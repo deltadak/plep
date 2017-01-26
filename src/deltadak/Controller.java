@@ -14,6 +14,8 @@ import javafx.util.Callback;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import static java.lang.Integer.min;
+
 public class Controller implements Initializable {
     /**
      * database communication below
@@ -53,6 +55,7 @@ public class Controller implements Initializable {
             }
         });
 
+        //todo setup drag and drop for all children of gridview
         setupDragAndDrop(day1);
         setupDragAndDrop(day2);
     }
@@ -115,7 +118,14 @@ public class Controller implements Initializable {
                             System.out.println("Dropped on "+listCell.getIndex());
                             String newvalue = db.getString();
                             //insert new task, removing will happen in onDragDone
-                            list.getItems().add(listCell.getIndex(),newvalue);
+                            int index = min(listCell.getIndex(),list.getItems().size()); // item can be dropped way below the existing list
+                            //we have put an empty item instead of no items
+                            //because otherwise there are no listCells that can receive an item
+                            if (list.getItems().get(0).equals("")) {
+                                list.getItems().set(0,newvalue); //replace empty item
+                            } else {
+                                list.getItems().add(index, newvalue);
+                            }
                             success = true;
                         }
                         event.setDropCompleted(success);
@@ -126,7 +136,8 @@ public class Controller implements Initializable {
                 listCell.setOnDragDone(new EventHandler<DragEvent>() {
                     @Override
                     public void handle(DragEvent event) {
-//                        if (event.getTransferMode() == TransferMode.COPY_OR_MOVE) {
+                        //ensures the original element is only removed on a valid copy transfer (no dropping outside listviews)
+                        if (event.getTransferMode() == TransferMode.COPY) {
                             Dragboard db = event.getDragboard();
                             String draggedvalue = db.getString();
                             //remove original item
@@ -138,7 +149,11 @@ public class Controller implements Initializable {
                             } else {
                                 list.getItems().remove(listCell.getIndex()+1);
                             }
-//                        }
+                            //prevent an empty list from refusing to receive items //// TODO
+                            if (list.getItems().size() < 1) {
+                                list.getItems().add("");
+                            }
+                        }
                         event.consume();
                     }
                 });
