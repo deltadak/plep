@@ -19,16 +19,25 @@ public class Controller implements Initializable {
     Connection connection;
     Statement statement;
     int countID = 1;
+    ArrayList<String[]> dayOne = new ArrayList<>();
 
     @FXML public void initialize(URL location, ResourceBundle resourceBundle){
 //        createTable();
         Calendar calendar = Calendar.getInstance();
-        insertTask(calendar, "Freak out", "2WS20");
+//        insertTask(calendar, "Freak out", "2WS20");
 //        insertTask(calendar, "exam1", "2WA60");
 //        insertTask(calendar, "exam2", "2WA60");
 //        insertTask(calendar, "exam1", "2WA30");
 //        insertTask(calendar, "exam2", "2WA30");
 //        deleteTasksDay(calendar);
+
+        getTasksDay(calendar);
+        for (int i = 0; i < dayOne.size(); i++) {
+            for (int j = 0; j < dayOne.get(i).length; j++) {
+                System.out.println("[" + dayOne.get(i)[1] + "] " + dayOne.get(i)[0]);
+            }
+        }
+
     }
 
     /**
@@ -40,10 +49,29 @@ public class Controller implements Initializable {
 
         String dayString = calendarToString(dayCal);
         System.out.println(dayString);
+
+        setConnection();
         String sql = "INSERT INTO tasks(id, day, task, subject) " +
                     "VALUES (" + countID + ", '" + dayString + "', '" + task + "','" + subject + "')";
         countID++;
         query(sql);
+    }
+
+    public void getTasksDay(Calendar dayCal) {
+        String dayString = calendarToString(dayCal);
+        String sql = "SELECT task, subject FROM tasks WHERE day = '" + dayString + "'";
+
+        setConnection();
+        try {
+            statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+            while(resultSet.next()) {
+                String[] task = {resultSet.getString("task"), resultSet.getString("subject")};
+                dayOne.add(task);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void getHighestID() {
