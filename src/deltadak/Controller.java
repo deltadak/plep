@@ -20,14 +20,6 @@ import java.util.ResourceBundle;
 import static java.lang.Integer.min;
 
 public class Controller implements Initializable {
-    /**
-     * database communication below
-     */
-
-
-    /**
-     * interface functions below
-     */
     @FXML ListView<String> day1;
     @FXML ListView<String> day2;
     @FXML GridPane gridpane;
@@ -36,6 +28,22 @@ public class Controller implements Initializable {
      * Initialization method for the controller.
      */
     @FXML public void initialize(URL location, ResourceBundle resourceBundle){
+        setupDays();
+    }
+
+    /**
+     * database communication below
+     */
+
+
+    /**
+     * interface functions below
+     */
+
+    /**
+     * sets up listviews for each day, initializes drag and drop, editing items
+     */
+    private void setupDays() {
 
         //some debug defaults
         ObservableList<String> day1List = FXCollections.<String>observableArrayList("task1","task2");
