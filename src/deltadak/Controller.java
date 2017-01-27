@@ -13,6 +13,7 @@ import javafx.scene.input.*;
 import javafx.scene.layout.GridPane;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
+import javafx.util.converter.DefaultStringConverter;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -63,12 +64,12 @@ public class Controller implements Initializable {
 
     private void setupDragAndDrop(ListView<String> list) {
         //todo cellfactory needs to produce editable listcell?
-        //like new TextFieldListCell<String>(new DefaultListConverter())
+        //like new TextFieldListCell<String>(new DefaultStringConverter())
         //see implementation of forListView
-        list.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
+        list.setCellFactory(new Callback<ListView<String>, TextFieldListCell<String>>(new DefaultStringConverter()) {
             @Override
-            public ListCell<String> call(ListView<String> param) {
-                ListCell<String> listCell = new ListCell<String>() {
+            public TextFieldListCell<String> call(ListView<String> param) {
+                ListCell<String> listCell = new TextFieldListCell<String>() {
                     @Override
                     protected void updateItem( String item, boolean empty) {
                         super.updateItem(item, empty);
