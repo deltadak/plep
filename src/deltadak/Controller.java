@@ -37,70 +37,132 @@ public class Controller implements Initializable {
     Connection connection;
     Statement statement;
     int countID = 1;
-    ArrayList<String[]> dayOne = new ArrayList<>();
+    ArrayList<String[]> dayOne = new ArrayList<>(); // containing "task", "label"
+    ArrayList<String[]> dayTwo = new ArrayList<>();
+    Calendar dayOneCal;
+    Calendar dayTwoCal;
 
 
     /**
      * Initialization method for the controller.
      */
     @FXML public void initialize(URL location, ResourceBundle resourceBundle){
-        setupGridPane();
 
+//        deleteTable("tasks");
 //        createTable();
-        Calendar calendar = Calendar.getInstance();
-//        insertTask(calendar, "Freak out", "2WS20");
-//        insertTask(calendar, "exam1", "2WA60");
-//        insertTask(calendar, "exam2", "2WA60");
-//        insertTask(calendar, "exam1", "2WA30");
-//        insertTask(calendar, "exam2", "2WA30");
+
+        Calendar dayOneCal = Calendar.getInstance();
+        insertTask(dayOneCal, "Freak out", "2WS20",1);
+        insertTask(dayOneCal, "exam1", "2WA60",2);
+        insertTask(dayOneCal, "exam2", "2WA60",3);
+        insertTask(dayOneCal, "exam1", "2WA30",4);
+        insertTask(dayOneCal, "exam2", "2WA30",5);
 //        deleteTasksDay(calendar);
 
-        getTasksDay(calendar);
-        for (int i = 0; i < dayOne.size(); i++) {
-            for (int j = 0; j < dayOne.get(i).length; j++) {
-                System.out.println("[" + dayOne.get(i)[1] + "] " + dayOne.get(i)[0]);
-            }
-        }
+        getTasksDay(dayOneCal, true);
+        dayOneCal.add(Calendar.DAY_OF_MONTH,1);
+        Calendar dayTwoCal = dayOneCal;
+//        insertTask(calendar, "one", "2WA60",1);
+//        insertTask(calendar, "two", "2WA60",2);
+//        insertTask(calendar, "three", "2WA30",3);
+//        insertTask(calendar, "boom", "2WA30",4);
+        getTasksDay(dayTwoCal, false);
+        putTasksDay(true);
+        putTasksDay(false);
+        setupGridPane();
 
     }
 
     /**
-     * database communication below
+     * database communication below -----------------------------------------------------
      */
 
-    public void insertTask(Calendar dayCal, String task, String subject) {
+    /**
+     * inserts a task into the database, given
+     * @param dayCal - the date as a Calendar
+     * @param task - the task as a string
+     * @param label - the label/course (code) as a string
+     * @param order - this is the i-th task on this day, as an int
+     */
+    public void insertTask(Calendar dayCal, String task, String label, int order) {
         getHighestID();
 
         String dayString = calendarToString(dayCal);
-        System.out.println(dayString);
 
-        setConnection();
-        String sql = "INSERT INTO tasks(id, day, task, subject) " +
-                    "VALUES (" + countID + ", '" + dayString + "', '" + task + "','" + subject + "')";
+        String sql = "INSERT INTO tasks(id, day, task, label, orderInDay) " +
+                    "VALUES (" + countID + ", '" + dayString + "', '" + task + "','" + label + "'," + order + ")";
         countID++;
         query(sql);
     }
 
-    public void getTasksDay(Calendar dayCal) {
+    /**
+     * Gets all the tasks on a given day, and stores them in dayOne if dayOneBoolean is true.
+     * Stores them in dayTwo otherwise.
+     *
+     * This method is used to get a day from the database for which we are going to update its tasks.
+     * THE CURRENT TASKS GET REMOVED!
+     * -> The new tasks will be put back with putTasksDay
+     *
+     * @param dayCal - the date for which to get all the tasks
+     * @param dayOneBoolean
+     */
+    public void getTasksDay(Calendar dayCal, boolean dayOneBoolean) {
+        if(dayOneBoolean) {
+            dayOneCal = dayCal;
+        } else {
+            dayTwoCal = dayCal;
+        }
+
         String dayString = calendarToString(dayCal);
-        String sql = "SELECT task, subject FROM tasks WHERE day = '" + dayString + "'";
+        String sql = "SELECT task, label FROM tasks WHERE day = '" + dayString + "' ORDER BY orderInDay";
 
         setConnection();
         try {
             statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
             while(resultSet.next()) {
-                String[] task = {resultSet.getString("task"), resultSet.getString("subject")};
-                dayOne.add(task);
+                String[] task = {resultSet.getString("task"), resultSet.getString("label")};
+                if(dayOneBoolean) {
+                    dayOne.add(task);
+                } else {
+                    dayTwo.add(task);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        // remove things from the day we are going to edit.
+        String sqlRemove = "DELETE FROM tasks WHERE day = '" + dayString + "'";
+        query(sqlRemove);
     }
 
+    /**
+     * Inserts all tasks of a day back into the database.
+     * Used after editing the tasks on a day.
+     * @param dayOneBoolean
+     *
+     * TODO is this what we need??
+     */
+    public void putTasksDay(boolean dayOneBoolean) {
+        if(dayOneBoolean) { // check if we are putting back the first or the second day
+            for (int i = 0; i < dayOne.size(); i++) {
+                insertTask(dayOneCal, dayOne.get(i)[0], dayOne.get(i)[1],i);
+            }
+
+        } else {
+            for (int i = 0; i < dayTwo.size(); i++) {
+                insertTask(dayTwoCal, dayTwo.get(i)[0], dayTwo.get(i)[1], i);
+            }
+        }
+    }
+
+    /**
+     * Sets countID to the highest ID that's currently in the database.
+     * To prevent double IDs and large gaps.
+     */
     public void getHighestID() {
         String sql = "SELECT * FROM tasks ORDER BY id DESC";
-        ArrayList<Integer>  ids = new ArrayList<>();
 
         setConnection();
         try {
@@ -109,7 +171,6 @@ public class Controller implements Initializable {
             if(resultSet.isBeforeFirst()) {
                 countID = resultSet.getInt("id") + 1;
             }
-            System.out.println(countID);
             statement.close();
             connection.close();
         } catch (Exception e) {
@@ -117,45 +178,71 @@ public class Controller implements Initializable {
         }
     }
 
+    /**
+     * Delete a task from the database given its id
+     * @param id - id of a task (primary key in the database)
+     */
     public void deleteTask(int id) {
         String sql = "DELETE FROM tasks WHERE id = " + id;
         query(sql);
     }
 
+    /**
+     * Deletes all tasks from the database for a given day.
+     * @param day - the day of which all tasks have to be deleted. Calendar object.
+     */
     public void deleteTasksDay(Calendar day) {
-        setConnection();
 
         String dayString = calendarToString(day);
         String sql = "DELETE FROM tasks WHERE day = '" + dayString + "'";
         query(sql);
     }
 
+    /**
+     * Creates table with all the tasks, if it doesn't exist yet.
+     */
     public void createTable() {
         String sql = "CREATE TABLE IF NOT EXISTS tasks(" +
                 "id INT PRIMARY KEY," +
                 "day DATE," +
                 "task CHAR(255)," +
-                "subject CHAR(10))";
+                "label CHAR(10)," +
+                "orderInDay INT)";
         query(sql);
     }
 
+    /**
+     * Delete a given table from the database.
+     * @param tableName
+     */
     public void deleteTable(String tableName) {
         String sql = "DROP TABLE IF EXISTS " + tableName;
         query(sql);
     }
 
+    /**
+     * Sends query to the database.
+     * Don't use this when selecting data from the database.
+     *      (No method for that because we need to do something with the data in the try-block).
+     * @param sql
+     */
     public void query(String sql) {
         setConnection();
         try {
             statement = connection.createStatement();
             statement.executeUpdate(sql);
             statement.close();
+            connection.close();
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Connect to the database.
+     * Use this before sending a query to the database.
+     */
     public void setConnection() {
         try {
             Class.forName("org.sqlite.JDBC");
@@ -167,7 +254,11 @@ public class Controller implements Initializable {
     }
 
 
-
+    /**
+     * Converts Calendar object to String object.
+     * @param calendar
+     * @return String with eg 2017-03-25
+     */
     public String calendarToString(Calendar calendar) {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         String calendarString = format.format(calendar.getTime());
@@ -181,8 +272,17 @@ public class Controller implements Initializable {
     private void setupGridPane() {
 
         //some debug defaults
-        ObservableList<String> day1List = FXCollections.observableArrayList("task1","task2","","","","","","");
-        ObservableList<String> day2List = FXCollections.observableArrayList("task3","task4","","","","","","");
+        ArrayList<String> temp = new ArrayList<>();
+        for (int i = 0; i < dayOne.size(); i++) {
+            temp.add(dayOne.get(i)[0]);
+        }
+        ObservableList<String> day1List = FXCollections.observableArrayList(temp);
+
+        temp.clear();
+        for (int i = 0; i < dayTwo.size(); i++) {
+            temp.add(dayTwo.get(i)[0]);
+        }
+        ObservableList<String> day2List = FXCollections.observableArrayList(temp);
         day1.setItems(day1List);
         day2.setItems(day2List);
 
