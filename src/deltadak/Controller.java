@@ -52,20 +52,20 @@ public class Controller implements Initializable {
 //        createTable();
 
         Calendar dayOneCal = Calendar.getInstance();
-        insertTask(dayOneCal, "Freak out", "2WS20",1);
-        insertTask(dayOneCal, "exam1", "2WA60",2);
-        insertTask(dayOneCal, "exam2", "2WA60",3);
-        insertTask(dayOneCal, "exam1", "2WA30",4);
-        insertTask(dayOneCal, "exam2", "2WA30",5);
+//        insertTask(dayOneCal, "exam1", "2WA60",1);
+//        insertTask(dayOneCal, "exam2", "2WA60",2);
+//        insertTask(dayOneCal, "exam3", "2WA30",3);
+//        insertTask(dayOneCal, "exam4", "2WA30",4);
 //        deleteTasksDay(calendar);
 
         getTasksDay(dayOneCal, true);
-        dayOneCal.add(Calendar.DAY_OF_MONTH,1);
-        Calendar dayTwoCal = dayOneCal;
-//        insertTask(calendar, "one", "2WA60",1);
-//        insertTask(calendar, "two", "2WA60",2);
-//        insertTask(calendar, "three", "2WA30",3);
-//        insertTask(calendar, "boom", "2WA30",4);
+        Calendar dayTwoCal = Calendar.getInstance();
+        dayTwoCal.add(Calendar.DAY_OF_MONTH,1);
+//        insertTask(dayTwoCal, "one", "2WA60",1);
+//        insertTask(dayTwoCal, "two", "2WA60",2);
+//        insertTask(dayTwoCal, "three", "2WA30",3);
+//        insertTask(dayTwoCal, "boom", "2WA30",4);
+
         getTasksDay(dayTwoCal, false);
         putTasksDay(true);
         putTasksDay(false);
@@ -145,6 +145,7 @@ public class Controller implements Initializable {
      * TODO is this what we need??
      */
     public void putTasksDay(boolean dayOneBoolean) {
+
         if(dayOneBoolean) { // check if we are putting back the first or the second day
             for (int i = 0; i < dayOne.size(); i++) {
                 insertTask(dayOneCal, dayOne.get(i)[0], dayOne.get(i)[1],i);
@@ -170,6 +171,8 @@ public class Controller implements Initializable {
             ResultSet resultSet = statement.executeQuery(sql);
             if(resultSet.isBeforeFirst()) {
                 countID = resultSet.getInt("id") + 1;
+            } else {
+                countID = 1;
             }
             statement.close();
             connection.close();
