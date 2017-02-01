@@ -58,7 +58,8 @@ public class Controller implements Initializable {
 //        insertTask(dayOneCal, "exam4", "2WA30",4);
 //        deleteTasksDay(calendar);
 
-        getTasksDay(dayOneCal, true);
+//        getTasksDay(dayOneCal, true, true);
+        getTasksDay(dayOneCal, true, false);
         Calendar dayTwoCal = Calendar.getInstance();
         dayTwoCal.add(Calendar.DAY_OF_MONTH,1);
 //        insertTask(dayTwoCal, "one", "2WA60",1);
@@ -66,9 +67,10 @@ public class Controller implements Initializable {
 //        insertTask(dayTwoCal, "three", "2WA30",3);
 //        insertTask(dayTwoCal, "boom", "2WA30",4);
 
-        getTasksDay(dayTwoCal, false);
-        putTasksDay(true);
-        putTasksDay(false);
+//        getTasksDay(dayTwoCal, false, true);
+        getTasksDay(dayTwoCal, false, false);
+//        putTasksDay(true);
+//        putTasksDay(false);
         setupGridPane();
 
     }
@@ -99,14 +101,12 @@ public class Controller implements Initializable {
      * Gets all the tasks on a given day, and stores them in dayOne if dayOneBoolean is true.
      * Stores them in dayTwo otherwise.
      *
-     * This method is used to get a day from the database for which we are going to update its tasks.
-     * THE CURRENT TASKS GET REMOVED!
-     * -> The new tasks will be put back with putTasksDay
+     * Removes current day from the database when we are going to edit this day.
      *
      * @param dayCal - the date for which to get all the tasks
      * @param dayOneBoolean
      */
-    public void getTasksDay(Calendar dayCal, boolean dayOneBoolean) {
+    public void getTasksDay(Calendar dayCal, boolean dayOneBoolean, boolean edit) {
         if(dayOneBoolean) {
             dayOneCal = dayCal;
         } else {
@@ -132,9 +132,11 @@ public class Controller implements Initializable {
             e.printStackTrace();
         }
 
-        // remove things from the day we are going to edit.
-        String sqlRemove = "DELETE FROM tasks WHERE day = '" + dayString + "'";
-        query(sqlRemove);
+        if(edit) {
+            // remove things from the day we are going to edit.
+            String sqlRemove = "DELETE FROM tasks WHERE day = '" + dayString + "'";
+            query(sqlRemove);
+        }
     }
 
     /**
