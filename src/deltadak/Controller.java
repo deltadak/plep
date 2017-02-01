@@ -4,10 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.input.*;
 import javafx.scene.layout.GridPane;
@@ -46,8 +43,8 @@ public class Controller implements Initializable {
     private void setupGridPane() {
 
         //some debug defaults
-        ObservableList<String> day1List = FXCollections.observableArrayList("task1","task2","","","","","","");
-        ObservableList<String> day2List = FXCollections.observableArrayList("task3","task4","","","","","","");
+        ObservableList<String> day1List = FXCollections.observableArrayList("task1","task2","","","","");
+        ObservableList<String> day2List = FXCollections.observableArrayList("task3","task4","","","","");
         day1.setItems(day1List);
         day2.setItems(day2List);
 
@@ -55,12 +52,6 @@ public class Controller implements Initializable {
         gridpane.getChildren().stream().filter(node -> node instanceof ListView).forEach(node -> {
             ListView<String> list = (ListView<String>) node;
             setupListView(list);
-//            list.setCellFactory(new Callback<ListView<String>,ListCell<String>>() {
-//                @Override
-//                public ListCell<String> call(ListView<String> param) {
-//                    return new LabelCell();
-//                }
-//            });
             list.setOnEditCommit(t -> list.getItems().set(t.getIndex(), t.getNewValue()));
         });
     }
@@ -109,15 +100,15 @@ public class Controller implements Initializable {
                     Dragboard db = event.getDragboard();
                     boolean success = false;
                     if (db.hasString()) {
-                        String newvalue = db.getString();
+                        String newText = db.getString();
                         //insert new task, removing will happen in onDragDone
                         int index = min(labelCell.getIndex(),list.getItems().size()); // item can be dropped way below the existing list
                         //we have put an empty item instead of no items
                         //because otherwise there are no listCells that can receive an item
                         if (list.getItems().get(index).equals("")) {
-                            list.getItems().set(index,newvalue); //replace empty item
+                            list.getItems().set(index,newText); //replace empty item
                         } else {
-                            list.getItems().add(index, newvalue);
+                            list.getItems().add(index, newText);
                         }
                         success = true;
                     }
@@ -130,6 +121,7 @@ public class Controller implements Initializable {
                     if (event.getTransferMode() == TransferMode.COPY) {
                         Dragboard db = event.getDragboard();
                         String draggedvalue = db.getString();
+                        labelCell.comboBox.setValue("");
                         //remove original item
                         //item can have been moved up (so index becomes one too much)
                         // or such that the index didn't change, like to another day
@@ -155,13 +147,14 @@ public class Controller implements Initializable {
         HBox hbox = new HBox();
         Label label = new Label("(empty)");
         Pane pane = new Pane();
-        Button button = new Button("(>)");
+        ObservableList<String> comboList = FXCollections.observableArrayList(
+                "0LAUK0","2WF50","2WA70","2IPC0");
+        ComboBox<String> comboBox = new ComboBox<>(comboList);
 
         public LabelCell() {
             super();
-            hbox.getChildren().addAll(label, pane, button);
+            hbox.getChildren().addAll(label, pane, comboBox);
             HBox.setHgrow(pane, Priority.ALWAYS);
-            //button.setOnAction
         }
 
         @Override
