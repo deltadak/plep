@@ -4,11 +4,16 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.input.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Priority;
 import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
 
@@ -50,6 +55,12 @@ public class Controller implements Initializable {
         gridpane.getChildren().stream().filter(node -> node instanceof ListView).forEach(node -> {
             ListView<String> list = (ListView<String>) node;
             setupListView(list);
+//            list.setCellFactory(new Callback<ListView<String>,ListCell<String>>() {
+//                @Override
+//                public ListCell<String> call(ListView<String> param) {
+//                    return new LabelCell();
+//                }
+//            });
             list.setOnEditCommit(t -> list.getItems().set(t.getIndex(), t.getNewValue()));
         });
     }
@@ -59,54 +70,48 @@ public class Controller implements Initializable {
         //anyway, editing is enabled by using TextFieldListCell instead of ListCell
         list.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
             @Override
-            public TextFieldListCell<String> call(ListView<String> param) {
-                TextFieldListCell<String> listCell = new TextFieldListCell<String>() {
-                    @Override
-                    public void updateItem( String item, boolean empty) {
-                        super.updateItem(item, empty);
-                        setText(item);
-                    }
-                };
+            public LabelCell call(ListView<String> param) {
+                LabelCell labelCell = new LabelCell() {};
 
                 //set converter to convert text input into object and back when editing
-                listCell.setConverter(new DefaultStringConverter());
+                labelCell.setConverter(new DefaultStringConverter());
 
-                listCell.setOnDragDetected( (MouseEvent event) -> {
-                    if (!listCell.getItem().equals("")) {
-                        Dragboard db = listCell.startDragAndDrop(TransferMode.COPY);
+                labelCell.setOnDragDetected( (MouseEvent event) -> {
+                    if (!labelCell.getItem().equals("")) {
+                        Dragboard db = labelCell.startDragAndDrop(TransferMode.COPY);
                         ClipboardContent content = new ClipboardContent();
-                        content.putString(listCell.getItem());
+                        content.putString(labelCell.getItem());
                         db.setContent(content);
                     }
                     event.consume();
                 });
 
-                listCell.setOnDragOver(event -> {
-                    if (event.getGestureSource() != listCell && event.getDragboard().hasString()) {
+                labelCell.setOnDragOver(event -> {
+                    if (event.getGestureSource() != labelCell && event.getDragboard().hasString()) {
                         event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
                     }
                     event.consume();
                 });
 
-                listCell.setOnDragEntered(event -> {
-                    if (event.getGestureSource() != listCell && event.getDragboard().hasString()) {
+                labelCell.setOnDragEntered(event -> {
+                    if (event.getGestureSource() != labelCell && event.getDragboard().hasString()) {
                         System.out.println("TODO: change color of listview"); //todo
                     }
                     event.consume();
                 });
 
-                listCell.setOnDragExited(event -> {
+                labelCell.setOnDragExited(event -> {
                     System.out.println("TODO reset color of listview"); //todo
                     event.consume();
                 });
 
-                listCell.setOnDragDropped(event -> {
+                labelCell.setOnDragDropped(event -> {
                     Dragboard db = event.getDragboard();
                     boolean success = false;
                     if (db.hasString()) {
                         String newvalue = db.getString();
                         //insert new task, removing will happen in onDragDone
-                        int index = min(listCell.getIndex(),list.getItems().size()); // item can be dropped way below the existing list
+                        int index = min(labelCell.getIndex(),list.getItems().size()); // item can be dropped way below the existing list
                         //we have put an empty item instead of no items
                         //because otherwise there are no listCells that can receive an item
                         if (list.getItems().get(index).equals("")) {
@@ -120,7 +125,7 @@ public class Controller implements Initializable {
                     event.consume();
                 });
 
-                listCell.setOnDragDone(event -> {
+                labelCell.setOnDragDone(event -> {
                     //ensures the original element is only removed on a valid copy transfer (no dropping outside listviews)
                     if (event.getTransferMode() == TransferMode.COPY) {
                         Dragboard db = event.getDragboard();
@@ -128,10 +133,10 @@ public class Controller implements Initializable {
                         //remove original item
                         //item can have been moved up (so index becomes one too much)
                         // or such that the index didn't change, like to another day
-                        if (list.getItems().get(listCell.getIndex()).equals(draggedvalue)) {
-                            list.getItems().set(listCell.getIndex(),"");
+                        if (list.getItems().get(labelCell.getIndex()).equals(draggedvalue)) {
+                            list.getItems().set(labelCell.getIndex(),"");
                         } else {
-                            list.getItems().set(listCell.getIndex()+1,"");
+                            list.getItems().set(labelCell.getIndex()+1,"");
                         }
                         //prevent an empty list from refusing to receive items, as it wouldn't contain any listcell
                         if (list.getItems().size() < 1) {
@@ -141,10 +146,35 @@ public class Controller implements Initializable {
                     event.consume();
                 });
 
-                return listCell;
+                return labelCell;
             }
         });
     }
 
+    static class LabelCell extends TextFieldListCell<String> {
+        HBox hbox = new HBox();
+        Label label = new Label("(empty)");
+        Pane pane = new Pane();
+        Button button = new Button("(>)");
+
+        public LabelCell() {
+            super();
+            hbox.getChildren().addAll(label, pane, button);
+            HBox.setHgrow(pane, Priority.ALWAYS);
+            //button.setOnAction
+        }
+
+        @Override
+        public void updateItem(String item, boolean empty) {
+            super.updateItem(item, empty);
+            setText(null); // No text in label of super class
+            if (empty) {
+                setGraphic(null);
+            } else {
+                label.setText(item != null ? item : "<null>");
+                setGraphic(hbox);
+            }
+        }
+    }
 
 }
