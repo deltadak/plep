@@ -12,6 +12,7 @@ import javafx.scene.layout.GridPane;
 import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
 
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -51,15 +52,13 @@ public class Controller implements Initializable {
 //        deleteTable("tasks");
 //        createTable();
 
-        Calendar dayOneCal = Calendar.getInstance();
-//        insertTask(dayOneCal, "exam1", "2WA60",1);
-//        insertTask(dayOneCal, "exam2", "2WA60",2);
-//        insertTask(dayOneCal, "exam3", "2WA30",3);
-//        insertTask(dayOneCal, "exam4", "2WA30",4);
+        Calendar calendar = Calendar.getInstance();
+//        insertTask(calendar, "exam1", "2WA60",1);
+//        insertTask(calendar, "exam2", "2WA60",2);
+//        insertTask(calendar, "exam3", "2WA30",3);
+//        insertTask(calendar, "exam4", "2WA30",4);
 //        deleteTasksDay(calendar);
 
-//        getTasksDay(dayOneCal, true, true);
-        getTasksDay(dayOneCal, true, false);
         Calendar dayTwoCal = Calendar.getInstance();
         dayTwoCal.add(Calendar.DAY_OF_MONTH,1);
 //        insertTask(dayTwoCal, "one", "2WA60",1);
@@ -67,10 +66,28 @@ public class Controller implements Initializable {
 //        insertTask(dayTwoCal, "three", "2WA30",3);
 //        insertTask(dayTwoCal, "boom", "2WA30",4);
 
-//        getTasksDay(dayTwoCal, false, true);
-        getTasksDay(dayTwoCal, false, false);
-//        putTasksDay(true);
-//        putTasksDay(false);
+        /**
+         * method demonstration! Yay!
+         */
+
+        // get todays task
+        ArrayList<String[]> todayTasks = getTasksDay(calendar);
+
+        for (int i = 0; i < todayTasks.size(); i++) {
+            System.out.println(todayTasks.get(i)[1] + " --- " + todayTasks.get(i)[0]);
+        }
+
+        System.out.println();
+        // change one entry
+        todayTasks.set(3, new String[]{"do nothing, yet", "2WF50"});
+
+        for (int i = 0; i < todayTasks.size(); i++) {
+            System.out.println(todayTasks.get(i)[1] + " --- " + todayTasks.get(i)[0]);
+        }
+
+        // store new values in database
+        putTasksDay(calendar, todayTasks);
+
         setupGridPane();
 
     }
@@ -98,23 +115,16 @@ public class Controller implements Initializable {
     }
 
     /**
-     * Gets all the tasks on a given day, and stores them in dayOne if dayOneBoolean is true.
-     * Stores them in dayTwo otherwise.
-     *
-     * Removes current day from the database when we are going to edit this day.
+     * Gets all the tasks on a given day.
      *
      * @param dayCal - the date for which to get all the tasks
-     * @param dayOneBoolean
+     * @return ArrayList<String[]> , where String[] is of size 2. A task and a label.
      */
-    public void getTasksDay(Calendar dayCal, boolean dayOneBoolean, boolean edit) {
-        if(dayOneBoolean) {
-            dayOneCal = dayCal;
-        } else {
-            dayTwoCal = dayCal;
-        }
+    public ArrayList<String[]> getTasksDay(Calendar dayCal) {
 
         String dayString = calendarToString(dayCal);
         String sql = "SELECT task, label FROM tasks WHERE day = '" + dayString + "' ORDER BY orderInDay";
+        ArrayList<String[]> tasksDay = new ArrayList<>();
 
         setConnection();
         try {
@@ -122,47 +132,35 @@ public class Controller implements Initializable {
             ResultSet resultSet = statement.executeQuery(sql);
             while(resultSet.next()) {
                 String[] task = {resultSet.getString("task"), resultSet.getString("label")};
-                if(dayOneBoolean) {
-                    dayOne.add(task);
-                } else {
-                    dayTwo.add(task);
-                }
+                tasksDay.add(task);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        if(edit) {
-            // remove things from the day we are going to edit.
-            String sqlRemove = "DELETE FROM tasks WHERE day = '" + dayString + "'";
-            query(sqlRemove);
-        }
+        return tasksDay;
     }
 
     /**
-     * Inserts all tasks of a day back into the database.
-     * Used after editing the tasks on a day.
-     * @param dayOneBoolean
-     *
-     * TODO is this what we need??
+     * updates a day in the database
+     * @param dayCal - date for which to update
+     * @param tasks - ArrayList<String[]> with the new tasks
      */
-    public void putTasksDay(boolean dayOneBoolean) {
+    public void putTasksDay(Calendar dayCal, ArrayList<String[]> tasks) {
 
-        if(dayOneBoolean) { // check if we are putting back the first or the second day
-            for (int i = 0; i < dayOne.size(); i++) {
-                insertTask(dayOneCal, dayOne.get(i)[0], dayOne.get(i)[1],i);
-            }
+        // first remove all the items for this day that are currently in the database before we add the new ones,
+        // so we don't get double tasks
+        deleteTasksDay(dayCal);
 
-        } else {
-            for (int i = 0; i < dayTwo.size(); i++) {
-                insertTask(dayTwoCal, dayTwo.get(i)[0], dayTwo.get(i)[1], i);
-            }
+        // then add the new tasks
+        for (int i = 0; i < tasks.size(); i++) {
+            insertTask(dayCal, tasks.get(i)[0], tasks.get(i)[1], i);
         }
+
     }
 
     /**
      * Sets countID to the highest ID that's currently in the database.
-     * To prevent double IDs and large gaps.
+     * To prevent double IDs
      */
     public void getHighestID() {
         String sql = "SELECT * FROM tasks ORDER BY id DESC";
@@ -277,13 +275,19 @@ public class Controller implements Initializable {
     private void setupGridPane() {
 
         //some debug defaults
+
+        // convert ArrayList<String[]> to ArrayList<String>, for now
         ArrayList<String> temp = new ArrayList<>();
+        ArrayList<String[]> dayOne = getTasksDay(Calendar.getInstance());
         for (int i = 0; i < dayOne.size(); i++) {
             temp.add(dayOne.get(i)[0]);
         }
         ObservableList<String> day1List = FXCollections.observableArrayList(temp);
 
         temp.clear();
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_MONTH,1);
+        ArrayList<String[]> dayTwo = getTasksDay(cal);
         for (int i = 0; i < dayTwo.size(); i++) {
             temp.add(dayTwo.get(i)[0]);
         }
