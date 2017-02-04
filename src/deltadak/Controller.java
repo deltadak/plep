@@ -12,6 +12,7 @@ import javafx.scene.layout.GridPane;
 import javafx.util.Callback;
 import javafx.util.converter.DefaultStringConverter;
 
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -41,7 +42,6 @@ public class Controller implements Initializable {
     ArrayList<String[]> dayTwo = new ArrayList<>();
     Calendar dayOneCal;
     Calendar dayTwoCal;
-    int countButton = 0;
 
 
     /**
@@ -52,164 +52,48 @@ public class Controller implements Initializable {
 //        deleteTable("tasks");
 //        createTable();
 
-        Calendar dayOneCal = Calendar.getInstance();
-//        insertTask(dayOneCal, "exam1", "2WA60",1);
-//        insertTask(dayOneCal, "exam2", "2WA60",2);
-//        insertTask(dayOneCal, "exam3", "2WA30",3);
-//        insertTask(dayOneCal, "exam4", "2WA30",4);
+        Calendar calendar = Calendar.getInstance();
+//        insertTask(calendar, "exam1", "2WA60",1);
+//        insertTask(calendar, "exam2", "2WA60",2);
+//        insertTask(calendar, "exam3", "2WA30",3);
+//        insertTask(calendar, "exam4", "2WA30",4);
 //        deleteTasksDay(calendar);
 
-//        getTasksDay(dayOneCal, true, true);
-        getTasksDay(dayOneCal, true);
         Calendar dayTwoCal = Calendar.getInstance();
         dayTwoCal.add(Calendar.DAY_OF_MONTH,1);
-//        insertTask(dayTwoCal, "a", "2WA60",1);
-//        insertTask(dayTwoCal, "b", "2WA60",2);
-//        insertTask(dayTwoCal, "c", "2WA30",3);
-//        insertTask(dayTwoCal, "d", "2WA30",4);
+//        insertTask(dayTwoCal, "one", "2WA60",1);
+//        insertTask(dayTwoCal, "two", "2WA60",2);
+//        insertTask(dayTwoCal, "three", "2WA30",3);
+//        insertTask(dayTwoCal, "boom", "2WA30",4);
 
-//        getTasksDay(dayTwoCal, false, true);
-        getTasksDay(dayTwoCal, false);
-//        putTasksDay(true);
-//        putTasksDay(false);
+        /**
+         * method demonstration! Yay!
+         */
+
+        // get todays task
+        ArrayList<String[]> todayTasks = getTasksDay(calendar);
+
+        for (int i = 0; i < todayTasks.size(); i++) {
+            System.out.println(todayTasks.get(i)[1] + " --- " + todayTasks.get(i)[0]);
+        }
+
+        System.out.println();
+        // change one entry
+        todayTasks.set(3, new String[]{"do nothing, yet", "2WF50"});
+
+        for (int i = 0; i < todayTasks.size(); i++) {
+            System.out.println(todayTasks.get(i)[1] + " --- " + todayTasks.get(i)[0]);
+        }
+
+        // store new values in database
+        putTasksDay(calendar, todayTasks);
+
         setupGridPane();
 
     }
 
-
-    @FXML private void addNumber() {
-        System.out.println("button clicked");
-        dayTwo.add(new String[]{String.valueOf(countButton),""});
-        countButton++;
-        updateDay(dayTwoCal,dayTwo);
-    }
-
-
     /**
-     * sets up listviews for each day, initializes drag and drop, editing items
-     */
-    private void setupGridPane() {
-
-        //some debug defaults
-        ArrayList<String> temp = new ArrayList<>();
-        for (int i = 0; i < dayOne.size(); i++) {
-            temp.add(dayOne.get(i)[0]);
-        }
-        ObservableList<String> day1List = FXCollections.observableArrayList(temp);
-
-        temp.clear();
-        for (int i = 0; i < dayTwo.size(); i++) {
-            temp.add(dayTwo.get(i)[0]);
-        }
-        ObservableList<String> day2List = FXCollections.observableArrayList(temp);
-        day1.setItems(day1List);
-        day2.setItems(day2List);
-
-        //setup drag and drop for all children of gridview
-        gridpane.getChildren().stream().filter(node -> node instanceof ListView).forEach(node -> {
-            ListView<String> list = (ListView<String>) node;
-            setupListView(list);
-            list.setOnEditCommit(t -> list.getItems().set(t.getIndex(), t.getNewValue()));
-        });
-
-    }
-
-    private void setupListView(ListView<String> list) {
-        //no idea why the callback needs a ListCell and not a TextFieldListCell
-        //anyway, editing is enabled by using TextFieldListCell instead of ListCell
-        list.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
-            @Override
-            public TextFieldListCell<String> call(ListView<String> param) {
-                TextFieldListCell<String> listCell = new TextFieldListCell<String>() {
-                    @Override
-                    public void updateItem( String item, boolean empty) {
-                        super.updateItem(item, empty);
-                        setText(item);
-
-                    }
-                };
-
-                //set converter to convert text input into object and back when editing
-                listCell.setConverter(new DefaultStringConverter());
-
-                listCell.setOnDragDetected( (MouseEvent event) -> {
-                    if (!listCell.getItem().equals("")) {
-                        Dragboard db = listCell.startDragAndDrop(TransferMode.COPY);
-                        ClipboardContent content = new ClipboardContent();
-                        content.putString(listCell.getItem());
-                        db.setContent(content);
-                    }
-                    event.consume();
-                });
-
-                listCell.setOnDragOver(event -> {
-                    if (event.getGestureSource() != listCell && event.getDragboard().hasString()) {
-                        event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
-                    }
-                    event.consume();
-                });
-
-                listCell.setOnDragEntered(event -> {
-                    if (event.getGestureSource() != listCell && event.getDragboard().hasString()) {
-                        System.out.println("TODO: change color of listview"); //todo
-                    }
-                    event.consume();
-                });
-
-                listCell.setOnDragExited(event -> {
-                    System.out.println("TODO reset color of listview"); //todo
-                    event.consume();
-                });
-
-                listCell.setOnDragDropped(event -> {
-                    Dragboard db = event.getDragboard();
-                    boolean success = false;
-                    if (db.hasString()) {
-                        String newvalue = db.getString();
-                        //insert new task, removing will happen in onDragDone
-                        int index = min(listCell.getIndex(),list.getItems().size()); // item can be dropped way below the existing list
-                        //we have put an empty item instead of no items
-                        //because otherwise there are no listCells that can receive an item
-                        if (list.getItems().get(index).equals("")) {
-                            list.getItems().set(index,newvalue); //replace empty item
-                        } else {
-                            list.getItems().add(index, newvalue);
-                        }
-                        success = true;
-                    }
-                    event.setDropCompleted(success);
-                    event.consume();
-                });
-
-                listCell.setOnDragDone(event -> {
-                    //ensures the original element is only removed on a valid copy transfer (no dropping outside listviews)
-                    if (event.getTransferMode() == TransferMode.COPY) {
-                        Dragboard db = event.getDragboard();
-                        String draggedvalue = db.getString();
-                        //remove original item
-                        //item can have been moved up (so index becomes one too much)
-                        // or such that the index didn't change, like to another day
-                        if (list.getItems().get(listCell.getIndex()).equals(draggedvalue)) {
-                            list.getItems().set(listCell.getIndex(),"");
-                        } else {
-                            list.getItems().set(listCell.getIndex()+1,"");
-                        }
-                        //prevent an empty list from refusing to receive items, as it wouldn't contain any listcell
-                        if (list.getItems().size() < 1) {
-                            list.getItems().add("");
-                        }
-                    }
-                    event.consume();
-                });
-
-                return listCell;
-            }
-        });
-
-    }
-
-    /**
-     * database communication below ----------------------------------------------------------------------------------
+     * database communication below -----------------------------------------------------
      */
 
     /**
@@ -230,29 +114,17 @@ public class Controller implements Initializable {
         query(sql);
     }
 
-    public void updateDay(Calendar dayCal, ArrayList<String[]> updateTasks) {
-        deleteTasksDay(dayCal);
-        for (int i = 0; i < updateTasks.size(); i++) {
-            insertTask(dayCal, updateTasks.get(i)[0], updateTasks.get(i)[1],i);
-        }
-    }
-
     /**
-     * Gets all the tasks on a given day, and stores them in dayOne if dayOneBoolean is true.
-     * Stores them in dayTwo otherwise.
+     * Gets all the tasks on a given day.
      *
      * @param dayCal - the date for which to get all the tasks
-     * @param dayOneBoolean
+     * @return ArrayList<String[]> , where String[] is of size 2. A task and a label.
      */
-    public void getTasksDay(Calendar dayCal, boolean dayOneBoolean) {
-        if(dayOneBoolean) {
-            dayOneCal = dayCal;
-        } else {
-            dayTwoCal = dayCal;
-        }
+    public ArrayList<String[]> getTasksDay(Calendar dayCal) {
 
         String dayString = calendarToString(dayCal);
         String sql = "SELECT task, label FROM tasks WHERE day = '" + dayString + "' ORDER BY orderInDay";
+        ArrayList<String[]> tasksDay = new ArrayList<>();
 
         setConnection();
         try {
@@ -260,42 +132,34 @@ public class Controller implements Initializable {
             ResultSet resultSet = statement.executeQuery(sql);
             while(resultSet.next()) {
                 String[] task = {resultSet.getString("task"), resultSet.getString("label")};
-                if(dayOneBoolean) {
-                    dayOne.add(task);
-                } else {
-                    dayTwo.add(task);
-                }
+                tasksDay.add(task);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        return tasksDay;
     }
 
     /**
-     * Inserts all tasks of a day back into the database.
-     * Used after editing the tasks on a day.
-     * @param dayOneBoolean
-     *
-     * TODO is this what we need??
+     * updates a day in the database
+     * @param dayCal - date for which to update
+     * @param tasks - ArrayList<String[]> with the new tasks
      */
-    public void putTasksDay(boolean dayOneBoolean) {
+    public void putTasksDay(Calendar dayCal, ArrayList<String[]> tasks) {
 
-        if(dayOneBoolean) { // check if we are putting back the first or the second day
-            for (int i = 0; i < dayOne.size(); i++) {
-                insertTask(dayOneCal, dayOne.get(i)[0], dayOne.get(i)[1],i);
-            }
+        // first remove all the items for this day that are currently in the database before we add the new ones,
+        // so we don't get double tasks
+        deleteTasksDay(dayCal);
 
-        } else {
-            for (int i = 0; i < dayTwo.size(); i++) {
-                insertTask(dayTwoCal, dayTwo.get(i)[0], dayTwo.get(i)[1], i);
-            }
+        // then add the new tasks
+        for (int i = 0; i < tasks.size(); i++) {
+            insertTask(dayCal, tasks.get(i)[0], tasks.get(i)[1], i);
         }
     }
 
     /**
      * Sets countID to the highest ID that's currently in the database.
-     * To prevent double IDs and large gaps.
+     * To prevent double IDs
      */
     public void getHighestID() {
         String sql = "SELECT * FROM tasks ORDER BY id DESC";
@@ -404,6 +268,133 @@ public class Controller implements Initializable {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         String calendarString = format.format(calendar.getTime());
         return calendarString;
+    }
+
+
+    /**
+     * sets up listviews for each day, initializes drag and drop, editing items
+     */
+    private void setupGridPane() {
+
+        //some debug defaults
+
+        // convert ArrayList<String[]> to ArrayList<String>, for now
+        ArrayList<String> temp = new ArrayList<>();
+        ArrayList<String[]> dayOne = getTasksDay(Calendar.getInstance());
+        for (int i = 0; i < dayOne.size(); i++) {
+            temp.add(dayOne.get(i)[0]);
+        }
+        ObservableList<String> day1List = FXCollections.observableArrayList(temp);
+
+        temp.clear();
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_MONTH,1);
+        ArrayList<String[]> dayTwo = getTasksDay(cal);
+        for (int i = 0; i < dayTwo.size(); i++) {
+            temp.add(dayTwo.get(i)[0]);
+        }
+        ObservableList<String> day2List = FXCollections.observableArrayList(temp);
+        day1.setItems(day1List);
+        day2.setItems(day2List);
+
+        //setup drag and drop for all children of gridview
+        gridpane.getChildren().stream().filter(node -> node instanceof ListView).forEach(node -> {
+            ListView<String> list = (ListView<String>) node;
+            setupListView(list);
+            list.setOnEditCommit(t -> list.getItems().set(t.getIndex(), t.getNewValue()));
+        });
+    }
+
+    private void setupListView(ListView<String> list) {
+        //no idea why the callback needs a ListCell and not a TextFieldListCell
+        //anyway, editing is enabled by using TextFieldListCell instead of ListCell
+        list.setCellFactory(new Callback<ListView<String>, ListCell<String>>() {
+            @Override
+            public TextFieldListCell<String> call(ListView<String> param) {
+                TextFieldListCell<String> listCell = new TextFieldListCell<String>() {
+                    @Override
+                    public void updateItem( String item, boolean empty) {
+                        super.updateItem(item, empty);
+                        setText(item);
+                    }
+                };
+
+                //set converter to convert text input into object and back when editing
+                listCell.setConverter(new DefaultStringConverter());
+
+                listCell.setOnDragDetected( (MouseEvent event) -> {
+                    if (!listCell.getItem().equals("")) {
+                        Dragboard db = listCell.startDragAndDrop(TransferMode.COPY);
+                        ClipboardContent content = new ClipboardContent();
+                        content.putString(listCell.getItem());
+                        db.setContent(content);
+                    }
+                    event.consume();
+                });
+
+                listCell.setOnDragOver(event -> {
+                    if (event.getGestureSource() != listCell && event.getDragboard().hasString()) {
+                        event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+                    }
+                    event.consume();
+                });
+
+                listCell.setOnDragEntered(event -> {
+                    if (event.getGestureSource() != listCell && event.getDragboard().hasString()) {
+                        System.out.println("TODO: change color of listview"); //todo
+                    }
+                    event.consume();
+                });
+
+                listCell.setOnDragExited(event -> {
+                    System.out.println("TODO reset color of listview"); //todo
+                    event.consume();
+                });
+
+                listCell.setOnDragDropped(event -> {
+                    Dragboard db = event.getDragboard();
+                    boolean success = false;
+                    if (db.hasString()) {
+                        String newvalue = db.getString();
+                        //insert new task, removing will happen in onDragDone
+                        int index = min(listCell.getIndex(),list.getItems().size()); // item can be dropped way below the existing list
+                        //we have put an empty item instead of no items
+                        //because otherwise there are no listCells that can receive an item
+                        if (list.getItems().get(index).equals("")) {
+                            list.getItems().set(index,newvalue); //replace empty item
+                        } else {
+                            list.getItems().add(index, newvalue);
+                        }
+                        success = true;
+                    }
+                    event.setDropCompleted(success);
+                    event.consume();
+                });
+
+                listCell.setOnDragDone(event -> {
+                    //ensures the original element is only removed on a valid copy transfer (no dropping outside listviews)
+                    if (event.getTransferMode() == TransferMode.COPY) {
+                        Dragboard db = event.getDragboard();
+                        String draggedvalue = db.getString();
+                        //remove original item
+                        //item can have been moved up (so index becomes one too much)
+                        // or such that the index didn't change, like to another day
+                        if (list.getItems().get(listCell.getIndex()).equals(draggedvalue)) {
+                            list.getItems().set(listCell.getIndex(),"");
+                        } else {
+                            list.getItems().set(listCell.getIndex()+1,"");
+                        }
+                        //prevent an empty list from refusing to receive items, as it wouldn't contain any listcell
+                        if (list.getItems().size() < 1) {
+                            list.getItems().add("");
+                        }
+                    }
+                    event.consume();
+                });
+
+                return listCell;
+            }
+        });
     }
 
 
