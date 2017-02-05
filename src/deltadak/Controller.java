@@ -17,11 +17,8 @@ import javafx.util.Callback;
 import javafx.util.StringConverter;
 import javafx.util.converter.DefaultStringConverter;
 
-<<<<<<< HEAD
 import java.io.Serializable;
-=======
 import java.lang.reflect.Array;
->>>>>>> master
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -63,18 +60,18 @@ public class Controller implements Initializable {
 //        createTable();
 
         Calendar calendar = Calendar.getInstance();
-//        insertTask(calendar, "exam1", "2WA60",1);
-//        insertTask(calendar, "exam2", "2WA60",2);
-//        insertTask(calendar, "exam3", "2WA30",3);
-//        insertTask(calendar, "exam4", "2WA30",4);
+        insertTask(calendar, "exam1", "2WA60",1);
+        insertTask(calendar, "exam2", "2WA60",2);
+        insertTask(calendar, "exam3", "2WA30",3);
+        insertTask(calendar, "exam4", "2WA30",4);
 //        deleteTasksDay(calendar);
 
         Calendar dayTwoCal = Calendar.getInstance();
         dayTwoCal.add(Calendar.DAY_OF_MONTH,1);
-//        insertTask(dayTwoCal, "one", "2WA60",1);
-//        insertTask(dayTwoCal, "two", "2WA60",2);
-//        insertTask(dayTwoCal, "three", "2WA30",3);
-//        insertTask(dayTwoCal, "boom", "2WA30",4);
+        insertTask(dayTwoCal, "one", "2WA60",1);
+        insertTask(dayTwoCal, "two", "2WA60",2);
+        insertTask(dayTwoCal, "three", "2WA30",3);
+        insertTask(dayTwoCal, "boom", "2WA30",4);
 
         /**
          * method demonstration! Yay!
@@ -285,18 +282,6 @@ public class Controller implements Initializable {
     private void setupGridPane() {
 
         //some debug defaults
-<<<<<<< HEAD
-        ObservableList<Task> day1Tasks = FXCollections.observableArrayList(
-                new Task("gdv","2WA70"),
-                new Task("methods","2IPC0")
-        );
-        ObservableList<Task> day2Tasks = FXCollections.observableArrayList(
-                new Task("discrete","2WF50"),
-                new Task("robot","0LAUK0")
-        );
-        day1.setItems(day1Tasks);
-        day2.setItems(day2Tasks);
-=======
 
         // convert ArrayList<String[]> to ArrayList<String>, for now
         ArrayList<String> temp = new ArrayList<>();
@@ -314,9 +299,16 @@ public class Controller implements Initializable {
             temp.add(dayTwo.get(i)[0]);
         }
         ObservableList<String> day2List = FXCollections.observableArrayList(temp);
-        day1.setItems(day1List);
-        day2.setItems(day2List);
->>>>>>> master
+        ObservableList<Task> day1Tasks = FXCollections.observableArrayList(
+                new Task("gdv","2WA70"),
+                new Task("methods","2IPC0")
+        );
+        ObservableList<Task> day2Tasks = FXCollections.observableArrayList(
+                new Task("discrete","2WF50"),
+                new Task("robot","0LAUK0")
+        );
+        day1.setItems(day1Tasks);
+        day2.setItems(day2Tasks);
 
         //setup drag and drop for all children of gridview
         gridpane.getChildren().stream().filter(node -> node instanceof ListView).forEach(node -> {
