@@ -6,6 +6,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.input.*;
@@ -13,6 +14,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
+import javafx.stage.Screen;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 import javafx.util.converter.DefaultStringConverter;
@@ -37,8 +39,8 @@ import java.util.ResourceBundle;
 import static java.lang.Integer.min;
 
 public class Controller implements Initializable {
-    @FXML ListView<Task> day1;
-    @FXML ListView<Task> day2;
+//    @FXML ListView<Task> day1;
+//    @FXML ListView<Task> day2;
     @FXML GridPane gridpane;
     private DataFormat dataFormat = new DataFormat("com.deltadak.Task");
 
@@ -275,47 +277,88 @@ public class Controller implements Initializable {
         return calendarString;
     }
 
-
+    /**
+     * get tasks by day
+     * @param c day
+     */
+    private ObservableList<Task> getTasksFromDatabase(Calendar c, int i) {
+        //todo replace by database code (and remove second param)
+        if (i==1) {
+            ObservableList<Task> day1Tasks = FXCollections.observableArrayList(
+                    new Task("gdv", "2WA70"),
+                    new Task("methods", "2IPC0")
+            );
+            return day1Tasks;
+//        } else if (i==2) {
+        } else {
+            ObservableList<Task> day2Tasks = FXCollections.observableArrayList(
+                    new Task("discrete","2WF50"),
+                    new Task("robot","0LAUK0")
+            );
+            return day2Tasks;
+        }
+    }
     /**
      * sets up listviews for each day, initializes drag and drop, editing items
      */
     private void setupGridPane() {
 
-        //some debug defaults
+        int numberOfDays = 9;
+        int maxColumns = 3;
 
-        // convert ArrayList<String[]> to ArrayList<String>, for now
-        ArrayList<String> temp = new ArrayList<>();
-        ArrayList<String[]> dayOne = getTasksDay(Calendar.getInstance());
-        for (int i = 0; i < dayOne.size(); i++) {
-            temp.add(dayOne.get(i)[0]);
-        }
-        ObservableList<String> day1List = FXCollections.observableArrayList(temp);
+        Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+        int totalHeight = (int) primaryScreenBounds.getHeight();
+        int listViewHeight = totalHeight/(numberOfDays/maxColumns);
+        int totalWidth = (int) primaryScreenBounds.getWidth();
+        int listViewWidth = totalWidth/maxColumns;
 
-        temp.clear();
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DAY_OF_MONTH,1);
-        ArrayList<String[]> dayTwo = getTasksDay(cal);
-        for (int i = 0; i < dayTwo.size(); i++) {
-            temp.add(dayTwo.get(i)[0]);
+
+        for (int i = 0; i < numberOfDays; i++ ) {
+            ListView<Task> list = new ListView<>();
+            int row = i/maxColumns;
+            int column = i % maxColumns;
+            gridpane.add(list, column, row);
+            Calendar c = Calendar.getInstance();
+            c.add(Calendar.DAY_OF_MONTH,i);
+            list.setItems(getTasksFromDatabase(c,i));
         }
-        ObservableList<String> day2List = FXCollections.observableArrayList(temp);
-        ObservableList<Task> day1Tasks = FXCollections.observableArrayList(
-                new Task("gdv","2WA70"),
-                new Task("methods","2IPC0")
-        );
-        ObservableList<Task> day2Tasks = FXCollections.observableArrayList(
-                new Task("discrete","2WF50"),
-                new Task("robot","0LAUK0")
-        );
-        day1.setItems(day1Tasks);
-        day2.setItems(day2Tasks);
+
+//        ListView<Task> day1 = new ListView<>();
+//        gridpane.add(day1,0,0);
+//        day1.setItems(getTasksFromDatabase(Calendar.getInstance(),0));
+//
+//        ListView<Task> day2= new ListView<>();
+//        gridpane.add(day2,1,0);
+//        Calendar c = Calendar.getInstance();
+//        c.add(Calendar.DAY_OF_MONTH,1);
+//        day2.setItems(getTasksFromDatabase(c,1));
 
         //setup drag and drop for all children of gridview
         gridpane.getChildren().stream().filter(node -> node instanceof ListView).forEach(node -> {
             ListView<Task> list = (ListView<Task>) node;
+            list.setEditable(true);
+            list.setPrefWidth(listViewWidth);
+            list.setPrefHeight(listViewHeight);
             setupListView(list);
             list.setOnEditCommit(t -> list.getItems().set(t.getIndex(), t.getNewValue()));
         });
+
+//        // convert ArrayList<String[]> to ArrayList<String>, for now
+//        ArrayList<String> temp = new ArrayList<>();
+//        ArrayList<String[]> dayOne = getTasksDay(Calendar.getInstance());
+//        for (int i = 0; i < dayOne.size(); i++) {
+//            temp.add(dayOne.get(i)[0]);
+//        }
+//        ObservableList<String> day1List = FXCollections.observableArrayList(temp);
+//
+//        temp.clear();
+//        Calendar cal = Calendar.getInstance();
+//        cal.add(Calendar.DAY_OF_MONTH,1);
+//        ArrayList<String[]> dayTwo = getTasksDay(cal);
+//        for (int i = 0; i < dayTwo.size(); i++) {
+//            temp.add(dayTwo.get(i)[0]);
+//        }
+//        ObservableList<String> day2List = FXCollections.observableArrayList(temp);
     }
 
     private void setupListView(ListView<Task> list) {
