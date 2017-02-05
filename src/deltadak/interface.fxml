@@ -9,7 +9,6 @@
   <children>
     <ListView fx:id="day1" editable="true" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="0" GridPane.rowIndex="0" />
     <ListView fx:id="day2" editable="true" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-    <Button fx:id="plusButton" GridPane.columnIndex="3" GridPane.rowIndex="0" text="+" onAction="#addNumber"/>
   </children>
   <columnConstraints>
     <ColumnConstraints hgrow="SOMETIMES" maxWidth="318.0" minWidth="10.0" prefWidth="211.0" />
