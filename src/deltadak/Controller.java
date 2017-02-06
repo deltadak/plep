@@ -2,7 +2,6 @@ package deltadak;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -14,16 +13,11 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
-import javafx.util.converter.DefaultStringConverter;
 
-import java.lang.reflect.Array;
 import java.io.Serializable;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import jdk.nashorn.internal.runtime.ECMAException;
-
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -31,7 +25,6 @@ import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.ResourceBundle;
 
 import static java.lang.Integer.min;
 
@@ -128,7 +121,7 @@ public class Controller implements Initializable {
      * @param dayCal - date for which to update
      * @param tasks - ArrayList<String[]> with the new tasks
      */
-    public void putTasksDay(Calendar dayCal, ArrayList<String[]> tasks) {
+    public void updateTasksDay(Calendar dayCal, ArrayList<String[]> tasks) {
 
         System.out.println(calendarToString(dayCal));
 
@@ -293,12 +286,18 @@ public class Controller implements Initializable {
         gridpane.getChildren().stream().filter(node -> node instanceof ListView)
                 .forEach(node -> {
                     ListView<Task> list = (ListView<Task>) node;
-                    list.setOnEditCommit(t -> list.getItems().set(t.getIndex(), t.getNewValue()));
+//                    list.setOnEditCommit(t -> list.getItems().set(t.getIndex(), t.getNewValue()));
+
+
                     Calendar calendar = Calendar.getInstance();
                     if(i[0] < gridpane.getChildren().size()) {
                         for (; i[1] < i[0]; i[1]++) {
                             calendar.add(Calendar.DAY_OF_MONTH,1);
                         }
+                        list.setOnEditCommit(event -> {
+                            updateTasksDay(calendar, listViewToString(list));
+                            deleteEmptyTasks();
+                        });
                         setupListView(list, calendar);
                         i[0]++;
                     }
@@ -307,7 +306,7 @@ public class Controller implements Initializable {
 
     private void setupListView(ListView<Task> list, Calendar day) {
         System.out.println(calendarToString(day));
-//        putTasksDay(day, listViewToString(list));
+//        updateTasksDay(day, listViewToString(list));
 
         //no idea why the callback needs a ListCell and not a TextFieldListCell
         //anyway, editing is enabled by using TextFieldListCell instead of ListCell
@@ -363,7 +362,7 @@ public class Controller implements Initializable {
                             list.getItems().add(index, newTask);
                         }
                         success = true;
-                        putTasksDay(day, listViewToString(list));
+                        updateTasksDay(day, listViewToString(list));
                     }
                     event.setDropCompleted(success);
                     event.consume();
@@ -381,7 +380,7 @@ public class Controller implements Initializable {
                         if (list.getItems().get(labelCell.getIndex()).getText().equals(newTask.getText())) {
                             list.getItems().set(labelCell.getIndex(),emptyTask);
                             labelCell.setGraphic(null);
-                            putTasksDay(day,listViewToString(list)); // update in database
+                            updateTasksDay(day,listViewToString(list)); // update in database
                             deleteEmptyTasks(); // deleting blank row updating creates
                         } else {
                             list.getItems().set(labelCell.getIndex()+1,emptyTask);
@@ -465,6 +464,8 @@ public class Controller implements Initializable {
         public Task fromString(String string) {
             Task task = cell.getItem();
             task.setText(string);
+            String id = cell.getListView().getId(); // get the id from the listview to figure out what day it is
+
             return task;
         }
     }
