@@ -2,6 +2,7 @@ package deltadak;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -70,28 +71,6 @@ public class Controller implements Initializable {
         insertTask(dayTwoCal, "three", "2WA30",3);
         insertTask(dayTwoCal, "boom", "2WA30",4);
 
-        /**
-         * method demonstration! Yay!
-         */
-
-        // get todays task
-        ArrayList<String[]> todayTasks = getTasksDay(calendar);
-
-        for (int i = 0; i < todayTasks.size(); i++) {
-            System.out.println(todayTasks.get(i)[1] + " --- " + todayTasks.get(i)[0]);
-        }
-
-        System.out.println();
-        // change one entry
-        todayTasks.set(3, new String[]{"do nothing, yet", "2WF50"});
-
-        for (int i = 0; i < todayTasks.size(); i++) {
-            System.out.println(todayTasks.get(i)[1] + " --- " + todayTasks.get(i)[0]);
-        }
-
-        // store new values in database
-        putTasksDay(calendar, todayTasks);
-
         setupGridPane();
 
     }
@@ -151,6 +130,8 @@ public class Controller implements Initializable {
      */
     public void putTasksDay(Calendar dayCal, ArrayList<String[]> tasks) {
 
+        System.out.println(calendarToString(dayCal));
+
         // first remove all the items for this day that are currently in the database before we add the new ones,
         // so we don't get double tasks
         deleteTasksDay(dayCal);
@@ -190,6 +171,15 @@ public class Controller implements Initializable {
      */
     public void deleteTask(int id) {
         String sql = "DELETE FROM tasks WHERE id = " + id;
+        query(sql);
+    }
+
+    /**
+     * deletes all the tasks from the database where field task is empty
+     * used when updating a day of which an item has been removed (by dragging)
+     */
+    public void deleteEmptyTasks() {
+        String sql = "DELETE FROM tasks WHERE task = '' ";
         query(sql);
     }
 
@@ -281,44 +271,44 @@ public class Controller implements Initializable {
     private void setupGridPane() {
 
         //some debug defaults
-
-        ObservableList<Task> day1Tasks = FXCollections.observableArrayList(
-                new Task("gdv","2WA70"),
-                new Task("methods","2IPC0")
-        );
-        ObservableList<Task> day2Tasks = FXCollections.observableArrayList(
-                new Task("discrete","2WF50"),
-                new Task("robot","0LAUK0")
-        );
-
-        // convert ArrayList<String[]> to ArrayList<String>, for now
-        ArrayList<String> temp = new ArrayList<>();
+        ObservableList<Task> day1Tasks = FXCollections.observableArrayList();
         ArrayList<String[]> dayOne = getTasksDay(Calendar.getInstance());
         for (int i = 0; i < dayOne.size(); i++) {
-            temp.add(dayOne.get(i)[0]);
+            day1Tasks.add(new Task(dayOne.get(i)[0], dayOne.get(i)[1]));
         }
-        ObservableList<String> day1List = FXCollections.observableArrayList(temp);
 
-        temp.clear();
+        ObservableList<Task> day2Tasks = FXCollections.observableArrayList();
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DAY_OF_MONTH,1);
         ArrayList<String[]> dayTwo = getTasksDay(cal);
         for (int i = 0; i < dayTwo.size(); i++) {
-            temp.add(dayTwo.get(i)[0]);
+            day2Tasks.add(new Task(dayTwo.get(i)[0],dayTwo.get(i)[1]));
         }
-        ObservableList<String> day2List = FXCollections.observableArrayList(temp);
-        day1.setItems(day1Tasks);
+
+         day1.setItems(day1Tasks);
         day2.setItems(day2Tasks);
 
         //setup drag and drop for all children of gridview
-        gridpane.getChildren().stream().filter(node -> node instanceof ListView).forEach(node -> {
-            ListView<Task> list = (ListView<Task>) node;
-            setupListView(list);
-            list.setOnEditCommit(t -> list.getItems().set(t.getIndex(), t.getNewValue()));
-        });
+        int[] i = {0,0};
+        gridpane.getChildren().stream().filter(node -> node instanceof ListView)
+                .forEach(node -> {
+                    ListView<Task> list = (ListView<Task>) node;
+                    list.setOnEditCommit(t -> list.getItems().set(t.getIndex(), t.getNewValue()));
+                    Calendar calendar = Calendar.getInstance();
+                    if(i[0] < gridpane.getChildren().size()) {
+                        for (; i[1] < i[0]; i[1]++) {
+                            calendar.add(Calendar.DAY_OF_MONTH,1);
+                        }
+                        setupListView(list, calendar);
+                        i[0]++;
+                    }
+                });
     }
 
-    private void setupListView(ListView<Task> list) {
+    private void setupListView(ListView<Task> list, Calendar day) {
+        System.out.println(calendarToString(day));
+//        putTasksDay(day, listViewToString(list));
+
         //no idea why the callback needs a ListCell and not a TextFieldListCell
         //anyway, editing is enabled by using TextFieldListCell instead of ListCell
         list.setCellFactory(new Callback<ListView<Task>, ListCell<Task>>() {
@@ -349,6 +339,7 @@ public class Controller implements Initializable {
                     if (event.getGestureSource() != labelCell && event.getDragboard().hasContent(dataFormat)) {
                         System.out.println("TODO: change color of listview"); //todo
                     }
+
                     event.consume();
                 });
 
@@ -372,6 +363,7 @@ public class Controller implements Initializable {
                             list.getItems().add(index, newTask);
                         }
                         success = true;
+                        putTasksDay(day, listViewToString(list));
                     }
                     event.setDropCompleted(success);
                     event.consume();
@@ -389,6 +381,8 @@ public class Controller implements Initializable {
                         if (list.getItems().get(labelCell.getIndex()).getText().equals(newTask.getText())) {
                             list.getItems().set(labelCell.getIndex(),emptyTask);
                             labelCell.setGraphic(null);
+                            putTasksDay(day,listViewToString(list)); // update in database
+                            deleteEmptyTasks(); // deleting blank row updating creates
                         } else {
                             list.getItems().set(labelCell.getIndex()+1,emptyTask);
 //                            nextLabelCell.setGraphic(null);
@@ -404,6 +398,19 @@ public class Controller implements Initializable {
                 return labelCell;
             }
         });
+
+    }
+
+    public ArrayList<String[]> listViewToString(ListView<Task> listView) {
+        ArrayList<String[]> tasks = new ArrayList<>();
+        for (int i = 0; i < listView.getItems().size(); i++) {
+            Task task = listView.getItems().get(i);
+            String[] singleTask = new String[2];
+            singleTask[0] = task.getText();
+            singleTask[1] = task.getLabel();
+            tasks.add(singleTask);
+        }
+        return tasks;
     }
 
     private class LabelCell extends TextFieldListCell<Task> {
