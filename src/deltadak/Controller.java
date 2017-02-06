@@ -315,6 +315,7 @@ public class Controller implements Initializable {
             ListView<Task> list = (ListView<Task>) node;
             setupListView(list);
             list.setOnEditCommit(t -> list.getItems().set(t.getIndex(), t.getNewValue()));
+            cleanUp(list);
         });
     }
 
