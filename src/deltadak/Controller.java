@@ -1,7 +1,5 @@
 package deltadak;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -10,23 +8,15 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.input.*;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Priority;
+import javafx.scene.layout.*;
 import javafx.stage.Screen;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
-import javafx.util.converter.DefaultStringConverter;
 
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import jdk.nashorn.internal.runtime.ECMAException;
-
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -34,14 +24,13 @@ import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.ResourceBundle;
 
 import static java.lang.Integer.min;
 
 public class Controller implements Initializable {
 //    @FXML ListView<Task> day1;
 //    @FXML ListView<Task> day2;
-    @FXML GridPane gridpane;
+    @FXML GridPane gridPane;
     private DataFormat dataFormat = new DataFormat("com.deltadak.Task");
 
     Connection connection;
@@ -51,6 +40,9 @@ public class Controller implements Initializable {
     ArrayList<String[]> dayTwo = new ArrayList<>();
     Calendar dayOneCal;
     Calendar dayTwoCal;
+
+    private static final int numberOfDays = 9;
+    private static final int maxColumns = 3;
 
 
     /**
@@ -302,66 +294,43 @@ public class Controller implements Initializable {
      * sets up listviews for each day, initializes drag and drop, editing items
      */
     private void setupGridPane() {
-
-        int numberOfDays = 9;
-        int maxColumns = 3;
-
-        Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-        int totalHeight = (int) primaryScreenBounds.getHeight();
-        int listViewHeight = totalHeight/(numberOfDays/maxColumns);
-        int totalWidth = (int) primaryScreenBounds.getWidth();
-        int listViewWidth = totalWidth/maxColumns;
-
-
         for (int i = 0; i < numberOfDays; i++ ) {
+            Calendar c = Calendar.getInstance();
+            c.add(Calendar.DAY_OF_MONTH,i-1);
+
             ListView<Task> list = new ListView<>();
+            VBox vbox = new VBox();
+            Label title = new Label(calendarToString(c));
+            Pane pane = new Pane();
+            vbox.getChildren().addAll(title, pane, list);
+            VBox.setVgrow(pane, Priority.ALWAYS);
+
             int row = i/maxColumns;
             int column = i % maxColumns;
-            gridpane.add(list, column, row);
-            Calendar c = Calendar.getInstance();
-            c.add(Calendar.DAY_OF_MONTH,i);
+            gridPane.add(vbox, column, row);
+
             list.setItems(getTasksFromDatabase(c,i));
-        }
-
-//        ListView<Task> day1 = new ListView<>();
-//        gridpane.add(day1,0,0);
-//        day1.setItems(getTasksFromDatabase(Calendar.getInstance(),0));
-//
-//        ListView<Task> day2= new ListView<>();
-//        gridpane.add(day2,1,0);
-//        Calendar c = Calendar.getInstance();
-//        c.add(Calendar.DAY_OF_MONTH,1);
-//        day2.setItems(getTasksFromDatabase(c,1));
-
-        //setup drag and drop for all children of gridview
-        gridpane.getChildren().stream().filter(node -> node instanceof ListView).forEach(node -> {
-            ListView<Task> list = (ListView<Task>) node;
             list.setEditable(true);
-            list.setPrefWidth(listViewWidth);
-            list.setPrefHeight(listViewHeight);
-            setupListView(list);
+            list.setPrefWidth(getListViewWidth());
+            list.setPrefHeight(getListViewHeight());
+            addLabelCells(list);
             list.setOnEditCommit(t -> list.getItems().set(t.getIndex(), t.getNewValue()));
-        });
-
-//        // convert ArrayList<String[]> to ArrayList<String>, for now
-//        ArrayList<String> temp = new ArrayList<>();
-//        ArrayList<String[]> dayOne = getTasksDay(Calendar.getInstance());
-//        for (int i = 0; i < dayOne.size(); i++) {
-//            temp.add(dayOne.get(i)[0]);
-//        }
-//        ObservableList<String> day1List = FXCollections.observableArrayList(temp);
-//
-//        temp.clear();
-//        Calendar cal = Calendar.getInstance();
-//        cal.add(Calendar.DAY_OF_MONTH,1);
-//        ArrayList<String[]> dayTwo = getTasksDay(cal);
-//        for (int i = 0; i < dayTwo.size(); i++) {
-//            temp.add(dayTwo.get(i)[0]);
-//        }
-//        ObservableList<String> day2List = FXCollections.observableArrayList(temp);
+        }
     }
 
-    private void setupListView(ListView<Task> list) {
+    private int getListViewHeight() {
+        Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+        int totalHeight = (int) primaryScreenBounds.getHeight();
+        return totalHeight/(numberOfDays/maxColumns);
+    }
+
+    private int getListViewWidth() {
+        Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
+        int totalWidth = (int) primaryScreenBounds.getWidth();
+        return totalWidth/maxColumns;
+    }
+
+    private void addLabelCells(ListView<Task> list) {
         //no idea why the callback needs a ListCell and not a TextFieldListCell
         //anyway, editing is enabled by using TextFieldListCell instead of ListCell
         list.setCellFactory(new Callback<ListView<Task>, ListCell<Task>>() {
@@ -373,12 +342,8 @@ public class Controller implements Initializable {
                 labelCell.setConverter(new TaskConverter(labelCell));
 
                 // update label on changes
-                labelCell.comboBox.valueProperty().addListener(new ChangeListener<String>() {
-                    @Override
-                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                        labelCell.getItem().setLabel(newValue);
-                    }
-                });
+                labelCell.comboBox.valueProperty().addListener(
+                        (observable, oldValue, newValue) -> labelCell.getItem().setLabel(newValue));
 
                 labelCell.setOnDragDetected( (MouseEvent event) -> {
                     if (!labelCell.getItem().getText().equals("")) {
@@ -498,8 +463,8 @@ public class Controller implements Initializable {
         /**
          * called when starting edit with (null, true)
          * and when finished edit with (task, false)
-         * @param task
-         * @param empty
+         * @param task to be updated
+         * @param empty whether to set empty?
          */
         @Override
         public void updateItem(Task task, boolean empty) {

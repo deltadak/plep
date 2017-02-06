@@ -2,5 +2,5 @@
 
 <?import javafx.scene.layout.*?>
 
-<GridPane fx:id="gridpane" alignment="CENTER" hgap="10.0" prefHeight="300.0" prefWidth="600.0" vgap="10.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="deltadak.Controller">
+<GridPane fx:id="gridPane" alignment="CENTER" hgap="10.0" prefHeight="300.0" prefWidth="600.0" vgap="10.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="deltadak.Controller">
 </GridPane>
