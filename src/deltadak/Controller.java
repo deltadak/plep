@@ -315,6 +315,7 @@ public class Controller implements Initializable {
             list.setPrefHeight(getListViewHeight());
             addLabelCells(list);
             list.setOnEditCommit(t -> list.getItems().set(t.getIndex(), t.getNewValue()));
+            cleanUp(list);
         }
     }
 
