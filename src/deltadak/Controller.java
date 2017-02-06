@@ -1,5 +1,7 @@
 package deltadak;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -15,6 +17,7 @@ import javafx.util.Callback;
 import javafx.util.StringConverter;
 
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -265,6 +268,9 @@ public class Controller implements Initializable {
 
         //some debug defaults
         ObservableList<Task> day1Tasks = FXCollections.observableArrayList();
+
+        // convert ArrayList<String[]> to ArrayList<String>, for now
+        ArrayList<String> temp = new ArrayList<>();
         ArrayList<String[]> dayOne = getTasksDay(Calendar.getInstance());
         for (int i = 0; i < dayOne.size(); i++) {
             day1Tasks.add(new Task(dayOne.get(i)[0], dayOne.get(i)[1]));
@@ -315,7 +321,16 @@ public class Controller implements Initializable {
             public LabelCell call(ListView<Task> param) {
                 LabelCell labelCell = new LabelCell() {};
 
+                //update text on changes
                 labelCell.setConverter(new TaskConverter(labelCell));
+
+                // update label on changes
+                labelCell.comboBox.valueProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                        labelCell.getItem().setLabel(newValue);
+                    }
+                });
 
                 labelCell.setOnDragDetected( (MouseEvent event) -> {
                     if (!labelCell.getItem().getText().equals("")) {
@@ -366,6 +381,7 @@ public class Controller implements Initializable {
                     }
                     event.setDropCompleted(success);
                     event.consume();
+                    cleanUp(list);
                 });
 
                 labelCell.setOnDragDone(event -> {
@@ -383,8 +399,7 @@ public class Controller implements Initializable {
                             updateTasksDay(day,listViewToString(list)); // update in database
                             deleteEmptyTasks(); // deleting blank row updating creates
                         } else {
-                            list.getItems().set(labelCell.getIndex()+1,emptyTask);
-//                            nextLabelCell.setGraphic(null);
+                            list.getItems().set(labelCell.getIndex() + 1, emptyTask);
                         }
                         //prevent an empty list from refusing to receive items, as it wouldn't contain any listcell
                         if (list.getItems().size() < 1) {
@@ -392,11 +407,34 @@ public class Controller implements Initializable {
                         }
                     }
                     event.consume();
+                    cleanUp(list);
                 });
 
                 return labelCell;
             }
         });
+        cleanUp(list);
+    }
+
+    /**
+     * removes empty rows, and then fills up with empty rows
+     * @param list to clean up
+     */
+    private void cleanUp(ListView<Task> list) {
+        int maxListLength = 6; //todo variable listview length
+        int i;
+        //first remove empty items
+        for (i=0; i < list.getItems().size(); i++) {
+            if (list.getItems().get(i).getText().equals("")) {
+                list.getItems().remove(i);
+            }
+        }
+        //fill up if necessary
+        for (i = 0; i<maxListLength; i++) {
+            if (i >= list.getItems().size()) {
+                list.getItems().add(i, new Task("",""));
+            }
+        }
 
     }
 
