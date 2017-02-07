@@ -18,6 +18,7 @@ import javafx.util.StringConverter;
 
 import java.io.Serializable;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import java.sql.Connection;
@@ -63,36 +64,36 @@ public class Controller implements Initializable {
         Calendar dayTwoCal = Calendar.getInstance();
         dayTwoCal.add(Calendar.DAY_OF_MONTH,1);
 
-        insertTask(calendar, "exam1", "2WA60",1);
-        insertTask(calendar, "exam2", "2WA60",2);
-        insertTask(calendar, "exam3", "2WA30",3);
-        insertTask(calendar, "exam4", "2WA30",4);
-        insertTask(dayTwoCal, "one", "2WA60",1);
-        insertTask(dayTwoCal, "two", "2WA60",2);
-        insertTask(dayTwoCal, "three", "2WA30",3);
-        insertTask(dayTwoCal, "boom", "2WA30",4);
+//        insertTask(calendar, "exam1", "2WA60",1);
+//        insertTask(calendar, "exam2", "2WA60",2);
+//        insertTask(calendar, "exam3", "2WA30",3);
+//        insertTask(calendar, "exam4", "2WA30",4);
+//        insertTask(dayTwoCal, "one", "2WA60",1);
+//        insertTask(dayTwoCal, "two", "2WA60",2);
+//        insertTask(dayTwoCal, "three", "2WA30",3);
+//        insertTask(dayTwoCal, "boom", "2WA30",4);
 
         /**
          * method demonstration! Yay!
          */
 
         // get todays task
-        ArrayList<String[]> todayTasks = getTasksDay(calendar);
+        ArrayList<Task> todayTasks = getTasksDay(calendar);
     
-        for (String[] todayTask : todayTasks) {
-            System.out.println(todayTask[1] + " --- " + todayTask[0]);
-        }
+//        for (String[] todayTask : todayTasks) {
+//            System.out.println(todayTask[1] + " --- " + todayTask[0]);
+//        }
 
-        System.out.println();
+//        System.out.println();
         // change one entry
-        todayTasks.set(3, new String[]{"do nothing, yet", "2WF50"});
+//        todayTasks.set(3, new String[]{"do nothing, yet", "2WF50"});
     
-        for (String[] todayTask : todayTasks) {
-            System.out.println(todayTask[1] + " --- " + todayTask[0]);
-        }
+//        for (String[] todayTask : todayTasks) {
+//            System.out.println(todayTask[1] + " --- " + todayTask[0]);
+//        }
 
         // store new values in database
-        putTasksDay(calendar, todayTasks);
+        updateTasksDay(calendar, todayTasks);
 
         setupGridPane();
 
@@ -124,26 +125,26 @@ public class Controller implements Initializable {
      * Gets all the tasks on a given day.
      *
      * @param dayCal - the date for which to get all the tasks
-     * @return ArrayList<String[]> , where String[] is of size 2. A task and a label.
+     * @return ArrayList<Task> , where String[] is of size 2. A task and a label.
      */
-    private ArrayList<String[]> getTasksDay(final Calendar dayCal) {
+    private ObservableList<Task> getTasksDay(final Calendar dayCal) {
 
         String dayString = calendarToString(dayCal);
         String sql = "SELECT task, label FROM tasks WHERE day = '" + dayString + "' ORDER BY orderInDay";
-        ArrayList<String[]> tasksDay = new ArrayList<>();
-
+        ObservableList<Task> tasks = new ArrayList<Task>();
+        
         setConnection();
         try {
             statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
             while(resultSet.next()) {
-                String[] task = {resultSet.getString("task"), resultSet.getString("label")};
-                tasksDay.add(task);
+                tasks.add(new Task(resultSet.getString("task"),
+                                   resultSet.getString("label")));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return tasksDay;
+        return tasks;
     }
 
     /**
@@ -151,7 +152,7 @@ public class Controller implements Initializable {
      * @param dayCal - date for which to update
      * @param tasks - ArrayList<String[]> with the new tasks
      */
-    public void updateTasksDay(Calendar dayCal, ArrayList<String[]> tasks) {
+    public void updateTasksDay(Calendar dayCal, ArrayList<Task> tasks) {
 
         System.out.println(calendarToString(dayCal));
 
@@ -161,7 +162,7 @@ public class Controller implements Initializable {
 
         // then add the new tasks
         for (int i = 0; i < tasks.size(); i++) {
-            insertTask(dayCal, tasks.get(i)[0], tasks.get(i)[1], i);
+            insertTask(dayCal, tasks.get(i).getText(), tasks.get(i).getLabel(), i);
         }
     }
 
@@ -327,7 +328,7 @@ public class Controller implements Initializable {
             int column = i % maxColumns;
             gridPane.add(vbox, column, row);
 
-            list.setItems(getTasksFromDatabase(calendar,i));
+            list.setItems(getTasksDay(calendar));
             list.setEditable(true);
             list.setPrefWidth(getListViewWidth());
             list.setPrefHeight(getListViewHeight());
