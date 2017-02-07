@@ -128,11 +128,11 @@ public class Controller implements Initializable {
      * @param dayCal - the date for which to get all the tasks
      * @return ArrayList<Task> , where String[] is of size 2. A task and a label.
      */
-    private ObservableList<Task> getTasksDay(final Calendar dayCal) {
+    private ArrayList<Task> getTasksDay(final Calendar dayCal) {
 
         String dayString = calendarToString(dayCal);
         String sql = "SELECT task, label FROM tasks WHERE day = '" + dayString + "' ORDER BY orderInDay";
-        ObservableList<Task> tasks = new ArrayList<Task>();
+        ArrayList<Task> tasks = new ArrayList<>();
         
         setConnection();
         try {
@@ -367,25 +367,41 @@ public class Controller implements Initializable {
             int column = i % maxColumns;
             gridPane.add(vbox, column, row);
 
-            list.setItems(getTasksDay(calendar));
+            ArrayList<Task> tasks = getTasksDay(calendar);
+            list.setItems(convertArrayToObservableList(tasks));
             list.setEditable(true);
             list.setPrefWidth(getListViewWidth());
             list.setPrefHeight(getListViewHeight());
             addLabelCells(list, calendar);
             //update database when editing is finished
             list.setOnEditCommit(event -> {
-                updateTasksDay(calendar, listViewToString(list));
+                updateTasksDay(calendar, convertObservableToArrayList(list.getItems()));
                 deleteEmptyTasks(); //from database
             });
             //add option to delete a task
             list.setOnKeyPressed(event -> {
                 if (event.getCode() == KeyCode.DELETE) {
                     list.getItems().remove(list.getSelectionModel().getSelectedIndex());
+                    updateTasksDay(calendar, convertObservableToArrayList(list.getItems()));
                     cleanUp(list); //cleaning up has to happen in the listener
                 }
             });
             cleanUp(list);
         }
+    }
+    
+    /**
+     * convert ObservableList to ArrayList
+     * @param list to convert
+     * @return converted List
+     */
+    private ArrayList<Task> convertObservableToArrayList(ObservableList<Task> list) {
+        return new ArrayList<>(list);
+    }
+    
+    private ObservableList<Task> convertArrayToObservableList(ArrayList<Task> list) {
+        ObservableList<Task> oList = FXCollections.observableList(list);
+        return oList;
     }
 
     private int getListViewHeight() {
@@ -418,7 +434,7 @@ public class Controller implements Initializable {
                 labelCell.comboBox.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
                     @Override
                     public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                        updateTasksDay(day, listViewToString(list));
+                        updateTasksDay(day, convertObservableToArrayList(list.getItems()));
                         deleteEmptyTasks();
                         cleanUp(list);
                     }
@@ -470,7 +486,7 @@ public class Controller implements Initializable {
                         }
                         success = true;
                         System.out.println("onDragDropped");
-                        updateTasksDay(day, listViewToString(list));
+                        updateTasksDay(day, convertObservableToArrayList(list.getItems()));
                     }
                     event.setDropCompleted(success);
                     event.consume();
@@ -490,7 +506,7 @@ public class Controller implements Initializable {
                             list.getItems().set(labelCell.getIndex(),emptyTask);
                             labelCell.setGraphic(null);
                             System.out.println("setOnDragDone");
-                            updateTasksDay(day,listViewToString(list)); // update in database
+                            updateTasksDay(day,convertObservableToArrayList(list.getItems())); // update in database
                             deleteEmptyTasks(); // deleting blank row updating creates
                         } else {
                             list.getItems().set(labelCell.getIndex() + 1, emptyTask);
@@ -530,18 +546,6 @@ public class Controller implements Initializable {
             }
         }
 
-    }
-
-    public ArrayList<String[]> listViewToString(ListView<Task> listView) {
-        ArrayList<String[]> tasks = new ArrayList<>();
-        for (int i = 0; i < listView.getItems().size(); i++) {
-            Task task = listView.getItems().get(i);
-            String[] singleTask = new String[2];
-            singleTask[0] = task.getText();
-            singleTask[1] = task.getLabel();
-            tasks.add(singleTask);
-        }
-        return tasks;
     }
 
     private class LabelCell extends TextFieldListCell<Task> {
