@@ -27,15 +27,18 @@ import java.util.Calendar;
 
 import static java.lang.Integer.min;
 
+/**
+ * Class to control the UI
+ */
 public class Controller implements Initializable {
 //    @FXML ListView<Task> day1;
 //    @FXML ListView<Task> day2;
     @FXML GridPane gridPane;
     private DataFormat dataFormat = new DataFormat("com.deltadak.Task");
 
-    Connection connection;
-    Statement statement;
-    int countID = 1;
+    private Connection connection;
+    private Statement statement;
+    private int countID = 1;
     ArrayList<String[]> dayOne = new ArrayList<>(); // containing "task", "label"
     ArrayList<String[]> dayTwo = new ArrayList<>();
     Calendar dayOneCal;
@@ -73,17 +76,17 @@ public class Controller implements Initializable {
 
         // get todays task
         ArrayList<String[]> todayTasks = getTasksDay(calendar);
-
-        for (int i = 0; i < todayTasks.size(); i++) {
-            System.out.println(todayTasks.get(i)[1] + " --- " + todayTasks.get(i)[0]);
+    
+        for (String[] todayTask : todayTasks) {
+            System.out.println(todayTask[1] + " --- " + todayTask[0]);
         }
 
         System.out.println();
         // change one entry
         todayTasks.set(3, new String[]{"do nothing, yet", "2WF50"});
-
-        for (int i = 0; i < todayTasks.size(); i++) {
-            System.out.println(todayTasks.get(i)[1] + " --- " + todayTasks.get(i)[0]);
+    
+        for (String[] todayTask : todayTasks) {
+            System.out.println(todayTask[1] + " --- " + todayTask[0]);
         }
 
         // store new values in database
@@ -121,7 +124,7 @@ public class Controller implements Initializable {
      * @param dayCal - the date for which to get all the tasks
      * @return ArrayList<String[]> , where String[] is of size 2. A task and a label.
      */
-    public ArrayList<String[]> getTasksDay(Calendar dayCal) {
+    private ArrayList<String[]> getTasksDay(final Calendar dayCal) {
 
         String dayString = calendarToString(dayCal);
         String sql = "SELECT task, label FROM tasks WHERE day = '" + dayString + "' ORDER BY orderInDay";
@@ -260,7 +263,7 @@ public class Controller implements Initializable {
 
     /**
      * Converts Calendar object to String object.
-     * @param calendar
+     * @param calendar to be converted
      * @return String with eg 2017-03-25
      */
     public String calendarToString(Calendar calendar) {
@@ -295,12 +298,12 @@ public class Controller implements Initializable {
      */
     private void setupGridPane() {
         for (int i = 0; i < numberOfDays; i++ ) {
-            Calendar c = Calendar.getInstance();
-            c.add(Calendar.DAY_OF_MONTH,i-1);
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.DAY_OF_MONTH,i-1);
 
             ListView<Task> list = new ListView<>();
             VBox vbox = new VBox();
-            Label title = new Label(calendarToString(c));
+            Label title = new Label(calendarToString(calendar));
             Pane pane = new Pane();
             vbox.getChildren().addAll(title, pane, list);
             VBox.setVgrow(pane, Priority.ALWAYS);
@@ -309,7 +312,7 @@ public class Controller implements Initializable {
             int column = i % maxColumns;
             gridPane.add(vbox, column, row);
 
-            list.setItems(getTasksFromDatabase(c,i));
+            list.setItems(getTasksFromDatabase(calendar,i));
             list.setEditable(true);
             list.setPrefWidth(getListViewWidth());
             list.setPrefHeight(getListViewHeight());
