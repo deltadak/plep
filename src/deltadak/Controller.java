@@ -60,14 +60,13 @@ public class Controller implements Initializable {
 //        createTable();
 
         Calendar calendar = Calendar.getInstance();
+        Calendar dayTwoCal = Calendar.getInstance();
+        dayTwoCal.add(Calendar.DAY_OF_MONTH,1);
+
         insertTask(calendar, "exam1", "2WA60",1);
         insertTask(calendar, "exam2", "2WA60",2);
         insertTask(calendar, "exam3", "2WA30",3);
         insertTask(calendar, "exam4", "2WA30",4);
-//        deleteTasksDay(calendar);
-
-        Calendar dayTwoCal = Calendar.getInstance();
-        dayTwoCal.add(Calendar.DAY_OF_MONTH,1);
         insertTask(dayTwoCal, "one", "2WA60",1);
         insertTask(dayTwoCal, "two", "2WA60",2);
         insertTask(dayTwoCal, "three", "2WA30",3);
@@ -116,7 +115,7 @@ public class Controller implements Initializable {
         String dayString = calendarToString(dayCal);
 
         String sql = "INSERT INTO tasks(id, day, task, label, orderInDay) " +
-                    "VALUES (" + countID + ", '" + dayString + "', '" + task + "','" + label + "'," + order + ")";
+                "VALUES (" + countID + ", '" + dayString + "', '" + task + "','" + label + "'," + order + ")";
         countID++;
         query(sql);
     }
@@ -152,7 +151,9 @@ public class Controller implements Initializable {
      * @param dayCal - date for which to update
      * @param tasks - ArrayList<String[]> with the new tasks
      */
-    public void putTasksDay(Calendar dayCal, ArrayList<String[]> tasks) {
+    public void updateTasksDay(Calendar dayCal, ArrayList<String[]> tasks) {
+
+        System.out.println(calendarToString(dayCal));
 
         // first remove all the items for this day that are currently in the database before we add the new ones,
         // so we don't get double tasks
@@ -162,7 +163,6 @@ public class Controller implements Initializable {
         for (int i = 0; i < tasks.size(); i++) {
             insertTask(dayCal, tasks.get(i)[0], tasks.get(i)[1], i);
         }
-
     }
 
     /**
@@ -194,6 +194,15 @@ public class Controller implements Initializable {
      */
     public void deleteTask(int id) {
         String sql = "DELETE FROM tasks WHERE id = " + id;
+        query(sql);
+    }
+
+    /**
+     * deletes all the tasks from the database where field task is empty
+     * used when updating a day of which an item has been removed (by dragging)
+     */
+    public void deleteEmptyTasks() {
+        String sql = "DELETE FROM tasks WHERE task = '' ";
         query(sql);
     }
 
@@ -263,6 +272,9 @@ public class Controller implements Initializable {
         }
     }
 
+    /**
+     * End of database communication ---------------------------------------------------------------------------
+     */
 
     /**
      * Converts Calendar object to String object.
@@ -319,8 +331,12 @@ public class Controller implements Initializable {
             list.setEditable(true);
             list.setPrefWidth(getListViewWidth());
             list.setPrefHeight(getListViewHeight());
-            addLabelCells(list);
-            list.setOnEditCommit(t -> list.getItems().set(t.getIndex(), t.getNewValue()));
+            addLabelCells(list, calendar);
+            //update database when editing is finished
+            list.setOnEditCommit(event -> {
+                updateTasksDay(calendar, listViewToString(list));
+                deleteEmptyTasks(); //from database
+            });
             //add option to delete a task
             list.setOnKeyPressed(event -> {
                 if (event.getCode() == KeyCode.DELETE) {
@@ -344,7 +360,7 @@ public class Controller implements Initializable {
         return totalWidth/maxColumns;
     }
 
-    private void addLabelCells(ListView<Task> list) {
+    private void addLabelCells(ListView<Task> list, Calendar day) {
         //no idea why the callback needs a ListCell and not a TextFieldListCell
         //anyway, editing is enabled by using TextFieldListCell instead of ListCell
         list.setCellFactory(new Callback<ListView<Task>, ListCell<Task>>() {
@@ -380,6 +396,7 @@ public class Controller implements Initializable {
                     if (event.getGestureSource() != labelCell && event.getDragboard().hasContent(dataFormat)) {
                         System.out.println("TODO: change color of listview"); //todo
                     }
+
                     event.consume();
                 });
 
@@ -403,6 +420,7 @@ public class Controller implements Initializable {
                             list.getItems().add(index, newTask);
                         }
                         success = true;
+                        updateTasksDay(day, listViewToString(list));
                     }
                     event.setDropCompleted(success);
                     event.consume();
@@ -421,6 +439,8 @@ public class Controller implements Initializable {
                         if (list.getItems().get(labelCell.getIndex()).getText().equals(newTask.getText())) {
                             list.getItems().set(labelCell.getIndex(),emptyTask);
                             labelCell.setGraphic(null);
+                            updateTasksDay(day,listViewToString(list)); // update in database
+                            deleteEmptyTasks(); // deleting blank row updating creates
                         } else {
                             list.getItems().set(labelCell.getIndex() + 1, emptyTask);
                         }
@@ -458,6 +478,19 @@ public class Controller implements Initializable {
                 list.getItems().add(i, new Task("",""));
             }
         }
+
+    }
+
+    public ArrayList<String[]> listViewToString(ListView<Task> listView) {
+        ArrayList<String[]> tasks = new ArrayList<>();
+        for (int i = 0; i < listView.getItems().size(); i++) {
+            Task task = listView.getItems().get(i);
+            String[] singleTask = new String[2];
+            singleTask[0] = task.getText();
+            singleTask[1] = task.getLabel();
+            tasks.add(singleTask);
+        }
+        return tasks;
     }
 
     private class LabelCell extends TextFieldListCell<Task> {
@@ -512,6 +545,8 @@ public class Controller implements Initializable {
         public Task fromString(String string) {
             Task task = cell.getItem();
             task.setText(string);
+            String id = cell.getListView().getId(); // get the id from the listview to figure out what day it is
+
             return task;
         }
     }
