@@ -1,7 +1,10 @@
 package deltadak;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
@@ -318,6 +321,13 @@ public class Controller implements Initializable {
             list.setPrefHeight(getListViewHeight());
             addLabelCells(list);
             list.setOnEditCommit(t -> list.getItems().set(t.getIndex(), t.getNewValue()));
+            //add option to delete a task
+            list.setOnKeyPressed(event -> {
+                if (event.getCode() == KeyCode.DELETE) {
+                    list.getItems().remove(list.getSelectionModel().getSelectedIndex());
+                    cleanUp(list); //cleaning up has to happen in the listener
+                }
+            });
             cleanUp(list);
         }
     }
