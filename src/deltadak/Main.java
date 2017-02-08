@@ -8,13 +8,16 @@ import javafx.scene.Scene;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+/**
+ * main class
+ */
 public class Main extends Application {
 
     @Override
-    public void start(Stage primaryStage) throws Exception{
+    public void start(final Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("interface.fxml"));
         primaryStage.setTitle("Plep");
-        primaryStage.setScene(new Scene(root, 300, 275));
+        primaryStage.setScene(new Scene(root, 0, 0));
 
         //set a size relative to screen
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
@@ -26,9 +29,12 @@ public class Main extends Application {
         primaryStage.show();
 
     }
-
-
-    public static void main(String[] args) {
+    
+    /**
+     *  main method
+     * @param args args
+     */
+    public static void main(final String[] args) {
         launch(args);
     }
 }
