@@ -1,7 +1,5 @@
 package deltadak;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -15,11 +13,10 @@ import javafx.stage.Screen;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 
-import javax.swing.text.DateFormatter;
 import java.io.Serializable;
 import java.net.URL;
-import java.text.DateFormat;
 import java.time.LocalDate;
+import java.time.chrono.ChronoLocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +27,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -40,7 +36,6 @@ import static java.lang.Integer.min;
  * Class to control the UI
  */
 @SuppressWarnings({
-//        "UseOfObsoleteDateTimeApi",
         "MethodReturnOfConcreteClass"
 })
 public class Controller implements Initializable {
@@ -62,21 +57,18 @@ public class Controller implements Initializable {
      */
     @FXML public void initialize(final URL location, final ResourceBundle resourceBundle){
 
-        Calendar calendar = Calendar.getInstance();
-        Calendar dayTwoCal = Calendar.getInstance();
-        dayTwoCal.add(Calendar.DAY_OF_MONTH,1);
-        
-        LocalDate date = LocalDate.now();
-        System.out.println(localDateToString(date));
+        // default things to test
+        LocalDate today = LocalDate.now();
+        LocalDate tomorrow = today.plusDays(1);
 
-//        insertTask(calendar, "exam1", "2WA60",1);
-//        insertTask(calendar, "exam2", "2WA60",2);
-//        insertTask(calendar, "exam3", "2WA30",3);
-//        insertTask(calendar, "exam4", "2WA30",4);
-//        insertTask(dayTwoCal, "one", "2WA60",1);
-//        insertTask(dayTwoCal, "two", "2WA60",2);
-//        insertTask(dayTwoCal, "three", "2WA30",3);
-//        insertTask(dayTwoCal, "boom", "2WA30",4);
+//        insertTask(today, "exam1", "2WA60",1);
+//        insertTask(today, "exam2", "2WA60",2);
+//        insertTask(today, "exam3", "2WA30",3);
+//        insertTask(today, "exam4", "2WA30",4);
+//        insertTask(tomorrow, "one", "2WA60",1);
+//        insertTask(tomorrow, "two", "2WA60",2);
+//        insertTask(tomorrow, "three", "2WA30",3);
+//        insertTask(tomorrow, "boom", "2WA30",4);
 
         setupGridPane();
 
@@ -100,7 +92,12 @@ public class Controller implements Initializable {
         String dayString = localDateToString(day);
 
         String sql = "INSERT INTO tasks(id, day, task, label, orderInDay) " +
-                "VALUES (" + countID + ", '" + dayString + "', '" + task + "','" + label + "'," + order + ")";
+                "VALUES (" +
+                countID + ", '" +
+                dayString + "', '" +
+                task + "','" +
+                label + "'," +
+                order + ")";
         countID++;
         query(sql);
     }
@@ -109,12 +106,15 @@ public class Controller implements Initializable {
      * Gets all the tasks on a given day.
      *
      * @param day - the date for which to get all the tasks
-     * @return ArrayList<Task> , where String[] is of size 2. A task and a label.
+     * @return List<Task>
      */
     private List<Task> getTasksDay(final LocalDate day) {
 
         String dayString = localDateToString(day);
-        String sql = "SELECT task, label FROM tasks WHERE day = '" + dayString + "' ORDER BY orderInDay";
+        String sql = "SELECT task, label "
+                + "FROM tasks "
+                + "WHERE day = '" + dayString
+                + "' ORDER BY orderInDay";
         List<Task> tasks = new ArrayList<>();
         
         setConnection();
@@ -162,8 +162,10 @@ public class Controller implements Initializable {
             statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
             if(resultSet.isBeforeFirst()) {
+                // if the database is not empty, we set the id to be the highest + 1
                 countID = resultSet.getInt("id") + 1;
             } else {
+                // if the database is empty we set the id to 1
                 countID = 1;
             }
             statement.close();
@@ -262,50 +264,22 @@ public class Controller implements Initializable {
      */
 
     /**
-     * Converts Calendar object to String object.
+     * Converts ChronoLocalDate object to String object.
+     *      ChronoLocalDate is weaker than LocalDate, so now it also excepts
+     *      LocalTimeDate?
      * @param localDate to be converted
      * @return String with eg 2017-03-25
      */
-//    private String calendarToString(final Calendar calendar) {
-//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-//        return format.format(calendar.getTime());
-//    }
-    
-    private String localDateToString(final LocalDate localDate) {
+    private String localDateToString(final ChronoLocalDate localDate) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return localDate.format(formatter);
     }
 
     /**
-     * TODO is never used because? commented out because never used anyway...
-     * get tasks by day
-     * @param c day
-     */
-//    private ObservableList<Task> getTasksFromDatabase(final Calendar c, final int i) {
-//        //todo replace by database code (and remove second param)
-//        if (i==1) {
-//            ObservableList<Task> day1Tasks = FXCollections.observableArrayList(
-//                    new Task("gdv", "2WA70"),
-//                    new Task("methods", "2IPC0")
-//            );
-//            return day1Tasks;
-////        } else if (i==2) {
-//        } else {
-//            ObservableList<Task> day2Tasks = FXCollections.observableArrayList(
-//                    new Task("discrete","2WF50"),
-//                    new Task("robot","0LAUK0")
-//            );
-//            return day2Tasks;
-//        }
-//    }
-    
-    /**
      * sets up listviews for each day, initializes drag and drop, editing items
      */
     private void setupGridPane() {
         for (int i = 0; i < NUMBER_OF_DAYS; i++ ) {
-//            Calendar calendar = Calendar.getInstance();
-//            calendar.add(Calendar.DAY_OF_MONTH,i-1);
     
             // add days immediately, otherwise we can't use localDate in a
             // lambda expression (as it is not final)
@@ -339,7 +313,7 @@ public class Controller implements Initializable {
                     list.getItems().remove(list.getSelectionModel().getSelectedIndex());
                     updateTasksDay(localDate, convertObservableToArrayList(list.getItems()));
                     cleanUp(list); //cleaning up has to happen in the listener
-                    deleteEmptyTasks();
+                    deleteEmptyTasks(); // from database
                 }
             });
             cleanUp(list);
@@ -355,6 +329,11 @@ public class Controller implements Initializable {
         return new ArrayList<>(list);
     }
     
+    /**
+     * convert (Array)List to ObservableList
+     * @param list - List to be converted
+     * @return ObservableList
+     */
     private ObservableList<Task> convertArrayToObservableList(final List<Task> list) {
         return FXCollections.observableList(list);
     }
