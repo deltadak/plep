@@ -15,8 +15,12 @@ import javafx.stage.Screen;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 
+import javax.swing.text.DateFormatter;
 import java.io.Serializable;
 import java.net.URL;
+import java.text.DateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -36,7 +40,7 @@ import static java.lang.Integer.min;
  * Class to control the UI
  */
 @SuppressWarnings({
-        "UseOfObsoleteDateTimeApi",
+//        "UseOfObsoleteDateTimeApi",
         "MethodReturnOfConcreteClass"
 })
 public class Controller implements Initializable {
@@ -61,6 +65,9 @@ public class Controller implements Initializable {
         Calendar calendar = Calendar.getInstance();
         Calendar dayTwoCal = Calendar.getInstance();
         dayTwoCal.add(Calendar.DAY_OF_MONTH,1);
+        
+        LocalDate date = LocalDate.now();
+        System.out.println(localDateToString(date));
 
 //        insertTask(calendar, "exam1", "2WA60",1);
 //        insertTask(calendar, "exam2", "2WA60",2);
@@ -81,16 +88,16 @@ public class Controller implements Initializable {
 
     /**
      * inserts a task into the database, given
-     * @param dayCal - the date as a Calendar
+     * @param day - the date as a LocalDate
      * @param task - the task as a string
      * @param label - the label/course (code) as a string
      * @param order - this is the i-th task on this day, as an int
      */
-    private void insertTask(final Calendar dayCal, final String task,
+    private void insertTask(final LocalDate day, final String task,
                             final String label, final int order) {
         getHighestID();
 
-        String dayString = calendarToString(dayCal);
+        String dayString = localDateToString(day);
 
         String sql = "INSERT INTO tasks(id, day, task, label, orderInDay) " +
                 "VALUES (" + countID + ", '" + dayString + "', '" + task + "','" + label + "'," + order + ")";
@@ -101,12 +108,12 @@ public class Controller implements Initializable {
     /**
      * Gets all the tasks on a given day.
      *
-     * @param dayCal - the date for which to get all the tasks
+     * @param day - the date for which to get all the tasks
      * @return ArrayList<Task> , where String[] is of size 2. A task and a label.
      */
-    private List<Task> getTasksDay(final Calendar dayCal) {
+    private List<Task> getTasksDay(final LocalDate day) {
 
-        String dayString = calendarToString(dayCal);
+        String dayString = localDateToString(day);
         String sql = "SELECT task, label FROM tasks WHERE day = '" + dayString + "' ORDER BY orderInDay";
         List<Task> tasks = new ArrayList<>();
         
@@ -126,20 +133,20 @@ public class Controller implements Initializable {
 
     /**
      * updates a day in the database
-     * @param dayCal - date for which to update
+     * @param day - date for which to update
      * @param tasks - List<Task> with the new tasks
      */
-    private void updateTasksDay(final Calendar dayCal, final List<Task> tasks) {
+    private void updateTasksDay(final LocalDate day, final List<Task> tasks) {
 
-        System.out.println("updateTasksDay " + calendarToString(dayCal));
+        System.out.println("updateTasksDay " + localDateToString(day));
 
         // first remove all the items for this day that are currently in the database before we add the new ones,
         // so we don't get double tasks
-        deleteTasksDay(dayCal);
+        deleteTasksDay(day);
 
         // then add the new tasks
         for (int i = 0; i < tasks.size(); i++) {
-            insertTask(dayCal, tasks.get(i).getText(), tasks.get(i).getLabel(), i);
+            insertTask(day, tasks.get(i).getText(), tasks.get(i).getLabel(), i);
         }
     }
 
@@ -188,9 +195,9 @@ public class Controller implements Initializable {
      * Deletes all tasks from the database for a given day.
      * @param day - the day of which all tasks have to be deleted. Calendar object.
      */
-    private void deleteTasksDay(final Calendar day) {
+    private void deleteTasksDay(final LocalDate day) {
 
-        String dayString = calendarToString(day);
+        String dayString = localDateToString(day);
         String sql = "DELETE FROM tasks WHERE day = '" + dayString + "'";
         query(sql);
     }
@@ -256,12 +263,17 @@ public class Controller implements Initializable {
 
     /**
      * Converts Calendar object to String object.
-     * @param calendar to be converted
+     * @param localDate to be converted
      * @return String with eg 2017-03-25
      */
-    private String calendarToString(final Calendar calendar) {
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-        return format.format(calendar.getTime());
+//    private String calendarToString(final Calendar calendar) {
+//        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+//        return format.format(calendar.getTime());
+//    }
+    
+    private String localDateToString(final LocalDate localDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return localDate.format(formatter);
     }
 
     /**
@@ -292,12 +304,16 @@ public class Controller implements Initializable {
      */
     private void setupGridPane() {
         for (int i = 0; i < NUMBER_OF_DAYS; i++ ) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.add(Calendar.DAY_OF_MONTH,i-1);
+//            Calendar calendar = Calendar.getInstance();
+//            calendar.add(Calendar.DAY_OF_MONTH,i-1);
+    
+            // add days immediately, otherwise we can't use localDate in a
+            // lambda expression (as it is not final)
+            LocalDate localDate = LocalDate.now().plusDays(i-1);
 
             ListView<Task> list = new ListView<>();
             VBox vbox = new VBox();
-            Label title = new Label(calendarToString(calendar));
+            Label title = new Label(localDateToString(localDate));
             Pane pane = new Pane();
             vbox.getChildren().addAll(title, pane, list);
             VBox.setVgrow(pane, Priority.ALWAYS);
@@ -306,23 +322,24 @@ public class Controller implements Initializable {
             int column = i % MAX_COLUMNS;
             gridPane.add(vbox, column, row);
 
-            List<Task> tasks = getTasksDay(calendar);
+            List<Task> tasks = getTasksDay(localDate);
             list.setItems(convertArrayToObservableList(tasks));
             list.setEditable(true);
             list.setPrefWidth(getListViewWidth());
             list.setPrefHeight(getListViewHeight());
-            addLabelCells(list, calendar);
+            addLabelCells(list, localDate);
             //update database when editing is finished
             list.setOnEditCommit(event -> {
-                updateTasksDay(calendar, convertObservableToArrayList(list.getItems()));
+                updateTasksDay(localDate, convertObservableToArrayList(list.getItems()));
                 deleteEmptyTasks(); //from database
             });
             //add option to delete a task
             list.setOnKeyPressed(event -> {
                 if (event.getCode() == KeyCode.DELETE) {
                     list.getItems().remove(list.getSelectionModel().getSelectedIndex());
-                    updateTasksDay(calendar, convertObservableToArrayList(list.getItems()));
+                    updateTasksDay(localDate, convertObservableToArrayList(list.getItems()));
                     cleanUp(list); //cleaning up has to happen in the listener
+                    deleteEmptyTasks();
                 }
             });
             cleanUp(list);
@@ -354,7 +371,7 @@ public class Controller implements Initializable {
         return totalWidth/ MAX_COLUMNS;
     }
 
-    private void addLabelCells(final ListView<Task> list, final Calendar day) {
+    private void addLabelCells(final ListView<Task> list, final LocalDate day) {
         //no idea why the callback needs a ListCell and not a TextFieldListCell
         //anyway, editing is enabled by using TextFieldListCell instead of ListCell
         list.setCellFactory(new Callback<ListView<Task>, ListCell<Task>>() {
