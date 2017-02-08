@@ -365,19 +365,18 @@ public class Controller implements Initializable {
                 labelCell.comboBox.valueProperty().addListener(
                         (observable, oldValue, newValue) -> labelCell.getItem().setLabel(newValue));
 
+                // update label in database when selecting a different one
                 labelCell.comboBox.getSelectionModel().selectedIndexProperty().addListener(
-                        
-                        
                         (observable, oldValue, newValue) -> {
                             updateTasksDay(day, convertObservableToArrayList(list.getItems()));
-                            deleteEmptyTasks();
+                            deleteEmptyTasks(); // from database
                             cleanUp(list);
                         });
 
                 labelCell.setOnDragDetected( (MouseEvent event) -> {
                     if (!labelCell.getItem().getText().equals("")) {
                         Dragboard db = labelCell.startDragAndDrop(TransferMode.MOVE);
-                        Map content = new ClipboardContent();
+                        ClipboardContent content = new ClipboardContent();
                         content.put(dataFormat,labelCell.getItem());
                         db.setContent(content);
                     }
@@ -421,7 +420,7 @@ public class Controller implements Initializable {
                             list.getItems().add(index, newTask);
                         }
                         success = true;
-                        System.out.println("onDragDropped");
+                        // update tasks in database
                         updateTasksDay(day, convertObservableToArrayList(list.getItems()));
                     }
                     event.setDropCompleted(success);
@@ -430,7 +429,8 @@ public class Controller implements Initializable {
                 });
 
                 labelCell.setOnDragDone(event -> {
-                    //ensures the original element is only removed on a valid copy transfer (no dropping outside listviews)
+                    //ensures the original element is only removed on a
+                    // valid copy transfer (no dropping outside listviews)
                     if (event.getTransferMode() == TransferMode.MOVE) {
                         Dragboard db = event.getDragboard();
                         Task newTask = (Task) db.getContent(dataFormat);
@@ -438,12 +438,14 @@ public class Controller implements Initializable {
                         //remove original item
                         //item can have been moved up (so index becomes one too much)
                         // or such that the index didn't change, like to another day
-                        if (list.getItems().get(labelCell.getIndex()).getText().equals(newTask.getText())) {
+                        if (list.getItems().get(labelCell.getIndex())
+                                .getText().equals(newTask.getText())) {
                             list.getItems().set(labelCell.getIndex(),emptyTask);
                             labelCell.setGraphic(null);
-                            System.out.println("setOnDragDone");
-                            updateTasksDay(day,convertObservableToArrayList(list.getItems())); // update in database
-                            deleteEmptyTasks(); // deleting blank row updating creates
+                            // update in database
+                            updateTasksDay(day,convertObservableToArrayList(list.getItems()));
+                            // deleting blank row from database updating creates
+                            deleteEmptyTasks();
                         } else {
                             list.getItems().set(labelCell.getIndex() + 1, emptyTask);
                         }
