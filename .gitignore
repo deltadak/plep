@@ -1,5 +1,9 @@
 *.class
 
+# Database files
+plep.db
+Plep.iml
+
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
