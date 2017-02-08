@@ -32,7 +32,7 @@ import static java.lang.Integer.min;
 /**
  * Class to control the UI
  */
-//incorrect warning about LocalDate may be weakened to LocalDate (not
+// incorrect warning about LocalDate may be weakened to ChronoLocalDate (not
 // true)
 @SuppressWarnings("TypeMayBeWeakened")
 public class Controller implements Initializable {
@@ -218,7 +218,7 @@ public class Controller implements Initializable {
     /**
      * Creates table with all the tasks, if it doesn't exist yet.
      */
-    public void createTable() {
+    private void createTable() {
         String sql = "CREATE TABLE IF NOT EXISTS tasks(" + "id INT PRIMARY KEY,"
                 + "day DATE," + "task CHAR(255)," + "label CHAR(10),"
                 + "orderInDay INT)";
