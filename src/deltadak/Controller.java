@@ -60,15 +60,17 @@ public class Controller implements Initializable {
                            final ResourceBundle resourceBundle) {
         
         // some optional insertion for testing purposes
-        
-        //        insertTask(today, "exam1", "2WA60",1);
-        //        insertTask(today, "exam2", "2WA60",2);
-        //        insertTask(today, "exam3", "2WA30",3);
-        //        insertTask(today, "exam4", "2WA30",4);
-        //        insertTask(tomorrow, "one", "2WA60",1);
-        //        insertTask(tomorrow, "two", "2WA60",2);
-        //        insertTask(tomorrow, "three", "2WA30",3);
-        //        insertTask(tomorrow, "boom", "2WA30",4);
+    
+//        LocalDate today = LocalDate.now();
+//        LocalDate tomorrow = today.plusDays(1);
+//        insertTask(today, "exam1", "2WA60",1);
+//        insertTask(today, "exam2", "2WA60",2);
+//        insertTask(today, "exam3", "2WA30",3);
+//        insertTask(today, "exam4", "2WA30",4);
+//        insertTask(tomorrow, "one", "2WA60",1);
+//        insertTask(tomorrow, "two", "2WA60",2);
+//        insertTask(tomorrow, "three", "2WA30",3);
+//        insertTask(tomorrow, "boom", "2WA30",4);
         
         createTable(); // if not already exists
         setupGridPane();
