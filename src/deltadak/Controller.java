@@ -2,6 +2,8 @@ package deltadak;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
@@ -9,6 +11,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
@@ -52,6 +55,9 @@ public class Controller implements Initializable {
     private static final int MAX_COLUMNS = 3;
     private static final int MAX_LIST_LENGTH = 7;
     
+    private ContextMenu contextMenu;
+    private ColorPicker colorPicker;
+    
     /**
      * Initialization method for the controller.
      */
@@ -69,6 +75,14 @@ public class Controller implements Initializable {
         //        insertTask(tomorrow, "two", "2WA60",2);
         //        insertTask(tomorrow, "three", "2WA30",3);
         //        insertTask(tomorrow, "boom", "2WA30",4);
+    
+        contextMenu = new ContextMenu();
+        colorPicker = new ColorPicker();
+    
+        MenuItem colorPickerItem = new MenuItem(null, colorPicker);
+//        MenuItem blueItem = new MenuItem("#42d1f4");
+    
+        contextMenu.getItems().addAll(colorPickerItem);
         
         createTable(); // if not already exists
         setupGridPane();
@@ -425,8 +439,7 @@ public class Controller implements Initializable {
         list.setCellFactory(new Callback<ListView<Task>, ListCell<Task>>() {
             @Override
             public LabelCell call(final ListView<Task> param) {
-                LabelCell labelCell = new LabelCell() {
-                };
+                LabelCell labelCell = new LabelCell() {};
                 
                 //update text on changes
                 labelCell.setConverter(new TaskConverter(labelCell));
@@ -445,6 +458,8 @@ public class Controller implements Initializable {
                 setOnDragDropped(labelCell, list, day);
                 setOnDragDone(labelCell, list, day);
                 
+                setRightMouseClickListener(labelCell);
+                
                 return labelCell;
             }
         });
@@ -461,6 +476,35 @@ public class Controller implements Initializable {
                     deleteEmptyTasks(); // from database
                     cleanUp(list);
                 });
+    }
+    
+    private void setRightMouseClickListener(final LabelCell labelCell) {
+        labelCell.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+            if (event.getButton() == MouseButton.SECONDARY) {
+                contextMenu.show(labelCell, event.getScreenX(), event.getScreenY());
+                List<MenuItem> menuItems = contextMenu.getItems();
+    
+                for (MenuItem menuItem : menuItems) {
+                    menuItem.setOnAction(new EventHandler<ActionEvent>() {
+    
+                        @Override
+                        public void handle(ActionEvent event) {
+                            Color color = colorPicker.getValue(); // java.scene.paint.Color
+                            java.awt.Color awtColor = new java.awt.Color(
+                                    (float) color.getRed(),
+                                    (float) color.getGreen(),
+                                    (float) color.getBlue(),
+                                    (float) color.getOpacity());
+                            String colorString = String.format("#%06x", (0xFFFFFF & awtColor.getRGB()));
+                            System.out.println(colorString);
+                            labelCell.setStyle("-fx-background-color: " + colorString);
+                        }
+                    });
+                }
+                
+            }
+            
+        });
     }
     
     private void setOnDragDetected(final LabelCell labelCell) {
@@ -593,6 +637,7 @@ public class Controller implements Initializable {
         }
         
     }
+    
     
     /**
      * custom ListCell
