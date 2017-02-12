@@ -2,6 +2,7 @@ package deltadak;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
@@ -9,10 +10,18 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
+import javafx.stage.Popup;
 import javafx.stage.Screen;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 
+import java.io.File;
 import java.io.Serializable;
 import java.net.URL;
 import java.time.LocalDate;
@@ -41,6 +50,8 @@ public class Controller implements Initializable {
     @FXML GridPane gridPane;
     // used to transfer tasks with drag and drop
     private DataFormat dataFormat = new DataFormat("com.deltadak.Task");
+    
+    private String databasePath;
     
     // database globals
     private Connection connection;
@@ -72,7 +83,8 @@ public class Controller implements Initializable {
 //        insertTask(tomorrow, "three", "2WA30",3);
 //        insertTask(tomorrow, "boom", "2WA30",4);
         
-        createTable(); // if not already exists
+//        createTable(); // if not already exists
+        setDatabasePath();
         setupGridPane();
     }
 
@@ -217,14 +229,63 @@ public class Controller implements Initializable {
         query(sql);
     }
     
+    public void setDatabasePath() {
+        if(databasePath == null) {
+            
+            Dialog chooseDialog = new Dialog();
+            chooseDialog.setHeight(100);
+            chooseDialog.setWidth(300);
+//            chooseDialog.setResizable(true);
+            chooseDialog.setTitle("Decisions!");
+            
+            GridPane grid = new GridPane();
+            grid.setPrefHeight(chooseDialog.getHeight());
+            grid.setPrefWidth(chooseDialog.getWidth());
+    
+            Button browseButton = new Button("Browse");
+            Text text = new Text("Choose database directory...");
+            
+            ButtonType browseButtonType = new ButtonType("OK",
+                                                         ButtonBar.ButtonData.OK_DONE);
+            chooseDialog.getDialogPane().getButtonTypes().add(browseButtonType);
+            chooseDialog.getDialogPane().lookupButton(browseButtonType).setDisable(true);
+    
+            browseButton.setOnMouseClicked(event -> {
+        
+                System.out.println("button clicked");
+                DirectoryChooser directoryChooser = new DirectoryChooser();
+                directoryChooser.setTitle("Choose Directory");
+                File directory = directoryChooser.showDialog(new Stage());
+                String databaseDirectory = directory.getAbsolutePath();
+                text.setText(databaseDirectory);
+                databasePath = "jdbc:sqlite:";
+                databasePath += databaseDirectory + "\\plep.db";
+                System.out.println(databasePath);
+                chooseDialog.getDialogPane().lookupButton(browseButtonType).setDisable(false);
+                
+            });
+    
+            
+            grid.add(browseButton,0,1);
+            grid.add(text,0,0);
+            chooseDialog.getDialogPane().setContent(grid);
+            
+            chooseDialog.showAndWait();
+            createTable();
+        } else {
+            createTable();
+        }
+    }
+    
     /**
      * Creates table with all the tasks, if it doesn't exist yet.
      */
     private void createTable() {
-        String sql = "CREATE TABLE IF NOT EXISTS tasks(" + "id INT PRIMARY KEY,"
-                + "day DATE," + "task CHAR(255)," + "label CHAR(10),"
-                + "orderInDay INT)";
-        query(sql);
+            String sql = "CREATE TABLE IF NOT EXISTS tasks(" + "id INT PRIMARY KEY,"
+                    + "day DATE," + "task CHAR(255)," + "label CHAR(10),"
+                    + "orderInDay INT)";
+            query(sql);
+    
     }
     
     /**
@@ -266,7 +327,7 @@ public class Controller implements Initializable {
     private void setConnection() {
         try {
             Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:plep.db");
+            connection = DriverManager.getConnection(databasePath);
             
         } catch (Exception e) {
             e.printStackTrace();
