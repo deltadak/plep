@@ -24,6 +24,7 @@ import javafx.util.StringConverter;
 import java.io.File;
 import java.io.Serializable;
 import java.net.URL;
+import java.security.CodeSource;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -83,8 +84,8 @@ public class Controller implements Initializable {
 //        insertTask(tomorrow, "three", "2WA30",3);
 //        insertTask(tomorrow, "boom", "2WA30",4);
         
-//        createTable(); // if not already exists
-        setDatabasePath();
+        setDefaultDatabasePath();
+        createTable(); // if not already exists
         setupGridPane();
     }
 
@@ -229,53 +230,70 @@ public class Controller implements Initializable {
         query(sql);
     }
     
-    public void setDatabasePath() {
-        if(databasePath == null) {
+    /**
+     * sets the default path of the database to the directory the jar file is in
+     */
+    private void setDefaultDatabasePath() {
+        try {
+            // get the directory of the jar
+            CodeSource codeSource = this.getClass().getProtectionDomain().getCodeSource();
+            File jarFile = new File(codeSource.getLocation().toURI().getPath());
+            String jarDir = jarFile.getParentFile().getPath();
             
-            Dialog chooseDialog = new Dialog();
-            chooseDialog.setHeight(100);
-            chooseDialog.setWidth(300);
-//            chooseDialog.setResizable(true);
-            chooseDialog.setTitle("Decisions!");
-            
-            GridPane grid = new GridPane();
-            grid.setPrefHeight(chooseDialog.getHeight());
-            grid.setPrefWidth(chooseDialog.getWidth());
-    
-            Button browseButton = new Button("Browse");
-            Text text = new Text("Choose database directory...");
-            
-            ButtonType browseButtonType = new ButtonType("OK",
-                                                         ButtonBar.ButtonData.OK_DONE);
-            chooseDialog.getDialogPane().getButtonTypes().add(browseButtonType);
-            chooseDialog.getDialogPane().lookupButton(browseButtonType).setDisable(true);
-    
-            browseButton.setOnMouseClicked(event -> {
-        
-                System.out.println("button clicked");
-                DirectoryChooser directoryChooser = new DirectoryChooser();
-                directoryChooser.setTitle("Choose Directory");
-                File directory = directoryChooser.showDialog(new Stage());
-                String databaseDirectory = directory.getAbsolutePath();
-                text.setText(databaseDirectory);
-                databasePath = "jdbc:sqlite:";
-                databasePath += databaseDirectory + "\\plep.db";
-                System.out.println(databasePath);
-                chooseDialog.getDialogPane().lookupButton(browseButtonType).setDisable(false);
-                
-            });
-    
-            
-            grid.add(browseButton,0,1);
-            grid.add(text,0,0);
-            chooseDialog.getDialogPane().setContent(grid);
-            
-            chooseDialog.showAndWait();
-            createTable();
-        } else {
-            createTable();
+            // set up the path of the database to make connection with the database
+            databasePath = "jdbc:sqlite:" + jarDir + "\\plep.db";
+            System.out.println(databasePath);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
     }
+    
+    /**
+     * used to change the directory of the database
+     * not used yet because we only set default database
+     */
+    //    private void changeDirectory() {
+//            Dialog chooseDialog = new Dialog();
+//            chooseDialog.setHeight(100);
+//            chooseDialog.setWidth(300);
+////            chooseDialog.setResizable(true);
+//            chooseDialog.setTitle("Decisions!");
+//
+//            GridPane grid = new GridPane();
+//            grid.setPrefHeight(chooseDialog.getHeight());
+//            grid.setPrefWidth(chooseDialog.getWidth());
+//
+//            Button browseButton = new Button("Browse");
+//            Text text = new Text("Choose database directory...");
+//
+//            ButtonType browseButtonType = new ButtonType("OK",
+//                                                         ButtonBar.ButtonData.OK_DONE);
+//            chooseDialog.getDialogPane().getButtonTypes().add(browseButtonType);
+//            chooseDialog.getDialogPane().lookupButton(browseButtonType).setDisable(true);
+//
+//            browseButton.setOnMouseClicked(event -> {
+//
+//                System.out.println("button clicked");
+//                DirectoryChooser directoryChooser = new DirectoryChooser();
+//                directoryChooser.setTitle("Choose Directory");
+//                File directory = directoryChooser.showDialog(new Stage());
+//                String databaseDirectory = directory.getAbsolutePath();
+//                text.setText(databaseDirectory);
+//                databasePath = "jdbc:sqlite:";
+//                databasePath += databaseDirectory + "\\plep.db";
+//                System.out.println(databasePath);
+//                chooseDialog.getDialogPane().lookupButton(browseButtonType).setDisable(false);
+//
+//            });
+//
+//
+//            grid.add(browseButton,0,1);
+//            grid.add(text,0,0);
+//            chooseDialog.getDialogPane().setContent(grid);
+//
+//            chooseDialog.showAndWait();
+//    }
     
     /**
      * Creates table with all the tasks, if it doesn't exist yet.
