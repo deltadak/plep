@@ -15,7 +15,9 @@ To install plep, download the latest [jar](https://github.com/PHPirates/plep/blo
 
 ## Release Notes
 Features of plep, listed by the version in which they were added.
-#### v0.1
+#### [v0.2](plep_v0.2.jar)
++ A small fix which solves the issue of not creating a database in some cases
+#### [v0.1](plep_v0.1.jar)
 + Dragging tasks from one day to another
 + Adding a label to each task
 + Automatically saves your tasks to a local database
