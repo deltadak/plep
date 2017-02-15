@@ -110,14 +110,14 @@ public class Controller implements Initializable {
      *         - this is the i-th task on this day, as an int
      */
     private void insertTask(final LocalDate day, final String task,
-                            final String label, final int order) {
+                            final String label, final String color, final int order) {
         setHighestID(); // sets countID
         
         String dayString = localDateToString(day);
         
-        String sql = "INSERT INTO tasks(id, day, task, label, orderInDay) "
+        String sql = "INSERT INTO tasks(id, day, task, label, color, orderInDay) "
                 + "VALUES (" + countID + ", '" + dayString + "', '" + task
-                + "','" + label + "'," + order + ")";
+                + "','" + label + "','" + color + "'," + order + ")";
         countID++;
         query(sql);
     }
@@ -170,7 +170,8 @@ public class Controller implements Initializable {
         
         // then add the new tasks
         for (int i = 0; i < tasks.size(); i++) {
-            insertTask(day, tasks.get(i).getText(), tasks.get(i).getLabel(), i);
+            insertTask(day, tasks.get(i).getText(), tasks.get(i).getLabel(), "White", i);
+            //TODO White for now, later color from labelcell
         }
     }
     
@@ -305,7 +306,7 @@ public class Controller implements Initializable {
     private void createTable() {
             String sql = "CREATE TABLE IF NOT EXISTS tasks(" + "id INT PRIMARY KEY,"
                     + "day DATE," + "task CHAR(255)," + "label CHAR(10),"
-                    + "orderInDay INT)";
+                    + "color CHAR(50)," + "orderInDay INT)";
             query(sql);
     
     }
@@ -818,6 +819,7 @@ public class Controller implements Initializable {
         
         private String text;
         private String label;
+        
         
         private Task(final String text, final String label) {
             this.text = text;
