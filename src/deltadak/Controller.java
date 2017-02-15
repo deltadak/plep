@@ -11,7 +11,6 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
@@ -56,7 +55,6 @@ public class Controller implements Initializable {
     private static final int MAX_LIST_LENGTH = 7;
     
     private ContextMenu contextMenu;
-    private ColorPicker colorPicker;
     
     /**
      * Initialization method for the controller.
@@ -76,14 +74,8 @@ public class Controller implements Initializable {
         //        insertTask(tomorrow, "three", "2WA30",3);
         //        insertTask(tomorrow, "boom", "2WA30",4);
     
-        contextMenu = new ContextMenu();
-        colorPicker = new ColorPicker();
-    
-        MenuItem colorPickerItem = new MenuItem(null, colorPicker);
-//        MenuItem blueItem = new MenuItem("#42d1f4");
-    
-        contextMenu.getItems().addAll(colorPickerItem);
         
+        setupContextMenu();
         createTable(); // if not already exists
         setupGridPane();
     }
@@ -481,6 +473,7 @@ public class Controller implements Initializable {
     private void setRightMouseClickListener(final LabelCell labelCell) {
         labelCell.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             if (event.getButton() == MouseButton.SECONDARY) {
+                System.out.println("right clicked");
                 contextMenu.show(labelCell, event.getScreenX(), event.getScreenY());
                 List<MenuItem> menuItems = contextMenu.getItems();
     
@@ -489,14 +482,7 @@ public class Controller implements Initializable {
     
                         @Override
                         public void handle(ActionEvent event) {
-                            Color color = colorPicker.getValue(); // java.scene.paint.Color
-                            java.awt.Color awtColor = new java.awt.Color(
-                                    (float) color.getRed(),
-                                    (float) color.getGreen(),
-                                    (float) color.getBlue(),
-                                    (float) color.getOpacity());
-                            String colorString = String.format("#%06x", (0xFFFFFF & awtColor.getRGB()));
-                            System.out.println(colorString);
+                            String colorString = convertColorToHex(menuItem.getText());
                             labelCell.setStyle("-fx-background-color: " + colorString);
                         }
                     });
@@ -638,6 +624,32 @@ public class Controller implements Initializable {
         
     }
     
+    private void setupContextMenu() {
+        contextMenu = new ContextMenu();
+        RadioMenuItem firstRadioItem = new RadioMenuItem("Green");
+        RadioMenuItem secondRadioItem = new RadioMenuItem("Blue");
+        RadioMenuItem thirdRadioItem = new RadioMenuItem("Red");
+        ToggleGroup group = new ToggleGroup();
+        firstRadioItem.setToggleGroup(group);
+        secondRadioItem.setToggleGroup(group);
+        thirdRadioItem.setToggleGroup(group);
+    
+        contextMenu.getItems().addAll(firstRadioItem, secondRadioItem, thirdRadioItem);
+    }
+    
+    private String convertColorToHex(final String colorName) {
+        String hex;
+        switch (colorName) {
+            case "Green": hex = "#7ef202";
+                break;
+            case "Blue": hex = "#4286f4";
+                break;
+            case "Red": hex = "#e64d4d";
+                break;
+            default: hex = "#ffffff";
+        }
+        return hex;
+    }
     
     /**
      * custom ListCell
