@@ -561,8 +561,14 @@ public class Controller implements Initializable {
     
                         @Override
                         public void handle(ActionEvent event) {
+                            System.out.println(menuItem.getText());
                             String colorString = convertColorToHex(menuItem.getText());
-                            labelCell.setStyle("-fx-background-color: " + colorString);
+                            if(colorString.equals("#ffffffff")) {
+                                labelCell.setStyle("-fx-text-fill: none");
+                            } else {
+                                labelCell.setStyle("-fx-background: " +
+                                                           colorString);
+                            }
                         }
                     });
                 }
@@ -708,12 +714,15 @@ public class Controller implements Initializable {
         RadioMenuItem firstRadioItem = new RadioMenuItem("Green");
         RadioMenuItem secondRadioItem = new RadioMenuItem("Blue");
         RadioMenuItem thirdRadioItem = new RadioMenuItem("Red");
+        RadioMenuItem defaultColor = new RadioMenuItem("White");
         ToggleGroup group = new ToggleGroup();
         firstRadioItem.setToggleGroup(group);
         secondRadioItem.setToggleGroup(group);
         thirdRadioItem.setToggleGroup(group);
+        defaultColor.setToggleGroup(group);
     
-        contextMenu.getItems().addAll(firstRadioItem, secondRadioItem, thirdRadioItem);
+        contextMenu.getItems().addAll(
+                firstRadioItem, secondRadioItem, thirdRadioItem,defaultColor);
     }
     
     private String convertColorToHex(final String colorName) {
@@ -725,7 +734,9 @@ public class Controller implements Initializable {
                 break;
             case "Red": hex = "#e64d4d";
                 break;
-            default: hex = "#ffffff";
+            case "White" : hex = "#ffffffff";
+                break;
+            default: hex = "#ffffffff";
         }
         return hex;
     }
