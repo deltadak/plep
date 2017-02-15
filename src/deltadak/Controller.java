@@ -11,12 +11,21 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.text.Text;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
+import javafx.stage.Popup;
 import javafx.stage.Screen;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 
+import java.io.File;
 import java.io.Serializable;
 import java.net.URL;
+import java.security.CodeSource;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -44,6 +53,8 @@ public class Controller implements Initializable {
     // used to transfer tasks with drag and drop
     private DataFormat dataFormat = new DataFormat("com.deltadak.Task");
     
+    private String databasePath;
+    
     // database globals
     private Connection connection;
     private Statement statement;
@@ -64,17 +75,19 @@ public class Controller implements Initializable {
                            final ResourceBundle resourceBundle) {
         
         // some optional insertion for testing purposes
-        
-        //        insertTask(today, "exam1", "2WA60",1);
-        //        insertTask(today, "exam2", "2WA60",2);
-        //        insertTask(today, "exam3", "2WA30",3);
-        //        insertTask(today, "exam4", "2WA30",4);
-        //        insertTask(tomorrow, "one", "2WA60",1);
-        //        insertTask(tomorrow, "two", "2WA60",2);
-        //        insertTask(tomorrow, "three", "2WA30",3);
-        //        insertTask(tomorrow, "boom", "2WA30",4);
     
+//        LocalDate today = LocalDate.now();
+//        LocalDate tomorrow = today.plusDays(1);
+//        insertTask(today, "exam1", "2WA60",1);
+//        insertTask(today, "exam2", "2WA60",2);
+//        insertTask(today, "exam3", "2WA30",3);
+//        insertTask(today, "exam4", "2WA30",4);
+//        insertTask(tomorrow, "one", "2WA60",1);
+//        insertTask(tomorrow, "two", "2WA60",2);
+//        insertTask(tomorrow, "three", "2WA30",3);
+//        insertTask(tomorrow, "boom", "2WA30",4);
         
+        setDefaultDatabasePath();
         setupContextMenu();
         createTable(); // if not already exists
         setupGridPane();
@@ -222,13 +235,79 @@ public class Controller implements Initializable {
     }
     
     /**
+     * sets the default path of the database to the directory the jar file is in
+     */
+    private void setDefaultDatabasePath() {
+        try {
+            // get the directory of the jar
+            CodeSource codeSource = this.getClass().getProtectionDomain().getCodeSource();
+            File jarFile = new File(codeSource.getLocation().toURI().getPath());
+            String jarDir = jarFile.getParentFile().getPath();
+            
+            // set up the path of the database to make connection with the database
+            databasePath = "jdbc:sqlite:" + jarDir + "\\plep.db";
+            System.out.println(databasePath);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+    
+    /**
+     * used to change the directory of the database
+     * not used yet because we only set default database
+     */
+    //    private void changeDirectory() {
+//            Dialog chooseDialog = new Dialog();
+//            chooseDialog.setHeight(100);
+//            chooseDialog.setWidth(300);
+////            chooseDialog.setResizable(true);
+//            chooseDialog.setTitle("Decisions!");
+//
+//            GridPane grid = new GridPane();
+//            grid.setPrefHeight(chooseDialog.getHeight());
+//            grid.setPrefWidth(chooseDialog.getWidth());
+//
+//            Button browseButton = new Button("Browse");
+//            Text text = new Text("Choose database directory...");
+//
+//            ButtonType browseButtonType = new ButtonType("OK",
+//                                                         ButtonBar.ButtonData.OK_DONE);
+//            chooseDialog.getDialogPane().getButtonTypes().add(browseButtonType);
+//            chooseDialog.getDialogPane().lookupButton(browseButtonType).setDisable(true);
+//
+//            browseButton.setOnMouseClicked(event -> {
+//
+//                System.out.println("button clicked");
+//                DirectoryChooser directoryChooser = new DirectoryChooser();
+//                directoryChooser.setTitle("Choose Directory");
+//                File directory = directoryChooser.showDialog(new Stage());
+//                String databaseDirectory = directory.getAbsolutePath();
+//                text.setText(databaseDirectory);
+//                databasePath = "jdbc:sqlite:";
+//                databasePath += databaseDirectory + "\\plep.db";
+//                System.out.println(databasePath);
+//                chooseDialog.getDialogPane().lookupButton(browseButtonType).setDisable(false);
+//
+//            });
+//
+//
+//            grid.add(browseButton,0,1);
+//            grid.add(text,0,0);
+//            chooseDialog.getDialogPane().setContent(grid);
+//
+//            chooseDialog.showAndWait();
+//    }
+    
+    /**
      * Creates table with all the tasks, if it doesn't exist yet.
      */
     private void createTable() {
-        String sql = "CREATE TABLE IF NOT EXISTS tasks(" + "id INT PRIMARY KEY,"
-                + "day DATE," + "task CHAR(255)," + "label CHAR(10),"
-                + "orderInDay INT)";
-        query(sql);
+            String sql = "CREATE TABLE IF NOT EXISTS tasks(" + "id INT PRIMARY KEY,"
+                    + "day DATE," + "task CHAR(255)," + "label CHAR(10),"
+                    + "orderInDay INT)";
+            query(sql);
+    
     }
     
     /**
@@ -270,7 +349,7 @@ public class Controller implements Initializable {
     private void setConnection() {
         try {
             Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:plep.db");
+            connection = DriverManager.getConnection(databasePath);
             
         } catch (Exception e) {
             e.printStackTrace();
