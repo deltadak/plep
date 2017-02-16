@@ -585,10 +585,6 @@ public class Controller implements Initializable {
                 // enable ok button after any input
                 chooseDialog.getDialogPane().lookupButton(browseButtonType).setDisable(false);
     
-                // stick dialog to mouse
-                Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
-                chooseDialog.setX(mouseLocation.getX());
-                chooseDialog.setY(mouseLocation.getY());
             });
     
             grid.add(new Text("Repeat ends after "), 0, 0);
@@ -597,6 +593,11 @@ public class Controller implements Initializable {
         }
         
         chooseDialog.getDialogPane().setContent(grid);
+    
+        // stick dialog to mouse, unfortunately does not work before show()
+//        Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
+//        chooseDialog.setX(mouseLocation.getX());
+//        chooseDialog.setY(mouseLocation.getY());
         
         chooseDialog.showAndWait();
         
