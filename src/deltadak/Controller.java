@@ -832,6 +832,7 @@ public class Controller implements Initializable {
                 // update tasks in database
                 updateTasksDay(day,
                                convertObservableToArrayList(list.getItems()));
+                refreshAllDays();
             }
             event.setDropCompleted(success);
             event.consume();
