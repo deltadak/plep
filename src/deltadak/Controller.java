@@ -407,7 +407,7 @@ public class Controller implements Initializable {
                           final LocalDate localDate) {
         // vbox will contain a title above a list of tasks
         VBox vbox = new VBox();
-        Label title = new Label(localDate.getDayOfWeek().toString());
+        Label title = new Label(localDate.getDayOfWeek() + " " + localDate);
         // the pane is used to align both properly (I think)
         Pane pane = new Pane();
         vbox.getChildren().addAll(title, pane, list);
