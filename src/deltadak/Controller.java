@@ -683,34 +683,10 @@ public class Controller implements Initializable {
         labelCell.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             if (event.getButton() == MouseButton.SECONDARY) {
                 createContextMenu(event, labelCell, list, day);
-                
-                
-//                for (MenuItem menuItem : menuItems) {
-//                    menuItem.setOnAction(event1 -> {
-//                        System.out.println(menuItem + " clicked");
-//                        System.out.println(menuItem.getStyleClass());
-//                        String colorWord = menuItem.getText();
-//                        String colorString = convertColorToHex(colorWord);
-//                        if (colorString.equals("#ffffffff")) {
-//                            labelCell.setStyle("-fx-text-fill: none");
-//                        } else {
-//                            labelCell.setStyle(
-//                                    "-fx-control-inner-background: "
-//                                            + colorString);
-//                        }
-//                        labelCell.getItem().setColor(colorWord);
-//                        updateTasksDay(day, convertObservableToArrayList(
-//                                list.getItems()));
-//                        deleteEmptyTasks(); // from database
-//                        cleanUp(list);
-//                    });
-//                }
-                }
-//
-//
-//
+            }
         });
     }
+    
     
     private void createContextMenu(final MouseEvent event,
                                    final LabelCell labelCell,
@@ -734,11 +710,11 @@ public class Controller implements Initializable {
         
         List<MenuItem> repeatMenuItems = repeatTasksMenu.getItems();
         for (MenuItem repeatMenuItem : repeatMenuItems) {
-            repeatMenuItem.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    System.out.println(repeatMenuItem.getText() + " clicked");
-                }
+            repeatMenuItem.setOnAction(event12 -> {
+                int repeatNumber = Integer.valueOf(repeatMenuItem.getText());
+                System.out.println(repeatNumber + " clicked");
+                Task taskToRepeat = labelCell.getItem();
+                repeatTask(repeatNumber, taskToRepeat, day);
             });
         }
         
@@ -749,10 +725,47 @@ public class Controller implements Initializable {
         MenuItem thirdColor = new MenuItem("Red");
         MenuItem defaultColor = new MenuItem("White");
         
-        
         contextMenu.getItems().addAll(repeatTasksMenu, separatorMenuItem,
-                                      firstColor, secondColor, thirdColor,defaultColor);
+                                      firstColor, secondColor,
+                                      thirdColor, defaultColor);
+        
+        for (int i = 1; i < contextMenu.getItems().size(); i++) {
+                MenuItem colorMenuItem = contextMenu.getItems().get(i);
+                colorMenuItem.setOnAction(event1 -> {
+                System.out.println(colorMenuItem.getText() + " clicked");
+                setBackgroundColor(colorMenuItem, labelCell);
+                updateTasksDay(day, convertObservableToArrayList(list.getItems()));
+                deleteEmptyTasks();
+                cleanUp(list);
+
+            });
+        }
         contextMenu.show(labelCell, event.getScreenX(), event.getScreenY());
+    }
+    
+    private void setBackgroundColor(final MenuItem menuItem,
+                                    final LabelCell labelCell) {
+        String colorWord = menuItem.getText();
+        String colorString = convertColorToHex(colorWord);
+        if (colorString.equals("#ffffffff")) {
+            labelCell.setStyle("-fx-text-fill: none");
+        } else {
+            labelCell.setStyle(
+                    "-fx-control-inner-background: "
+                            + colorString);
+        }
+        labelCell.getItem().setColor(colorWord);
+    
+    }
+    
+    private void repeatTask(int repeatNumber, Task task, LocalDate day) {
+        for (int i = 0; i < repeatNumber; i++) {
+            day = day.plusWeeks(1);
+            List<Task> tasks = getTasksDay(day);
+            tasks.add(task);
+            updateTasksDay(day, tasks);
+        }
+        refreshAllDays();
     }
     
     private void setOnDragDetected(final LabelCell labelCell) {
