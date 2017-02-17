@@ -110,7 +110,7 @@ public class Controller implements Initializable {
     private void insertTask(final LocalDate day, Task task, final int order) {
         setHighestID(); // sets countID
         
-        String dayString = localDateToString(day);
+        String dayString = day.toString();
         
         String sql = "INSERT INTO tasks(id, day, task, label, color, orderInDay) "
                 + "VALUES (" + countID + ", '" + dayString + "', '" + task.getText()
@@ -129,7 +129,7 @@ public class Controller implements Initializable {
      */
     private List<Task> getTasksDay(final LocalDate day) {
         
-        String dayString = localDateToString(day);
+        String dayString = day.toString();
         String sql = "SELECT task, label, color " + "FROM tasks " + "WHERE day = '"
                 + dayString + "' ORDER BY orderInDay";
         List<Task> tasks = new ArrayList<>();
@@ -160,7 +160,7 @@ public class Controller implements Initializable {
     private void updateTasksDay(final LocalDate day, final List<Task> tasks) {
         
         long startTime = System.currentTimeMillis();
-        System.out.println("updateTasksDay " + localDateToString(day));
+        System.out.println("updateTasksDay " + day);
         
         // first remove all the items for this day that are currently in the
         // database before we add the new ones,
@@ -232,8 +232,7 @@ public class Controller implements Initializable {
      */
     private void deleteTasksDay(final LocalDate day) {
         
-        String dayString = localDateToString(day);
-        String sql = "DELETE FROM tasks WHERE day = '" + dayString + "'";
+        String sql = "DELETE FROM tasks WHERE day = '" + day + "'";
         query(sql);
     }
     
@@ -256,10 +255,10 @@ public class Controller implements Initializable {
 
     }
     
-    /**
-     * used to change the directory of the database
-     * not used yet because we only set default database
-     */
+//    /**
+//     * used to change the directory of the database
+//     * not used yet because we only set default database
+//     */
     //    private void changeDirectory() {
 //            Dialog chooseDialog = new Dialog();
 //            chooseDialog.setHeight(100);
@@ -364,19 +363,6 @@ public class Controller implements Initializable {
      */
     
     /**
-     * Converts LocalDate object to String object.
-     *
-     * @param localDate
-     *         to be converted
-     *
-     * @return String with eg 2017-03-25
-     */
-    private String localDateToString(final LocalDate localDate) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        return localDate.format(formatter);
-    }
-    
-    /**
      * sets up listviews for each day, initializes drag and drop, editing items
      */
     private void setupGridPane() {
@@ -421,7 +407,7 @@ public class Controller implements Initializable {
                           final LocalDate localDate) {
         // vbox will contain a title above a list of tasks
         VBox vbox = new VBox();
-        Label title = new Label(localDateToString(localDate));
+        Label title = new Label(localDate.getDayOfWeek().toString());
         // the pane is used to align both properly (I think)
         Pane pane = new Pane();
         vbox.getChildren().addAll(title, pane, list);
