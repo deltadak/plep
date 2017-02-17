@@ -7,21 +7,20 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
+import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
-import javafx.stage.Popup;
 import javafx.stage.Screen;
-import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 
+//import java.awt.*;
 import java.io.File;
 import java.io.Serializable;
 import java.net.URL;
@@ -30,6 +29,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 import java.sql.Connection;
@@ -65,7 +65,8 @@ public class Controller implements Initializable {
     private static final int MAX_COLUMNS = 3;
     private static final int MAX_LIST_LENGTH = 7;
     
-    private ContextMenu contextMenu;
+    private static final int DIALOG_WIDTH = 300;
+    private static final int DIALOG_HEIGHT = 100;
     
     /**
      * Initialization method for the controller.
@@ -88,7 +89,6 @@ public class Controller implements Initializable {
 //        insertTask(tomorrow, "boom", "2WA30",4);
         
         setDefaultDatabasePath();
-        setupContextMenu();
         createTable(); // if not already exists
         setupGridPane();
     }
@@ -103,21 +103,18 @@ public class Controller implements Initializable {
      * @param day
      *         - the date as a LocalDate
      * @param task
-     *         - the task as a string
-     * @param label
-     *         - the label/course (code) as a string
+     *         - the task to be inserted
      * @param order
      *         - this is the i-th task on this day, as an int
      */
-    private void insertTask(final LocalDate day, final String task,
-                            final String label, final String color, final int order) {
+    private void insertTask(final LocalDate day, Task task, final int order) {
         setHighestID(); // sets countID
         
         String dayString = localDateToString(day);
         
         String sql = "INSERT INTO tasks(id, day, task, label, color, orderInDay) "
-                + "VALUES (" + countID + ", '" + dayString + "', '" + task
-                + "','" + label + "','" + color + "'," + order + ")";
+                + "VALUES (" + countID + ", '" + dayString + "', '" + task.getText()
+                + "','" + task.getLabel() + "','" + task.getColor() + "'," + order + ")";
         countID++;
         query(sql);
     }
@@ -172,9 +169,7 @@ public class Controller implements Initializable {
         
         // then add the new tasks
         for (int i = 0; i < tasks.size(); i++) {
-            insertTask(day, tasks.get(i).getText(),
-                       tasks.get(i).getLabel(),
-                       tasks.get(i).getColor(), i);
+            insertTask(day, tasks.get(i), i);
         }
     
         long stopTime = System.currentTimeMillis();
@@ -511,6 +506,11 @@ public class Controller implements Initializable {
         return totalWidth / MAX_COLUMNS;
     }
     
+    /**
+     * sets up labelCells for
+     * @param list a ListView
+     * @param day and a specific date
+     */
     private void addLabelCells(final ListView<Task> list, final LocalDate day) {
         //no idea why the callback needs a ListCell and not a TextFieldListCell
         //anyway, editing is enabled by using TextFieldListCell instead of
@@ -536,6 +536,7 @@ public class Controller implements Initializable {
                 setOnDragExited(labelCell);
                 setOnDragDropped(labelCell, list, day);
                 setOnDragDone(labelCell, list, day);
+//                setRightMouseClickListener(labelCell, day);
                 
                 setRightMouseClickListener(labelCell, list, day);
                 
@@ -543,6 +544,123 @@ public class Controller implements Initializable {
             }
         });
         cleanUp(list);
+    }
+    
+    private void setRightMouseClickListener(LabelCell labelCell, LocalDate day) {
+        labelCell.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+            if (event.getButton() == MouseButton.SECONDARY) {
+                showPopup(labelCell, day);
+            }
+        });
+    }
+    
+    /**
+     * used to change the directory of the database
+     * not used yet because we only set default database
+     */
+    private void showPopup(LabelCell labelCell, LocalDate day) {
+        Dialog chooseDialog = new Dialog();
+        
+        chooseDialog.setHeight(DIALOG_HEIGHT);
+        chooseDialog.setWidth(DIALOG_WIDTH);
+//            chooseDialog.setResizable(true);d
+        chooseDialog.setTitle("Options");
+
+        GridPane grid = new GridPane();
+        grid.setPrefHeight(chooseDialog.getHeight());
+        grid.setPrefWidth(chooseDialog.getWidth());
+
+        ButtonType browseButtonType = new ButtonType("OK",
+                                                     ButtonBar.ButtonData.OK_DONE);
+        chooseDialog.getDialogPane().getButtonTypes().add(browseButtonType);
+        chooseDialog.getDialogPane().lookupButton(browseButtonType).setDisable(true);
+        
+        // when user edits textfield, allow 'ok' button
+        // the button will check for valid entry
+        TextField numberRepeatsTextField = new TextField();
+        if (labelCell.getItem().getText().equals("")) {
+            grid.add(new Text("You cannot repeat an empty task."), 0, 0);
+        } else {
+            numberRepeatsTextField.textProperty().addListener((observable, oldValue, newValue) -> {
+                // only do something on valid task
+    
+                // only allow numbers to be entered
+                if (!newValue.matches("\\d")) {
+                    // only repeat non-empty tasks
+                    numberRepeatsTextField
+                            .setText(newValue.replaceAll("[^\\d]", ""));
+        
+                }
+                // enable ok button after any input
+                chooseDialog.getDialogPane().lookupButton(browseButtonType).setDisable(false);
+    
+            });
+    
+            grid.add(new Text("Repeat ends after "), 0, 0);
+            grid.add(numberRepeatsTextField, 1, 0);
+            grid.add(new Text("occurrences, every week"), 0, 1);
+        }
+        
+        chooseDialog.getDialogPane().setContent(grid);
+    
+        // stick dialog to mouse, unfortunately does not work before show()
+//        Point mouseLocation = MouseInfo.getPointerInfo().getLocation();
+//        chooseDialog.setX(mouseLocation.getX());
+//        chooseDialog.setY(mouseLocation.getY());
+        
+        chooseDialog.showAndWait();
+        
+        // button has been clicked, we already ensured the textfield only
+        // contains digits, and the task to repeat is not empty
+        int repeatNumber = Integer.parseInt(numberRepeatsTextField.getText());
+        // insert all next tasks in database
+        for (int i = 1; i < repeatNumber; i++) {
+            // find the day to which to copy the task to
+            day = day.plusWeeks(1);
+            // task that was right-clicked
+            Task taskToRepeat = labelCell.getItem();
+            List<Task> tasks = getTasksDay(day);
+            tasks.add(taskToRepeat);
+            updateTasksDay(day, tasks);
+        }
+        refreshAllDays();
+    }
+    
+    /**
+     * @return all ListViews in the gridPane
+     */
+    private List<ListView<Task>> getAllListViews() {
+        ArrayList<ListView<Task>> listViews = new ArrayList<>();
+        for (Node node : gridPane.getChildren()) {
+            //gridpane contains vbox contains label, pane and listview
+            if (node instanceof VBox) {
+                // we try to dig up the listviews in this vbox
+                for (Node subNode : ((VBox)node).getChildren()) {
+                    if (subNode instanceof ListView) {
+                        listViews.add((ListView) subNode);
+                    }
+                }
+            }
+        }
+        return listViews;
+    }
+    
+    /**
+     * refreshes all listviews using data from the database
+     */
+    private void refreshAllDays() {
+        // find all listviews
+        List<ListView<Task>> listViews = getAllListViews();
+        
+        for (int i = 0; i < NUMBER_OF_DAYS; i++) {
+            ListView<Task> list = listViews.get(i);
+            // refresh the listview from database
+            LocalDate localDate = LocalDate.now().plusDays(i - 1);
+            List<Task> tasks = getTasksDay(localDate);
+            list.setItems(convertArrayToObservableList(tasks));
+            addLabelCells(list, localDate);
+            cleanUp(list);
+        }
     }
     
     private void setOnLabelChangeListener(final LabelCell labelCell,
@@ -564,30 +682,77 @@ public class Controller implements Initializable {
         
         labelCell.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             if (event.getButton() == MouseButton.SECONDARY) {
-                contextMenu.show(labelCell, event.getScreenX(), event.getScreenY());
-                List<MenuItem> menuItems = contextMenu.getItems();
-    
-                for (MenuItem menuItem : menuItems) {
-                    menuItem.setOnAction(event1 -> {
-                        String colorWord = menuItem.getText();
-                        String colorString = convertColorToHex(colorWord);
-                        if(colorString.equals("#ffffffff")) {
-                            labelCell.setStyle("-fx-text-fill: none");
-                        } else {
-                            labelCell.setStyle("-fx-control-inner-background: " +
-                                                       colorString);
-                        }
-                        labelCell.getItem().setColor(colorWord);
-                        updateTasksDay(day, convertObservableToArrayList(
-                                list.getItems()));
-                        deleteEmptyTasks(); // from database
-                        cleanUp(list);
-                    });
-                }
+                createContextMenu(event, labelCell, list, day);
                 
-            }
-            
+                
+//                for (MenuItem menuItem : menuItems) {
+//                    menuItem.setOnAction(event1 -> {
+//                        System.out.println(menuItem + " clicked");
+//                        System.out.println(menuItem.getStyleClass());
+//                        String colorWord = menuItem.getText();
+//                        String colorString = convertColorToHex(colorWord);
+//                        if (colorString.equals("#ffffffff")) {
+//                            labelCell.setStyle("-fx-text-fill: none");
+//                        } else {
+//                            labelCell.setStyle(
+//                                    "-fx-control-inner-background: "
+//                                            + colorString);
+//                        }
+//                        labelCell.getItem().setColor(colorWord);
+//                        updateTasksDay(day, convertObservableToArrayList(
+//                                list.getItems()));
+//                        deleteEmptyTasks(); // from database
+//                        cleanUp(list);
+//                    });
+//                }
+                }
+//
+//
+//
         });
+    }
+    
+    private void createContextMenu(final MouseEvent event,
+                                   final LabelCell labelCell,
+                                   final ListView<Task> list,
+                                   final LocalDate day) {
+        
+        ContextMenu contextMenu = new ContextMenu();
+        
+        Menu repeatTasksMenu = new Menu("Repeat for x weeks");
+        MenuItem oneMenuItem = new MenuItem("1");
+        MenuItem twoMenuItem = new MenuItem("2");
+        MenuItem threeMenuItem = new MenuItem("3");
+        MenuItem fourMenuItem = new MenuItem("4");
+        MenuItem fiveMenuItem = new MenuItem("5");
+        MenuItem sixMenuItem = new MenuItem("6");
+        MenuItem sevenMenuItem = new MenuItem("7");
+        MenuItem eightMenuItem = new MenuItem("8");
+        repeatTasksMenu.getItems().addAll(oneMenuItem, twoMenuItem,threeMenuItem,
+                                          fourMenuItem, fiveMenuItem, sixMenuItem,
+                                          sevenMenuItem, eightMenuItem);
+        
+        List<MenuItem> repeatMenuItems = repeatTasksMenu.getItems();
+        for (MenuItem repeatMenuItem : repeatMenuItems) {
+            repeatMenuItem.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    System.out.println(repeatMenuItem.getText() + " clicked");
+                }
+            });
+        }
+        
+        SeparatorMenuItem separatorMenuItem = new SeparatorMenuItem();
+        
+        MenuItem firstColor = new MenuItem("Green");
+        MenuItem secondColor = new MenuItem("Blue");
+        MenuItem thirdColor = new MenuItem("Red");
+        MenuItem defaultColor = new MenuItem("White");
+        
+        
+        contextMenu.getItems().addAll(repeatTasksMenu, separatorMenuItem,
+                                      firstColor, secondColor, thirdColor,defaultColor);
+        contextMenu.show(labelCell, event.getScreenX(), event.getScreenY());
     }
     
     private void setOnDragDetected(final LabelCell labelCell) {
@@ -719,22 +884,6 @@ public class Controller implements Initializable {
             }
         }
         
-    }
-    
-    private void setupContextMenu() {
-        contextMenu = new ContextMenu();
-        RadioMenuItem firstRadioItem = new RadioMenuItem("Green");
-        RadioMenuItem secondRadioItem = new RadioMenuItem("Blue");
-        RadioMenuItem thirdRadioItem = new RadioMenuItem("Red");
-        RadioMenuItem defaultColor = new RadioMenuItem("White");
-        ToggleGroup group = new ToggleGroup();
-        firstRadioItem.setToggleGroup(group);
-        secondRadioItem.setToggleGroup(group);
-        thirdRadioItem.setToggleGroup(group);
-        defaultColor.setToggleGroup(group);
-    
-        contextMenu.getItems().addAll(
-                firstRadioItem, secondRadioItem, thirdRadioItem,defaultColor);
     }
     
     private String convertColorToHex(final String colorName) {
