@@ -16,15 +16,15 @@ To install plep, download the latest [jar](https://github.com/PHPirates/plep/blo
 ## Release Notes
 Features of plep, listed by the version in which they were added.
 
-#### [v1.0](plep_v1.0.jar)
+#### [v1.0](https://github.com/PHPirates/plep/blob/master/plep_v1.0.jar?raw=true)
 + Tasks can have a colour
 + Tasks can be repeated each week
 + Fixed some bugs
 
-#### [v0.2](plep_v0.2.jar)
+#### [v0.2](https://github.com/PHPirates/plep/blob/master/plep_v0.2.jar?raw=true)
 + A small fix which solves the issue of not creating a database in some cases
 
-#### [v0.1](plep_v0.1.jar)
+#### [v0.1](https://github.com/PHPirates/plep/blob/master/plep_v0.1.jar?raw=true)
 + Dragging tasks from one day to another
 + Adding a label to each task
 + Automatically saves your tasks to a local database
