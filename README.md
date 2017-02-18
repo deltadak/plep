@@ -13,6 +13,9 @@ To install plep, download the latest [jar](https://github.com/PHPirates/plep/blo
   * When you click a selected cell/task, it will see this as double-click and start editing.
 + To **edit** a label, click the label you wish to edit. A drop-down menu will show from which you can select the label you want.
 
+## Screenshot of v1.0
+[screenshot](v1.0.PNG)
+
 ## Release Notes
 Features of plep, listed by the version in which they were added.
 
