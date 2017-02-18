@@ -2,7 +2,8 @@
 Plepping is the new planning.
 
 Find the latest stable version (v1.0) [here](https://github.com/PHPirates/plep/blob/master/plep_v1.0.jar?raw=true).
-Find the latest build [here](https://github.com/PHPirates/plep/blob/master/out/artifacts/plep_jar/plep.jar?raw=true).
+
+Find the latest debug build [here](https://github.com/PHPirates/plep/blob/master/out/artifacts/plep_jar/plep.jar?raw=true).
 
 ## User Manual
 To install plep, download the latest [jar](https://github.com/PHPirates/plep/blob/master/out/artifacts/plep_jar/plep.jar?raw=true). The first time plep is runned, it will create a database file in the folder plep.jar is stored. Below we have listed a few things that might come in handy, as well as known bugs we have to live with, for now.
