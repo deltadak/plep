@@ -62,21 +62,21 @@ class Database {
      *
      * @return List<Task>
      */
-    public List<Controller.Task> getTasksDay(final LocalDate day) {
+    public List<Task> getTasksDay(final LocalDate day) {
         
         String dayString = day.toString();
         String sql = "SELECT task, label, color " + "FROM tasks " + "WHERE day = '"
                 + dayString + "' ORDER BY orderInDay";
-        List<Controller.Task> tasks = new ArrayList<>();
+        List<Task> tasks = new ArrayList<>();
         
         setConnection();
         try {
             statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
             while (resultSet.next()) {
-                tasks.add(new Controller.Task(resultSet.getString("task"),
-                                              resultSet.getString("label"),
-                                              resultSet.getString("color")));
+                tasks.add(new Task(resultSet.getString("task"),
+                                   resultSet.getString("label"),
+                                   resultSet.getString("color")));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -92,7 +92,7 @@ class Database {
      * @param tasks
      *         - List<Task> with the new tasks
      */
-    public void updateTasksDay(final LocalDate day, final List<Controller.Task> tasks) {
+    public void updateTasksDay(final LocalDate day, final List<Task> tasks) {
         
         System.out.println("updateTasksDay " + day);
         
@@ -154,7 +154,7 @@ class Database {
      *         - this is the i-th task on this day, as an int
      */
     private void insertTask(final LocalDate day,
-                            final Controller.Task task, final int order) {
+                            final Task task, final int order) {
         setHighestID(); // sets countID
         
         String dayString = day.toString();

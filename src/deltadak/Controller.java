@@ -13,9 +13,7 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.Screen;
 import javafx.util.Callback;
-import javafx.util.StringConverter;
 
-import java.io.Serializable;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
@@ -389,12 +387,12 @@ public class Controller implements Initializable {
         getDatabaseInstance().createTable();
     }
     
-    private List<Controller.Task> getTasksDay(final LocalDate localDate) {
+    private List<Task> getTasksDay(final LocalDate localDate) {
         return getDatabaseInstance().getTasksDay(localDate);
     }
     
     private void updateTasksDay(final LocalDate day,
-                                final List<Controller.Task> tasks) {
+                                final List<Task> tasks) {
         getDatabaseInstance().updateTasksDay(day, tasks);
     }
     
@@ -579,73 +577,6 @@ public class Controller implements Initializable {
                 event.consume();
                 cleanUp(list);
             });
-        }
-    }
-    
-    /**
-     * custom stringconverter to define what editing a listcell means
-     * this converter is set on each listcell
-     */
-    private class TaskConverter extends StringConverter<Task> {
-        
-        private final ListCell<Task> cell;
-        
-        private TaskConverter(final ListCell<Task> cell) {
-            this.cell = cell;
-        }
-        
-        @Override
-        public String toString(final Task task) {
-            return task.getText();
-        }
-        
-        @Override
-        public Task fromString(final String string) {
-            Task task = cell.getItem();
-            task.setText(string);
-            
-            return task;
-        }
-    }
-    
-    //when transferred with the dragboard, the object is serialized
-    //which I think means that a new object is created and you lose the
-    // reference to the old one
-    //which I think should be fine here, as only content matters
-    static class Task implements Serializable {
-        
-        private String text;
-        private String label;
-        private String color;
-        
-        public Task(final String text, final String label, final String color) {
-            this.text = text;
-            this.label = label;
-            this.color = color;
-        }
-        
-        public String getText() {
-            return text;
-        }
-        
-        public void setText(final String text) {
-            this.text = text;
-        }
-        
-        public String getLabel() {
-            return label;
-        }
-        
-        public void setLabel(final String label) {
-            this.label = label;
-        }
-        
-        public String getColor() {
-            return color;
-        }
-        
-        public void setColor(final String color) {
-            this.color = color;
         }
     }
     
