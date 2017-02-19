@@ -8,7 +8,6 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
-import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.Screen;
@@ -17,11 +16,8 @@ import javafx.util.Callback;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.ArrayList;
-
-import static java.lang.Integer.min;
 
 /**
  * Class to control the UI
@@ -34,7 +30,7 @@ public class Controller implements Initializable {
     // main element of the UI is declared in interface.fxml
     @FXML GridPane gridPane;
     // used to transfer tasks with drag and drop
-    private DataFormat dataFormat = new DataFormat("com.deltadak.Task");
+    DataFormat dataFormat = new DataFormat("com.deltadak.Task");
     
     // layout globals
     private static final int NUMBER_OF_DAYS = 9;
@@ -140,7 +136,7 @@ public class Controller implements Initializable {
      *
      * @return converted ObservableList
      */
-    private List<Task> convertObservableToArrayList(
+    List<Task> convertObservableToArrayList(
             final ObservableList<Task> list) {
         return new ArrayList<>(list);
     }
@@ -192,7 +188,7 @@ public class Controller implements Initializable {
         list.setCellFactory(new Callback<ListView<Task>, ListCell<Task>>() {
             @Override
             public LabelCell call(final ListView<Task> param) {
-                LabelCell labelCell = new LabelCell();
+                LabelCell labelCell = new LabelCell(Controller.this);
                 
                 //update text on changes
                 labelCell.setConverter(new TaskConverter(labelCell));
@@ -241,7 +237,7 @@ public class Controller implements Initializable {
     /**
      * refreshes all listviews using data from the database
      */
-    private void refreshAllDays() {
+    void refreshAllDays() {
         // find all listviews
         List<ListView<Task>> listViews = getAllListViews();
         
@@ -256,7 +252,7 @@ public class Controller implements Initializable {
         }
     }
     
-    private void createContextMenu(final MouseEvent event,
+    void createContextMenu(final MouseEvent event,
                                    final LabelCell labelCell,
                                    final ListView<Task> list,
                                    final LocalDate day) {
@@ -341,7 +337,7 @@ public class Controller implements Initializable {
      * @param list
      *         to clean up
      */
-    private void cleanUp(final ListView<Task> list) {
+    void cleanUp(final ListView<Task> list) {
         int i;
         //first remove empty items
         for (i = 0; i < list.getItems().size(); i++) {
@@ -358,7 +354,7 @@ public class Controller implements Initializable {
         
     }
     
-    private String convertColorToHex(final String colorName) {
+    String convertColorToHex(final String colorName) {
         String hex;
         switch (colorName) {
             case "Green": hex = "#7ef202";
@@ -391,7 +387,7 @@ public class Controller implements Initializable {
         return getDatabaseInstance().getTasksDay(localDate);
     }
     
-    private void updateTasksDay(final LocalDate day,
+    void updateTasksDay(final LocalDate day,
                                 final List<Task> tasks) {
         getDatabaseInstance().updateTasksDay(day, tasks);
     }
@@ -403,181 +399,5 @@ public class Controller implements Initializable {
     /*
      * End of database methods
      */
-    
-    /**
-     * custom ListCell
-     */
-    private class LabelCell extends TextFieldListCell<Task> {
-        
-        HBox hbox = new HBox();
-        Label text = new Label("");
-        Pane pane = new Pane();
-        ObservableList<String> comboList = FXCollections
-                .observableArrayList("0LAUK0", "2WF50", "2WA70", "2IPC0");
-        ComboBox<String> comboBox = new ComboBox<>(comboList);
-        
-        private LabelCell() {
-            super();
-            hbox.getChildren().addAll(text, pane, comboBox);
-            HBox.setHgrow(pane, Priority.ALWAYS);
-        }
-        
-        /**
-         * called when starting edit with (null, true)
-         * and when finished edit with (task, false)
-         *
-         * @param task
-         *         to be updated
-         * @param empty
-         *         whether to set empty?
-         */
-        @Override
-        public void updateItem(final Task task, final boolean empty) {
-            super.updateItem(task, empty);
-            setText(null);
-            if (empty) {
-                setGraphic(null);
-            } else {
-                text.setText(
-                        (task.getText() != null) ? task.getText() : "<null>");
-                comboBox.setValue(
-                        (task.getLabel() != null) ? task.getLabel() : "<null>");
-                setGraphic(hbox);
-                setStyle("-fx-control-inner-background: "
-                                 + convertColorToHex(task.getColor()));
-            }
-        }
-    
-        private void setOnLabelChangeListener(final LabelCell labelCell,
-                                              final ListView<Task> list,
-                                              final LocalDate day) {
-            // update label in database when selecting a different one
-            labelCell.comboBox.getSelectionModel().selectedIndexProperty()
-                    .addListener((observable, oldValue, newValue) -> {
-                        updateTasksDay(day, convertObservableToArrayList(
-                                list.getItems()));
-                        cleanUp(list);
-                    });
-        }
-    
-        private void setRightMouseClickListener(final LabelCell labelCell,
-                                                final ListView<Task> list,
-                                                final LocalDate day) {
-        
-            labelCell.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-                if (event.getButton() == MouseButton.SECONDARY) {
-                    createContextMenu(event, labelCell, list, day);
-                }
-            });
-        }
-    
-        private void setOnDragDetected(final LabelCell labelCell) {
-            labelCell.setOnDragDetected((MouseEvent event) -> {
-                if (!labelCell.getItem().getText().equals("")) {
-                    Dragboard db = labelCell.startDragAndDrop(TransferMode.MOVE);
-                    ClipboardContent content = new ClipboardContent();
-                    content.put(dataFormat, labelCell.getItem());
-                    db.setContent(content);
-                }
-                event.consume();
-            });
-        }
-    
-        private void setOnDragOver(final LabelCell labelCell) {
-            labelCell.setOnDragOver(event -> {
-                if ((!Objects.equals(event.getGestureSource(), labelCell)) && event
-                        .getDragboard().hasContent(dataFormat)) {
-                    event.acceptTransferModes(TransferMode.MOVE);
-                }
-                event.consume();
-            });
-        }
-    
-        private void setOnDragEntered(final LabelCell labelCell) {
-            labelCell.setOnDragEntered(event -> {
-                if ((!Objects.equals(event.getGestureSource(), labelCell)) && event
-                        .getDragboard().hasContent(dataFormat)) {
-                    System.out.println("TODO: change color of listview"); //todo
-                }
-            
-                event.consume();
-            });
-        }
-    
-        private void setOnDragExited(final LabelCell labelCell) {
-            labelCell.setOnDragExited(event -> {
-                System.out.println("TODO reset color of listview"); //todo
-                event.consume();
-            });
-        }
-    
-        private void setOnDragDropped(final LabelCell labelCell,
-                                      final ListView<Task> list,
-                                      final LocalDate day) {
-            labelCell.setOnDragDropped(event -> {
-                Dragboard db = event.getDragboard();
-                boolean success = false;
-                if (db.hasContent(dataFormat)) {
-                    Task newTask = (Task)db.getContent(dataFormat);
-                    //insert new task, removing will happen in onDragDone
-                    int index = min(labelCell.getIndex(), list.getItems()
-                            .size()); // item can be dropped way below
-                    // the existing list
-                    //we have put an empty item instead of no items
-                    //because otherwise there are no listCells that can
-                    // receive an item
-                    if (list.getItems().get(index).getText().equals("")) {
-                        list.getItems().set(index, newTask); //replace empty item
-                    } else {
-                        list.getItems().add(index, newTask);
-                    }
-                    success = true;
-                    // update tasks in database
-                    updateTasksDay(day,
-                                   convertObservableToArrayList(list.getItems()));
-                    refreshAllDays();
-                }
-                event.setDropCompleted(success);
-                event.consume();
-                cleanUp(list);
-            });
-        }
-    
-        private void setOnDragDone(final LabelCell labelCell,
-                                   final ListView<Task> list, final LocalDate day) {
-            labelCell.setOnDragDone(event -> {
-                //ensures the original element is only removed on a
-                // valid copy transfer (no dropping outside listviews)
-                if (event.getTransferMode() == TransferMode.MOVE) {
-                    Dragboard db = event.getDragboard();
-                    Task newTask = (Task)db.getContent(dataFormat);
-                    Task emptyTask = new Task("", "", "White");
-                    //remove original item
-                    //item can have been moved up (so index becomes one
-                    // too much)
-                    // or such that the index didn't change, like to
-                    // another day
-                    if (list.getItems().get(labelCell.getIndex()).getText()
-                            .equals(newTask.getText())) {
-                        list.getItems().set(labelCell.getIndex(), emptyTask);
-                        labelCell.setGraphic(null);
-                        // update in database
-                        updateTasksDay(day, convertObservableToArrayList(
-                                list.getItems()));
-                        // deleting blank row from database updating creates
-                    } else {
-                        list.getItems().set(labelCell.getIndex() + 1, emptyTask);
-                    }
-                    //prevent an empty list from refusing to receive
-                    // items, as it wouldn't contain any listcell
-                    if (list.getItems().size() < 1) {
-                        list.getItems().add(emptyTask);
-                    }
-                }
-                event.consume();
-                cleanUp(list);
-            });
-        }
-    }
     
 }
