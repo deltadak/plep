@@ -1,5 +1,7 @@
 package deltadak;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
@@ -63,15 +65,19 @@ class LabelCell extends TextFieldListCell<Task> {
             setGraphic(hbox);
             setStyle("-fx-control-inner-background: "
                              + controller.convertColorToHex(task.getColor()));
+            
         }
     }
 
     void setOnLabelChangeListener(final LabelCell labelCell,
                                           final ListView<Task> list,
                                           final LocalDate day) {
+    
         // update label in database when selecting a different one
         labelCell.comboBox.getSelectionModel().selectedIndexProperty()
                 .addListener((observable, oldValue, newValue) -> {
+                    System.out.println("old: " + oldValue);
+                    System.out.println("new: " + newValue);
                     controller.updateTasksDay(day, controller
                             .convertObservableToArrayList(
                             list.getItems()));
@@ -157,6 +163,8 @@ class LabelCell extends TextFieldListCell<Task> {
                                                   .convertObservableToArrayList(list.getItems()));
                 controller.refreshAllDays();
             }
+            
+            
             event.setDropCompleted(success);
             event.consume();
             controller.cleanUp(list);

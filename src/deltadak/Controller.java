@@ -2,6 +2,7 @@ package deltadak;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
@@ -247,7 +248,6 @@ public class Controller implements Initializable {
             LocalDate localDate = LocalDate.now().plusDays(i - 1);
             List<Task> tasks = getTasksDay(localDate);
             list.setItems(convertArrayToObservableList(tasks));
-            addLabelCells(list, localDate);
             cleanUp(list);
         }
     }
