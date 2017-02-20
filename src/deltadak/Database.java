@@ -133,6 +133,9 @@ class Database {
      * These are methods needed by the available methods
      */
     
+    /**
+     * create a connection with the database
+     */
     private void setConnection() {
         try {
             Class.forName("org.sqlite.JDBC");

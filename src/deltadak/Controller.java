@@ -115,6 +115,12 @@ public class Controller implements Initializable {
         gridPane.add(vbox, column, row);
     }
     
+    /**
+     * add a Listener to a list for the delete key
+     *
+     * @param list ListView to add the Listener to
+     * @param localDate so we know for what day to update the database
+     */
     private void addDeleteKeyListener(final ListView<Task> list,
                                       final LocalDate localDate) {
         //add option to delete a task
@@ -179,6 +185,7 @@ public class Controller implements Initializable {
     
     /**
      * sets up labelCells for
+     *
      * @param list a ListView
      * @param day and a specific date
      */
@@ -238,7 +245,8 @@ public class Controller implements Initializable {
     /**
      * refreshes all listviews using data from the database
      */
-    void refreshAllDays() {
+    void
+    refreshAllDays() {
         // find all listviews
         List<ListView<Task>> listViews = getAllListViews();
         
@@ -306,6 +314,12 @@ public class Controller implements Initializable {
         contextMenu.show(labelCell, event.getScreenX(), event.getScreenY());
     }
     
+    /**
+     * sets the background color of a LabelCell
+     *
+     * @param menuItem MenuItem to retrieve the color from
+     * @param labelCell LabelCell of which to change the background color
+     */
     private void setBackgroundColor(final MenuItem menuItem,
                                     final LabelCell labelCell) {
         String colorWord = menuItem.getText();
@@ -321,6 +335,14 @@ public class Controller implements Initializable {
     
     }
     
+    /**
+     * repeats a task for a number of weeks
+     *
+     * @param repeatNumber how many times to repeat a task
+     * @param task the task to repeat
+     * @param day the current day is needed to update the days on which the
+     *            task will be repeated
+     */
     private void repeatTask(final int repeatNumber, final Task task, LocalDate day) {
         for (int i = 0; i < repeatNumber; i++) {
             day = day.plusWeeks(1);
@@ -354,6 +376,13 @@ public class Controller implements Initializable {
         
     }
     
+    /**
+     * converts a String containing a color (e.g. Green) to a String with the
+     * hex code of that color, so the styling can use it
+     *
+     * @param colorName String containing the color
+     * @return String with the hex code of
+     */
     String convertColorToHex(final String colorName) {
         String hex;
         switch (colorName) {
@@ -373,6 +402,10 @@ public class Controller implements Initializable {
     
     /*
      * Database methods
+     *
+     * each method first creates (or gets, if it already exists) an instance
+     * of the Database, then calls the corresponding method from the Database
+     * class
      */
     
     private void setDefaultDatabasePath() {
