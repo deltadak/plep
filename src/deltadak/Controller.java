@@ -227,12 +227,12 @@ public class Controller implements Initializable {
      * @return all ListViews in the gridPane
      */
     private List<ListView<Task>> getAllListViews() {
-        ArrayList<ListView<Task>> listViews = new ArrayList<>();
+        List<ListView<Task>> listViews = new ArrayList<>();
         for (Node node : gridPane.getChildren()) {
             //gridpane contains vbox contains label, pane and listview
             if (node instanceof VBox) {
                 // we try to dig up the listviews in this vbox
-                for (Node subNode : ((VBox)node).getChildren()) {
+                for (Node subNode : ((Pane)node).getChildren()) {
                     if (subNode instanceof ListView) {
                         listViews.add((ListView) subNode);
                     }
@@ -260,26 +260,19 @@ public class Controller implements Initializable {
         }
     }
     
-    void createContextMenu(final MouseEvent event,
-                                   final LabelCell labelCell,
-                                   final ListView<Task> list,
-                                   final LocalDate day) {
-        
-        ContextMenu contextMenu = new ContextMenu();
-        
+    /**
+     * Makes the menu with options to repeat for 1-8 weeks.
+     * @param labelCell task to repeat
+     * @param day the day to repeat
+     * @return the menu with those options
+     */
+    private Menu makeRepeatMenu(LabelCell labelCell, LocalDate day) {
         Menu repeatTasksMenu = new Menu("Repeat for x weeks");
-        MenuItem oneMenuItem = new MenuItem("1");
-        MenuItem twoMenuItem = new MenuItem("2");
-        MenuItem threeMenuItem = new MenuItem("3");
-        MenuItem fourMenuItem = new MenuItem("4");
-        MenuItem fiveMenuItem = new MenuItem("5");
-        MenuItem sixMenuItem = new MenuItem("6");
-        MenuItem sevenMenuItem = new MenuItem("7");
-        MenuItem eightMenuItem = new MenuItem("8");
-        repeatTasksMenu.getItems().addAll(oneMenuItem, twoMenuItem,threeMenuItem,
-                                          fourMenuItem, fiveMenuItem, sixMenuItem,
-                                          sevenMenuItem, eightMenuItem);
-        
+        for (int i = 1; i < 9; i++) {
+            MenuItem menuItem = new MenuItem(String.valueOf(i));
+            repeatTasksMenu.getItems().add(menuItem);
+        }
+    
         List<MenuItem> repeatMenuItems = repeatTasksMenu.getItems();
         for (MenuItem repeatMenuItem : repeatMenuItems) {
             repeatMenuItem.setOnAction(event12 -> {
@@ -289,7 +282,23 @@ public class Controller implements Initializable {
                 repeatTask(repeatNumber, taskToRepeat, day);
             });
         }
+        return repeatTasksMenu;
+    }
+    
+    /**
+     * create a context menu
+     * @param event show context menu at place of mouse event
+     * @param labelCell to know which labelCell to color or repeat or ...
+     * @param list to update and cleanup after changing labelCell
+     * @param day needed for updating the database
+     */
+    void createContextMenu(final MouseEvent event,
+                                   final LabelCell labelCell,
+                                   final ListView<Task> list,
+                                   final LocalDate day) {
         
+        ContextMenu contextMenu = new ContextMenu();
+        Menu repeatTasksMenu = makeRepeatMenu(labelCell, day);
         SeparatorMenuItem separatorMenuItem = new SeparatorMenuItem();
         
         MenuItem firstColor = new MenuItem("Green");
