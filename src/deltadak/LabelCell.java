@@ -35,11 +35,41 @@ class LabelCell extends TextFieldListCell<Task> {
             .observableArrayList("0LAUK0", "2WF50", "2WA70", "2IPC0");
     ComboBox<String> comboBox = new ComboBox<>(comboList);
     
+    /**
+     * Constructor.
+     * @param controller a private controller object to access some methods.
+     */
     LabelCell(Controller controller) {
         super();
         this.controller = controller;
         hbox.getChildren().addAll(text, pane, comboBox);
         HBox.setHgrow(pane, Priority.ALWAYS);
+    }
+    
+    /**
+     * sets up a labelcell, e.g. adding drag and drop listeners
+     * @param list listview in which the labelcell resides
+     * @param day localdate which belongs to the listview
+     */
+    public void setup(ListView<Task> list, LocalDate day) {
+        //update text on changes
+        setConverter(new TaskConverter(this));
+    
+        // update label on changes
+        comboBox.valueProperty().addListener(
+                (observable, oldValue, newValue) -> this.getItem()
+                        .setLabel(newValue));
+    
+        setOnLabelChangeListener(list, day);
+    
+        setOnDragDetected();
+        setOnDragOver();
+        setOnDragEntered();
+        setOnDragExited();
+        setOnDragDropped(list, day);
+        setOnDragDone(list, day);
+    
+        setRightMouseClickListener(list, day);
     }
     
     /**
@@ -73,17 +103,15 @@ class LabelCell extends TextFieldListCell<Task> {
      * set listener on the ComboBox to update the database when the
      * selected index changes
      *
-     * @param labelCell LabelCell which the ComboBox is in
      * @param list ListView which the LabelCell is in, needed for updating
      *             the database
      * @param day LocalDate which we need for updating the database
      */
-    void setOnLabelChangeListener(final LabelCell labelCell,
-                                          final ListView<Task> list,
+    void setOnLabelChangeListener(final ListView<Task> list,
                                           final LocalDate day) {
     
         // update label in database when selecting a different one
-        labelCell.comboBox.getSelectionModel().selectedIndexProperty()
+        comboBox.getSelectionModel().selectedIndexProperty()
                 .addListener((observable, oldValue, newValue) -> {
                     System.out.println("old: " + oldValue);
                     System.out.println("new: " + newValue);
@@ -98,33 +126,29 @@ class LabelCell extends TextFieldListCell<Task> {
      * set ClickListener on a LabelCell, to be able to display the
      * ContextMenu on a RightClick
      *
-     * @param labelCell LabelCell on which to set the Listener
      * @param list ListView is needed for updating
      * @param day LocalDate is needed for updating
      */
-    void setRightMouseClickListener(final LabelCell labelCell,
-                                            final ListView<Task> list,
+    void setRightMouseClickListener(final ListView<Task> list,
                                             final LocalDate day) {
     
-        labelCell.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+        addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             if (event.getButton() == MouseButton.SECONDARY) {
-                controller.createContextMenu(event, labelCell, list, day);
+                controller.createContextMenu(event, this, list, day);
             }
         });
     }
     
     /**
-     * when the dragging is detected, we place the content of the LabelCell
-     * in the DragBoard
-     *
-     * @param labelCell LabelCell which is being dragged
+     * When the dragging is detected, we place the content of the LabelCell
+     * in the DragBoard.
      */
-    void setOnDragDetected(final LabelCell labelCell) {
-        labelCell.setOnDragDetected((MouseEvent event) -> {
-            if (!labelCell.getItem().getText().equals("")) {
-                Dragboard db = labelCell.startDragAndDrop(TransferMode.MOVE);
+    void setOnDragDetected() {
+        setOnDragDetected((MouseEvent event) -> {
+            if (!getItem().getText().equals("")) {
+                Dragboard db = startDragAndDrop(TransferMode.MOVE);
                 ClipboardContent content = new ClipboardContent();
-                content.put(controller.dataFormat, labelCell.getItem());
+                content.put(controller.dataFormat, getItem());
                 db.setContent(content);
             }
             event.consume();
@@ -132,11 +156,11 @@ class LabelCell extends TextFieldListCell<Task> {
     }
     
     /**
-     * @param labelCell LabelCell we are dragging
+     * Sets on drag over.
      */
-    void setOnDragOver(final LabelCell labelCell) {
-        labelCell.setOnDragOver(event -> {
-            if ((!Objects.equals(event.getGestureSource(), labelCell)) && event
+    void setOnDragOver() {
+        setOnDragOver(event -> {
+            if ((!Objects.equals(event.getGestureSource(), this)) && event
                     .getDragboard().hasContent(controller.dataFormat)) {
                 event.acceptTransferModes(TransferMode.MOVE);
             }
@@ -145,11 +169,11 @@ class LabelCell extends TextFieldListCell<Task> {
     }
     
     /**
-     * @param labelCell LabelCell we are dragging
+     * Sets on drag entered.
      */
-    void setOnDragEntered(final LabelCell labelCell) {
-        labelCell.setOnDragEntered(event -> {
-            if ((!Objects.equals(event.getGestureSource(), labelCell)) && event
+    void setOnDragEntered() {
+        setOnDragEntered(event -> {
+            if ((!Objects.equals(event.getGestureSource(), this)) && event
                     .getDragboard().hasContent(controller.dataFormat)) {
                 System.out.println("TODO: change color of listview"); //todo
             }
@@ -159,10 +183,10 @@ class LabelCell extends TextFieldListCell<Task> {
     }
     
     /**
-     * @param labelCell LabelCell we are dragging
+     * Sets on drag exited.
      */
-    void setOnDragExited(final LabelCell labelCell) {
-        labelCell.setOnDragExited(event -> {
+    void setOnDragExited() {
+        setOnDragExited(event -> {
             System.out.println("TODO reset color of listview"); //todo
             event.consume();
         });
@@ -171,20 +195,18 @@ class LabelCell extends TextFieldListCell<Task> {
     /**
      * updates the ListView and database when a LabelCell is being dropped
      *
-     * @param labelCell LabelCell we are dragging
      * @param list ListView needed for updating the database
      * @param day LocalDate needed for updating the database
      */
-    void setOnDragDropped(final LabelCell labelCell,
-                                  final ListView<Task> list,
+    void setOnDragDropped(final ListView<Task> list,
                                   final LocalDate day) {
-        labelCell.setOnDragDropped(event -> {
+        setOnDragDropped(event -> {
             Dragboard db = event.getDragboard();
             boolean success = false;
             if (db.hasContent(controller.dataFormat)) {
                 Task newTask = (Task)db.getContent(controller.dataFormat);
                 //insert new task, removing will happen in onDragDone
-                int index = min(labelCell.getIndex(), list.getItems()
+                int index = min(getIndex(), list.getItems()
                         .size()); // item can be dropped way below
                 // the existing list
                 //we have put an empty item instead of no items
@@ -213,13 +235,11 @@ class LabelCell extends TextFieldListCell<Task> {
     /**
      * removing the original copy
      *
-     * @param labelCell LabelCell we were dragging
      * @param list ListView needed for updating the database
      * @param day LocalDate needed for updating the database
      */
-    void setOnDragDone(final LabelCell labelCell,
-                               final ListView<Task> list, final LocalDate day) {
-        labelCell.setOnDragDone(event -> {
+    void setOnDragDone(final ListView<Task> list, final LocalDate day) {
+        setOnDragDone(event -> {
             //ensures the original element is only removed on a
             // valid copy transfer (no dropping outside listviews)
             if (event.getTransferMode() == TransferMode.MOVE) {
@@ -231,17 +251,17 @@ class LabelCell extends TextFieldListCell<Task> {
                 // too much)
                 // or such that the index didn't change, like to
                 // another day
-                if (list.getItems().get(labelCell.getIndex()).getText()
+                if (list.getItems().get(getIndex()).getText()
                         .equals(newTask.getText())) {
-                    list.getItems().set(labelCell.getIndex(), emptyTask);
-                    labelCell.setGraphic(null);
+                    list.getItems().set(getIndex(), emptyTask);
+                    setGraphic(null);
                     // update in database
                     controller.updateTasksDay(day, controller
                             .convertObservableToArrayList(
                             list.getItems()));
                     // deleting blank row from database updating creates
                 } else {
-                    list.getItems().set(labelCell.getIndex() + 1, emptyTask);
+                    list.getItems().set(getIndex() + 1, emptyTask);
                 }
                 //prevent an empty list from refusing to receive
                 // items, as it wouldn't contain any listcell

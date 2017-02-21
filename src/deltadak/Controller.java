@@ -2,7 +2,6 @@ package deltadak;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
@@ -70,7 +69,7 @@ public class Controller implements Initializable {
             list.setEditable(true);
             list.setPrefWidth(getListViewWidth());
             list.setPrefHeight(getListViewHeight());
-            addLabelCells(list, localDate);
+            setupLabelCells(list, localDate);
             //update database when editing is finished
             list.setOnEditCommit(event -> updateTasksDay(
                     localDate, convertObservableToArrayList(list.getItems())));
@@ -189,7 +188,7 @@ public class Controller implements Initializable {
      * @param list a ListView
      * @param day and a specific date
      */
-    private void addLabelCells(final ListView<Task> list, final LocalDate day) {
+    private void setupLabelCells(final ListView<Task> list, final LocalDate day) {
         //no idea why the callback needs a ListCell and not a TextFieldListCell
         //anyway, editing is enabled by using TextFieldListCell instead of
         // ListCell
@@ -197,26 +196,7 @@ public class Controller implements Initializable {
             @Override
             public LabelCell call(final ListView<Task> param) {
                 LabelCell labelCell = new LabelCell(Controller.this);
-                
-                //update text on changes
-                labelCell.setConverter(new TaskConverter(labelCell));
-                
-                // update label on changes
-                labelCell.comboBox.valueProperty().addListener(
-                        (observable, oldValue, newValue) -> labelCell.getItem()
-                                .setLabel(newValue));
-                
-                labelCell.setOnLabelChangeListener(labelCell, list, day);
-                
-                labelCell.setOnDragDetected(labelCell);
-                labelCell.setOnDragOver(labelCell);
-                labelCell.setOnDragEntered(labelCell);
-                labelCell.setOnDragExited(labelCell);
-                labelCell.setOnDragDropped(labelCell, list, day);
-                labelCell.setOnDragDone(labelCell, list, day);
-    
-                labelCell.setRightMouseClickListener(labelCell, list, day);
-                
+                labelCell.setup(list, day);
                 return labelCell;
             }
         });
