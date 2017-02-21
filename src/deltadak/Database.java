@@ -11,33 +11,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @author s152337 19-2-2017
+ * Class to communicate with database, it is an enum by the singleton design pattern.
+ * Call methods by using Database.INSTANCE.method()
  */
 // incorrect warning about LocalDate may be weakened to ChronoLocalDate (not
 // true)
 @SuppressWarnings("TypeMayBeWeakened")
-class Database {
+public enum Database {
+    /**
+     * Implicit empty constructor.
+     */
+    INSTANCE;
+    
     
     private Connection connection;
     private Statement statement;
     private String databasePath;
     private int countID = 1;
-    
-    private Database() {}
-    
-    private static Database instance = null;
-    
-    /**
-     * Method to get the instance of the database, makes sure that there is only
-     * one instance (singleton design pattern)
-     * @return instance of Database
-     */
-    static synchronized Database getInstance() {
-        if( instance == null) {
-            instance = new Database();
-        }
-        return instance;
-    }
     
     /*
      * Methods that are available to the controller

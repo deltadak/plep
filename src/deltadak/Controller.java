@@ -398,24 +398,20 @@ public class Controller implements Initializable {
      */
     
     private void setDefaultDatabasePath() {
-        getDatabaseInstance().setDefaultDatabasePath();
+        Database.INSTANCE.setDefaultDatabasePath();
     }
     
     private void createTable() {
-        getDatabaseInstance().createTable();
+        Database.INSTANCE.createTable();
     }
     
     private List<Task> getTasksDay(final LocalDate localDate) {
-        return getDatabaseInstance().getTasksDay(localDate);
+        return Database.INSTANCE.getTasksDay(localDate);
     }
     
     void updateTasksDay(final LocalDate day,
                                 final List<Task> tasks) {
-        getDatabaseInstance().updateTasksDay(day, tasks);
-    }
-    
-    private Database getDatabaseInstance() {
-        return Database.getInstance();
+        Database.INSTANCE.updateTasksDay(day, tasks);
     }
     
     /*
