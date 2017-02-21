@@ -390,11 +390,8 @@ public class Controller implements Initializable {
     
     
     /*
-     * Database methods
-     *
-     * each method first creates (or gets, if it already exists) an instance
-     * of the Database, then calls the corresponding method from the Database
-     * class
+     * Database methods, Database is a singleton using the enum structure.
+     * For corresponding javadoc see Database.
      */
     
     private void setDefaultDatabasePath() {
