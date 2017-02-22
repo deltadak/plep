@@ -365,6 +365,18 @@ public class Controller implements Initializable {
         
     }
     
+    @FXML protected void dayBackward() {
+        System.out.println("day back clicked");
+    }
+    
+    @FXML protected void goToToday() {
+        System.out.println("today button clicked");
+    }
+    
+    @FXML protected void dayForward() {
+        System.out.println("day forward clicked");
+    }
+         
     /**
      * converts a String containing a color (e.g. Green) to a String with the
      * hex code of that color, so the styling can use it
