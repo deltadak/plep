@@ -27,7 +27,19 @@ public class Main extends Application {
         primaryStage.setY(primaryScreenBounds.getMinY());
         primaryStage.setWidth(primaryScreenBounds.getWidth()/2);
         primaryStage.setHeight(primaryScreenBounds.getHeight());
-        primaryStage.getIcons().add(new Image(this.getClass().getResourceAsStream("icon.png")));
+    
+        // check if running in debug mode
+        // to display the default java icon so we can distinguish between
+        // the program we are testing and the one we are actually using
+        // (the latter has the plep logo)
+        boolean isDebug = java.lang.management.ManagementFactory.getRuntimeMXBean().
+                getInputArguments().toString().indexOf("-agentlib:jdwp") > 0;
+        if(isDebug) {
+            System.out.println("debug");
+        } else {
+            System.out.println("no debug");
+            primaryStage.getIcons().add(new Image(this.getClass().getResourceAsStream("icon.png")));
+        }
     
         primaryStage.show();
 
