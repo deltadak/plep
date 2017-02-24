@@ -6,11 +6,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.Screen;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 
 import java.net.URL;
@@ -37,6 +39,8 @@ public class Controller implements Initializable {
     private static final int MAX_COLUMNS = 3;
     private static final int MAX_LIST_LENGTH = 7;
     
+    // to find out whether a day has advanced, remember today
+    private LocalDate today;
     
     /**
      * Initialization method for the controller.
@@ -56,7 +60,7 @@ public class Controller implements Initializable {
      * sets up listviews for each day, initializes drag and drop, editing items
      * @param focusDate date that is the top middle one (is today on default)
      */
-    private void setupGridPane(LocalDate focusDate) {
+    public void setupGridPane(LocalDate focusDate) {
         for (int index = 0; index < NUMBER_OF_DAYS; index++) {
             
             // add days immediately, otherwise we can't use localDate in a
@@ -79,6 +83,25 @@ public class Controller implements Initializable {
             addDeleteKeyListener(list, localDate);
             cleanUp(list);
         }
+    }
+    
+    /**
+     * Sets a listener which checks if it is a new day,
+     * when the window becomes focused.
+     *
+     * @param primaryStage Stage to set listener on
+     */
+    public void setDayChangeListener(Stage primaryStage) {
+        today = LocalDate.now();
+        primaryStage.focusedProperty().addListener((observable, wasFocused, isFocused) -> {
+            if (isFocused) { // if becomes focused
+                if (!today.equals(LocalDate.now())) {
+                    // then reset view
+                    today = LocalDate.now();
+                    setupGridPane(today);
+                }
+            }
+        });
     }
     
     /**
