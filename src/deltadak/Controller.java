@@ -47,18 +47,21 @@ public class Controller implements Initializable {
         
         setDefaultDatabasePath();
         createTable(); // if not already exists
-        setupGridPane();
+        
+        LocalDate today = LocalDate.now();
+        setupGridPane(today);
     }
     
     /**
      * sets up listviews for each day, initializes drag and drop, editing items
+     * @param focusDate date that is the top middle one (is today on default)
      */
-    private void setupGridPane() {
+    private void setupGridPane(LocalDate focusDate) {
         for (int index = 0; index < NUMBER_OF_DAYS; index++) {
             
             // add days immediately, otherwise we can't use localDate in a
             // lambda expression (as it is not final)
-            LocalDate localDate = LocalDate.now().plusDays(index - 1);
+            LocalDate localDate = focusDate.plusDays(index - 1);
             
             ListView<Task> list = new ListView<>();
             VBox vbox = setTitle(list, localDate);
