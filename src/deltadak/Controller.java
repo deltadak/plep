@@ -37,6 +37,9 @@ public class Controller implements Initializable {
     private static final int MAX_COLUMNS = 3;
     private static final int MAX_LIST_LENGTH = 7;
     
+    private LocalDate focusDay;
+    private static final int NUMBER_OF_MOVING_DAYS = 7;
+    
     
     /**
      * Initialization method for the controller.
@@ -48,8 +51,8 @@ public class Controller implements Initializable {
         setDefaultDatabasePath();
         createTable(); // if not already exists
         
-        LocalDate today = LocalDate.now();
-        setupGridPane(today);
+        focusDay = LocalDate.now(); // set focus day to today
+        setupGridPane(focusDay);
     }
     
     /**
@@ -57,6 +60,7 @@ public class Controller implements Initializable {
      * @param focusDate date that is the top middle one (is today on default)
      */
     private void setupGridPane(LocalDate focusDate) {
+        gridPane.getChildren().clear();
         for (int index = 0; index < NUMBER_OF_DAYS; index++) {
             
             // add days immediately, otherwise we can't use localDate in a
@@ -370,14 +374,20 @@ public class Controller implements Initializable {
     
     @FXML protected void dayBackward() {
         System.out.println("day back clicked");
+        focusDay = focusDay.plusDays(-NUMBER_OF_MOVING_DAYS);
+        setupGridPane(focusDay);
     }
     
     @FXML protected void goToToday() {
         System.out.println("today button clicked");
+        focusDay = LocalDate.now();
+        setupGridPane(focusDay);
     }
     
     @FXML protected void dayForward() {
         System.out.println("day forward clicked");
+        focusDay = focusDay.plusDays(NUMBER_OF_MOVING_DAYS);
+        setupGridPane(focusDay);
     }
          
     /**
