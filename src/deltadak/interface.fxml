@@ -9,6 +9,6 @@
               prefHeight="300.0" prefWidth="600.0" vgap="10.0" >
 
     </GridPane>
-    <ProgressIndicator fx:id="progressIndicator" layoutX="78.0" layoutY="55.0" progress="-1.0"/>
+    <ProgressIndicator fx:id="progressIndicator" progress="-1.0"/>
 </StackPane>
 

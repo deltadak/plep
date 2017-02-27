@@ -1,5 +1,6 @@
 package deltadak;
 
+import javax.xml.crypto.Data;
 import java.io.File;
 import java.security.CodeSource;
 import java.sql.Connection;
@@ -17,17 +18,36 @@ import java.util.List;
 // incorrect warning about LocalDate may be weakened to ChronoLocalDate (not
 // true)
 @SuppressWarnings("TypeMayBeWeakened")
-public enum Database {
-    /**
-     * Implicit empty constructor.
-     */
-    INSTANCE;
-    
+public class Database {
     
     private Connection connection;
     private Statement statement;
     private String databasePath;
     private int countID = 1;
+    private static Database instance = null;
+    
+    Database() {
+        try {
+            setDefaultDatabasePath();
+            Class.forName("org.sqlite.JDBC");
+            connection = DriverManager.getConnection(databasePath);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Method to get the instance of the database, makes sure that there is only
+     * one instance (singleton design pattern)
+     * @return instance of Database
+     */
+     static synchronized Database getInstance() {
+                if( instance == null) {
+                        instance = new Database();
+                    }
+                return instance;
+            }
     
     /*
      * Methods that are available to the controller
@@ -59,7 +79,7 @@ public enum Database {
                 + dayString + "' ORDER BY orderInDay";
         List<Task> tasks = new ArrayList<>();
         
-        setConnection();
+//        setConnection();
         try {
             statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
@@ -83,7 +103,6 @@ public enum Database {
      *         - List<Task> with the new tasks
      */
     public void updateTasksDay(final LocalDate day, final List<Task> tasks) {
-        
         System.out.println("updateTasksDay " + day);
         
         // first remove all the items for this day that are currently in the
@@ -123,18 +142,12 @@ public enum Database {
      * These are methods needed by the available methods
      */
     
-    /**
-     * create a connection with the database
-     */
-    private void setConnection() {
-        try {
-            Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection(databasePath);
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+//    /**
+//     * create a connection with the database
+//     */
+//    private void setConnection() {
+//
+//    }
     
     /**
      * inserts a task into the database, given
@@ -148,15 +161,18 @@ public enum Database {
      */
     private void insertTask(final LocalDate day,
                             final Task task, final int order) {
+    
         setHighestID(); // sets countID
+    
         
-        String dayString = day.toString();
-        
-        String sql = "INSERT INTO tasks(id, day, task, label, color, orderInDay) "
-                + "VALUES (" + countID + ", '" + dayString + "', '" + task.getText()
-                + "','" + task.getLabel() + "','" + task.getColor() + "'," + order + ")";
-        countID++;
-        query(sql);
+    
+                String dayString = day.toString();
+    
+                String sql = "INSERT INTO tasks(id, day, task, label, color, orderInDay) "
+                        + "VALUES (" + countID + ", '" + dayString + "', '" + task.getText()
+                        + "','" + task.getLabel() + "','" + task.getColor() + "'," + order + ")";
+                countID++;
+                query(sql);
     }
     
     /**
@@ -166,7 +182,7 @@ public enum Database {
     private void setHighestID() {
         String sql = "SELECT * FROM tasks ORDER BY id DESC";
         
-        setConnection();
+//        setConnection();
         try {
             statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
@@ -178,8 +194,8 @@ public enum Database {
                 // if the database is empty we set the id to 1
                 countID = 1;
             }
-            statement.close();
-            connection.close();
+//            statement.close();
+//            connection.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -238,12 +254,12 @@ public enum Database {
      *         - string with the sql query
      */
     private void query(final String sql) {
-        setConnection();
+//        setConnection();
         try {
             statement = connection.createStatement();
             statement.executeUpdate(sql);
             statement.close();
-            connection.close();
+//            connection.close();
             
         } catch (Exception e) {
             e.printStackTrace();

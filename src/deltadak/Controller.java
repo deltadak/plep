@@ -2,6 +2,7 @@ package deltadak;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Service;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -14,6 +15,7 @@ import javafx.scene.layout.*;
 import javafx.stage.Screen;
 import javafx.util.Callback;
 
+import javax.xml.crypto.Data;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
@@ -30,6 +32,7 @@ public class Controller implements Initializable {
     
     // main element of the UI is declared in interface.fxml
     @FXML GridPane gridPane;
+    @FXML ProgressIndicator progressIndicator;
     // used to transfer tasks with drag and drop
     DataFormat dataFormat = new DataFormat("com.deltadak.Task");
     
@@ -49,6 +52,7 @@ public class Controller implements Initializable {
         setDefaultDatabasePath();
         createTable(); // if not already exists
         setupGridPane();
+        progressIndicator.setVisible(false);
     }
     
     /**
@@ -398,20 +402,41 @@ public class Controller implements Initializable {
      */
     
     private void setDefaultDatabasePath() {
-        Database.INSTANCE.setDefaultDatabasePath();
+        Database.getInstance().setDefaultDatabasePath();
     }
     
     private void createTable() {
-        Database.INSTANCE.createTable();
+        Database.getInstance().createTable();
     }
     
     private List<Task> getTasksDay(final LocalDate localDate) {
-        return Database.INSTANCE.getTasksDay(localDate);
+        return Database.getInstance().getTasksDay(localDate);
     }
     
     void updateTasksDay(final LocalDate day,
                                 final List<Task> tasks) {
-        Database.INSTANCE.updateTasksDay(day, tasks);
+        final Service service = new Service() {
+            @Override
+            protected javafx.concurrent.Task<String> createTask() {
+                return new javafx.concurrent.Task<String>() {
+                    @Override
+                    protected String call() throws Exception {
+                        System.out.println("running");
+                        Database.getInstance().updateTasksDay(day, tasks);
+                        return "bla";
+                    }
+                };
+    
+            }
+        };
+    
+        progressIndicator.visibleProperty().bind(service.runningProperty());
+    
+    
+        service.setOnSucceeded(event -> System.out.println("done"));
+        
+        service.restart();
+    
     }
     
     /*
