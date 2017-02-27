@@ -60,6 +60,7 @@ public class Controller implements Initializable {
      * @param focusDate date that is the top middle one (is today on default)
      */
     private void setupGridPane(LocalDate focusDate) {
+        // first clear the gridpane so we don't get titles overlaying each other
         gridPane.getChildren().clear();
         for (int index = 0; index < NUMBER_OF_DAYS; index++) {
             
@@ -372,20 +373,29 @@ public class Controller implements Initializable {
         
     }
     
+    /**
+     * called by the backward button
+     * moves the planner a (few) day(s) back
+     */
     @FXML protected void dayBackward() {
-        System.out.println("day back clicked");
         focusDay = focusDay.plusDays(-NUMBER_OF_MOVING_DAYS);
         setupGridPane(focusDay);
     }
     
+    /**
+     * called by the today button
+     * focuses the planner on today
+     */
     @FXML protected void goToToday() {
-        System.out.println("today button clicked");
         focusDay = LocalDate.now();
         setupGridPane(focusDay);
     }
     
+    /**
+     * called by the forward button
+     * moves the planner a (few) day(s) forward
+     */
     @FXML protected void dayForward() {
-        System.out.println("day forward clicked");
         focusDay = focusDay.plusDays(NUMBER_OF_MOVING_DAYS);
         setupGridPane(focusDay);
     }
