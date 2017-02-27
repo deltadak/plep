@@ -4,6 +4,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -70,7 +71,7 @@ public class Controller implements Initializable {
             list.setPrefWidth(getListViewWidth());
             list.setPrefHeight(getListViewHeight());
             // disable leaving half-selected listcells around
-            list.setFocusTraversable(false);
+//            list.setFocusTraversable(false);
             setupLabelCells(list, localDate);
             //update database when editing is finished
             list.setOnEditCommit(event -> updateTasksDay(
