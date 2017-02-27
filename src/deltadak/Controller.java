@@ -37,6 +37,9 @@ public class Controller implements Initializable {
     private static final int MAX_COLUMNS = 3;
     private static final int MAX_LIST_LENGTH = 7;
     
+    private LocalDate focusDay;
+    private static final int NUMBER_OF_MOVING_DAYS = 7;
+    
     
     /**
      * Initialization method for the controller.
@@ -47,18 +50,23 @@ public class Controller implements Initializable {
         
         setDefaultDatabasePath();
         createTable(); // if not already exists
-        setupGridPane();
+        
+        focusDay = LocalDate.now(); // set focus day to today
+        setupGridPane(focusDay);
     }
     
     /**
      * sets up listviews for each day, initializes drag and drop, editing items
+     * @param focusDate date that is the top middle one (is today on default)
      */
-    private void setupGridPane() {
+    private void setupGridPane(LocalDate focusDate) {
+        // first clear the gridpane so we don't get titles overlaying each other
+        gridPane.getChildren().clear();
         for (int index = 0; index < NUMBER_OF_DAYS; index++) {
             
             // add days immediately, otherwise we can't use localDate in a
             // lambda expression (as it is not final)
-            LocalDate localDate = LocalDate.now().plusDays(index - 1);
+            LocalDate localDate = focusDate.plusDays(index - 1);
             
             ListView<Task> list = new ListView<>();
             VBox vbox = setTitle(list, localDate);
@@ -367,6 +375,33 @@ public class Controller implements Initializable {
         
     }
     
+    /**
+     * called by the backward button
+     * moves the planner a (few) day(s) back
+     */
+    @FXML protected void dayBackward() {
+        focusDay = focusDay.plusDays(-NUMBER_OF_MOVING_DAYS);
+        setupGridPane(focusDay);
+    }
+    
+    /**
+     * called by the today button
+     * focuses the planner on today
+     */
+    @FXML protected void goToToday() {
+        focusDay = LocalDate.now();
+        setupGridPane(focusDay);
+    }
+    
+    /**
+     * called by the forward button
+     * moves the planner a (few) day(s) forward
+     */
+    @FXML protected void dayForward() {
+        focusDay = focusDay.plusDays(NUMBER_OF_MOVING_DAYS);
+        setupGridPane(focusDay);
+    }
+         
     /**
      * converts a String containing a color (e.g. Green) to a String with the
      * hex code of that color, so the styling can use it
