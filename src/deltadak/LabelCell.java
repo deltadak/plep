@@ -271,6 +271,7 @@ class LabelCell extends TextFieldListCell<Task> {
             }
             event.consume();
             controller.cleanUp(list);
+            controller.refreshAllDays();
         });
     }
 }

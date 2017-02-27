@@ -39,8 +39,10 @@ public class Controller implements Initializable {
     private static final int MAX_COLUMNS = 3;
     private static final int MAX_LIST_LENGTH = 7;
     
-    // to find out whether a day has advanced, remember today
+    private LocalDate focusDay;
     private LocalDate today;
+    private static final int NUMBER_OF_MOVING_DAYS = 7;
+    
     
     /**
      * Initialization method for the controller.
@@ -52,15 +54,17 @@ public class Controller implements Initializable {
         setDefaultDatabasePath();
         createTable(); // if not already exists
         
-        LocalDate today = LocalDate.now();
-        setupGridPane(today);
+        focusDay = LocalDate.now(); // set focus day to today
+        setupGridPane(focusDay);
     }
     
     /**
      * sets up listviews for each day, initializes drag and drop, editing items
      * @param focusDate date that is the top middle one (is today on default)
      */
-    public void setupGridPane(LocalDate focusDate) {
+    private void setupGridPane(LocalDate focusDate) {
+        // first clear the gridpane so we don't get titles overlaying each other
+        gridPane.getChildren().clear();
         for (int index = 0; index < NUMBER_OF_DAYS; index++) {
             
             // add days immediately, otherwise we can't use localDate in a
@@ -92,7 +96,7 @@ public class Controller implements Initializable {
      * @param primaryStage Stage to set listener on
      */
     public void setDayChangeListener(Stage primaryStage) {
-        today = LocalDate.now();
+        today = LocalDate.now().plusDays(-1);
         primaryStage.focusedProperty().addListener((observable, wasFocused, isFocused) -> {
             if (isFocused) { // if becomes focused
                 if (!today.equals(LocalDate.now())) {
@@ -251,8 +255,7 @@ public class Controller implements Initializable {
     /**
      * refreshes all listviews using data from the database
      */
-    void
-    refreshAllDays() {
+    void refreshAllDays() {
         // find all listviews
         List<ListView<Task>> listViews = getAllListViews();
         
@@ -391,16 +394,31 @@ public class Controller implements Initializable {
         
     }
     
+    /**
+     * called by the backward button
+     * moves the planner a (few) day(s) back
+     */
     @FXML protected void dayBackward() {
-        System.out.println("day back clicked");
+        focusDay = focusDay.plusDays(-NUMBER_OF_MOVING_DAYS);
+        setupGridPane(focusDay);
     }
     
+    /**
+     * called by the today button
+     * focuses the planner on today
+     */
     @FXML protected void goToToday() {
-        System.out.println("today button clicked");
+        focusDay = LocalDate.now();
+        setupGridPane(focusDay);
     }
     
+    /**
+     * called by the forward button
+     * moves the planner a (few) day(s) forward
+     */
     @FXML protected void dayForward() {
-        System.out.println("day forward clicked");
+        focusDay = focusDay.plusDays(NUMBER_OF_MOVING_DAYS);
+        setupGridPane(focusDay);
     }
          
     /**
