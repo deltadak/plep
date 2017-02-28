@@ -262,7 +262,7 @@ public class Controller implements Initializable {
         for (int i = 0; i < NUMBER_OF_DAYS; i++) {
             ListView<Task> list = listViews.get(i);
             // refresh the listview from database
-            LocalDate localDate = LocalDate.now().plusDays(i - 1);
+            LocalDate localDate = focusDay.plusDays(i - 1);
             List<Task> tasks = getTasksDay(localDate);
             list.setItems(convertArrayToObservableList(tasks));
             cleanUp(list);
