@@ -80,8 +80,6 @@ public class Controller implements Initializable {
             list.setEditable(true);
             list.setPrefWidth(getListViewWidth());
             list.setPrefHeight(getListViewHeight());
-            // disable leaving half-selected listcells around
-            list.setFocusTraversable(false);
             setupLabelCells(list, localDate);
             //update database when editing is finished
             list.setOnEditCommit(event -> updateTasksDay(
