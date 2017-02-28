@@ -20,7 +20,13 @@ public class Main extends Application {
 
     @Override
     public void start(final Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("interface.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("interface.fxml"));
+        Parent root = loader.load();
+        
+        //used to invoke a setup method in controller which needs the stage
+        Controller controller = loader.getController();
+        controller.setDayChangeListener(primaryStage);
+        
         primaryStage.setTitle("Plep");
         primaryStage.setScene(new Scene(root, 0, 0));
     

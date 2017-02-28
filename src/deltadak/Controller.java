@@ -2,17 +2,18 @@ package deltadak;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Service;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.Screen;
+import javafx.stage.Stage;
 import javafx.util.Callback;
 
 import javax.xml.crypto.Data;
@@ -41,6 +42,10 @@ public class Controller implements Initializable {
     private static final int MAX_COLUMNS = 3;
     private static final int MAX_LIST_LENGTH = 7;
     
+    private LocalDate focusDay;
+    private LocalDate today;
+    private static final int NUMBER_OF_MOVING_DAYS = 7;
+    
     
     /**
      * Initialization method for the controller.
@@ -51,19 +56,26 @@ public class Controller implements Initializable {
         
         setDefaultDatabasePath();
         createTable(); // if not already exists
-        setupGridPane();
+        
+        focusDay = LocalDate.now(); // set focus day to today
+        setupGridPane(focusDay);
+        
         progressIndicator.setVisible(false);
+
     }
     
     /**
      * sets up listviews for each day, initializes drag and drop, editing items
+     * @param focusDate date that is the top middle one (is today on default)
      */
-    private void setupGridPane() {
+    private void setupGridPane(LocalDate focusDate) {
+        // first clear the gridpane so we don't get titles overlaying each other
+        gridPane.getChildren().clear();
         for (int index = 0; index < NUMBER_OF_DAYS; index++) {
             
             // add days immediately, otherwise we can't use localDate in a
             // lambda expression (as it is not final)
-            LocalDate localDate = LocalDate.now().plusDays(index - 1);
+            LocalDate localDate = focusDate.plusDays(index - 1);
             
             ListView<Task> list = new ListView<>();
             VBox vbox = setTitle(list, localDate);
@@ -74,8 +86,6 @@ public class Controller implements Initializable {
             list.setEditable(true);
             list.setPrefWidth(getListViewWidth());
             list.setPrefHeight(getListViewHeight());
-            // disable leaving half-selected listcells around
-//            list.setFocusTraversable(false);
             setupLabelCells(list, localDate);
             //update database when editing is finished
             list.setOnEditCommit(event -> updateTasksDay(
@@ -83,6 +93,27 @@ public class Controller implements Initializable {
             addDeleteKeyListener(list, localDate);
             cleanUp(list);
         }
+    }
+    
+    /**
+     * Sets a listener which checks if it is a new day,
+     * when the window becomes focused.
+     *
+     * @param primaryStage Stage to set listener on
+     */
+    public void setDayChangeListener(Stage primaryStage) {
+        // debug line, also comment out the line to reset 'today'
+//        today = LocalDate.now().plusDays(-1);
+        today = LocalDate.now();
+        primaryStage.focusedProperty().addListener((observable, wasFocused, isFocused) -> {
+            if (isFocused) { // if becomes focused
+                if (!today.equals(LocalDate.now())) {
+                    // then reset view
+                    today = LocalDate.now();
+                    setupGridPane(today);
+                }
+            }
+        });
     }
     
     /**
@@ -232,15 +263,14 @@ public class Controller implements Initializable {
     /**
      * refreshes all listviews using data from the database
      */
-    void
-    refreshAllDays() {
+    void refreshAllDays() {
         // find all listviews
         List<ListView<Task>> listViews = getAllListViews();
         
         for (int i = 0; i < NUMBER_OF_DAYS; i++) {
             ListView<Task> list = listViews.get(i);
             // refresh the listview from database
-            LocalDate localDate = LocalDate.now().plusDays(i - 1);
+            LocalDate localDate = focusDay.plusDays(i - 1);
             List<Task> tasks = getTasksDay(localDate);
             list.setItems(convertArrayToObservableList(tasks));
             cleanUp(list);
@@ -372,6 +402,33 @@ public class Controller implements Initializable {
         
     }
     
+    /**
+     * called by the backward button
+     * moves the planner a (few) day(s) back
+     */
+    @FXML protected void dayBackward() {
+        focusDay = focusDay.plusDays(-NUMBER_OF_MOVING_DAYS);
+        setupGridPane(focusDay);
+    }
+    
+    /**
+     * called by the today button
+     * focuses the planner on today
+     */
+    @FXML protected void goToToday() {
+        focusDay = LocalDate.now();
+        setupGridPane(focusDay);
+    }
+    
+    /**
+     * called by the forward button
+     * moves the planner a (few) day(s) forward
+     */
+    @FXML protected void dayForward() {
+        focusDay = focusDay.plusDays(NUMBER_OF_MOVING_DAYS);
+        setupGridPane(focusDay);
+    }
+         
     /**
      * converts a String containing a color (e.g. Green) to a String with the
      * hex code of that color, so the styling can use it
