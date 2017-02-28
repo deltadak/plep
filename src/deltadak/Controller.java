@@ -56,6 +56,9 @@ public class Controller implements Initializable {
         
         focusDay = LocalDate.now(); // set focus day to today
         setupGridPane(focusDay);
+        
+        // Notice that the listener which listens for day changes is called from
+        // Main, because it needs the primary Stage.
     }
     
     /**
@@ -96,7 +99,9 @@ public class Controller implements Initializable {
      * @param primaryStage Stage to set listener on
      */
     public void setDayChangeListener(Stage primaryStage) {
-        today = LocalDate.now().plusDays(-1);
+        // debug line, also comment out the line to reset 'today'
+//        today = LocalDate.now().plusDays(-1);
+        today = LocalDate.now();
         primaryStage.focusedProperty().addListener((observable, wasFocused, isFocused) -> {
             if (isFocused) { // if becomes focused
                 if (!today.equals(LocalDate.now())) {
