@@ -1,7 +1,10 @@
 package deltadak;
 
+import javafx.animation.TranslateTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
@@ -13,6 +16,7 @@ import javafx.scene.layout.*;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Callback;
+import javafx.util.Duration;
 
 import java.net.URL;
 import java.time.LocalDate;
@@ -30,6 +34,8 @@ public class Controller implements Initializable {
     
     // main element of the UI is declared in interface.fxml
     @FXML GridPane gridPane;
+    @FXML GridPane settingsPane;
+    @FXML Button settingsButton;
     // used to transfer tasks with drag and drop
     DataFormat dataFormat = new DataFormat("com.deltadak.Task");
     
@@ -37,11 +43,11 @@ public class Controller implements Initializable {
     private static final int NUMBER_OF_DAYS = 9;
     private static final int MAX_COLUMNS = 3;
     private static final int MAX_LIST_LENGTH = 7;
+    private static final int SETTINGS_WIDTH = 350;
     
     private LocalDate focusDay;
     private LocalDate today;
     private static final int NUMBER_OF_MOVING_DAYS = 7;
-    
     
     /**
      * Initialization method for the controller.
@@ -52,12 +58,16 @@ public class Controller implements Initializable {
         
         setDefaultDatabasePath();
         createTable(); // if not already exists
+        createLabelsTable();
         
         focusDay = LocalDate.now(); // set focus day to today
         setupGridPane(focusDay);
+        setupSettingsMenu();
         
         // Notice that the listener which listens for day changes is called from
         // Main, because it needs the primary Stage.
+    
+        prepareToggleSettings();
     }
     
     /**
@@ -399,6 +409,29 @@ public class Controller implements Initializable {
     }
     
     /**
+     * converts a String containing a color (e.g. Green) to a String with the
+     * hex code of that color, so the styling can use it
+     *
+     * @param colorName String containing the color
+     * @return String with the hex code of
+     */
+    String convertColorToHex(final String colorName) {
+        String hex;
+        switch (colorName) {
+            case "Green": hex = "#7ef202";
+                break;
+            case "Blue": hex = "#4286f4";
+                break;
+            case "Red": hex = "#e64d4d";
+                break;
+            case "White" : hex = "#ffffffff";
+                break;
+            default: hex = "#ffffffff";
+        }
+        return hex;
+    }
+    
+    /**
      * called by the backward button
      * moves the planner a (few) day(s) back
      */
@@ -424,29 +457,58 @@ public class Controller implements Initializable {
         focusDay = focusDay.plusDays(NUMBER_OF_MOVING_DAYS);
         setupGridPane(focusDay);
     }
-         
-    /**
-     * converts a String containing a color (e.g. Green) to a String with the
-     * hex code of that color, so the styling can use it
-     *
-     * @param colorName String containing the color
-     * @return String with the hex code of
+    
+    /*
+     * Settings ----------------------------------------------------------------
      */
-    String convertColorToHex(final String colorName) {
-        String hex;
-        switch (colorName) {
-            case "Green": hex = "#7ef202";
-                break;
-            case "Blue": hex = "#4286f4";
-                break;
-            case "Red": hex = "#e64d4d";
-                break;
-            case "White" : hex = "#ffffffff";
-                break;
-            default: hex = "#ffffffff";
-        }
-        return hex;
+    
+    private void prepareToggleSettings() {
+        settingsPane.setPrefWidth(SETTINGS_WIDTH);
+        settingsPane.setTranslateX(-SETTINGS_WIDTH);
+        TranslateTransition openNav =
+                new TranslateTransition(new Duration(350), settingsPane);
+        openNav.setToX(0);
+        TranslateTransition closeNav =
+                new TranslateTransition(new Duration(350), settingsPane);
+        
+        settingsButton.setOnAction((ActionEvent evt)->{
+            if(settingsPane.getTranslateX()!=0){
+                openNav.play();
+            }else{
+                closeNav.setToX(-(settingsPane.getWidth()));
+                closeNav.play();
+            }
+        });
     }
+    
+    public void setupSettingsMenu() {
+        ListView<String> labelsList = new ListView<>();
+        ObservableList<String> itemsLabelsList =
+                FXCollections.observableArrayList("test", "testing");
+        
+        ArrayList<String> labelStrings = Database.INSTANCE.getLabels();
+        for(String labelString : labelStrings) {
+            System.out.println(labelString);
+            itemsLabelsList.add(labelString);
+        }
+        
+        labelsList.setItems(itemsLabelsList);
+        labelsList.setVisible(false);
+        labelsList.setPrefWidth(100);
+        GridPane.setColumnIndex(labelsList,1);
+        GridPane.setRowIndex(labelsList,0);
+        settingsPane.getChildren().add(labelsList);
+        
+    }
+    
+    @FXML protected void editCourseLabels() {
+        System.out.println("editing course labels");
+        settingsPane.getChildren().get(1).setVisible(true);
+    }
+    
+    /*
+     * End of settings ---------------------------------------------------------
+     */
     
     
     /*
@@ -466,6 +528,10 @@ public class Controller implements Initializable {
      */
     private void createTable() {
         Database.INSTANCE.createTable();
+    }
+    
+    private void createLabelsTable() {
+        Database.INSTANCE.createLabelsTable();
     }
     
     /**

@@ -20,6 +20,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.text.TextAlignment;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Objects;
 
 import static java.lang.Integer.min;
@@ -33,13 +34,12 @@ class LabelCell extends TextFieldListCell<Task> {
     HBox hbox = new HBox();
     Label text = new Label("");
     Pane pane = new Pane();
-    ObservableList<String> comboList = FXCollections
-            .observableArrayList("0LAUK0", "2WF50", "2WA70", "2IPC0");
-    ComboBox<String> comboBox = new ComboBox<>(comboList);
+    ObservableList<String> comboList;
+    ComboBox<String> comboBox;
     
     // used to set the width of the text as
     // size of the listview - size of the combobox
-    private static double COMBOBOX_DEFAULT_WIDTH = 130;
+    private static final double COMBOBOX_DEFAULT_WIDTH = 130;
     
     /**
      * Constructor.
@@ -48,9 +48,13 @@ class LabelCell extends TextFieldListCell<Task> {
     LabelCell(Controller controller) {
         super();
         this.controller = controller;
+        comboList = FXCollections
+                .observableArrayList("0LAUK0", "2WF50", "2WA70", "2IPC0");
+        comboBox = new ComboBox<>(comboList);
         hbox.getChildren().addAll(text, pane, comboBox);
         HBox.setHgrow(pane, Priority.ALWAYS);
-    
+        
+        
     }
     
     /**

@@ -118,6 +118,44 @@ public enum Database {
         
     }
     
+    public void createLabelsTable() {
+        String sql = "CREATE TABLE IF NOT EXISTS labels(id INT PRIMARY KEY, "
+                + "label CHAR(10))";
+        query(sql);
+    }
+    
+    public ArrayList<String> getLabels() {
+        String sql = "SELECT * FROM labels";
+        ArrayList<String> labels = new ArrayList<>();
+        
+        setConnection();
+        try {
+            statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+            System.out.println("resultsss");
+//            System.out.println(resultSet.next());
+            while(resultSet.next()) {
+                System.out.println("resultset");
+                labels.add(resultSet.getString("label"));
+                System.out.println(resultSet.getString("label"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return labels;
+    }
+    
+    public void insertLabel(int id, String label) {
+        String sql = "INSERT INTO labels(id, label)"
+                + "VALUES (" + id + ", '" + label + "')";
+        query(sql);
+    }
+    
+    public void removeLabel(int id) {
+        String sql = "DELETE FROM labels WHERE id = " + id;
+        query(sql);
+    }
+    
     /*
      * Private methods that are not available to the Controller
      * These are methods needed by the available methods
