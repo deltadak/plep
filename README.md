@@ -43,3 +43,4 @@ Features of plep, listed by the version in which they were added.
 This application works with a database, so you need to add the sqlite library by going to project structure -> libaries -> add new one and then selecting the file located at something like C:\Users\s156757\.IntelliJIdea2016.2\config\jdbc-drivers\sqlite-jdbc-3.8.11.2.jar
 Then you go to view -> tool windows -> database and follow the instructions to add an SQLite data source.
 
+## Javadoc [here](Javadoc/index.html)
