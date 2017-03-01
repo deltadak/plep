@@ -1,6 +1,5 @@
 package deltadak;
 
-import javax.xml.crypto.Data;
 import java.io.File;
 import java.security.CodeSource;
 import java.sql.Connection;
@@ -18,36 +17,17 @@ import java.util.List;
 // incorrect warning about LocalDate may be weakened to ChronoLocalDate (not
 // true)
 @SuppressWarnings("TypeMayBeWeakened")
-public class Database {
+public enum Database {
+    /**
+     * Implicit empty constructor.
+     */
+    INSTANCE;
+    
     
     private Connection connection;
     private Statement statement;
     private String databasePath;
     private int countID = 1;
-    private static Database instance = null;
-    
-    Database() {
-        try {
-            setDefaultDatabasePath();
-            Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection(databasePath);
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    
-    /**
-     * Method to get the instance of the database, makes sure that there is only
-     * one instance (singleton design pattern)
-     * @return instance of Database
-     */
-     static synchronized Database getInstance() {
-                if( instance == null) {
-                        instance = new Database();
-                    }
-                return instance;
-            }
     
     /*
      * Methods that are available to the controller
@@ -79,7 +59,7 @@ public class Database {
                 + dayString + "' ORDER BY orderInDay";
         List<Task> tasks = new ArrayList<>();
         
-//        setConnection();
+        setConnection();
         try {
             statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
@@ -103,6 +83,7 @@ public class Database {
      *         - List<Task> with the new tasks
      */
     public void updateTasksDay(final LocalDate day, final List<Task> tasks) {
+        
         System.out.println("updateTasksDay " + day);
         
         // first remove all the items for this day that are currently in the
@@ -142,12 +123,18 @@ public class Database {
      * These are methods needed by the available methods
      */
     
-//    /**
-//     * create a connection with the database
-//     */
-//    private void setConnection() {
-//
-//    }
+    /**
+     * create a connection with the database
+     */
+    private void setConnection() {
+        try {
+            Class.forName("org.sqlite.JDBC");
+            connection = DriverManager.getConnection(databasePath);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     
     /**
      * inserts a task into the database, given
@@ -161,18 +148,15 @@ public class Database {
      */
     private void insertTask(final LocalDate day,
                             final Task task, final int order) {
-    
         setHighestID(); // sets countID
-    
         
-    
-                String dayString = day.toString();
-    
-                String sql = "INSERT INTO tasks(id, day, task, label, color, orderInDay) "
-                        + "VALUES (" + countID + ", '" + dayString + "', '" + task.getText()
-                        + "','" + task.getLabel() + "','" + task.getColor() + "'," + order + ")";
-                countID++;
-                query(sql);
+        String dayString = day.toString();
+        
+        String sql = "INSERT INTO tasks(id, day, task, label, color, orderInDay) "
+                + "VALUES (" + countID + ", '" + dayString + "', '" + task.getText()
+                + "','" + task.getLabel() + "','" + task.getColor() + "'," + order + ")";
+        countID++;
+        query(sql);
     }
     
     /**
@@ -182,7 +166,7 @@ public class Database {
     private void setHighestID() {
         String sql = "SELECT * FROM tasks ORDER BY id DESC";
         
-//        setConnection();
+        setConnection();
         try {
             statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
@@ -194,8 +178,8 @@ public class Database {
                 // if the database is empty we set the id to 1
                 countID = 1;
             }
-//            statement.close();
-//            connection.close();
+            statement.close();
+            connection.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -254,61 +238,61 @@ public class Database {
      *         - string with the sql query
      */
     private void query(final String sql) {
-//        setConnection();
+        setConnection();
         try {
             statement = connection.createStatement();
             statement.executeUpdate(sql);
             statement.close();
-//            connection.close();
+            connection.close();
             
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
     
-//    /**
-//     * used to change the directory of the database
-//     * not used yet because we only set default database
-//     */
-//    private void changeDirectory() {
-//        Dialog chooseDialog = new Dialog();
-//        chooseDialog.setHeight(100);
-//        chooseDialog.setWidth(300);
-//        //            chooseDialog.setResizable(true);
-//        chooseDialog.setTitle("Decisions!");
-//
-//        GridPane grid = new GridPane();
-//        grid.setPrefHeight(chooseDialog.getHeight());
-//        grid.setPrefWidth(chooseDialog.getWidth());
-//
-//        Button browseButton = new Button("Browse");
-//        Text text = new Text("Choose database directory...");
-//
-//        ButtonType browseButtonType = new ButtonType("OK",
-//                                                     ButtonBar.ButtonData.OK_DONE);
-//        chooseDialog.getDialogPane().getButtonTypes().add(browseButtonType);
-//        chooseDialog.getDialogPane().lookupButton(browseButtonType).setDisable(true);
-//
-//        browseButton.setOnMouseClicked(event -> {
-//
-//            System.out.println("button clicked");
-//            DirectoryChooser directoryChooser = new DirectoryChooser();
-//            directoryChooser.setTitle("Choose Directory");
-//            File directory = directoryChooser.showDialog(new Stage());
-//            String databaseDirectory = directory.getAbsolutePath();
-//            text.setText(databaseDirectory);
-//            databasePath = "jdbc:sqlite:";
-//            databasePath += databaseDirectory + "\\plep.db";
-//            System.out.println(databasePath);
-//            chooseDialog.getDialogPane().lookupButton(browseButtonType).setDisable(false);
-//
-//        });
-//
-//
-//        grid.add(browseButton,0,1);
-//        grid.add(text,0,0);
-//        chooseDialog.getDialogPane().setContent(grid);
-//
-//        chooseDialog.showAndWait();
-//    }
+    //    /**
+    //     * used to change the directory of the database
+    //     * not used yet because we only set default database
+    //     */
+    //    private void changeDirectory() {
+    //        Dialog chooseDialog = new Dialog();
+    //        chooseDialog.setHeight(100);
+    //        chooseDialog.setWidth(300);
+    //        //            chooseDialog.setResizable(true);
+    //        chooseDialog.setTitle("Decisions!");
+    //
+    //        GridPane grid = new GridPane();
+    //        grid.setPrefHeight(chooseDialog.getHeight());
+    //        grid.setPrefWidth(chooseDialog.getWidth());
+    //
+    //        Button browseButton = new Button("Browse");
+    //        Text text = new Text("Choose database directory...");
+    //
+    //        ButtonType browseButtonType = new ButtonType("OK",
+    //                                                     ButtonBar.ButtonData.OK_DONE);
+    //        chooseDialog.getDialogPane().getButtonTypes().add(browseButtonType);
+    //        chooseDialog.getDialogPane().lookupButton(browseButtonType).setDisable(true);
+    //
+    //        browseButton.setOnMouseClicked(event -> {
+    //
+    //            System.out.println("button clicked");
+    //            DirectoryChooser directoryChooser = new DirectoryChooser();
+    //            directoryChooser.setTitle("Choose Directory");
+    //            File directory = directoryChooser.showDialog(new Stage());
+    //            String databaseDirectory = directory.getAbsolutePath();
+    //            text.setText(databaseDirectory);
+    //            databasePath = "jdbc:sqlite:";
+    //            databasePath += databaseDirectory + "\\plep.db";
+    //            System.out.println(databasePath);
+    //            chooseDialog.getDialogPane().lookupButton(browseButtonType).setDisable(false);
+    //
+    //        });
+    //
+    //
+    //        grid.add(browseButton,0,1);
+    //        grid.add(text,0,0);
+    //        chooseDialog.getDialogPane().setContent(grid);
+    //
+    //        chooseDialog.showAndWait();
+    //    }
 }

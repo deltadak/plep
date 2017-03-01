@@ -2,6 +2,7 @@ package deltadak;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Service;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
@@ -459,41 +460,20 @@ public class Controller implements Initializable {
      */
     
     private void setDefaultDatabasePath() {
-        Database.getInstance().setDefaultDatabasePath();
+        Database.INSTANCE.setDefaultDatabasePath();
     }
     
     private void createTable() {
-        Database.getInstance().createTable();
+        Database.INSTANCE.createTable();
     }
     
     private List<Task> getTasksDay(final LocalDate localDate) {
-        return Database.getInstance().getTasksDay(localDate);
+        return Database.INSTANCE.getTasksDay(localDate);
     }
     
     void updateTasksDay(final LocalDate day,
                                 final List<Task> tasks) {
-        final Service service = new Service() {
-            @Override
-            protected javafx.concurrent.Task<String> createTask() {
-                return new javafx.concurrent.Task<String>() {
-                    @Override
-                    protected String call() throws Exception {
-                        System.out.println("running");
-                        Database.getInstance().updateTasksDay(day, tasks);
-                        return "bla";
-                    }
-                };
-    
-            }
-        };
-    
-        progressIndicator.visibleProperty().bind(service.runningProperty());
-    
-    
-        service.setOnSucceeded(event -> System.out.println("done"));
-        
-        service.restart();
-    
+        Database.INSTANCE.updateTasksDay(day, tasks);
     }
     
     /*
