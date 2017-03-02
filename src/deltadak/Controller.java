@@ -11,6 +11,7 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
+import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.Screen;
@@ -18,6 +19,7 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.Duration;
 
+import javax.xml.crypto.Data;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
@@ -34,8 +36,13 @@ public class Controller implements Initializable {
     
     // main element of the UI is declared in interface.fxml
     @FXML GridPane gridPane;
-    @FXML GridPane settingsPane;
-    @FXML Button settingsButton;
+    @FXML AnchorPane settingsPane;
+        @FXML GridPane editLabelsPane;
+            ListView<String> labelsList;
+            @FXML Button settingsButton;
+            @FXML TextField courseToAdd;
+            @FXML Button addLabelButton;
+            @FXML Button removeLabelButton;
     // used to transfer tasks with drag and drop
     DataFormat dataFormat = new DataFormat("com.deltadak.Task");
     
@@ -43,7 +50,10 @@ public class Controller implements Initializable {
     private static final int NUMBER_OF_DAYS = 9;
     private static final int MAX_COLUMNS = 3;
     private static final int MAX_LIST_LENGTH = 7;
+    
     private static final int SETTINGS_WIDTH = 350;
+    private static final int LISTVIEW_ROW_HEIGHT = 29;
+    private static final int MAX_NUMBER_LABELS = 5;
     
     private LocalDate focusDay;
     private LocalDate today;
@@ -482,28 +492,58 @@ public class Controller implements Initializable {
     }
     
     public void setupSettingsMenu() {
-        ListView<String> labelsList = new ListView<>();
+        setupEditLabelsListView();
+    }
+    
+    private void setupEditLabelsListView() {
+        labelsList = new ListView<>();
         ObservableList<String> itemsLabelsList =
-                FXCollections.observableArrayList("test", "testing");
-        
-        ArrayList<String> labelStrings = Database.INSTANCE.getLabels();
-        for(String labelString : labelStrings) {
-            System.out.println(labelString);
-            itemsLabelsList.add(labelString);
+                FXCollections.observableArrayList("","","","","");
+    
+        ArrayList<String> labelStrings = getLabels();
+        for (int i = 0; i < labelStrings.size(); i++) {
+            itemsLabelsList.set(i, labelStrings.get(i));
         }
-        
+//        itemsLabelsList.addAll(labelStrings);
+    
+        labelsList.setCellFactory(TextFieldListCell.forListView());
+    
+        labelsList.setEditable(true);
+        labelsList.setId("labelsListView");
         labelsList.setItems(itemsLabelsList);
         labelsList.setVisible(false);
         labelsList.setPrefWidth(100);
-        GridPane.setColumnIndex(labelsList,1);
-        GridPane.setRowIndex(labelsList,0);
-        settingsPane.getChildren().add(labelsList);
-        
+        labelsList.setPrefHeight(
+                LISTVIEW_ROW_HEIGHT * MAX_NUMBER_LABELS + 2);
+        GridPane.setColumnIndex(labelsList, 1);
+        GridPane.setRowIndex(labelsList, 0);
+        GridPane.setRowSpan(labelsList, 2);
+    
+        labelsList.setOnEditCommit(event -> {
+            labelsList.getItems()
+                    .set(event.getIndex(), event.getNewValue());
+            updateLabel(event.getIndex(), event.getNewValue());
+        });
+    
+        labelsList.setOnEditCancel(event -> System.out.println("edit cancelled"));
+    
+        editLabelsPane.getChildren().add(labelsList);
     }
     
     @FXML protected void editCourseLabels() {
-        System.out.println("editing course labels");
-        settingsPane.getChildren().get(1).setVisible(true);
+        toggleVisibilityFXMLObject("labelsListView");
+        toggleVisibilityFXMLObject("removeLabelButton");
+    }
+    
+    @FXML protected void removeLabel() {
+        int selectedIndex = labelsList.getSelectionModel().getSelectedIndex();
+        labelsList.getItems().remove(selectedIndex);
+        updateLabel(selectedIndex, "");
+    }
+    
+    private void toggleVisibilityFXMLObject(String id) {
+        Boolean isVisible = editLabelsPane.lookup("#" + id).isVisible();
+        editLabelsPane.lookup("#" + id).setVisible(!isVisible);
     }
     
     /*
@@ -551,6 +591,17 @@ public class Controller implements Initializable {
     void updateTasksDay(final LocalDate day,
                                 final List<Task> tasks) {
         Database.INSTANCE.updateTasksDay(day, tasks);
+    }
+    
+    /**
+     * See {@link Database#getLabels()}.
+     */
+    ArrayList<String> getLabels() {
+        return Database.INSTANCE.getLabels();
+    }
+    
+    void updateLabel(int id, String label) {
+        Database.INSTANCE.updateLabel(id, label);
     }
     
     /*

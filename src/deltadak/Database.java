@@ -96,7 +96,7 @@ public enum Database {
             insertTask(day, tasks.get(i), i);
         }
         
-        deleteEmptyTasks();
+        deleteEmptyRows("tasks", "task");
     }
     
     /**
@@ -125,7 +125,7 @@ public enum Database {
     }
     
     public ArrayList<String> getLabels() {
-        String sql = "SELECT * FROM labels";
+        String sql = "SELECT * FROM labels ORDER BY id";
         ArrayList<String> labels = new ArrayList<>();
         
         setConnection();
@@ -145,13 +145,19 @@ public enum Database {
         return labels;
     }
     
-    public void insertLabel(int id, String label) {
+    public void updateLabel(int id, String label) {
+        removeLabel(id);
+        insertLabel(id, label);
+        deleteEmptyRows("labels", "label");
+    }
+    
+    private void insertLabel(int id, String label) {
         String sql = "INSERT INTO labels(id, label)"
                 + "VALUES (" + id + ", '" + label + "')";
         query(sql);
     }
     
-    public void removeLabel(int id) {
+    private void removeLabel(int id) {
         String sql = "DELETE FROM labels WHERE id = " + id;
         query(sql);
     }
@@ -238,8 +244,9 @@ public enum Database {
      * deletes all the tasks from the database where field task is empty
      * used when updating a day of which an item has been removed (by dragging)
      */
-    private void deleteEmptyTasks() {
-        String sql = "DELETE FROM tasks WHERE task = '' ";
+    private void deleteEmptyRows(String tableName, String conditionColumn) {
+        String sql = "DELETE FROM " + tableName
+                + " WHERE "+ conditionColumn + " = '' ";
         query(sql);
     }
     

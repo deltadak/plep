@@ -6,6 +6,7 @@
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1"
             xmlns="http://javafx.com/javafx/2.2"
             fx:controller="deltadak.Controller">
@@ -37,16 +38,27 @@
               vgap="10.0">
     </GridPane>
 
-    <GridPane fx:id="settingsPane"
-              hgap="10.0"
-              vgap="10.0"
+    <AnchorPane fx:id="settingsPane"
                 style="-fx-background-color: lightskyblue"
                 AnchorPane.topAnchor="44.0"
                 AnchorPane.bottomAnchor="0.0">
-        <Button text="Edit course labels"
-                onAction="#editCourseLabels"
-                GridPane.columnIndex="0"
-                GridPane.rowIndex="0"/>
-    </GridPane>
+
+        <GridPane fx:id="editLabelsPane"
+                  AnchorPane.topAnchor="10.0"
+                  AnchorPane.leftAnchor="10.0"
+                  hgap="10"
+                  vgap="10">
+            <Button text="Edit course labels"
+                    onAction="#editCourseLabels"
+                    GridPane.columnIndex="0"
+                    GridPane.rowIndex="0"/>
+            <Button fx:id="removeLabelButton"
+                    text="remove"
+                    GridPane.rowIndex="1"
+                    GridPane.columnIndex="0"
+                    onAction="#removeLabel"
+                    visible="false"/>
+        </GridPane>
+    </AnchorPane>
 </AnchorPane>
 
