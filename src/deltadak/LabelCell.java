@@ -39,7 +39,7 @@ class LabelCell extends TextFieldListCell<Task> {
     
     // used to set the width of the text as
     // size of the listview - size of the combobox
-    private static double COMBOBOX_DEFAULT_WIDTH = 130;
+    private static final double COMBOBOX_DEFAULT_WIDTH = 130;
     
     /**
      * Constructor.
@@ -262,18 +262,24 @@ class LabelCell extends TextFieldListCell<Task> {
                 // too much)
                 // or such that the index didn't change, like to
                 // another day
+                
+                // If item was moved to an other day or down in same list
                 if (list.getItems().get(getIndex()).getText()
                         .equals(newTask.getText())) {
                     list.getItems().set(getIndex(), emptyTask);
                     setGraphic(null);
-                    // update in database
-                    controller.updateTasksDay(day, controller
-                            .convertObservableToArrayList(
-                            list.getItems()));
-                    // deleting blank row from database updating creates
-                } else {
+                    
+                    // deleting blank row from database which updating creates
+                } else { // item was moved up in same list
+                    int index = getIndex() + 1;
                     list.getItems().set(getIndex() + 1, emptyTask);
                 }
+    
+                // update in database
+                controller.updateTasksDay(day, controller
+                        .convertObservableToArrayList(
+                                list.getItems()));
+                
                 //prevent an empty list from refusing to receive
                 // items, as it wouldn't contain any listcell
                 if (list.getItems().size() < 1) {
