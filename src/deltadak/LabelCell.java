@@ -49,7 +49,7 @@ class LabelCell extends TextFieldListCell<Task> {
         super();
         this.controller = controller;
         comboList = FXCollections
-                .observableArrayList("0LAUK0", "2WF50", "2WA70", "2IPC0");
+                .observableArrayList(Database.INSTANCE.getLabels());
         comboBox = new ComboBox<>(comboList);
         hbox.getChildren().addAll(text, pane, comboBox);
         HBox.setHgrow(pane, Priority.ALWAYS);

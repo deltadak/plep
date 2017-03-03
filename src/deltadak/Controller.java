@@ -512,9 +512,9 @@ public class Controller implements Initializable {
         labelsList.setId("labelsListView");
         labelsList.setItems(itemsLabelsList);
         labelsList.setVisible(false);
-        labelsList.setPrefWidth(100);
+        labelsList.setPrefWidth(120);
         labelsList.setPrefHeight(
-                LISTVIEW_ROW_HEIGHT * MAX_NUMBER_LABELS + 2);
+                LISTVIEW_ROW_HEIGHT * MAX_NUMBER_LABELS + 18);
         GridPane.setColumnIndex(labelsList, 1);
         GridPane.setRowIndex(labelsList, 0);
         GridPane.setRowSpan(labelsList, 2);
@@ -523,6 +523,7 @@ public class Controller implements Initializable {
             labelsList.getItems()
                     .set(event.getIndex(), event.getNewValue());
             updateLabel(event.getIndex(), event.getNewValue());
+            setupGridPane(focusDay);
         });
     
         labelsList.setOnEditCancel(event -> System.out.println("edit cancelled"));
@@ -537,8 +538,9 @@ public class Controller implements Initializable {
     
     @FXML protected void removeLabel() {
         int selectedIndex = labelsList.getSelectionModel().getSelectedIndex();
-        labelsList.getItems().remove(selectedIndex);
+        labelsList.getItems().set(selectedIndex,"");
         updateLabel(selectedIndex, "");
+        setupGridPane(focusDay);
     }
     
     private void toggleVisibilityFXMLObject(String id) {
