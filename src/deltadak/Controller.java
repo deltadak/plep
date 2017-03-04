@@ -2,10 +2,8 @@ package deltadak;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Service;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -16,7 +14,6 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
-import javax.xml.crypto.Data;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
@@ -35,7 +32,7 @@ public class Controller implements Initializable {
     @FXML GridPane gridPane;
     @FXML ProgressIndicator progressIndicator;
     // used to transfer tasks with drag and drop
-    DataFormat dataFormat = new DataFormat("com.deltadak.Task");
+    DataFormat dataFormat = new DataFormat("com.deltadak.HomeworkTask");
     
     // layout globals
     private static final int NUMBER_OF_DAYS = 9;
@@ -77,12 +74,12 @@ public class Controller implements Initializable {
             // lambda expression (as it is not final)
             LocalDate localDate = focusDate.plusDays(index - 1);
             
-            ListView<Task> list = new ListView<>();
+            ListView<HomeworkTask> list = new ListView<>();
             VBox vbox = setTitle(list, localDate);
             addVBoxToGridPane(vbox, index);
             
-            List<Task> tasks = getTasksDay(localDate);
-            list.setItems(convertArrayToObservableList(tasks));
+            List<HomeworkTask> homeworkTasks = getTasksDay(localDate);
+            list.setItems(convertArrayToObservableList(homeworkTasks));
             list.setEditable(true);
             list.setPrefWidth(getListViewWidth());
             list.setPrefHeight(getListViewHeight());
@@ -129,7 +126,7 @@ public class Controller implements Initializable {
      *
      * @return VBox with listview and title
      */
-    private VBox setTitle(final ListView<Task> list,
+    private VBox setTitle(final ListView<HomeworkTask> list,
                           final LocalDate localDate) {
         // vbox will contain a title above a list of tasks
         VBox vbox = new VBox();
@@ -161,7 +158,7 @@ public class Controller implements Initializable {
      * @param list ListView to add the Listener to
      * @param localDate so we know for what day to update the database
      */
-    private void addDeleteKeyListener(final ListView<Task> list,
+    private void addDeleteKeyListener(final ListView<HomeworkTask> list,
                                       final LocalDate localDate) {
         //add option to delete a task
         list.setOnKeyPressed(event -> {
@@ -183,8 +180,8 @@ public class Controller implements Initializable {
      *
      * @return converted ObservableList
      */
-    List<Task> convertObservableToArrayList(
-            final ObservableList<Task> list) {
+    List<HomeworkTask> convertObservableToArrayList(
+            final ObservableList<HomeworkTask> list) {
         return new ArrayList<>(list);
     }
     
@@ -196,8 +193,8 @@ public class Controller implements Initializable {
      *
      * @return ObservableList
      */
-    private ObservableList<Task> convertArrayToObservableList(
-            final List<Task> list) {
+    private ObservableList<HomeworkTask> convertArrayToObservableList(
+            final List<HomeworkTask> list) {
         return FXCollections.observableList(list);
     }
     
@@ -229,13 +226,13 @@ public class Controller implements Initializable {
      * @param list a ListView
      * @param day and a specific date
      */
-    private void setupLabelCells(final ListView<Task> list, final LocalDate day) {
+    private void setupLabelCells(final ListView<HomeworkTask> list, final LocalDate day) {
         //no idea why the callback needs a ListCell and not a TextFieldListCell
         //anyway, editing is enabled by using TextFieldListCell instead of
         // ListCell
-        list.setCellFactory(new Callback<ListView<Task>, ListCell<Task>>() {
+        list.setCellFactory(new Callback<ListView<HomeworkTask>, ListCell<HomeworkTask>>() {
             @Override
-            public LabelCell call(final ListView<Task> param) {
+            public LabelCell call(final ListView<HomeworkTask> param) {
                 LabelCell labelCell = new LabelCell(Controller.this);
                 labelCell.setup(list, day);
                 return labelCell;
@@ -247,8 +244,8 @@ public class Controller implements Initializable {
     /**
      * @return all ListViews in the gridPane
      */
-    private List<ListView<Task>> getAllListViews() {
-        List<ListView<Task>> listViews = new ArrayList<>();
+    private List<ListView<HomeworkTask>> getAllListViews() {
+        List<ListView<HomeworkTask>> listViews = new ArrayList<>();
         for (Node node : gridPane.getChildren()) {
             //gridpane contains vbox contains label, pane and listview
             if (node instanceof VBox) {
@@ -268,14 +265,14 @@ public class Controller implements Initializable {
      */
     void refreshAllDays() {
         // find all listviews
-        List<ListView<Task>> listViews = getAllListViews();
+        List<ListView<HomeworkTask>> listViews = getAllListViews();
         
         for (int i = 0; i < NUMBER_OF_DAYS; i++) {
-            ListView<Task> list = listViews.get(i);
+            ListView<HomeworkTask> list = listViews.get(i);
             // refresh the listview from database
             LocalDate localDate = focusDay.plusDays(i - 1);
-            List<Task> tasks = getTasksDay(localDate);
-            list.setItems(convertArrayToObservableList(tasks));
+            List<HomeworkTask> homeworkTasks = getTasksDay(localDate);
+            list.setItems(convertArrayToObservableList(homeworkTasks));
             cleanUp(list);
         }
     }
@@ -298,8 +295,8 @@ public class Controller implements Initializable {
             repeatMenuItem.setOnAction(event12 -> {
                 int repeatNumber = Integer.valueOf(repeatMenuItem.getText());
                 System.out.println(repeatNumber + " clicked");
-                Task taskToRepeat = labelCell.getItem();
-                repeatTask(repeatNumber, taskToRepeat, day);
+                HomeworkTask homeworkTaskToRepeat = labelCell.getItem();
+                repeatTask(repeatNumber, homeworkTaskToRepeat, day);
             });
         }
         return repeatTasksMenu;
@@ -314,7 +311,7 @@ public class Controller implements Initializable {
      */
     void createContextMenu(final MouseEvent event,
                                    final LabelCell labelCell,
-                                   final ListView<Task> list,
+                                   final ListView<HomeworkTask> list,
                                    final LocalDate day) {
         
         ContextMenu contextMenu = new ContextMenu();
@@ -365,19 +362,19 @@ public class Controller implements Initializable {
     }
     
     /**
-     * repeats a task for a number of weeks
+     * repeats a homeworkTask for a number of weeks
      *
-     * @param repeatNumber how many times to repeat a task
-     * @param task the task to repeat
+     * @param repeatNumber how many times to repeat a homeworkTask
+     * @param homeworkTask the homeworkTask to repeat
      * @param day the current day is needed to update the days on which the
-     *            task will be repeated
+     *            homeworkTask will be repeated
      */
-    private void repeatTask(final int repeatNumber, final Task task, LocalDate day) {
+    private void repeatTask(final int repeatNumber, final HomeworkTask homeworkTask, LocalDate day) {
         for (int i = 0; i < repeatNumber; i++) {
             day = day.plusWeeks(1);
-            List<Task> tasks = getTasksDay(day);
-            tasks.add(task);
-            updateTasksDay(day, tasks);
+            List<HomeworkTask> homeworkTasks = getTasksDay(day);
+            homeworkTasks.add(homeworkTask);
+            updateTasksDay(day, homeworkTasks);
         }
         refreshAllDays();
     }
@@ -388,7 +385,7 @@ public class Controller implements Initializable {
      * @param list
      *         to clean up
      */
-    void cleanUp(final ListView<Task> list) {
+    void cleanUp(final ListView<HomeworkTask> list) {
         int i;
         //first remove empty items
         for (i = 0; i < list.getItems().size(); i++) {
@@ -399,7 +396,7 @@ public class Controller implements Initializable {
         //fill up if necessary
         for (i = 0; i < MAX_LIST_LENGTH; i++) {
             if (i >= list.getItems().size()) {
-                list.getItems().add(i, new Task("", "", "White"));
+                list.getItems().add(i, new HomeworkTask("", "", "White"));
             }
         }
         
@@ -480,18 +477,18 @@ public class Controller implements Initializable {
      * @param localDate Same.
      * @return Same.
      */
-    private List<Task> getTasksDay(final LocalDate localDate) {
+    private List<HomeworkTask> getTasksDay(final LocalDate localDate) {
         return Database.INSTANCE.getTasksDay(localDate);
     }
     
     /**
      * See {@link Database#updateTasksDay(LocalDate, List)}
      * @param day Same.
-     * @param tasks Same.
+     * @param homeworkTasks Same.
      */
     void updateTasksDay(final LocalDate day,
-                                final List<Task> tasks) {
-        Database.INSTANCE.updateTasksDay(day, tasks);
+                                final List<HomeworkTask> homeworkTasks) {
+        Database.INSTANCE.updateTasksDay(day, homeworkTasks);
     }
     
     /*

@@ -25,7 +25,7 @@ out/*
 
 # User-specific stuff:
 .idea/workspace.xml
-.idea/tasks.xml
+.idea/homeworkTasks.xml
 
 # Sensitive or high-churn files:
 .idea/dataSources.ids

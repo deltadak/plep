@@ -50,28 +50,28 @@ public enum Database {
      * @param day
      *         - the date for which to get all the tasks
      *
-     * @return List<Task>
+     * @return List<HomeworkTask>
      */
-    public List<Task> getTasksDay(final LocalDate day) {
+    public List<HomeworkTask> getTasksDay(final LocalDate day) {
         
         String dayString = day.toString();
         String sql = "SELECT task, label, color " + "FROM tasks " + "WHERE day = '"
                 + dayString + "' ORDER BY orderInDay";
-        List<Task> tasks = new ArrayList<>();
+        List<HomeworkTask> homeworkTasks = new ArrayList<>();
         
         setConnection();
         try {
             statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
             while (resultSet.next()) {
-                tasks.add(new Task(resultSet.getString("task"),
-                                   resultSet.getString("label"),
-                                   resultSet.getString("color")));
+                homeworkTasks.add(new HomeworkTask(resultSet.getString("task"),
+                                                   resultSet.getString("label"),
+                                                   resultSet.getString("color")));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return tasks;
+        return homeworkTasks;
     }
     
     /**
@@ -79,21 +79,19 @@ public enum Database {
      *
      * @param day
      *         - date for which to update
-     * @param tasks
-     *         - List<Task> with the new tasks
+     * @param homeworkTasks
+     *         - List<HomeworkTask> with the new homeworkTasks
      */
-    public void updateTasksDay(final LocalDate day, final List<Task> tasks) {
-        
-        System.out.println("updateTasksDay " + day);
+    public void updateTasksDay(final LocalDate day, final List<HomeworkTask> homeworkTasks) {
         
         // first remove all the items for this day that are currently in the
         // database before we add the new ones,
-        // so we don't get double tasks
+        // so we don't get double homeworkTasks
         deleteTasksDay(day);
         
-        // then add the new tasks
-        for (int i = 0; i < tasks.size(); i++) {
-            insertTask(day, tasks.get(i), i);
+        // then add the new homeworkTasks
+        for (int i = 0; i < homeworkTasks.size(); i++) {
+            insertTask(day, homeworkTasks.get(i), i);
         }
         
         deleteEmptyTasks();
@@ -137,24 +135,25 @@ public enum Database {
     }
     
     /**
-     * inserts a task into the database, given
+     * inserts a homeworkTask into the database, given
      *
      * @param day
      *         - the date as a LocalDate
-     * @param task
-     *         - the task to be inserted
+     * @param homeworkTask
+     *         - the homeworkTask to be inserted
      * @param order
-     *         - this is the i-th task on this day, as an int
+     *         - this is the i-th homeworkTask on this day, as an int
      */
     private void insertTask(final LocalDate day,
-                            final Task task, final int order) {
+                            final HomeworkTask homeworkTask, final int order) {
         setHighestID(); // sets countID
         
         String dayString = day.toString();
         
         String sql = "INSERT INTO tasks(id, day, task, label, color, orderInDay) "
-                + "VALUES (" + countID + ", '" + dayString + "', '" + task.getText()
-                + "','" + task.getLabel() + "','" + task.getColor() + "'," + order + ")";
+                + "VALUES (" + countID + ", '" + dayString + "', '" + homeworkTask
+                .getText()
+                + "','" + homeworkTask.getLabel() + "','" + homeworkTask.getColor() + "'," + order + ")";
         countID++;
         query(sql);
     }
