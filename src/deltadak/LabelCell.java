@@ -1,5 +1,6 @@
 package deltadak;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -16,6 +17,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
+import javafx.scene.text.TextAlignment;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -35,6 +37,10 @@ class LabelCell extends TextFieldListCell<Task> {
             .observableArrayList("0LAUK0", "2WF50", "2WA70", "2IPC0");
     ComboBox<String> comboBox = new ComboBox<>(comboList);
     
+    // used to set the width of the text as
+    // size of the listview - size of the combobox
+    private static final double COMBOBOX_DEFAULT_WIDTH = 130;
+    
     /**
      * Constructor.
      * @param controller a private controller object to access some methods.
@@ -44,6 +50,7 @@ class LabelCell extends TextFieldListCell<Task> {
         this.controller = controller;
         hbox.getChildren().addAll(text, pane, comboBox);
         HBox.setHgrow(pane, Priority.ALWAYS);
+    
     }
     
     /**
@@ -54,7 +61,7 @@ class LabelCell extends TextFieldListCell<Task> {
     public void setup(ListView<Task> list, LocalDate day) {
         //update text on changes
         setConverter(new TaskConverter(this));
-    
+        
         // update label on changes
         comboBox.valueProperty().addListener(
                 (observable, oldValue, newValue) -> this.getItem()
@@ -88,6 +95,10 @@ class LabelCell extends TextFieldListCell<Task> {
         if (empty) {
             setGraphic(null);
         } else {
+            text.prefWidthProperty().bind(
+                    getListView().widthProperty()
+                            .subtract(COMBOBOX_DEFAULT_WIDTH));
+            text.setWrapText(true);
             text.setText(
                     (task.getText() != null) ? task.getText() : "<null>");
             comboBox.setValue(
@@ -251,18 +262,24 @@ class LabelCell extends TextFieldListCell<Task> {
                 // too much)
                 // or such that the index didn't change, like to
                 // another day
+                
+                // If item was moved to an other day or down in same list
                 if (list.getItems().get(getIndex()).getText()
                         .equals(newTask.getText())) {
                     list.getItems().set(getIndex(), emptyTask);
                     setGraphic(null);
-                    // update in database
-                    controller.updateTasksDay(day, controller
-                            .convertObservableToArrayList(
-                            list.getItems()));
-                    // deleting blank row from database updating creates
-                } else {
+                    
+                    // deleting blank row from database which updating creates
+                } else { // item was moved up in same list
+                    int index = getIndex() + 1;
                     list.getItems().set(getIndex() + 1, emptyTask);
                 }
+    
+                // update in database
+                controller.updateTasksDay(day, controller
+                        .convertObservableToArrayList(
+                                list.getItems()));
+                
                 //prevent an empty list from refusing to receive
                 // items, as it wouldn't contain any listcell
                 if (list.getItems().size() < 1) {

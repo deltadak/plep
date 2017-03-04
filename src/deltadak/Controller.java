@@ -8,7 +8,6 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.input.*;
@@ -105,12 +104,15 @@ public class Controller implements Initializable {
     public void setDayChangeListener(Stage primaryStage) {
         // debug line, also comment out the line to reset 'today'
 //        today = LocalDate.now().plusDays(-1);
+//        focusDay.plusDays(-1);
         today = LocalDate.now();
         primaryStage.focusedProperty().addListener((observable, wasFocused, isFocused) -> {
             if (isFocused) { // if becomes focused
                 if (!today.equals(LocalDate.now())) {
                     // then reset view
                     today = LocalDate.now();
+                    // Also update focusDay, before refreshing.
+                    focusDay = today;
                     setupGridPane(today);
                 }
             }
@@ -459,18 +461,34 @@ public class Controller implements Initializable {
      * For corresponding javadoc see Database.
      */
     
+    /**
+     * See {@link Database#setDefaultDatabasePath()}.
+     */
     private void setDefaultDatabasePath() {
         Database.INSTANCE.setDefaultDatabasePath();
     }
     
+    /**
+     * See {@link Database#createTable()}.
+     */
     private void createTable() {
         Database.INSTANCE.createTable();
     }
     
+    /**
+     * See {@link Database#getTasksDay(LocalDate)}.
+     * @param localDate Same.
+     * @return Same.
+     */
     private List<Task> getTasksDay(final LocalDate localDate) {
         return Database.INSTANCE.getTasksDay(localDate);
     }
     
+    /**
+     * See {@link Database#updateTasksDay(LocalDate, List)}
+     * @param day Same.
+     * @param tasks Same.
+     */
     void updateTasksDay(final LocalDate day,
                                 final List<Task> tasks) {
         Database.INSTANCE.updateTasksDay(day, tasks);
