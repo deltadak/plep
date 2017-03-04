@@ -38,11 +38,10 @@ public class Controller implements Initializable {
     @FXML GridPane gridPane;
     @FXML AnchorPane settingsPane;
         @FXML GridPane editLabelsPane;
-            ListView<String> labelsList;
+            private ListView<String> labelsList;
             @FXML Button settingsButton;
-            @FXML TextField courseToAdd;
-            @FXML Button addLabelButton;
             @FXML Button removeLabelButton;
+    
     // used to transfer tasks with drag and drop
     DataFormat dataFormat = new DataFormat("com.deltadak.Task");
     
@@ -51,9 +50,12 @@ public class Controller implements Initializable {
     private static final int MAX_COLUMNS = 3;
     private static final int MAX_LIST_LENGTH = 7;
     
+    // layout globals for the settings pane
     private static final int SETTINGS_WIDTH = 350;
     private static final int LISTVIEW_ROW_HEIGHT = 29;
     private static final int MAX_NUMBER_LABELS = 5;
+    // the duration of the animation when opening and closing the settings pane
+    private static final int TOGGLE_SETTINGS_DURATION = 350;
     
     private LocalDate focusDay;
     private LocalDate today;
@@ -115,7 +117,7 @@ public class Controller implements Initializable {
      * Sets a listener which checks if it is a new day,
      * when the window becomes focused.
      *
-     * @param primaryStage Stage to set listener on
+     * @param primaryStage Stage to set listener on.
      */
     public void setDayChangeListener(Stage primaryStage) {
         // debug line, also comment out the line to reset 'today'
@@ -472,14 +474,26 @@ public class Controller implements Initializable {
      * Settings ----------------------------------------------------------------
      */
     
+    /**
+     * Sets up the animations for the settings pane, so we can open and close
+     * the settings menu.
+     */
     private void prepareToggleSettings() {
         settingsPane.setPrefWidth(SETTINGS_WIDTH);
+        // set the left x coordinate of the settings pane at -SETTINGS_WIDTH
+        // on initialization, so the entire pane is outside of the window
         settingsPane.setTranslateX(-SETTINGS_WIDTH);
+        
+        // setup the animation to open the settings pane
         TranslateTransition openNav =
-                new TranslateTransition(new Duration(350), settingsPane);
+                new TranslateTransition(new Duration(TOGGLE_SETTINGS_DURATION),
+                                        settingsPane);
         openNav.setToX(0);
+        
+        // setup the animation to close the settings pane
         TranslateTransition closeNav =
-                new TranslateTransition(new Duration(350), settingsPane);
+                new TranslateTransition(new Duration(TOGGLE_SETTINGS_DURATION),
+                                        settingsPane);
         
         settingsButton.setOnAction((ActionEvent evt)->{
             if(settingsPane.getTranslateX()!=0){
@@ -491,34 +505,50 @@ public class Controller implements Initializable {
         });
     }
     
+    /**
+     * Sets up the content of the settings menu.
+     */
     public void setupSettingsMenu() {
         setupEditLabelsListView();
     }
     
+    /**
+     * Sets up the editable ListView to edit the labels/items we want to see
+     * in the comboboxes on the main screen.
+     */
     private void setupEditLabelsListView() {
         labelsList = new ListView<>();
+        // first set up the listview with empty labels
         ObservableList<String> itemsLabelsList =
                 FXCollections.observableArrayList("","","","","");
     
+        // get the labels from the database and store them in the listview
         ArrayList<String> labelStrings = getLabels();
         for (int i = 0; i < labelStrings.size(); i++) {
             itemsLabelsList.set(i, labelStrings.get(i));
         }
-//        itemsLabelsList.addAll(labelStrings);
     
+        // set a CellFactory on the listview to be able make the cells editable
+        // using setEditable(true) isn't enough
         labelsList.setCellFactory(TextFieldListCell.forListView());
-    
         labelsList.setEditable(true);
+        
+        // give the listview an id (FXML) so we can look it up by its id, and
+        // toggle the visibility
         labelsList.setId("labelsListView");
         labelsList.setItems(itemsLabelsList);
         labelsList.setVisible(false);
         labelsList.setPrefWidth(120);
-        labelsList.setPrefHeight(
-                LISTVIEW_ROW_HEIGHT * MAX_NUMBER_LABELS + 18);
+        labelsList.setPrefHeight((LISTVIEW_ROW_HEIGHT * MAX_NUMBER_LABELS) + 18);
+        
+        // position the listview in the settings pane
         GridPane.setColumnIndex(labelsList, 1);
         GridPane.setRowIndex(labelsList, 0);
         GridPane.setRowSpan(labelsList, 2);
     
+        // when editing a label in the listview, update the value
+        // in the database and setup the main gridpane with the new items in the
+        // comboboxed
         labelsList.setOnEditCommit(event -> {
             labelsList.getItems()
                     .set(event.getIndex(), event.getNewValue());
@@ -526,23 +556,34 @@ public class Controller implements Initializable {
             setupGridPane(focusDay);
         });
     
-        labelsList.setOnEditCancel(event -> System.out.println("edit cancelled"));
-    
         editLabelsPane.getChildren().add(labelsList);
     }
     
+    /**
+     * Toggles the visibility of the listview with labels.
+     */
     @FXML protected void editCourseLabels() {
         toggleVisibilityFXMLObject("labelsListView");
         toggleVisibilityFXMLObject("removeLabelButton");
     }
     
+    /**
+     * Removes the selected label from all the items in the combobox, also
+     * removes it from the database
+     */
     @FXML protected void removeLabel() {
         int selectedIndex = labelsList.getSelectionModel().getSelectedIndex();
+        // to remove an item from the listview, we replace it with an empty
+        // string, so we can edit it again
         labelsList.getItems().set(selectedIndex,"");
         updateLabel(selectedIndex, "");
         setupGridPane(focusDay);
     }
     
+    /**
+     * Toggles the visibility of an object.
+     * @param id String with a FXML id of the object to be toggled.
+     */
     private void toggleVisibilityFXMLObject(String id) {
         Boolean isVisible = editLabelsPane.lookup("#" + id).isVisible();
         editLabelsPane.lookup("#" + id).setVisible(!isVisible);
@@ -572,6 +613,9 @@ public class Controller implements Initializable {
         Database.INSTANCE.createTable();
     }
     
+    /**
+     * See {@link Database#createLabelsTable()}
+     */
     private void createLabelsTable() {
         Database.INSTANCE.createLabelsTable();
     }
@@ -597,11 +641,17 @@ public class Controller implements Initializable {
     
     /**
      * See {@link Database#getLabels()}.
+     * @return Same.
      */
     ArrayList<String> getLabels() {
         return Database.INSTANCE.getLabels();
     }
     
+    /**
+     * See {@link Database#updateLabel(int, String)}
+     * @param id Same.
+     * @param label Same.
+     */
     void updateLabel(int id, String label) {
         Database.INSTANCE.updateLabel(id, label);
     }

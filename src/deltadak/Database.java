@@ -47,8 +47,7 @@ public enum Database {
     /**
      * Gets all the tasks on a given day.
      *
-     * @param day
-     *         - the date for which to get all the tasks
+     * @param day the date for which to get all the tasks
      *
      * @return List<Task>
      */
@@ -77,10 +76,8 @@ public enum Database {
     /**
      * updates a day in the database
      *
-     * @param day
-     *         - date for which to update
-     * @param tasks
-     *         - List<Task> with the new tasks
+     * @param day date for which to update
+     * @param tasks List<Task> with the new tasks
      */
     public void updateTasksDay(final LocalDate day, final List<Task> tasks) {
         
@@ -118,12 +115,21 @@ public enum Database {
         
     }
     
+    /**
+     * Creates the table in the database to hold the labels, if it doesn't
+     * exist yet.
+     */
     public void createLabelsTable() {
         String sql = "CREATE TABLE IF NOT EXISTS labels(id INT PRIMARY KEY, "
                 + "label CHAR(10))";
         query(sql);
     }
     
+    /**
+     * Retrieves all the labels that are stored in the database, and returns
+     * them as Strings in an ArrayList.
+     * @return labels
+     */
     public ArrayList<String> getLabels() {
         String sql = "SELECT * FROM labels ORDER BY id";
         ArrayList<String> labels = new ArrayList<>();
@@ -132,12 +138,8 @@ public enum Database {
         try {
             statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
-            System.out.println("resultsss");
-//            System.out.println(resultSet.next());
             while(resultSet.next()) {
-                System.out.println("resultset");
                 labels.add(resultSet.getString("label"));
-                System.out.println(resultSet.getString("label"));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -145,18 +147,34 @@ public enum Database {
         return labels;
     }
     
+    /**
+     * Updates the label in the database for the given id.
+     * @param id Integer with the primary key of label that has to be changed.
+     * @param label String with the new label.
+     */
     public void updateLabel(int id, String label) {
         removeLabel(id);
         insertLabel(id, label);
         deleteEmptyRows("labels", "label");
     }
     
+    /**
+     * Inserts a new label into the database, used by
+     * {@link Database#updateLabel(int, String)}
+     * @param id Integer with the primary key of label that has to be removed.
+     * @param label String with the new label.
+     */
     private void insertLabel(int id, String label) {
         String sql = "INSERT INTO labels(id, label)"
                 + "VALUES (" + id + ", '" + label + "')";
         query(sql);
     }
     
+    /**
+     * Remove a label from the database, used by
+     * {@link Database#updateLabel(int, String)}
+     * @param id Integer with primary key of label that has to be deleted.
+     */
     private void removeLabel(int id) {
         String sql = "DELETE FROM labels WHERE id = " + id;
         query(sql);
@@ -243,6 +261,10 @@ public enum Database {
     /**
      * deletes all the tasks from the database where field task is empty
      * used when updating a day of which an item has been removed (by dragging)
+     * @param tableName String with the name of the table from which to
+     *                  remove the empty rows.
+     * @param conditionColumn String (name) of the column on which to check for
+     *                        empty rows.
      */
     private void deleteEmptyRows(String tableName, String conditionColumn) {
         String sql = "DELETE FROM " + tableName

@@ -38,6 +38,7 @@
               vgap="10.0">
     </GridPane>
 
+    <!-- settings -->
     <AnchorPane fx:id="settingsPane"
                 style="-fx-background-color: lightskyblue"
                 AnchorPane.topAnchor="44.0"
