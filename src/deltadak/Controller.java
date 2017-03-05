@@ -1,12 +1,15 @@
 package deltadak;
 
 import javafx.animation.TranslateTransition;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -14,6 +17,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
+import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -38,9 +42,13 @@ public class Controller implements Initializable {
     @FXML GridPane gridPane;
     @FXML AnchorPane settingsPane;
         @FXML GridPane editLabelsPane;
+            @FXML Button editLabelsButton;
             private ListView<String> labelsList;
             @FXML Button settingsButton;
             @FXML Button removeLabelButton;
+        @FXML GridPane editDaysPane;
+            @FXML Text numberOfDaysText;
+            private Spinner<Integer> numberOfDaysSpinner;
     
     // used to transfer tasks with drag and drop
     DataFormat dataFormat = new DataFormat("com.deltadak.Task");
@@ -51,7 +59,7 @@ public class Controller implements Initializable {
     private static final int MAX_LIST_LENGTH = 7;
     
     // layout globals for the settings pane
-    private static final int SETTINGS_WIDTH = 350;
+    private static final int SETTINGS_WIDTH = 400;
     private static final int LISTVIEW_ROW_HEIGHT = 29;
     private static final int MAX_NUMBER_LABELS = 5;
     // the duration of the animation when opening and closing the settings pane
@@ -59,7 +67,7 @@ public class Controller implements Initializable {
     
     private LocalDate focusDay;
     private LocalDate today;
-    private static final int NUMBER_OF_MOVING_DAYS = 7;
+    private int NUMBER_OF_MOVING_DAYS = 7;
     
     /**
      * Initialization method for the controller.
@@ -510,6 +518,18 @@ public class Controller implements Initializable {
      */
     public void setupSettingsMenu() {
         setupEditLabelsListView();
+        
+        numberOfDaysSpinner = new Spinner<>();
+        SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory
+                .IntegerSpinnerValueFactory(1, 14, NUMBER_OF_MOVING_DAYS);
+        
+        numberOfDaysSpinner.setValueFactory(valueFactory);
+        numberOfDaysSpinner.setId("numberOfDaysSpinner");
+        numberOfDaysSpinner.setPrefWidth(70);
+        GridPane.setColumnIndex(numberOfDaysSpinner, 1);
+        editDaysPane.getChildren().add(numberOfDaysSpinner);
+        
+        
     }
     
     /**
@@ -565,6 +585,8 @@ public class Controller implements Initializable {
     @FXML protected void editCourseLabels() {
         toggleVisibilityFXMLObject("labelsListView");
         toggleVisibilityFXMLObject("removeLabelButton");
+        
+        toggleYsettingsObject("editDaysPane");
     }
     
     /**
@@ -580,6 +602,11 @@ public class Controller implements Initializable {
         setupGridPane(focusDay);
     }
     
+    @FXML protected void applyNumberOfDaysChange() {
+        NUMBER_OF_MOVING_DAYS = numberOfDaysSpinner.getValue();
+        setupGridPane(focusDay);
+    }
+    
     /**
      * Toggles the visibility of an object.
      * @param id String with a FXML id of the object to be toggled.
@@ -587,6 +614,15 @@ public class Controller implements Initializable {
     private void toggleVisibilityFXMLObject(String id) {
         Boolean isVisible = editLabelsPane.lookup("#" + id).isVisible();
         editLabelsPane.lookup("#" + id).setVisible(!isVisible);
+    }
+    
+    private void toggleYsettingsObject(String id) {
+        Node node = settingsPane.lookup("#" + id);
+        if(node.getTranslateY() == 0) {
+            node.setTranslateY(editLabelsPane.getHeight());
+        } else {
+            node.setTranslateY(0);
+        }
     }
     
     /*

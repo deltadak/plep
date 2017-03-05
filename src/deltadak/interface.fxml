@@ -7,6 +7,8 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.control.Spinner?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1"
             xmlns="http://javafx.com/javafx/2.2"
             fx:controller="deltadak.Controller">
@@ -49,7 +51,8 @@
                   AnchorPane.leftAnchor="10.0"
                   hgap="10"
                   vgap="10">
-            <Button text="Edit course labels"
+            <Button fx:id="editLabelsButton"
+                    text="Edit course labels"
                     onAction="#editCourseLabels"
                     GridPane.columnIndex="0"
                     GridPane.rowIndex="0"/>
@@ -60,6 +63,21 @@
                     onAction="#removeLabel"
                     visible="false"/>
         </GridPane>
+
+        <GridPane fx:id="editDaysPane"
+                  hgap="10"
+                  AnchorPane.topAnchor="44.0"
+                  AnchorPane.leftAnchor="10.0">
+
+            <Text fx:id="numberOfDaysText"
+                  text="Number of days to go forward:"/>
+
+            <Button fx:id="applyNumberOfDays"
+                    GridPane.columnIndex="2"
+                    onAction="#applyNumberOfDaysChange"
+                    text="Apply"/>
+        </GridPane>
+
     </AnchorPane>
 </AnchorPane>
 
