@@ -1,5 +1,7 @@
 package deltadak;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
@@ -32,6 +34,12 @@ class LabelCell extends TextFieldListCell<HomeworkTask> {
     ObservableList<String> comboList = FXCollections
             .observableArrayList("0LAUK0", "2WF50", "2WA70", "2IPC0");
     ComboBox<String> comboBox = new ComboBox<>(comboList);
+    
+    /**
+     * Each LabelCell keeps a reference to the listener of the
+     * ComboBox, in order to choose whether to block it temporarily or not.
+     */
+    ListenerWithBlocker labelChangeListener;
     
     // used to set the width of the text as
     // size of the listview - size of the combobox
@@ -97,9 +105,16 @@ class LabelCell extends TextFieldListCell<HomeworkTask> {
             text.setWrapText(true);
             text.setText(
                     (homeworkTask.getText() != null) ? homeworkTask.getText() : "<null>");
+            
+            // Before setting value, we need to temporarily disable the
+            // listener, otherwise it fires and goes unnecessarily updating
+            // the database, which takes a lot of time.
+            labelChangeListener.setBlock(true);
             comboBox.setValue(
                     (homeworkTask.getLabel() != null) ? homeworkTask
                             .getLabel() : "<null>");
+            labelChangeListener.setBlock(false);
+            
             setGraphic(hbox);
             setStyle("-fx-control-inner-background: "
                              + controller.convertColorToHex(homeworkTask.getColor()));
@@ -117,16 +132,24 @@ class LabelCell extends TextFieldListCell<HomeworkTask> {
      */
     void setOnLabelChangeListener(ListView<HomeworkTask> list,
                                           LocalDate day) {
+        
+        InvalidationListener invalidationListener = new InvalidationListener() {
+            @Override
+            public void invalidated(Observable observable) {
+                controller.updateDatabase(day, controller
+                        .convertObservableToArrayList(
+                                list.getItems()));
+                // We do not need to cleanup here, as no tasks
+                // were added or deleted.
+            }
+        };
+        
+        // Pass the invalidationlistener on to the custom listener
+        labelChangeListener = new ListenerWithBlocker(invalidationListener);
     
         // update label in database when selecting a different one
         comboBox.getSelectionModel().selectedIndexProperty()
-                .addListener((observable, oldValue, newValue) -> {
-                    controller.updateDatabase(day, controller
-                            .convertObservableToArrayList(
-                            list.getItems()));
-                    // We do not need to cleanup here, as no tasks
-                    // were added or deleted.
-                });
+                .addListener(labelChangeListener);
     }
     
     /**
