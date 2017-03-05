@@ -121,10 +121,11 @@ class LabelCell extends TextFieldListCell<HomeworkTask> {
         // update label in database when selecting a different one
         comboBox.getSelectionModel().selectedIndexProperty()
                 .addListener((observable, oldValue, newValue) -> {
-                    controller.updateTasksDay(day, controller
+                    controller.updateDatabase(day, controller
                             .convertObservableToArrayList(
                             list.getItems()));
-                    controller.cleanUp(list);
+                    // We do not need to cleanup here, as no tasks
+                    // were added or deleted.
                 });
     }
     
@@ -181,7 +182,7 @@ class LabelCell extends TextFieldListCell<HomeworkTask> {
         setOnDragEntered(event -> {
             if ((!Objects.equals(event.getGestureSource(), this)) && event
                     .getDragboard().hasContent(controller.dataFormat)) {
-                System.out.println("TODO: change color of listview"); //todo
+//                System.out.println("TODO: change color of listview"); //todo
             }
         
             event.consume();
@@ -193,7 +194,7 @@ class LabelCell extends TextFieldListCell<HomeworkTask> {
      */
     void setOnDragExited() {
         setOnDragExited(event -> {
-            System.out.println("TODO reset color of listview"); //todo
+//            System.out.println("TODO reset color of listview"); //todo
             event.consume();
         });
     }
@@ -226,7 +227,7 @@ class LabelCell extends TextFieldListCell<HomeworkTask> {
                 }
                 success = true;
                 // update tasks in database
-                controller.updateTasksDay(day,
+                controller.updateDatabase(day,
                                           controller
                                                   .convertObservableToArrayList(list.getItems()));
                 controller.refreshAllDays();
@@ -273,7 +274,7 @@ class LabelCell extends TextFieldListCell<HomeworkTask> {
                 }
     
                 // update in database
-                controller.updateTasksDay(day, controller
+                controller.updateDatabase(day, controller
                         .convertObservableToArrayList(
                                 list.getItems()));
                 
