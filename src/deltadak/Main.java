@@ -33,6 +33,9 @@ public class Main extends Application {
         primaryStage.setY(primaryScreenBounds.getMinY());
         primaryStage.setWidth(primaryScreenBounds.getWidth()/2);
         primaryStage.setHeight(primaryScreenBounds.getHeight());
+        
+        String listViewCSS = this.getClass().getResource("listview.css").toExternalForm();
+        primaryStage.getScene().getStylesheets().addAll(listViewCSS);
     
         // check if running in debug mode
         // to display the default java icon so we can distinguish between
