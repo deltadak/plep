@@ -250,15 +250,14 @@ class LabelCell extends TextFieldListCell<HomeworkTask> {
                 }
                 success = true;
                 // update tasks in database
-                controller.updateDatabase(day,
-                                          controller
-                                                  .convertObservableToArrayList(list.getItems()));
-                controller.refreshAllDays();
+                controller.updateDatabase(
+                        day, controller.convertObservableToArrayList(list.getItems()));
             }
             
             
             event.setDropCompleted(success);
             event.consume();
+            // clean up immediately for a smooth reaction
             controller.cleanUp(list);
         });
     }
@@ -308,8 +307,8 @@ class LabelCell extends TextFieldListCell<HomeworkTask> {
                 }
             }
             event.consume();
+            // clean up immediately for a smooth reaction
             controller.cleanUp(list);
-            controller.refreshAllDays();
         });
     }
 }

@@ -93,7 +93,7 @@ public class Controller implements Initializable {
             
             // Request content on a separate thread, and hope the content
             // will be set eventually.
-            getDatabaseTasksToList(list, localDate);
+            refreshDay(list, localDate);
             
             list.setEditable(true);
             list.setPrefWidth(getListViewWidth());
@@ -273,9 +273,9 @@ public class Controller implements Initializable {
         }
         return listViews;
     }
-    
+
     /**
-     * refreshes all listviews using data from the database
+     * Refreshes all listviews using data from the database.
      */
     void refreshAllDays() {
         // find all listviews
@@ -285,7 +285,7 @@ public class Controller implements Initializable {
             ListView<HomeworkTask> list = listViews.get(i);
             // refresh the listview from database
             LocalDate localDate = focusDay.plusDays(i - 1);
-            getDatabaseTasksToList(list, localDate);
+            refreshDay(list, localDate);
             cleanUp(list);
         }
     }
@@ -468,10 +468,11 @@ public class Controller implements Initializable {
     //todo should these methods be in Database class?
     /**
      * Requests tasks from database, and when done updates the listview.
+     *
      * @param list ListView to be updated.
      * @param localDate The day for which to request tasks.
      */
-    public void getDatabaseTasksToList(ListView<HomeworkTask> list, LocalDate localDate) {
+    public void refreshDay(ListView<HomeworkTask> list, LocalDate localDate) {
         progressIndicator.setVisible(true);
         Task<List<HomeworkTask>> task = new Task<List<HomeworkTask>>() {
             @Override
