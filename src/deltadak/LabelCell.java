@@ -175,7 +175,7 @@ class LabelCell extends TextFieldListCell<Task> {
      */
     void setOnDragOver() {
         setOnDragOver(event -> {
-            if ((!Objects.equals(event.getGestureSource(), this)) && event
+            if (!Objects.equals(event.getGestureSource(), this) && event
                     .getDragboard().hasContent(controller.dataFormat)) {
                 event.acceptTransferModes(TransferMode.MOVE);
             }
@@ -253,7 +253,7 @@ class LabelCell extends TextFieldListCell<Task> {
      * @param list ListView needed for updating the database
      * @param day LocalDate needed for updating the database
      */
-    void setOnDragDone(final ListView<Task> list, final LocalDate day) {
+    private void setOnDragDone(final ListView<Task> list, final LocalDate day) {
         setOnDragDone(event -> {
             //ensures the original element is only removed on a
             // valid copy transfer (no dropping outside listviews)

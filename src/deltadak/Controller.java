@@ -1,15 +1,11 @@
 package deltadak;
 
 import javafx.animation.TranslateTransition;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -23,7 +19,6 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.Duration;
 
-import javax.xml.crypto.Data;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
@@ -47,15 +42,16 @@ public class Controller implements Initializable {
             @FXML Button settingsButton;
             @FXML Button removeLabelButton;
         @FXML GridPane editDaysPane;
-            @FXML Text numberOfDaysText;
-            private Spinner<Integer> numberOfDaysSpinner;
+            @FXML Text numberOfMovingDaysText;
+            private Spinner<Integer> numberOfMovingDaysSpinner;
+            private Spinner<Integer> numberOfShowDaysSpinner;
     
     // used to transfer tasks with drag and drop
     DataFormat dataFormat = new DataFormat("com.deltadak.Task");
     
     // layout globals
-    private static final int NUMBER_OF_DAYS = 9;
-    private static final int MAX_COLUMNS = 3;
+    private int NUMBER_OF_DAYS = 9;
+    private int MAX_COLUMNS = 3;
     private static final int MAX_LIST_LENGTH = 7;
     
     // layout globals for the settings pane
@@ -72,6 +68,7 @@ public class Controller implements Initializable {
     /**
      * Initialization method for the controller.
      */
+    @Override
     @FXML
     public void initialize(final URL location,
                            final ResourceBundle resourceBundle) {
@@ -436,19 +433,18 @@ public class Controller implements Initializable {
      * @return String with the hex code of
      */
     String convertColorToHex(final String colorName) {
-        String hex;
         switch (colorName) {
-            case "Green": hex = "#7ef202";
-                break;
-            case "Blue": hex = "#4286f4";
-                break;
-            case "Red": hex = "#e64d4d";
-                break;
-            case "White" : hex = "#ffffffff";
-                break;
-            default: hex = "#ffffffff";
+            case "Green":
+                return "#7ef202";
+            case "Blue":
+                return "#00cbef";
+            case "Red":
+                return "#ff2600";
+            case "White" :
+                return "#ffffffff";
+            default:
+                return "#ffffffff";
         }
-        return hex;
     }
     
     /**
@@ -507,7 +503,7 @@ public class Controller implements Initializable {
             if(settingsPane.getTranslateX()!=0){
                 openNav.play();
             }else{
-                closeNav.setToX(-(settingsPane.getWidth()));
+                closeNav.setToX(-settingsPane.getWidth());
                 closeNav.play();
             }
         });
@@ -517,18 +513,9 @@ public class Controller implements Initializable {
      * Sets up the content of the settings menu.
      */
     public void setupSettingsMenu() {
-        setupEditLabelsListView();
+        addEditLabelsPane();
         
-        numberOfDaysSpinner = new Spinner<>();
-        SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory
-                .IntegerSpinnerValueFactory(1, 14, NUMBER_OF_MOVING_DAYS);
-        
-        numberOfDaysSpinner.setValueFactory(valueFactory);
-        numberOfDaysSpinner.setId("numberOfDaysSpinner");
-        numberOfDaysSpinner.setPrefWidth(70);
-        GridPane.setColumnIndex(numberOfDaysSpinner, 1);
-        editDaysPane.getChildren().add(numberOfDaysSpinner);
-        
+        addChangeNumberOfDaysSettings();
         
     }
     
@@ -536,7 +523,7 @@ public class Controller implements Initializable {
      * Sets up the editable ListView to edit the labels/items we want to see
      * in the comboboxes on the main screen.
      */
-    private void setupEditLabelsListView() {
+    private void addEditLabelsPane() {
         labelsList = new ListView<>();
         // first set up the listview with empty labels
         ObservableList<String> itemsLabelsList =
@@ -558,6 +545,7 @@ public class Controller implements Initializable {
         labelsList.setId("labelsListView");
         labelsList.setItems(itemsLabelsList);
         labelsList.setVisible(false);
+        // "magik numbers" are figured out by observations
         labelsList.setPrefWidth(120);
         labelsList.setPrefHeight((LISTVIEW_ROW_HEIGHT * MAX_NUMBER_LABELS) + 18);
         
@@ -577,6 +565,37 @@ public class Controller implements Initializable {
         });
     
         editLabelsPane.getChildren().add(labelsList);
+    }
+    
+    /**
+     * Adds the Spinners to be able to change the number of days to move and
+     * number of days to show to the settings pane.
+     */
+    private void addChangeNumberOfDaysSettings() {
+        // Adding the spinner to change the number of days to move.
+        numberOfMovingDaysSpinner = new Spinner<>();
+        SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory
+                .IntegerSpinnerValueFactory(1, 14, NUMBER_OF_MOVING_DAYS);
+    
+        numberOfMovingDaysSpinner.setValueFactory(valueFactory);
+        numberOfMovingDaysSpinner.setId("numberOfMovingDaysSpinner");
+        numberOfMovingDaysSpinner.setPrefWidth(70);
+        GridPane.setColumnIndex(numberOfMovingDaysSpinner, 1);
+        editDaysPane.getChildren().add(numberOfMovingDaysSpinner);
+    
+        
+        // Adding the spinner to change the number of days to show.
+        numberOfShowDaysSpinner = new Spinner<>();
+        // magik value 31 is the length of the longest month, just to be sure
+        SpinnerValueFactory<Integer> valueShowFactory = new SpinnerValueFactory
+                .IntegerSpinnerValueFactory(1, 31, NUMBER_OF_DAYS);
+    
+        numberOfShowDaysSpinner.setValueFactory(valueShowFactory);
+        numberOfShowDaysSpinner.setId("numberOfShowDaysSpinner");
+        numberOfShowDaysSpinner.setPrefWidth(70);
+        GridPane.setColumnIndex(numberOfShowDaysSpinner, 1);
+        GridPane.setRowIndex(numberOfShowDaysSpinner,1);
+        editDaysPane.getChildren().add(numberOfShowDaysSpinner);
     }
     
     /**
@@ -602,9 +621,23 @@ public class Controller implements Initializable {
         setupGridPane(focusDay);
     }
     
-    @FXML protected void applyNumberOfDaysChange() {
-        NUMBER_OF_MOVING_DAYS = numberOfDaysSpinner.getValue();
+    /**
+     * Applies the value of the numberOfMovingDaysSpinner to the main
+     * GridPane.
+     */
+    @FXML protected void applyNumberOfMovingDaysChange() {
+        NUMBER_OF_MOVING_DAYS = numberOfMovingDaysSpinner.getValue();
         setupGridPane(focusDay);
+    }
+    
+    /**
+     * Applies the value of the numberOfShowDaysSpinner to the main GridPane.
+     */
+    @FXML protected void applyNumberOfShowDaysChange() {
+        NUMBER_OF_DAYS = numberOfShowDaysSpinner.getValue();
+        MAX_COLUMNS = (int) Math.ceil(Math.sqrt(NUMBER_OF_DAYS));
+        setupGridPane(focusDay);
+    
     }
     
     /**
@@ -616,6 +649,11 @@ public class Controller implements Initializable {
         editLabelsPane.lookup("#" + id).setVisible(!isVisible);
     }
     
+    /**
+     * Moves the FXML object up or down as much as the height the listview to
+     * edit the labels needs.
+     * @param id The fx:id of the object to be moved.
+     */
     private void toggleYsettingsObject(String id) {
         Node node = settingsPane.lookup("#" + id);
         if(node.getTranslateY() == 0) {

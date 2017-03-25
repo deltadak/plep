@@ -57,7 +57,7 @@
                     GridPane.columnIndex="0"
                     GridPane.rowIndex="0"/>
             <Button fx:id="removeLabelButton"
-                    text="remove"
+                    text="Remove"
                     GridPane.rowIndex="1"
                     GridPane.columnIndex="0"
                     onAction="#removeLabel"
@@ -66,15 +66,25 @@
 
         <GridPane fx:id="editDaysPane"
                   hgap="10"
+                  vgap="10"
                   AnchorPane.topAnchor="44.0"
                   AnchorPane.leftAnchor="10.0">
 
-            <Text fx:id="numberOfDaysText"
+            <Text fx:id="numberOfMovingDaysText"
                   text="Number of days to go forward:"/>
 
             <Button fx:id="applyNumberOfDays"
                     GridPane.columnIndex="2"
-                    onAction="#applyNumberOfDaysChange"
+                    onAction="#applyNumberOfMovingDaysChange"
+                    text="Apply"/>
+
+            <Text fx:id="numberOfShowDaysText"
+                  text="Number of days to show:" GridPane.rowIndex="1"/>
+
+            <Button fx:id="applyNumberOfShowDays"
+                    GridPane.columnIndex="2"
+                    GridPane.rowIndex="1"
+                    onAction="#applyNumberOfShowDaysChange"
                     text="Apply"/>
         </GridPane>
 
