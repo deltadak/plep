@@ -485,10 +485,8 @@ public class Controller implements Initializable {
             list.setItems(convertArrayToObservableList(task.getValue()));
             cleanUp(list);
             progressIndicator.setVisible(false);
-            System.out.println("finished GET thread");
         });
         exec.execute(task);
-        System.out.println("started GET thread");
     }
     
     /**
@@ -507,10 +505,8 @@ public class Controller implements Initializable {
         };
         task.setOnSucceeded(e -> {
             progressIndicator.setVisible(false);
-            System.out.println("finished SET thread");
         });
         exec.execute(task);
-        System.out.println("started SET thread");
     }
     
     /*

@@ -13,6 +13,7 @@
 
         <ToolBar prefHeight="40.0" prefWidth="200.0">
             <items>
+                <ProgressIndicator fx:id="progressIndicator" />
                 <Pane prefWidth="20.0" HBox.hgrow="SOMETIMES" />
                 <Button text="&lt;" onAction="#dayBackward"/>
                 <Button text="Today" onAction="#goToToday" />
@@ -30,7 +31,6 @@
                   vgap="10.0">
         </GridPane>
     </SplitPane>
-    <ProgressIndicator fx:id="progressIndicator" progress="-1.0"/>
 </StackPane>
 
 
