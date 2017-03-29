@@ -2,31 +2,36 @@
 
 <?import javafx.scene.layout.*?>
 
-<?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Button?>
-<SplitPane xmlns:fx="http://javafx.com/fxml/1"
-           xmlns="http://javafx.com/javafx/2.2"
-           fx:controller="deltadak.Controller"
-orientation="VERTICAL">
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.SplitPane?>
+<StackPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2"
+           fx:controller="deltadak.Controller">
+    <SplitPane orientation="VERTICAL">
 
-    <ToolBar prefHeight="40.0" prefWidth="200.0">
-        <items>
-            <Pane prefWidth="20.0" HBox.hgrow="SOMETIMES" />
-            <Button text="&lt;" onAction="#dayBackward"/>
-            <Button text="Today" onAction="#goToToday" />
-            <Button text="&gt;" onAction="#dayForward" />
-            <Pane prefWidth="20.0" HBox.hgrow="SOMETIMES" />
-            <!-- insert settings button here -->
-        </items>
-    </ToolBar>
+        <ToolBar prefHeight="40.0" prefWidth="200.0">
+            <items>
+                <ProgressIndicator fx:id="progressIndicator" />
+                <Pane prefWidth="20.0" HBox.hgrow="SOMETIMES" />
+                <Button text="&lt;" onAction="#dayBackward"/>
+                <Button text="Today" onAction="#goToToday" />
+                <Button text="&gt;" onAction="#dayForward" />
+                <Pane prefWidth="20.0" HBox.hgrow="SOMETIMES" />
+                <!-- insert settings button here -->
+            </items>
+        </ToolBar>
 
-    <GridPane fx:id="gridPane"
-              alignment="CENTER"
-              hgap="10.0"
-              prefHeight="300.0"
-              prefWidth="600.0"
-              vgap="10.0">
-    </GridPane>
-</SplitPane>
+        <GridPane fx:id="gridPane"
+                  alignment="CENTER"
+                  hgap="10.0"
+                  prefHeight="300.0"
+                  prefWidth="600.0"
+                  vgap="10.0">
+        </GridPane>
+    </SplitPane>
+</StackPane>
+
+
 
