@@ -21,6 +21,9 @@ To install plep, download the version you want. The first time plep is runned, i
 ## Release Notes
 Features of plep, listed by the version in which they were added.
 
+#### [v1.2&#946;](https://github.com/deltadak/plep/blob/master/releases/plep_v1.2B.jar?raw=true) 
++ Improved speed when executing a database query
+
 #### [v1.1.1](https://github.com/deltadak/plep/blob/master/releases/plep_v1.1.1.jar?raw=true)
 + Fixes an important bug which moved tasks when editing on a new day
 + Fixes a bug of duplicating tasks when swapping them in the same day
