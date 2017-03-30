@@ -76,15 +76,8 @@ public enum Database {
     /**
      * updates a day in the database
      *
-<<<<<<< HEAD
      * @param day date for which to update
-     * @param tasks List<Task> with the new tasks
-=======
-     * @param day
-     *         - date for which to update
-     * @param homeworkTasks
-     *         - List<HomeworkTask> with the new homeworkTasks
->>>>>>> master
+     * @param homeworkTasks List<HomeworkTask> with the new homeworkTasks
      */
     public void updateTasksDay(final LocalDate day, final List<HomeworkTask> homeworkTasks) {
         

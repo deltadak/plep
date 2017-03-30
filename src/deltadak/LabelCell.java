@@ -272,11 +272,7 @@ class LabelCell extends TextFieldListCell<HomeworkTask> {
      * @param list ListView needed for updating the database
      * @param day LocalDate needed for updating the database
      */
-<<<<<<< HEAD
-    private void setOnDragDone(final ListView<Task> list, final LocalDate day) {
-=======
     void setOnDragDone(final ListView<HomeworkTask> list, final LocalDate day) {
->>>>>>> master
         setOnDragDone(event -> {
             //ensures the original element is only removed on a
             // valid copy transfer (no dropping outside listviews)
