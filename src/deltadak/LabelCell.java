@@ -1,8 +1,7 @@
 package deltadak;
 
-import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
@@ -17,7 +16,6 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
-import javafx.scene.text.TextAlignment;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -28,7 +26,7 @@ import static java.lang.Integer.min;
 /**
  * custom ListCell
  */
-class LabelCell extends TextFieldListCell<Task> {
+class LabelCell extends TextFieldListCell<HomeworkTask> {
 
     private Controller controller;
     HBox hbox = new HBox();
@@ -36,6 +34,12 @@ class LabelCell extends TextFieldListCell<Task> {
     Pane pane = new Pane();
     ObservableList<String> comboList;
     ComboBox<String> comboBox;
+    
+    /**
+     * Each LabelCell keeps a reference to the listener of the
+     * ComboBox, in order to choose whether to block it temporarily or not.
+     */
+    ListenerWithBlocker labelChangeListener;
     
     // used to set the width of the text as
     // size of the listview - size of the combobox
@@ -62,7 +66,7 @@ class LabelCell extends TextFieldListCell<Task> {
      * @param list listview in which the labelcell resides
      * @param day localdate which belongs to the listview
      */
-    public void setup(ListView<Task> list, LocalDate day) {
+    public void setup(ListView<HomeworkTask> list, LocalDate day) {
         //update text on changes
         setConverter(new TaskConverter(this));
         
@@ -85,16 +89,16 @@ class LabelCell extends TextFieldListCell<Task> {
     
     /**
      * called when starting edit with (null, true)
-     * and when finished edit with (task, false)
+     * and when finished edit with (homeworkTask, false)
      *
-     * @param task
+     * @param homeworkTask
      *         to be updated
      * @param empty
      *         whether to set empty?
      */
     @Override
-    public void updateItem(final Task task, final boolean empty) {
-        super.updateItem(task, empty);
+    public void updateItem(final HomeworkTask homeworkTask, final boolean empty) {
+        super.updateItem(homeworkTask, empty);
         setText(null);
         if (empty) {
             setGraphic(null);
@@ -104,12 +108,20 @@ class LabelCell extends TextFieldListCell<Task> {
                             .subtract(COMBOBOX_DEFAULT_WIDTH));
             text.setWrapText(true);
             text.setText(
-                    (task.getText() != null) ? task.getText() : "<null>");
+                    (homeworkTask.getText() != null) ? homeworkTask.getText() : "<null>");
+            
+            // Before setting value, we need to temporarily disable the
+            // listener, otherwise it fires and goes unnecessarily updating
+            // the database, which takes a lot of time.
+            labelChangeListener.setBlock(true);
             comboBox.setValue(
-                    (task.getLabel() != null) ? task.getLabel() : "<null>");
+                    (homeworkTask.getLabel() != null) ? homeworkTask
+                            .getLabel() : "<null>");
+            labelChangeListener.setBlock(false);
+            
             setGraphic(hbox);
             setStyle("-fx-control-inner-background: "
-                             + controller.convertColorToHex(task.getColor()));
+                             + controller.convertColorToHex(homeworkTask.getColor()));
             
         }
     }
@@ -122,19 +134,26 @@ class LabelCell extends TextFieldListCell<Task> {
      *             the database
      * @param day LocalDate which we need for updating the database
      */
-    void setOnLabelChangeListener(final ListView<Task> list,
-                                          final LocalDate day) {
+    void setOnLabelChangeListener(ListView<HomeworkTask> list,
+                                          LocalDate day) {
+        
+        InvalidationListener invalidationListener = new InvalidationListener() {
+            @Override
+            public void invalidated(Observable observable) {
+                controller.updateDatabase(day, controller
+                        .convertObservableToArrayList(
+                                list.getItems()));
+                // We do not need to cleanup here, as no tasks
+                // were added or deleted.
+            }
+        };
+        
+        // Pass the invalidationlistener on to the custom listener
+        labelChangeListener = new ListenerWithBlocker(invalidationListener);
     
         // update label in database when selecting a different one
         comboBox.getSelectionModel().selectedIndexProperty()
-                .addListener((observable, oldValue, newValue) -> {
-                    System.out.println("old: " + oldValue);
-                    System.out.println("new: " + newValue);
-                    controller.updateTasksDay(day, controller
-                            .convertObservableToArrayList(
-                            list.getItems()));
-                    controller.cleanUp(list);
-                });
+                .addListener(labelChangeListener);
     }
     
     /**
@@ -144,7 +163,7 @@ class LabelCell extends TextFieldListCell<Task> {
      * @param list ListView is needed for updating
      * @param day LocalDate is needed for updating
      */
-    void setRightMouseClickListener(final ListView<Task> list,
+    void setRightMouseClickListener(final ListView<HomeworkTask> list,
                                             final LocalDate day) {
     
         addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
@@ -190,7 +209,7 @@ class LabelCell extends TextFieldListCell<Task> {
         setOnDragEntered(event -> {
             if ((!Objects.equals(event.getGestureSource(), this)) && event
                     .getDragboard().hasContent(controller.dataFormat)) {
-                System.out.println("TODO: change color of listview"); //todo
+//                System.out.println("TODO: change color of listview"); //todo
             }
         
             event.consume();
@@ -202,7 +221,7 @@ class LabelCell extends TextFieldListCell<Task> {
      */
     void setOnDragExited() {
         setOnDragExited(event -> {
-            System.out.println("TODO reset color of listview"); //todo
+//            System.out.println("TODO reset color of listview"); //todo
             event.consume();
         });
     }
@@ -213,13 +232,14 @@ class LabelCell extends TextFieldListCell<Task> {
      * @param list ListView needed for updating the database
      * @param day LocalDate needed for updating the database
      */
-    void setOnDragDropped(final ListView<Task> list,
+    void setOnDragDropped(final ListView<HomeworkTask> list,
                                   final LocalDate day) {
         setOnDragDropped(event -> {
             Dragboard db = event.getDragboard();
             boolean success = false;
             if (db.hasContent(controller.dataFormat)) {
-                Task newTask = (Task)db.getContent(controller.dataFormat);
+                HomeworkTask newHomeworkTask
+                        = (HomeworkTask)db.getContent(controller.dataFormat);
                 //insert new task, removing will happen in onDragDone
                 int index = min(getIndex(), list.getItems()
                         .size()); // item can be dropped way below
@@ -228,21 +248,20 @@ class LabelCell extends TextFieldListCell<Task> {
                 //because otherwise there are no listCells that can
                 // receive an item
                 if (list.getItems().get(index).getText().equals("")) {
-                    list.getItems().set(index, newTask); //replace empty item
+                    list.getItems().set(index, newHomeworkTask); //replace empty item
                 } else {
-                    list.getItems().add(index, newTask);
+                    list.getItems().add(index, newHomeworkTask);
                 }
                 success = true;
                 // update tasks in database
-                controller.updateTasksDay(day,
-                                          controller
-                                                  .convertObservableToArrayList(list.getItems()));
-                controller.refreshAllDays();
+                controller.updateDatabase(
+                        day, controller.convertObservableToArrayList(list.getItems()));
             }
             
             
             event.setDropCompleted(success);
             event.consume();
+            // clean up immediately for a smooth reaction
             controller.cleanUp(list);
         });
     }
@@ -253,40 +272,51 @@ class LabelCell extends TextFieldListCell<Task> {
      * @param list ListView needed for updating the database
      * @param day LocalDate needed for updating the database
      */
+<<<<<<< HEAD
     private void setOnDragDone(final ListView<Task> list, final LocalDate day) {
+=======
+    void setOnDragDone(final ListView<HomeworkTask> list, final LocalDate day) {
+>>>>>>> master
         setOnDragDone(event -> {
             //ensures the original element is only removed on a
             // valid copy transfer (no dropping outside listviews)
             if (event.getTransferMode() == TransferMode.MOVE) {
                 Dragboard db = event.getDragboard();
-                Task newTask = (Task)db.getContent(controller.dataFormat);
-                Task emptyTask = new Task("", "", "White");
+                HomeworkTask newHomeworkTask
+                        = (HomeworkTask)db.getContent(controller.dataFormat);
+                HomeworkTask emptyHomeworkTask = new HomeworkTask("", "", "White");
                 //remove original item
                 //item can have been moved up (so index becomes one
                 // too much)
                 // or such that the index didn't change, like to
                 // another day
+                
+                // If item was moved to an other day or down in same list
                 if (list.getItems().get(getIndex()).getText()
-                        .equals(newTask.getText())) {
-                    list.getItems().set(getIndex(), emptyTask);
+                        .equals(newHomeworkTask.getText())) {
+                    list.getItems().set(getIndex(), emptyHomeworkTask);
                     setGraphic(null);
-                    // update in database
-                    controller.updateTasksDay(day, controller
-                            .convertObservableToArrayList(
-                            list.getItems()));
-                    // deleting blank row from database updating creates
-                } else {
-                    list.getItems().set(getIndex() + 1, emptyTask);
+                    
+                    // deleting blank row from database which updating creates
+                } else { // item was moved up in same list
+                    int index = getIndex() + 1;
+                    list.getItems().set(getIndex() + 1, emptyHomeworkTask);
                 }
+    
+                // update in database
+                controller.updateDatabase(day, controller
+                        .convertObservableToArrayList(
+                                list.getItems()));
+                
                 //prevent an empty list from refusing to receive
                 // items, as it wouldn't contain any listcell
                 if (list.getItems().size() < 1) {
-                    list.getItems().add(emptyTask);
+                    list.getItems().add(emptyHomeworkTask);
                 }
             }
             event.consume();
+            // clean up immediately for a smooth reaction
             controller.cleanUp(list);
-            controller.refreshAllDays();
         });
     }
 }

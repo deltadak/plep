@@ -191,13 +191,13 @@ extends java.lang.Enum&lt;<a href="../deltadak/Database.html" title="enum in del
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../deltadak/Database.html#createTable--">createTable</a></span>()</code>
-<div class="block">Creates table with all the tasks, if it doesn't exist yet.</div>
+<div class="block">Creates table with all the homeworkTasks, if it doesn't exist yet.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>private void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../deltadak/Database.html#deleteEmptyTasks--">deleteEmptyTasks</a></span>()</code>
-<div class="block">deletes all the tasks from the database where field task is empty
+<div class="block">deletes all the homeworkTasks from the database where field homeworkTask is empty
  used when updating a day of which an item has been removed (by dragging)</div>
 </td>
 </tr>
@@ -210,27 +210,27 @@ extends java.lang.Enum&lt;<a href="../deltadak/Database.html" title="enum in del
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>private void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../deltadak/Database.html#deleteTask-int-">deleteTask</a></span>(int&nbsp;id)</code>
-<div class="block">Delete a task from the database given its id</div>
+<div class="block">Delete a homeworkTask from the database given its id</div>
 </td>
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>private void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../deltadak/Database.html#deleteTasksDay-java.time.LocalDate-">deleteTasksDay</a></span>(java.time.LocalDate&nbsp;day)</code>
-<div class="block">Deletes all tasks from the database for a given day.</div>
+<div class="block">Deletes all homeworkTasks from the database for a given day.</div>
 </td>
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>java.util.List&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../deltadak/Database.html#getTasksDay-java.time.LocalDate-">getTasksDay</a></span>(java.time.LocalDate&nbsp;day)</code>
-<div class="block">Gets all the tasks on a given day.</div>
+<div class="block">Gets all the homeworkTasks on a given day.</div>
 </td>
 </tr>
 <tr id="i6" class="altColor">
 <td class="colFirst"><code>private void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../deltadak/Database.html#insertTask-java.time.LocalDate-deltadak.Task-int-">insertTask</a></span>(java.time.LocalDate&nbsp;day,
-          <a href="../deltadak/Task.html" title="class in deltadak">Task</a>&nbsp;task,
+<td class="colLast"><code><span class="memberNameLink"><a href="../deltadak/Database.html#insertTask-java.time.LocalDate-deltadak.HomeworkTask-int-">insertTask</a></span>(java.time.LocalDate&nbsp;day,
+          <a href="../deltadak/Task.html" title="class in deltadak">Task</a>&nbsp;homeworkTask,
           int&nbsp;order)</code>
-<div class="block">inserts a task into the database, given</div>
+<div class="block">inserts a homeworkTask into the database, given</div>
 </td>
 </tr>
 <tr id="i7" class="rowColor">
@@ -260,7 +260,7 @@ extends java.lang.Enum&lt;<a href="../deltadak/Database.html" title="enum in del
 <tr id="i11" class="rowColor">
 <td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../deltadak/Database.html#updateTasksDay-java.time.LocalDate-java.util.List-">updateTasksDay</a></span>(java.time.LocalDate&nbsp;day,
-              java.util.List&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;tasks)</code>
+              java.util.List&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;homeworkTasks)</code>
 <div class="block">updates a day in the database</div>
 </td>
 </tr>
@@ -417,7 +417,7 @@ not permitted.)</div>
 <li class="blockList">
 <h4>createTable</h4>
 <pre>public&nbsp;void&nbsp;createTable()</pre>
-<div class="block">Creates table with all the tasks, if it doesn't exist yet.</div>
+<div class="block">Creates table with all the homeworkTasks, if it doesn't exist yet.</div>
 </li>
 </ul>
 <a name="getTasksDay-java.time.LocalDate-">
@@ -427,10 +427,10 @@ not permitted.)</div>
 <li class="blockList">
 <h4>getTasksDay</h4>
 <pre>public&nbsp;java.util.List&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;getTasksDay(java.time.LocalDate&nbsp;day)</pre>
-<div class="block">Gets all the tasks on a given day.</div>
+<div class="block">Gets all the homeworkTasks on a given day.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>day</code> - - the date for which to get all the tasks</dd>
+<dd><code>day</code> - - the date for which to get all the homeworkTasks</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>List<Task></dd>
 </dl>
@@ -443,12 +443,12 @@ not permitted.)</div>
 <li class="blockList">
 <h4>updateTasksDay</h4>
 <pre>public&nbsp;void&nbsp;updateTasksDay(java.time.LocalDate&nbsp;day,
-                           java.util.List&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;tasks)</pre>
+                           java.util.List&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;homeworkTasks)</pre>
 <div class="block">updates a day in the database</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>day</code> - - date for which to update</dd>
-<dd><code>tasks</code> - - List<Task> with the new tasks</dd>
+<dd><code>homeworkTasks</code> - - List<Task> with the new homeworkTasks</dd>
 </dl>
 </li>
 </ul>
@@ -472,21 +472,21 @@ not permitted.)</div>
 <div class="block">create a connection with the database</div>
 </li>
 </ul>
-<a name="insertTask-java.time.LocalDate-deltadak.Task-int-">
+<a name="insertTask-java.time.LocalDate-deltadak.HomeworkTask-int-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>insertTask</h4>
 <pre>private&nbsp;void&nbsp;insertTask(java.time.LocalDate&nbsp;day,
-                        <a href="../deltadak/Task.html" title="class in deltadak">Task</a>&nbsp;task,
+                        <a href="../deltadak/Task.html" title="class in deltadak">Task</a>&nbsp;homeworkTask,
                         int&nbsp;order)</pre>
-<div class="block">inserts a task into the database, given</div>
+<div class="block">inserts a homeworkTask into the database, given</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>day</code> - - the date as a LocalDate</dd>
-<dd><code>task</code> - - the task to be inserted</dd>
-<dd><code>order</code> - - this is the i-th task on this day, as an int</dd>
+<dd><code>homeworkTask</code> - - the homeworkTask to be inserted</dd>
+<dd><code>order</code> - - this is the i-th homeworkTask on this day, as an int</dd>
 </dl>
 </li>
 </ul>
@@ -508,10 +508,10 @@ not permitted.)</div>
 <li class="blockList">
 <h4>deleteTask</h4>
 <pre>private&nbsp;void&nbsp;deleteTask(int&nbsp;id)</pre>
-<div class="block">Delete a task from the database given its id</div>
+<div class="block">Delete a homeworkTask from the database given its id</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>id</code> - - id of a task (primary key in the database)</dd>
+<dd><code>id</code> - - id of a homeworkTask (primary key in the database)</dd>
 </dl>
 </li>
 </ul>
@@ -522,7 +522,7 @@ not permitted.)</div>
 <li class="blockList">
 <h4>deleteEmptyTasks</h4>
 <pre>private&nbsp;void&nbsp;deleteEmptyTasks()</pre>
-<div class="block">deletes all the tasks from the database where field task is empty
+<div class="block">deletes all the homeworkTasks from the database where field homeworkTask is empty
  used when updating a day of which an item has been removed (by dragging)</div>
 </li>
 </ul>
@@ -533,10 +533,10 @@ not permitted.)</div>
 <li class="blockList">
 <h4>deleteTasksDay</h4>
 <pre>private&nbsp;void&nbsp;deleteTasksDay(java.time.LocalDate&nbsp;day)</pre>
-<div class="block">Deletes all tasks from the database for a given day.</div>
+<div class="block">Deletes all homeworkTasks from the database for a given day.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>day</code> - - the day of which all tasks have to be deleted. Calendar
+<dd><code>day</code> - - the day of which all homeworkTasks have to be deleted. Calendar
          object.</dd>
 </dl>
 </li>

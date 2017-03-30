@@ -2,10 +2,14 @@ package deltadak;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.Image;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
@@ -25,7 +29,7 @@ public class Main extends Application {
         
         primaryStage.setTitle("Plep");
         primaryStage.setScene(new Scene(root, 0, 0));
-
+    
         //set a size relative to screen
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
         //set Stage boundaries to visible bounds of the main screen
@@ -33,6 +37,9 @@ public class Main extends Application {
         primaryStage.setY(primaryScreenBounds.getMinY());
         primaryStage.setWidth(primaryScreenBounds.getWidth()/2);
         primaryStage.setHeight(primaryScreenBounds.getHeight());
+        
+        String listViewCSS = this.getClass().getResource("listview.css").toExternalForm();
+        primaryStage.getScene().getStylesheets().addAll(listViewCSS);
     
         // check if running in debug mode
         // to display the default java icon so we can distinguish between
