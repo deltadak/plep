@@ -315,10 +315,10 @@ implements javafx.fxml.Initializable</pre>
 </tr>
 <tr id="i18" class="altColor">
 <td class="colFirst"><code>private void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../deltadak/Controller.html#repeatTask-int-deltadak.Task-java.time.LocalDate-">repeatTask</a></span>(int&nbsp;repeatNumber,
-          <a href="../deltadak/Task.html" title="class in deltadak">Task</a>&nbsp;task,
+<td class="colLast"><code><span class="memberNameLink"><a href="../deltadak/Controller.html#repeatTask-int-deltadak.HomeworkTask-java.time.LocalDate-">repeatTask</a></span>(int&nbsp;repeatNumber,
+          <a href="../deltadak/Task.html" title="class in deltadak">Task</a>&nbsp;homeworkTask,
           java.time.LocalDate&nbsp;day)</code>
-<div class="block">repeats a task for a number of weeks</div>
+<div class="block">repeats a homeworkTask for a number of weeks</div>
 </td>
 </tr>
 <tr id="i19" class="rowColor">
@@ -364,7 +364,7 @@ implements javafx.fxml.Initializable</pre>
 <tr id="i25" class="rowColor">
 <td class="colFirst"><code>(package private) void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../deltadak/Controller.html#updateTasksDay-java.time.LocalDate-java.util.List-">updateTasksDay</a></span>(java.time.LocalDate&nbsp;day,
-              java.util.List&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;tasks)</code>
+              java.util.List&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;homeworkTasks)</code>
 <div class="block">See <a href="../deltadak/Database.html#updateTasksDay-java.time.LocalDate-java.util.List-"><code>Database.updateTasksDay(LocalDate, List)</code></a></div>
 </td>
 </tr>
@@ -707,7 +707,7 @@ implements javafx.fxml.Initializable</pre>
 <div class="block">Makes the menu with options to repeat for 1-8 weeks.</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>labelCell</code> - task to repeat</dd>
+<dd><code>labelCell</code> - homeworkTask to repeat</dd>
 <dd><code>day</code> - the day to repeat</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>the menu with those options</dd>
@@ -750,22 +750,22 @@ implements javafx.fxml.Initializable</pre>
 </dl>
 </li>
 </ul>
-<a name="repeatTask-int-deltadak.Task-java.time.LocalDate-">
+<a name="repeatTask-int-deltadak.HomeworkTask-java.time.LocalDate-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>repeatTask</h4>
 <pre>private&nbsp;void&nbsp;repeatTask(int&nbsp;repeatNumber,
-                        <a href="../deltadak/Task.html" title="class in deltadak">Task</a>&nbsp;task,
+                        <a href="../deltadak/Task.html" title="class in deltadak">Task</a>&nbsp;homeworkTask,
                         java.time.LocalDate&nbsp;day)</pre>
-<div class="block">repeats a task for a number of weeks</div>
+<div class="block">repeats a homeworkTask for a number of weeks</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>repeatNumber</code> - how many times to repeat a task</dd>
-<dd><code>task</code> - the task to repeat</dd>
+<dd><code>repeatNumber</code> - how many times to repeat a homeworkTask</dd>
+<dd><code>homeworkTask</code> - the homeworkTask to repeat</dd>
 <dd><code>day</code> - the current day is needed to update the days on which the
-            task will be repeated</dd>
+            homeworkTask will be repeated</dd>
 </dl>
 </li>
 </ul>
@@ -876,12 +876,12 @@ implements javafx.fxml.Initializable</pre>
 <li class="blockList">
 <h4>updateTasksDay</h4>
 <pre>void&nbsp;updateTasksDay(java.time.LocalDate&nbsp;day,
-                    java.util.List&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;tasks)</pre>
+                    java.util.List&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;homeworkTasks)</pre>
 <div class="block">See <a href="../deltadak/Database.html#updateTasksDay-java.time.LocalDate-java.util.List-"><code>Database.updateTasksDay(LocalDate, List)</code></a></div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>day</code> - Same.</dd>
-<dd><code>tasks</code> - Same.</dd>
+<dd><code>homeworkTasks</code> - Same.</dd>
 </dl>
 </li>
 </ul>
