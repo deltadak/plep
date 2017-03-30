@@ -1,7 +1,7 @@
 # plep
 Plepping is the new planning.
 
-Find the latest stable version (v1.1.1) [here](https://github.com/PHPirates/plep/blob/master/plep_v1.1.1.jar?raw=true).
+Find the latest stable version (v1.1.1) [here](https://github.com/PHPirates/plep/blob/master/releases/plep_v1.1.1.jar?raw=true).
 
 Find the latest debug build [here](https://github.com/PHPirates/plep/blob/master/out/artifacts/plep_jar/plep.jar?raw=true).
 
@@ -21,23 +21,23 @@ To install plep, download the version you want. The first time plep is runned, i
 ## Release Notes
 Features of plep, listed by the version in which they were added.
 
-#### [v1.1.1](https://github.com/deltadak/plep/blob/master/plep_v1.1.1.jar?raw=true)
+#### [v1.1.1](https://github.com/deltadak/plep/blob/master/releases/plep_v1.1.1.jar?raw=true)
 + Fixes an important bug which moved tasks when editing on a new day
 + Fixes a bug of duplicating tasks when swapping them in the same day
 
-#### [v1.1](https://github.com/deltadak/plep/blob/master/plep_v1.1.jar?raw=true)
+#### [v1.1](https://github.com/deltadak/plep/blob/master/releases/plep_v1.1.jar?raw=true)
 + Moving forwards and backwards a week
 + Automatically refreshes on a new day
 
-#### [v1.0](https://github.com/PHPirates/plep/blob/master/plep_v1.0.jar?raw=true)
+#### [v1.0](https://github.com/PHPirates/plep/blob/master/releases/plep_v1.0.jar?raw=true)
 + Tasks can have a colour
 + Tasks can be repeated each week
 + Fixed some bugs
 
-#### [v0.2](https://github.com/PHPirates/plep/blob/master/plep_v0.2.jar?raw=true)
+#### [v0.2](https://github.com/PHPirates/plep/blob/master/releases/plep_v0.2.jar?raw=true)
 + A small fix which solves the issue of not creating a database in some cases
 
-#### [v0.1](https://github.com/PHPirates/plep/blob/master/plep_v0.1.jar?raw=true)
+#### [v0.1](https://github.com/PHPirates/plep/blob/master/releases/plep_v0.1.jar?raw=true)
 + Dragging tasks from one day to another
 + Adding a label to each task
 + Automatically saves your tasks to a local database
