@@ -38,6 +38,7 @@ public class Controller implements Initializable {
     
     // main element of the UI is declared in interface.fxml
     @FXML GridPane gridPane;
+    @FXML ToolBar toolBar;
     @FXML ProgressIndicator progressIndicator;
     @FXML AnchorPane settingsPane;
         @FXML GridPane editLabelsPane;
@@ -107,6 +108,9 @@ public class Controller implements Initializable {
      * @param focusDate date that is the top middle one (is today on default)
      */
     private void setupGridPane(LocalDate focusDate) {
+    
+        AnchorPane.setTopAnchor(gridPane, toolBar.getPrefHeight());
+    
         // first clear the gridpane so we don't get titles overlaying each other
         gridPane.getChildren().clear();
         for (int index = 0; index < NUMBER_OF_DAYS; index++) {
@@ -132,6 +136,7 @@ public class Controller implements Initializable {
                     localDate, convertObservableToArrayList(list.getItems())));
             addDeleteKeyListener(list, localDate);
         }
+    
     }
     
     /**
@@ -531,8 +536,9 @@ public class Controller implements Initializable {
      * Sets up the content of the settings menu.
      */
     public void setupSettingsMenu() {
-        addEditLabelsPane();
         
+        AnchorPane.setTopAnchor(settingsPane, toolBar.getPrefHeight());
+        addEditLabelsPane();
         addChangeNumberOfDaysSettings();
         
     }

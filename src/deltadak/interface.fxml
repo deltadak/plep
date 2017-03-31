@@ -14,7 +14,8 @@
             xmlns="http://javafx.com/javafx/2.2"
             fx:controller="deltadak.Controller">
 
-    <ToolBar prefHeight="40.0"
+    <ToolBar fx:id="toolBar"
+             prefHeight="75.0"
              prefWidth="200.0"
              AnchorPane.topAnchor="0.0"
              AnchorPane.rightAnchor="0.0"
@@ -33,7 +34,6 @@
 
     <GridPane fx:id="gridPane"
               AnchorPane.bottomAnchor="0.0"
-              AnchorPane.topAnchor="72.0"
               AnchorPane.rightAnchor="0.0"
               AnchorPane.leftAnchor="0.0"
               alignment="CENTER"
@@ -46,7 +46,6 @@
     <!-- settings -->
     <AnchorPane fx:id="settingsPane"
                 style="-fx-background-color: lightskyblue"
-                AnchorPane.topAnchor="44.0"
                 AnchorPane.bottomAnchor="0.0">
 
         <GridPane fx:id="editLabelsPane"
