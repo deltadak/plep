@@ -4,13 +4,11 @@ import javafx.animation.TranslateTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.cell.TextFieldListCell;
@@ -22,9 +20,8 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.Duration;
 import javafx.concurrent.Task;
-import sun.plugin.javascript.navig.Anchor;
 
-import javax.xml.stream.EventFilter;
+import javax.xml.crypto.Data;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
@@ -62,9 +59,15 @@ public class Controller implements Initializable {
     DataFormat dataFormat = new DataFormat("com.deltadak.HomeworkTask");
     
     // layout globals
-    private int NUMBER_OF_DAYS = 9;
+    private int NUMBER_OF_DAYS;
+    private  int NUMBER_OF_MOVING_DAYS;
+    
     private int MAX_COLUMNS = 3;
     private static final int MAX_LIST_LENGTH = 7;
+    
+    private static final String NUMBER_OF_DAYS_NAME = "number_of_days";
+    private static final String NUMBER_OF_MOVING_DAYS_NAME
+            = "number_of_moving_days";
     
     // layout globals for the settings pane
     private static final int SETTINGS_WIDTH = 400;
@@ -75,7 +78,6 @@ public class Controller implements Initializable {
     
     private LocalDate focusDay;
     private LocalDate today;
-    private  int NUMBER_OF_MOVING_DAYS = 7;
     // Multithreading
     private Executor exec;
     
@@ -95,8 +97,12 @@ public class Controller implements Initializable {
         });
         
         setDefaultDatabasePath();
-        createTable(); // if not already exists
-        createLabelsTable();
+        createTables(); // if not already exists
+    
+        NUMBER_OF_DAYS = Integer.valueOf(getSetting(NUMBER_OF_DAYS_NAME));
+        MAX_COLUMNS = calculateMaxColumns();
+        NUMBER_OF_MOVING_DAYS = Integer.valueOf(getSetting(
+                NUMBER_OF_MOVING_DAYS_NAME));
         
         focusDay = LocalDate.now(); // set focus day to today
         setupGridPane(focusDay);
@@ -683,6 +689,10 @@ public class Controller implements Initializable {
      */
     @FXML protected void applyNumberOfMovingDaysChange() {
         NUMBER_OF_MOVING_DAYS = numberOfMovingDaysSpinner.getValue();
+        // update the value in the database
+        updateSetting(NUMBER_OF_MOVING_DAYS_NAME,
+                      String.valueOf(NUMBER_OF_MOVING_DAYS));
+    
         setupGridPane(focusDay);
     }
     
@@ -691,9 +701,16 @@ public class Controller implements Initializable {
      */
     @FXML protected void applyNumberOfShowDaysChange() {
         NUMBER_OF_DAYS = numberOfShowDaysSpinner.getValue();
-        MAX_COLUMNS = (int) Math.ceil(Math.sqrt(NUMBER_OF_DAYS));
+        MAX_COLUMNS = calculateMaxColumns();
+        
+        updateSetting(NUMBER_OF_DAYS_NAME,
+                      String.valueOf(NUMBER_OF_DAYS));
         setupGridPane(focusDay);
     
+    }
+    
+    private int calculateMaxColumns() {
+        return (int) Math.ceil(Math.sqrt(NUMBER_OF_DAYS));
     }
     
     /**
@@ -793,17 +810,10 @@ public class Controller implements Initializable {
     }
     
     /**
-     * See {@link Database#createTable()}.
+     * See {@link Database#createTables()}.
      */
-    private void createTable() {
-        Database.INSTANCE.createTable();
-    }
-    
-    /**
-     * See {@link Database#createLabelsTable()}
-     */
-    private void createLabelsTable() {
-        Database.INSTANCE.createLabelsTable();
+    private void createTables() {
+        Database.INSTANCE.createTables();
     }
     
     /**
@@ -825,11 +835,19 @@ public class Controller implements Initializable {
         Database.INSTANCE.updateTasksDay(day, homeworkTasks);
     }
     
+    private String getSetting(String name) {
+        return Database.INSTANCE.getSetting(name);
+    }
+    
+    private void updateSetting(String name, String newValue) {
+        Database.INSTANCE.updateSetting(name, newValue);
+    }
+    
     /**
      * See {@link Database#getLabels()}.
      * @return Same.
      */
-    ArrayList<String> getLabels() {
+    private ArrayList<String> getLabels() {
         return Database.INSTANCE.getLabels();
     }
     
@@ -838,7 +856,7 @@ public class Controller implements Initializable {
      * @param id Same.
      * @param label Same.
      */
-    void updateLabel(int id, String label) {
+    private void updateLabel(int id, String label) {
         Database.INSTANCE.updateLabel(id, label);
     }
     
@@ -846,6 +864,12 @@ public class Controller implements Initializable {
      * End of database methods
      */
     
+    /**
+     * Enables or disables a node.
+     * @param node The node to enable to disable.
+     * @param enable True if the node should be enabled, false if
+     *               the node should be disabled.
+     */
     private void setEnable(Node node, boolean enable) {
         node.setDisable(!enable);
     }

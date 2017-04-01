@@ -33,16 +33,7 @@ public enum Database {
      * Methods that are available to the controller
      */
     
-    /**
-     * Creates table with all the tasks, if it doesn't exist yet.
-     */
-    public void createTable() {
-        String sql = "CREATE TABLE IF NOT EXISTS tasks(" + "id INT PRIMARY KEY,"
-                + "day DATE," + "task CHAR(255)," + "label CHAR(10),"
-                + "color CHAR(50)," + "orderInDay INT)";
-        query(sql);
-        
-    }
+    // homework tasks --------------------------------------------------
     
     /**
      * Gets all the tasks on a given day.
@@ -63,9 +54,10 @@ public enum Database {
             statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
             while (resultSet.next()) {
-                homeworkTasks.add(new HomeworkTask(resultSet.getString("task"),
-                                                   resultSet.getString("label"),
-                                                   resultSet.getString("color")));
+                homeworkTasks.add(
+                        new HomeworkTask(resultSet.getString("task"),
+                                         resultSet.getString("label"),
+                                         resultSet.getString("color")));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -94,34 +86,31 @@ public enum Database {
         deleteEmptyRows("tasks", "task");
     }
     
-    /**
-     * sets the default path of the database to the directory the jar file is in
-     */
-    public void setDefaultDatabasePath() {
-        try {
-            // get the directory of the jar
-            CodeSource codeSource = this.getClass().getProtectionDomain().getCodeSource();
-            File jarFile = new File(codeSource.getLocation().toURI().getPath());
-            String jarDir = jarFile.getParentFile().getPath();
-            
-            // set up the path of the database to make connection with the database
-            databasePath = "jdbc:sqlite:" + jarDir + "\\plep.db";
-            System.out.println(databasePath);
+    // settings ------------------------------------------------------
+    
+    public String getSetting(String name) {
+        String value = "";
+        String sql = "SELECT value FROM settings where name = '" + name + "'";
+        setConnection();
+        try{
+            statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+            while(resultSet.next()) {
+                value = resultSet.getString("value");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+        return value;
     }
     
-    /**
-     * Creates the table in the database to hold the labels, if it doesn't
-     * exist yet.
-     */
-    public void createLabelsTable() {
-        String sql = "CREATE TABLE IF NOT EXISTS labels(id INT PRIMARY KEY, "
-                + "label CHAR(10))";
+    public void updateSetting(String name, String newValue) {
+        String sql = "UPDATE settings SET value = '" + newValue +
+                "' WHERE name = '" + name + "'";
         query(sql);
     }
+    
+    // labels ---------------------------------------------------------
     
     /**
      * Retrieves all the labels that are stored in the database, and returns
@@ -156,44 +145,51 @@ public enum Database {
         deleteEmptyRows("labels", "label");
     }
     
-    /**
-     * Inserts a new label into the database, used by
-     * {@link Database#updateLabel(int, String)}
-     * @param id Integer with the primary key of label that has to be removed.
-     * @param label String with the new label.
-     */
-    private void insertLabel(int id, String label) {
-        String sql = "INSERT INTO labels(id, label)"
-                + "VALUES (" + id + ", '" + label + "')";
-        query(sql);
+    // misc ---------------------------------------------------------------
+    
+    public void createTables() {
+        createHomeworkTable();
+        createSettingsTable();
+        createLabelsTable();
     }
     
     /**
-     * Remove a label from the database, used by
-     * {@link Database#updateLabel(int, String)}
-     * @param id Integer with primary key of label that has to be deleted.
+     * sets the default path of the database to the directory the jar file is in
      */
-    private void removeLabel(int id) {
-        String sql = "DELETE FROM labels WHERE id = " + id;
-        query(sql);
+    public void setDefaultDatabasePath() {
+        try {
+            // get the directory of the jar
+            CodeSource codeSource = this.getClass().getProtectionDomain().getCodeSource();
+            File jarFile = new File(codeSource.getLocation().toURI().getPath());
+            String jarDir = jarFile.getParentFile().getPath();
+            
+            // set up the path of the database to make connection with the database
+            databasePath = "jdbc:sqlite:" + jarDir + "\\plep.db";
+            System.out.println(databasePath);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
     }
+    
+    
     
     /*
      * Private methods that are not available to the Controller
      * These are methods needed by the available methods
      */
     
+    // homework tasks ---------------------------------------------------
+    
     /**
-     * create a connection with the database
+     * Creates table with all the tasks, if it doesn't exist yet.
      */
-    private void setConnection() {
-        try {
-            Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection(databasePath);
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    private void createHomeworkTable() {
+        String sql = "CREATE TABLE IF NOT EXISTS tasks(" + "id INT PRIMARY KEY,"
+                + "day DATE," + "task CHAR(255)," + "label CHAR(10),"
+                + "color CHAR(50)," + "orderInDay INT)";
+        query(sql);
+        
     }
     
     /**
@@ -213,9 +209,9 @@ public enum Database {
         String dayString = day.toString();
         
         String sql = "INSERT INTO tasks(id, day, task, label, color, orderInDay) "
-                + "VALUES (" + countID + ", '" + dayString + "', '" + homeworkTask
-                .getText()
-                + "','" + homeworkTask.getLabel() + "','" + homeworkTask.getColor() + "'," + order + ")";
+                + "VALUES (" + countID + ", '" + dayString + "', '"
+                + homeworkTask.getText() + "','" + homeworkTask.getLabel() + "','"
+                + homeworkTask.getColor() + "'," + order + ")";
         countID++;
         query(sql);
     }
@@ -258,6 +254,99 @@ public enum Database {
     }
     
     /**
+     * Deletes all tasks from the database for a given day.
+     *
+     * @param day
+     *         - the day of which all tasks have to be deleted. Calendar
+     *         object.
+     */
+    private void deleteTasksDay(final LocalDate day) {
+        
+        String sql = "DELETE FROM tasks WHERE day = '" + day + "'";
+        query(sql);
+    }
+    
+    // settings -------------------------------------------------------------
+    
+    /**
+     * Creates a table with settings and populates it with default settings.
+     * The settings table contains
+     *      - the name of the setting as primary key,
+     *      - the value of the setting as a string.
+     */
+    private void createSettingsTable() {
+        String sql = "CREATE TABLE IF NOT EXISTS settings("
+                + "name CHAR(50) PRIMARY KEY, "
+                + "value CHAR(50))";
+        query(sql);
+        
+        // insert the default settings
+        insertSetting("number_of_days", "9");
+        insertSetting("number_of_moving_days", "7");
+        
+    }
+    
+    /**
+     * Inserts a setting with given name and value into the settings table.
+     * Only insert it when there is no row with the same name in the table.
+     * @param name
+     * @param value
+     */
+    private void insertSetting(String name, String value) {
+        String sql = "INSERT OR IGNORE INTO settings(name, value) VALUES ('"
+                + name + "', '" + value + "')";
+        query(sql);
+    }
+    
+    // labels ---------------------------------------------------------------
+    
+    /**
+     * Creates the table in the database to hold the labels, if it doesn't
+     * exist yet.
+     */
+    private void createLabelsTable() {
+        String sql = "CREATE TABLE IF NOT EXISTS labels(id INT PRIMARY KEY, "
+                + "label CHAR(10))";
+        query(sql);
+    }
+    /**
+     * Inserts a new label into the database, used by
+     * {@link Database#updateLabel(int, String)}
+     * @param id Integer with the primary key of label that has to be removed.
+     * @param label String with the new label.
+     */
+    private void insertLabel(int id, String label) {
+        String sql = "INSERT INTO labels(id, label)"
+                + "VALUES (" + id + ", '" + label + "')";
+        query(sql);
+    }
+    
+    /**
+     * Remove a label from the database, used by
+     * {@link Database#updateLabel(int, String)}
+     * @param id Integer with primary key of label that has to be deleted.
+     */
+    private void removeLabel(int id) {
+        String sql = "DELETE FROM labels WHERE id = " + id;
+        query(sql);
+    }
+    
+    // misc -------------------------------------------------------------
+    
+    /**
+     * create a connection with the database
+     */
+    private void setConnection() {
+        try {
+            Class.forName("org.sqlite.JDBC");
+            connection = DriverManager.getConnection(databasePath);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
+    /**
      * deletes all the tasks from the database where field task is empty
      * used when updating a day of which an item has been removed (by dragging)
      * @param tableName String with the name of the table from which to
@@ -268,19 +357,6 @@ public enum Database {
     private void deleteEmptyRows(String tableName, String conditionColumn) {
         String sql = "DELETE FROM " + tableName
                 + " WHERE "+ conditionColumn + " = '' ";
-        query(sql);
-    }
-    
-    /**
-     * Deletes all tasks from the database for a given day.
-     *
-     * @param day
-     *         - the day of which all tasks have to be deleted. Calendar
-     *         object.
-     */
-    private void deleteTasksDay(final LocalDate day) {
-        
-        String sql = "DELETE FROM tasks WHERE day = '" + day + "'";
         query(sql);
     }
     
