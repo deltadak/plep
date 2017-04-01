@@ -549,7 +549,7 @@ public class Controller implements Initializable {
                 // add the event filter to close the settings pane
                 main.addEventFilter(MouseEvent.MOUSE_CLICKED, filter);
                 
-                gridPane.setDisable(true);
+                setEnable(gridPane, false);
                 openNav.play();
     
     
@@ -558,7 +558,7 @@ public class Controller implements Initializable {
                 closeNav.play();
                 // remove the event filter to close the settings pane
                 main.removeEventFilter(MouseEvent.MOUSE_CLICKED, filter);
-                gridPane.setDisable(false);
+                setEnable(gridPane, true);
             }
         });
         
@@ -845,5 +845,9 @@ public class Controller implements Initializable {
     /*
      * End of database methods
      */
+    
+    private void setEnable(Node node, boolean enable) {
+        node.setDisable(!enable);
+    }
     
 }
