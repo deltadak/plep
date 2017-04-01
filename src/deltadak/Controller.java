@@ -547,7 +547,9 @@ public class Controller implements Initializable {
             if(settingsPane.getTranslateX()!=0){
                 
                 // add the event filter to close the settings pane
-                gridPane.addEventFilter(MouseEvent.MOUSE_CLICKED, filter);
+                main.addEventFilter(MouseEvent.MOUSE_CLICKED, filter);
+                
+                gridPane.setDisable(true);
                 openNav.play();
     
     
@@ -555,7 +557,8 @@ public class Controller implements Initializable {
                 closeNav.setToX(-settingsPane.getWidth());
                 closeNav.play();
                 // remove the event filter to close the settings pane
-                gridPane.removeEventFilter(MouseEvent.MOUSE_CLICKED, filter);
+                main.removeEventFilter(MouseEvent.MOUSE_CLICKED, filter);
+                gridPane.setDisable(false);
             }
         });
         
