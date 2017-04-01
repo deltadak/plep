@@ -4,10 +4,13 @@ import javafx.animation.TranslateTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.cell.TextFieldListCell;
@@ -19,10 +22,13 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 import javafx.util.Duration;
 import javafx.concurrent.Task;
+import sun.plugin.javascript.navig.Anchor;
 
+import javax.xml.stream.EventFilter;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.ArrayList;
 import java.util.concurrent.Executor;
@@ -37,6 +43,7 @@ import java.util.concurrent.Executors;
 public class Controller implements Initializable {
     
     // main element of the UI is declared in interface.fxml
+    @FXML AnchorPane main;
     @FXML GridPane gridPane;
     @FXML ToolBar toolBar;
     @FXML ProgressIndicator progressIndicator;
@@ -521,15 +528,37 @@ public class Controller implements Initializable {
         TranslateTransition closeNav =
                 new TranslateTransition(new Duration(TOGGLE_SETTINGS_DURATION),
                                         settingsPane);
+    
+        // EventHandler to close the settings pane when the user clicks
+        // somewhere outside the settings pane
+        EventHandler<MouseEvent> filter = event -> {
+            // check if the region in the gridpane, outside the settings
+            // pane is clicked
+            if(!inHierarchy(event.getPickResult().getIntersectedNode(), settingsPane)) {
+                // fire the settings button so it will close the settings
+                // pane and remove this EventHandler
+                settingsButton.fire();
+                event.consume();
+            }
+        
+        };
         
         settingsButton.setOnAction((ActionEvent evt)->{
             if(settingsPane.getTranslateX()!=0){
+                
+                // add the event filter to close the settings pane
+                gridPane.addEventFilter(MouseEvent.MOUSE_CLICKED, filter);
                 openNav.play();
+    
+    
             }else{
                 closeNav.setToX(-settingsPane.getWidth());
                 closeNav.play();
+                // remove the event filter to close the settings pane
+                gridPane.removeEventFilter(MouseEvent.MOUSE_CLICKED, filter);
             }
         });
+        
     }
     
     /**
@@ -690,6 +719,19 @@ public class Controller implements Initializable {
     /*
      * End of settings ---------------------------------------------------------
      */
+    
+    public static boolean inHierarchy(Node node, Node potentialHierarchyElement) {
+        if (potentialHierarchyElement == null) {
+            return true;
+        }
+        while (node != null) {
+            if (Objects.equals(node, potentialHierarchyElement)) {
+                return true;
+            }
+            node = node.getParent();
+        }
+        return false;
+    }
     
     //todo should these methods be in Database class?
     /**
