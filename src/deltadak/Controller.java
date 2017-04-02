@@ -177,10 +177,11 @@ public class Controller implements Initializable {
         //add option to delete a task
         list.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.DELETE) {
-                list.getItems()
-                        .remove(list.getSelectionModel().getSelectedIndex());
-                updateDatabase(localDate,
-                               convertObservableToArrayList(list.getItems()));
+                new DeleteCommand(this, localDate,
+                        convertObservableToArrayList( list.getItems()),
+                        list.getSelectionModel().getSelectedIndex());
+                //todo pass to undoredo class to execute
+
                 cleanUp(list); //cleaning up has to happen in the listener
             }
         });
