@@ -59,12 +59,13 @@ public class Controller implements Initializable {
     DataFormat dataFormat = new DataFormat("com.deltadak.HomeworkTask");
     
     // layout globals
-    private int NUMBER_OF_DAYS;
-    private  int NUMBER_OF_MOVING_DAYS;
+    private int NUMBER_OF_DAYS; // number of days shown
+    private  int NUMBER_OF_MOVING_DAYS; // number of days to skip when using the forward/backward buttons
     
     private int MAX_COLUMNS = 3;
     private static final int MAX_LIST_LENGTH = 7;
-    
+
+    // name of setting in the database
     private static final String NUMBER_OF_DAYS_NAME = "number_of_days";
     private static final String NUMBER_OF_MOVING_DAYS_NAME
             = "number_of_moving_days";
@@ -587,16 +588,17 @@ public class Controller implements Initializable {
      */
     private void addEditLabelsPane() {
         labelsList = new ListView<>();
-        // first set up the listview with empty labels
+        // first set up the listview with empty labels in order to allow editing
         ObservableList<String> itemsLabelsList =
                 FXCollections.observableArrayList("","","","","");
-    
+
         // get the labels from the database and store them in the listview
         ArrayList<String> labelStrings = getLabels();
+        // add items starting at the top
         for (int i = 0; i < labelStrings.size(); i++) {
             itemsLabelsList.set(i, labelStrings.get(i));
         }
-    
+
         // set a CellFactory on the listview to be able make the cells editable
         // using setEditable(true) isn't enough
         labelsList.setCellFactory(TextFieldListCell.forListView());
@@ -618,7 +620,7 @@ public class Controller implements Initializable {
     
         // when editing a label in the listview, update the value
         // in the database and setup the main gridpane with the new items in the
-        // comboboxed
+        // comboboxes
         labelsList.setOnEditCommit(event -> {
             labelsList.getItems()
                     .set(event.getIndex(), event.getNewValue());
@@ -726,8 +728,8 @@ public class Controller implements Initializable {
     }
     
     /**
-     * Moves the FXML object up or down as much as the height the listview to
-     * edit the labels needs.
+     * Moves the FXML object up or down as much as the height of the listview to
+     * edit the labels, because the listview needs to push down the objects below it.
      * @param id The fx:id of the object to be moved.
      */
     private void toggleYsettingsObject(String id) {
@@ -886,7 +888,7 @@ public class Controller implements Initializable {
      */
     
     /**
-     * Enables or disables a node.
+     * Enables or disables a node, to circumvent double negation.
      * @param node The node to enable to disable.
      * @param enable True if the node should be enabled, false if
      *               the node should be disabled.
