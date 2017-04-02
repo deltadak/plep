@@ -100,7 +100,7 @@ public class Controller implements Initializable {
         createTables(); // if not already exists
     
         NUMBER_OF_DAYS = Integer.valueOf(getSetting(NUMBER_OF_DAYS_NAME));
-        MAX_COLUMNS = calculateMaxColumns();
+        calculateMaxColumns();
         NUMBER_OF_MOVING_DAYS = Integer.valueOf(getSetting(
                 NUMBER_OF_MOVING_DAYS_NAME));
         
@@ -701,7 +701,7 @@ public class Controller implements Initializable {
      */
     @FXML protected void applyNumberOfShowDaysChange() {
         NUMBER_OF_DAYS = numberOfShowDaysSpinner.getValue();
-        MAX_COLUMNS = calculateMaxColumns();
+        calculateMaxColumns();
         
         updateSetting(NUMBER_OF_DAYS_NAME,
                       String.valueOf(NUMBER_OF_DAYS));
@@ -709,8 +709,11 @@ public class Controller implements Initializable {
     
     }
     
-    private int calculateMaxColumns() {
-        return (int) Math.ceil(Math.sqrt(NUMBER_OF_DAYS));
+    /**
+     * Calculates and sets the value of MAX_COLUMNS
+     */
+    private void calculateMaxColumns() {
+        MAX_COLUMNS = (int) Math.ceil(Math.sqrt(NUMBER_OF_DAYS));
     }
     
     /**
@@ -740,6 +743,14 @@ public class Controller implements Initializable {
      * End of settings ---------------------------------------------------------
      */
     
+    /**
+     * Returns whether a MouseEvent happened in a certain node or not.
+     * @param node The node the event happened in.
+     * @param potentialHierarchyElement The node to check if the event
+     *                                  happened in.
+     * @return True if the event happened in the checked node, false
+     * otherwise.
+     */
     public static boolean inHierarchy(Node node, Node potentialHierarchyElement) {
         if (potentialHierarchyElement == null) {
             return true;
@@ -835,10 +846,20 @@ public class Controller implements Initializable {
         Database.INSTANCE.updateTasksDay(day, homeworkTasks);
     }
     
+    /**
+     * See {@link Database#getSetting(String)}
+     * @param name Same.
+     * @return Same.
+     */
     private String getSetting(String name) {
         return Database.INSTANCE.getSetting(name);
     }
     
+    /**
+     * See {@link Database#updateSetting(String, String)}
+     * @param name Same.
+     * @param newValue Same.
+     */
     private void updateSetting(String name, String newValue) {
         Database.INSTANCE.updateSetting(name, newValue);
     }

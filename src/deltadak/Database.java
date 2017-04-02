@@ -88,6 +88,11 @@ public enum Database {
     
     // settings ------------------------------------------------------
     
+    /**
+     * Gets the value of a setting from the database.
+     * @param name Name of the setting to get the value from.
+     * @return String with the value.
+     */
     public String getSetting(String name) {
         String value = "";
         String sql = "SELECT value FROM settings where name = '" + name + "'";
@@ -104,6 +109,11 @@ public enum Database {
         return value;
     }
     
+    /**
+     * Updates a setting in the database.
+     * @param name The name of the setting to update.
+     * @param newValue The new value to update the setting with.
+     */
     public void updateSetting(String name, String newValue) {
         String sql = "UPDATE settings SET value = '" + newValue +
                 "' WHERE name = '" + name + "'";
@@ -147,6 +157,9 @@ public enum Database {
     
     // misc ---------------------------------------------------------------
     
+    /**
+     * Creates all the tables in the database.
+     */
     public void createTables() {
         createHomeworkTable();
         createSettingsTable();
@@ -289,8 +302,8 @@ public enum Database {
     /**
      * Inserts a setting with given name and value into the settings table.
      * Only insert it when there is no row with the same name in the table.
-     * @param name
-     * @param value
+     * @param name Name of the setting.
+     * @param value Value of the setting, as a string.
      */
     private void insertSetting(String name, String value) {
         String sql = "INSERT OR IGNORE INTO settings(name, value) VALUES ('"
