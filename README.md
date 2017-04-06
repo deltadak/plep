@@ -5,7 +5,7 @@ Find the latest stable version (v1.1.1) [here](https://github.com/PHPirates/plep
 
 Find the latest debug build [here](https://github.com/PHPirates/plep/blob/master/out/artifacts/plep_jar/plep.jar?raw=true).
 
-## User Manual
+## Features/User Manual
 To install plep, download the version you want. The first time plep is runned, it will create a database file in the folder plep.jar is stored. Below we have listed a few things that might come in handy, as well as known bugs we have to live with, for now.
 + To **move** a task from one day to another, click, hold, and drag the task to the day you wish to move it to. 
   * Sometimes when you drag an item into a cell/task that is selected (dark grey) it disappears.
@@ -14,18 +14,21 @@ To install plep, download the version you want. The first time plep is runned, i
   * Not pressing enter results in the label being removed.
   * When you click a selected cell/task, it will see this as double-click and start editing.
 + To **edit** a label, click the label you wish to edit. A drop-down menu will show from which you can select the label you want.
++ To view other days, use the forward (>) and backward (<) button, go back to today in view with the 'today' button. 
++ To **change settings** click the settings button and then you can edit the labels used, number of days shown and number of days skipped by the 'forward' and 'backward' buttons. 
 
 ## Screenshot of v1.1
 ![screenshot](v1.1.PNG)
 
 ## Release Notes
-Features of plep, listed by the version in which they were added.
+Bugs solved and features, listed by the version in which they were added.
 
 #### [v1.2.1&#946;](https://github.com/deltadak/plep/blob/master/releases/plep_v1.2.1B.jar?raw=true)
 + Settings page 
   + Changing the labels
   + Changing the number of shown days
   + Changing the number of days to move at once
++ Fixed a bug which left grey selected cells behind.
 
 #### [v1.2&#946;](https://github.com/deltadak/plep/blob/master/releases/plep_v1.2B.jar?raw=true) 
 + Improved speed when executing a database query
