@@ -6,7 +6,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldListCell;
@@ -56,9 +55,6 @@ public class SettingsPane {
      */
     public SettingsPane(Controller controller) {
         this.controller = controller;
-        FXMLLoader fxmlLoader = new FXMLLoader();
-        fxmlLoader.setLocation(getClass().getResource("interface.xml"));
-        AnchorPane main = fxmlLoader.load();
 
     }
 
