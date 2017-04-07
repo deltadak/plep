@@ -64,8 +64,9 @@ public class Controller implements Initializable {
     public int MAX_COLUMNS = 3;
     private static final int MAX_LIST_LENGTH = 7;
 
-    // name of setting in the database
+    /** name of 'number of shown days'-setting in the database */
     public static final String NUMBER_OF_DAYS_NAME = "number_of_days";
+    /** name of 'number of days moved per forward/backward button click'-setting in the database */
     public static final String NUMBER_OF_MOVING_DAYS_NAME
             = "number_of_moving_days";
 
