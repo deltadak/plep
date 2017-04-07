@@ -1,3 +1,8 @@
+!releases/setup/*.exe
+!releases/setup/*.iss
+!out/artifacts/plep_jar/plep.jar
+!releases/*.jar
+
 *.class
 
 # Database files
@@ -17,8 +22,6 @@ hs_err_pid*
 
 .idea/*
 out/*
-
-!out/artifacts/plep_jar/plep.jar
 
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio and Webstorm
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839

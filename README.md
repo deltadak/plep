@@ -1,9 +1,9 @@
 # plep
 Plepping is the new planning.
 
-Find the latest stable version (v1.1.1) [here](https://github.com/PHPirates/plep/blob/master/releases/plep_v1.1.1.jar?raw=true).
+Find the latest stable version (v1.2.1) [here](https://github.com/deltadak/plep/blob/master/releases/setup/setup_plep_v1.2.1.exe?raw=true).
 
-Find the latest debug build [here](https://github.com/PHPirates/plep/blob/master/out/artifacts/plep_jar/plep.jar?raw=true).
+Find the latest debug build [here](https://github.com/deltadak/plep/blob/master/out/artifacts/plep_jar/plep.jar?raw=true).
 
 ## Features/User Manual
 To install plep, download the version you want. The first time plep is runned, it will create a database file in the folder plep.jar is stored. Below we have listed a few things that might come in handy, as well as known bugs we have to live with, for now.
@@ -23,7 +23,8 @@ To install plep, download the version you want. The first time plep is runned, i
 ## Release Notes
 Bugs solved and features, listed by the version in which they were added.
 
-#### [v1.2.1&#946;](https://github.com/deltadak/plep/blob/master/releases/plep_v1.2.1B.jar?raw=true)
+#### [v1.2.1](https://github.com/deltadak/plep/blob/master/releases/setup/setup_plep_v1.2.1.exe?raw=true?raw=true)
++ Plep now installs with a setup.exe
 + Settings page 
   + Changing the labels
   + Changing the number of shown days
