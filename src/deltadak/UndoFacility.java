@@ -23,9 +23,11 @@ public class UndoFacility {
      * Undo last done command.
      */
     public void undo() {
-        Command command = undoStack.pop();
-        if (command.isExecuted()) {
-            command.undo();
+        if (!undoStack.isEmpty()) {
+            Command command = undoStack.pop();
+            if (command.isExecuted()) {
+                command.undo();
+            }
         }
     }
 

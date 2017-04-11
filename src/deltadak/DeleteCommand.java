@@ -54,10 +54,14 @@ public class DeleteCommand extends Command {
     @Override
     protected void undoHook() {
         listViewItems.add(indexState, deletedTask);
+        // if not testing, provide user feedback
         if (listView != null) {
             listView.getItems().add(indexState, deletedTask);
         }
         controller.updateDatabase(dayState, listViewItems);
+        if (listView != null) {
+            controller.cleanUp(listView);
+        }
     }
 
     /**

@@ -74,6 +74,16 @@ public class Controller implements Initializable, AbstractController {
         
         progressIndicator.setVisible(false);
 
+        addUndoKeyListener();
+
+    }
+
+    private void addUndoKeyListener() {
+        gridPane.setOnKeyPressed(event -> {
+            if (event.isControlDown() && (event.getCode() == KeyCode.Z)) {
+                undoFacility.undo();
+            }
+        });
     }
     
     /**
@@ -400,7 +410,7 @@ public class Controller implements Initializable, AbstractController {
      * @param list
      *         to clean up
      */
-    void cleanUp(ListView<HomeworkTask> list) {
+    public void cleanUp(ListView<HomeworkTask> list) {
         int i;
         //first remove empty items
         for (i = 0; i < list.getItems().size(); i++) {
