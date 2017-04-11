@@ -42,7 +42,7 @@
     </GridPane>
 
     <!-- settings -->
-    <AnchorPane fx:id="settingsPane"
+    <AnchorPane fx:id="anchorPane"
                 style="-fx-background-color: lightskyblue"
                 AnchorPane.bottomAnchor="0.0">
 
@@ -53,14 +53,12 @@
                   vgap="10">
             <Button fx:id="editLabelsButton"
                     text="Edit course labels"
-                    onAction="#editCourseLabels"
                     GridPane.columnIndex="0"
                     GridPane.rowIndex="0"/>
             <Button fx:id="removeLabelButton"
                     text="Remove"
                     GridPane.rowIndex="1"
                     GridPane.columnIndex="0"
-                    onAction="#removeLabel"
                     visible="false"/>
         </GridPane>
 
@@ -75,7 +73,6 @@
 
             <Button fx:id="applyNumberOfDays"
                     GridPane.columnIndex="2"
-                    onAction="#applyNumberOfMovingDaysChange"
                     text="Apply"/>
 
             <Text fx:id="numberOfShowDaysText"
@@ -84,7 +81,6 @@
             <Button fx:id="applyNumberOfShowDays"
                     GridPane.columnIndex="2"
                     GridPane.rowIndex="1"
-                    onAction="#applyNumberOfShowDaysChange"
                     text="Apply"/>
         </GridPane>
 
