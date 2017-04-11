@@ -59,6 +59,6 @@ Bugs solved and features, listed by the version in which they were added.
 
 ## Instructions for building from source in IntelliJ
 This application works with a database, so you need to add the sqlite library by going to project structure -> libaries -> add new one and then selecting the file located at something like C:\Users\s156757\.IntelliJIdea2016.2\config\jdbc-drivers\sqlite-jdbc-3.8.11.2.jar
-Then you go to view -> tool windows -> database and follow the instructions to add an SQLite data source.
+To add the database to IntelliJ, go to View -> Tool Windows -> Database and add an SQLite data source. To find out the path to your database file (plep.db), look for a method in `Database.java` called `setDefaultDatabasePath()` and find out the value of `jarDir`. The database file will be in the same folder as the plep folder.
 
 ## [Javadoc](http://htmlpreview.github.io/?https://github.com/deltadak/plep/blob/master/Javadoc/index.html)
