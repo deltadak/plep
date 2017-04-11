@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="plep" default="all">
+  
+  
+  <property file="build.properties"/>
+  <!-- Uncomment the following property if no tests compilation is needed -->
+  <!-- 
+  <property name="skip.tests" value="true"/>
+   -->
+  
+  <!-- Compiler options -->
+  
+  <property name="compiler.debug" value="on"/>
+  <property name="compiler.generate.no.warnings" value="off"/>
+  <property name="compiler.args" value=""/>
+  <property name="compiler.max.memory" value="700m"/>
+  <patternset id="ignored.files">
+    <exclude name="**/*.hprof/**"/>
+    <exclude name="**/*.orig/**"/>
+    <exclude name="**/*.pyc/**"/>
+    <exclude name="**/*.pyo/**"/>
+    <exclude name="**/*.rbc/**"/>
+    <exclude name="**/*.yarb/**"/>
+    <exclude name="**/*~/**"/>
+    <exclude name="**/.DS_Store/**"/>
+    <exclude name="**/.git/**"/>
+    <exclude name="**/.hg/**"/>
+    <exclude name="**/.svn/**"/>
+    <exclude name="**/CVS/**"/>
+    <exclude name="**/__pycache__/**"/>
+    <exclude name="**/_svn/**"/>
+    <exclude name="**/vssver.scc/**"/>
+    <exclude name="**/vssver2.scc/**"/>
+  </patternset>
+  <patternset id="library.patterns">
+    <include name="*.egg"/>
+    <include name="*.jar"/>
+    <include name="*.ear"/>
+    <include name="*.swc"/>
+    <include name="*.war"/>
+    <include name="*.ane"/>
+    <include name="*.zip"/>
+  </patternset>
+  <patternset id="compiler.resources">
+    <exclude name="**/?*.java"/>
+    <exclude name="**/?*.form"/>
+    <exclude name="**/?*.class"/>
+    <exclude name="**/?*.groovy"/>
+    <exclude name="**/?*.scala"/>
+    <exclude name="**/?*.flex"/>
+    <exclude name="**/?*.kt"/>
+    <exclude name="**/?*.clj"/>
+    <exclude name="**/?*.aj"/>
+  </patternset>
+  
+  <!-- JDK definitions -->
+  
+  <property name="jdk.bin.1.8" value="${jdk.home.1.8}/bin"/>
+  <path id="jdk.classpath.1.8">
+    <fileset dir="${jdk.home.1.8}">
+      <include name="jre/lib/charsets.jar"/>
+      <include name="jre/lib/deploy.jar"/>
+      <include name="jre/lib/ext/access-bridge-64.jar"/>
+      <include name="jre/lib/ext/cldrdata.jar"/>
+      <include name="jre/lib/ext/dnsns.jar"/>
+      <include name="jre/lib/ext/jaccess.jar"/>
+      <include name="jre/lib/ext/jfxrt.jar"/>
+      <include name="jre/lib/ext/localedata.jar"/>
+      <include name="jre/lib/ext/nashorn.jar"/>
+      <include name="jre/lib/ext/sunec.jar"/>
+      <include name="jre/lib/ext/sunjce_provider.jar"/>
+      <include name="jre/lib/ext/sunmscapi.jar"/>
+      <include name="jre/lib/ext/sunpkcs11.jar"/>
+      <include name="jre/lib/ext/zipfs.jar"/>
+      <include name="jre/lib/javaws.jar"/>
+      <include name="jre/lib/jce.jar"/>
+      <include name="jre/lib/jfr.jar"/>
+      <include name="jre/lib/jfxswt.jar"/>
+      <include name="jre/lib/jsse.jar"/>
+      <include name="jre/lib/management-agent.jar"/>
+      <include name="jre/lib/plugin.jar"/>
+      <include name="jre/lib/resources.jar"/>
+      <include name="jre/lib/rt.jar"/>
+    </fileset>
+  </path>
+  
+  <property name="project.jdk.home" value="${jdk.home.1.8}"/>
+  <property name="project.jdk.bin" value="${jdk.bin.1.8}"/>
+  <property name="project.jdk.classpath" value="jdk.classpath.1.8"/>
+  
+  
+  <!-- Project Libraries -->
+  
+  <path id="library.plep.classpath">
+    <pathelement location="${basedir}/plep_v0.1.jar"/>
+    <pathelement location="${basedir}/plep_v0.2.jar"/>
+    <pathelement location="${basedir}/plep_v1.0.jar"/>
+    <pathelement location="${basedir}/plep_v1.1.1.jar"/>
+    <pathelement location="${basedir}/plep_v1.1.jar"/>
+  </path>
+  
+  <path id="library.plep1.classpath">
+    <pathelement location="${basedir}/out/artifacts/plep_jar/plep.jar"/>
+  </path>
+  <!-- Register Custom Compiler Taskdefs -->
+  <property name="javac2.home" value="${idea.home}/lib"/>
+  <path id="javac2.classpath">
+    <pathelement location="${javac2.home}/javac2.jar"/>
+    <pathelement location="${javac2.home}/jdom.jar"/>
+    <pathelement location="${javac2.home}/asm-all.jar"/>
+    <pathelement location="${javac2.home}/jgoodies-forms.jar"/>
+  </path>
+  <target name="register.custom.compilers">
+    <taskdef name="javac2" classname="com.intellij.ant.Javac2" classpathref="javac2.classpath"/>
+    <taskdef name="instrumentIdeaExtensions" classname="com.intellij.ant.InstrumentIdeaExtensions" classpathref="javac2.classpath"/>
+  </target>
+  
+  <!-- Modules -->
+  
+  
+  <!-- Module plep -->
+  
+  <dirname property="module.plep.basedir" file="${ant.file}"/>
+  
+  
+  <property name="module.jdk.home.plep" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.plep" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.plep" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.plep" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="plep.output.dir" value="${module.plep.basedir}/out/production/plep"/>
+  <property name="plep.testoutput.dir" value="${module.plep.basedir}/out/test/plep"/>
+  
+  <path id="plep.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="plep.module.production.classpath">
+    <path refid="${module.jdk.classpath.plep}"/>
+    <path refid="library.plep.classpath"/>
+    <path refid="library.plep1.classpath"/>
+  </path>
+  
+  <path id="plep.runtime.production.module.classpath">
+    <pathelement location="${plep.output.dir}"/>
+    <path refid="library.plep.classpath"/>
+    <path refid="library.plep1.classpath"/>
+  </path>
+  
+  <path id="plep.module.classpath">
+    <path refid="${module.jdk.classpath.plep}"/>
+    <pathelement location="${plep.output.dir}"/>
+    <path refid="library.plep.classpath"/>
+    <path refid="library.plep1.classpath"/>
+    <pathelement location="${idea.home}/plugins/junit/lib/junit-jupiter-api-5.0.0-M3.jar"/>
+    <pathelement location="${idea.home}/plugins/junit/lib/opentest4j-1.0.0-M1.jar"/>
+  </path>
+  
+  <path id="plep.runtime.module.classpath">
+    <pathelement location="${plep.testoutput.dir}"/>
+    <pathelement location="${plep.output.dir}"/>
+    <path refid="library.plep.classpath"/>
+    <path refid="library.plep1.classpath"/>
+    <pathelement location="${idea.home}/plugins/junit/lib/junit-jupiter-api-5.0.0-M3.jar"/>
+    <pathelement location="${idea.home}/plugins/junit/lib/opentest4j-1.0.0-M1.jar"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.plep">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.plep">
+    <patternset refid="excluded.from.module.plep"/>
+  </patternset>
+  
+  <path id="plep.module.sourcepath">
+    <dirset dir="${module.plep.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.plep" depends="compile.module.plep.production,compile.module.plep.tests" description="Compile module plep"/>
+  
+  <target name="compile.module.plep.production" depends="register.custom.compilers" description="Compile module plep; production classes">
+    <mkdir dir="${plep.output.dir}"/>
+    <javac2 destdir="${plep.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.plep}/javac">
+      <compilerarg line="${compiler.args.plep}"/>
+      <bootclasspath refid="plep.module.bootclasspath"/>
+      <classpath refid="plep.module.production.classpath"/>
+      <src refid="plep.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.plep"/>
+    </javac2>
+    
+    <copy todir="${plep.output.dir}">
+      <fileset dir="${module.plep.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.plep.tests" depends="register.custom.compilers,compile.module.plep.production" description="compile module plep; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.plep" description="cleanup module">
+    <delete dir="${plep.output.dir}"/>
+    <delete dir="${plep.testoutput.dir}"/>
+  </target>
+  
+  <target name="init" description="Build initialization">
+    <!-- Perform any build initialization in this target -->
+  </target>
+  
+  <target name="clean" depends="clean.module.plep" description="cleanup all"/>
+  
+  <target name="build.modules" depends="init, clean, compile.module.plep" description="build all modules"/>
+  
+  <target name="init.artifacts">
+    <property name="artifacts.temp.dir" value="${basedir}/__artifacts_temp"/>
+    <property name="artifact.output.plep:jar" value="${basedir}/out/artifacts/plep_jar"/>
+    <mkdir dir="${artifacts.temp.dir}"/>
+    <property name="temp.jar.path.plep.jar" value="${artifacts.temp.dir}/plep.jar"/>
+  </target>
+  
+  <target name="artifact.plep:jar" depends="init.artifacts, compile.module.plep" description="Build &#39;plep:jar&#39; artifact">
+    <property name="artifact.temp.output.plep:jar" value="${artifacts.temp.dir}/plep_jar"/>
+    <mkdir dir="${artifact.temp.output.plep:jar}"/>
+    <jar destfile="${temp.jar.path.plep.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
+      <zipfileset dir="${plep.output.dir}"/>
+      <zipfileset src="${basedir}/out/artifacts/plep_jar/plep.jar"/>
+      <zipfileset src="${basedir}/plep_v1.1.jar"/>
+      <zipfileset src="${basedir}/plep_v0.1.jar"/>
+      <zipfileset src="${basedir}/plep_v0.2.jar"/>
+      <zipfileset src="${basedir}/plep_v1.1.1.jar"/>
+      <zipfileset src="${basedir}/plep_v1.0.jar"/>
+    </jar>
+    <copy file="${temp.jar.path.plep.jar}" tofile="${artifact.temp.output.plep:jar}/plep.jar"/>
+  </target>
+  
+  <target name="build.all.artifacts" depends="artifact.plep:jar" description="Build all artifacts">
+    <mkdir dir="${artifact.output.plep:jar}"/>
+    <copy todir="${artifact.output.plep:jar}">
+      <fileset dir="${artifact.temp.output.plep:jar}"/>
+    </copy>
+    
+    <!-- Delete temporary files -->
+    <delete dir="${artifacts.temp.dir}"/>
+  </target>
+  
+  <target name="all" depends="build.modules, build.all.artifacts" description="build all"/>
+</project>
