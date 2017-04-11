@@ -19,7 +19,7 @@ public abstract class Command {
             throw new IllegalStateException("Cannot execute command twice");
         }
         executed = true;
-        continueExecution();
+        executionHook();
     }
 
     /**
@@ -27,19 +27,20 @@ public abstract class Command {
      * but at least does not require them to not forget
      * to call super.execute(), conform Template pattern.
      */
-    protected abstract void continueExecution();
+    protected abstract void executionHook();
 
     /**
      * Undo
      */
     public void undo() {
         executed = false;
+        undoHook();
     }
 
     /**
-     * Same reason as with {@link #continueExecution()} )}.
+     * Same reason as with {@link #executionHook()} )}.
      */
-    protected abstract void continueUndo();
+    protected abstract void undoHook();
 
     /**
      * @return whether command is executed

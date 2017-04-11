@@ -29,7 +29,7 @@ import java.util.concurrent.Executors;
 // incorrect warning about LocalDate may be weakened to ChronoLocalDate (not
 // true)
 @SuppressWarnings("TypeMayBeWeakened")
-public class Controller implements Initializable {
+public class Controller implements Initializable, AbstractController {
     
     // main element of the UI is declared in interface.fxml
     @FXML GridPane gridPane;
@@ -48,7 +48,9 @@ public class Controller implements Initializable {
     
     // Multithreading
     private Executor exec;
-    
+
+    /** keep a reference to the undo facility */
+    private UndoFacility undoFacility = new UndoFacility();
     
     /**
      * Initialization method for the controller.
@@ -177,10 +179,9 @@ public class Controller implements Initializable {
         //add option to delete a task
         list.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.DELETE) {
-                new DeleteCommand(this, localDate,
-                        convertObservableToArrayList( list.getItems()),
-                        list.getSelectionModel().getSelectedIndex());
-                //todo pass to undoredo class to execute
+                DeleteCommand command = new DeleteCommand(this, localDate,
+                        convertObservableToArrayList(list.getItems()), list.getSelectionModel().getSelectedIndex(), list);
+                undoFacility.execute(command);
 
                 cleanUp(list); //cleaning up has to happen in the listener
             }
@@ -195,7 +196,7 @@ public class Controller implements Initializable {
      *
      * @return converted ObservableList
      */
-    List<HomeworkTask> convertObservableToArrayList(
+    public static List<HomeworkTask> convertObservableToArrayList(
             final ObservableList<HomeworkTask> list) {
         return new ArrayList<>(list);
     }

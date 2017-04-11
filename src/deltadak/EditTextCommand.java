@@ -26,14 +26,14 @@ public class EditTextCommand extends Command {
     }
 
     @Override
-    protected void continueExecution() {
+    protected void executionHook() {
         List<HomeworkTask> newList = new ArrayList<>(listState);
 //        newList.add(stuff); //todo
         Database.INSTANCE.updateTasksDay(dayState, newList);
     }
 
     @Override
-    protected void continueUndo() {
+    protected void undoHook() {
         Database.INSTANCE.updateTasksDay(dayState, listState);
 
     }
