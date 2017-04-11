@@ -71,6 +71,7 @@ public class Controller implements Initializable {
     public static final String NUMBER_OF_MOVING_DAYS_NAME
             = "number_of_moving_days";
     public static final String MAX_COLUMNS_NAME = "max_columns";
+    public static final String MAX_COLUMNS_AUTO_NAME = "max_columns_auto";
 
     public LocalDate focusDay;
     private LocalDate today;
@@ -140,6 +141,13 @@ public class Controller implements Initializable {
      * @param focusDate date that is the top middle one (is today on default)
      */
     public void setupGridPane(LocalDate focusDate) {
+        boolean isAuto = Boolean.valueOf(
+                getSetting(MAX_COLUMNS_AUTO_NAME));
+        if(isAuto) {
+            MAX_COLUMNS = maxColumns(NUMBER_OF_DAYS);
+        } else {
+            MAX_COLUMNS = Integer.valueOf(getSetting(MAX_COLUMNS_NAME));
+        }
 
         AnchorPane.setTopAnchor(gridPane, toolBar.getPrefHeight());
 
@@ -224,6 +232,15 @@ public class Controller implements Initializable {
         int row = index / MAX_COLUMNS;
         int column = index % MAX_COLUMNS;
         gridPane.add(vbox, column, row);
+    }
+    
+    /**
+     * Calculates and sets the value of MAX_COLUMNS
+     * @param numberOfDays number of days in total
+     * @return int for MAX_COLUMNS
+     */
+    private int maxColumns(int numberOfDays) {
+        return (int) Math.ceil(Math.sqrt(numberOfDays));
     }
 
     /**

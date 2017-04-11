@@ -1,6 +1,9 @@
 package deltadak;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import javafx.animation.TranslateTransition;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -65,18 +68,28 @@ public class SettingsPane {
      * Setup components, which are hopefully not null...
      */
     public void setup() {
-        controller.MAX_COLUMNS = maxColumns(controller.NUMBER_OF_DAYS);
+//        controller.MAX_COLUMNS = maxColumns(controller.NUMBER_OF_DAYS);
         setupSettingsMenu();
         prepareToggleSettings();
         setComponentListeners();
+        boolean isAuto = Boolean.valueOf(getSetting(
+                Controller.MAX_COLUMNS_AUTO_NAME));
+        autoColumnsCheckBox.setSelected(isAuto);
     }
 
     private void setComponentListeners() {
         editLabelsButton.setOnAction(event -> editCourseLabels());
         removeLabelButton.setOnAction(event -> removeLabel());
-        applyNumberOfDays.setOnAction(event -> applyNumberOfMovingDaysChange());
-        applyNumberOfShowDays.setOnAction(event -> applyNumberOfShowDaysChange());
+        applyNumberOfDays.setOnAction(event ->
+                applyNumberOfMovingDaysChange());
+        applyNumberOfShowDays.setOnAction(event ->
+                applyNumberOfShowDaysChange());
         applyMaxColumns.setOnAction(event -> applyMaxColumnsChange());
+//        autoColumnsCheckBox.setOnAction(event ->
+//                autoColumnsCheckBoxToggled());
+        autoColumnsCheckBox.selectedProperty().addListener(
+                (observable, oldValue, newValue) ->
+                        autoColumnsCheckBoxToggled());
     }
 
     /**
@@ -227,9 +240,11 @@ public class SettingsPane {
         
         
         maxColumnsSpinner = new Spinner<>();
+        int defaultValue = Integer.valueOf(getSetting(
+                Controller.MAX_COLUMNS_NAME));
         SpinnerValueFactory<Integer> valueColumnFactory = new
                 SpinnerValueFactory.IntegerSpinnerValueFactory(
-                        1, 14, controller.MAX_COLUMNS);
+                        1, 14, defaultValue);
         
         maxColumnsSpinner.setValueFactory(valueColumnFactory);
         maxColumnsSpinner.setId("maxColumnsSpinner");
@@ -293,15 +308,14 @@ public class SettingsPane {
         controller.MAX_COLUMNS = maxColumnsSpinner.getValue();
         updateSetting(Controller.MAX_COLUMNS_NAME,
                       String.valueOf(controller.MAX_COLUMNS));
+        autoColumnsCheckBox.setSelected(false);
         controller.setupGridPane(controller.focusDay);
     }
-
-    /**
-     * Calculates and sets the value of MAX_COLUMNS
-     * @param numberOfDays number of days in total
-     */
-    private int maxColumns(int numberOfDays) {
-        return (int) Math.ceil(Math.sqrt(numberOfDays));
+    
+    @FXML protected void autoColumnsCheckBoxToggled() {
+        updateSetting(Controller.MAX_COLUMNS_AUTO_NAME,
+                      String.valueOf(autoColumnsCheckBox.isSelected()));
+        controller.setupGridPane(controller.focusDay);
     }
 
     /**
