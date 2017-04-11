@@ -63,7 +63,7 @@ public class Controller implements Initializable {
     public int NUMBER_OF_DAYS; // number of days shown
     public int NUMBER_OF_MOVING_DAYS; // number of days to skip when using the forward/backward buttons
 
-    public int MAX_COLUMNS;
+    public int MAX_COLUMNS; // number of columns to fill with lists with tasks
     private static final int MAX_LIST_LENGTH = 7;
 
     // name of setting in the database
@@ -96,6 +96,7 @@ public class Controller implements Initializable {
         setDefaultDatabasePath();
         createTables(); // if not already exists
 
+        // get the current settings from the database
         NUMBER_OF_DAYS = Integer.valueOf(getSetting(NUMBER_OF_DAYS_NAME));
         NUMBER_OF_MOVING_DAYS = Integer.valueOf(getSetting(
                 NUMBER_OF_MOVING_DAYS_NAME));
@@ -106,6 +107,7 @@ public class Controller implements Initializable {
 
         progressIndicator.setVisible(false);
 
+        // setup the settings pange
         settingsPane = new SettingsPane(this);
         copySettingsPaneComponents(settingsPane);
         settingsPane.setup();
@@ -141,6 +143,8 @@ public class Controller implements Initializable {
      * @param focusDate date that is the top middle one (is today on default)
      */
     public void setupGridPane(LocalDate focusDate) {
+        // check if the number of columns should be calculated, or retrieved
+        // from the database
         boolean isAuto = Boolean.valueOf(
                 getSetting(MAX_COLUMNS_AUTO_NAME));
         if(isAuto) {

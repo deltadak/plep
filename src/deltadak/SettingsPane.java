@@ -89,7 +89,7 @@ public class SettingsPane {
 //                autoColumnsCheckBoxToggled());
         autoColumnsCheckBox.selectedProperty().addListener(
                 (observable, oldValue, newValue) ->
-                        autoColumnsCheckBoxToggled());
+                        autoColumnsCheckBoxToggled(newValue));
     }
 
     /**
@@ -238,8 +238,9 @@ public class SettingsPane {
         GridPane.setRowIndex(numberOfShowDaysSpinner,1);
         editDaysPane.getChildren().add(numberOfShowDaysSpinner);
         
-        
+        // Adding the spinner to change the number of columns.
         maxColumnsSpinner = new Spinner<>();
+        // Get the previous value from the database.
         int defaultValue = Integer.valueOf(getSetting(
                 Controller.MAX_COLUMNS_NAME));
         SpinnerValueFactory<Integer> valueColumnFactory = new
@@ -304,17 +305,29 @@ public class SettingsPane {
         controller.setupGridPane(controller.focusDay);
     }
     
+    /**
+     * Applies the new number of columns to the main GridPane, and toggles the
+     * autoColumnsCheckBox to unselected. So the number of columns isn't
+     * automatically calculated, but manually set.
+     */
     @FXML protected void applyMaxColumnsChange() {
         controller.MAX_COLUMNS = maxColumnsSpinner.getValue();
         updateSetting(Controller.MAX_COLUMNS_NAME,
                       String.valueOf(controller.MAX_COLUMNS));
         autoColumnsCheckBox.setSelected(false);
-        controller.setupGridPane(controller.focusDay);
+        // No need to explicitly setup the GridPane here, that's already done
+        // in autoColumnsCheckBoxToggled().
     }
     
-    @FXML protected void autoColumnsCheckBoxToggled() {
+    /**
+     * Updates the value of 'max_columns_auto' in the database to the new
+     * value of the check box.
+     * @param newValue a boolean with true or false. True if the box is
+     *                 selected, false if it is not selected.
+     */
+    @FXML protected void autoColumnsCheckBoxToggled(boolean newValue) {
         updateSetting(Controller.MAX_COLUMNS_AUTO_NAME,
-                      String.valueOf(autoColumnsCheckBox.isSelected()));
+                      String.valueOf(newValue));
         controller.setupGridPane(controller.focusDay);
     }
 
