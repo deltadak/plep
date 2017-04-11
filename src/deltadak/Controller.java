@@ -50,6 +50,8 @@ public class Controller implements Initializable {
     @FXML Button removeLabelButton;
     @FXML Button applyNumberOfDays;
     @FXML Button applyNumberOfShowDays;
+    @FXML CheckBox autoColumnCheckBox;
+    @FXML Button applyMaxColumns;
 
     @FXML Text numberOfMovingDaysText;
     @FXML Text numberOfShowDaysText;
@@ -61,13 +63,14 @@ public class Controller implements Initializable {
     public int NUMBER_OF_DAYS; // number of days shown
     public int NUMBER_OF_MOVING_DAYS; // number of days to skip when using the forward/backward buttons
 
-    public int MAX_COLUMNS = 3;
+    public int MAX_COLUMNS;
     private static final int MAX_LIST_LENGTH = 7;
 
     // name of setting in the database
     public static final String NUMBER_OF_DAYS_NAME = "number_of_days";
     public static final String NUMBER_OF_MOVING_DAYS_NAME
             = "number_of_moving_days";
+    public static final String MAX_COLUMNS_NAME = "max_columns";
 
     public LocalDate focusDay;
     private LocalDate today;
@@ -95,6 +98,7 @@ public class Controller implements Initializable {
         NUMBER_OF_DAYS = Integer.valueOf(getSetting(NUMBER_OF_DAYS_NAME));
         NUMBER_OF_MOVING_DAYS = Integer.valueOf(getSetting(
                 NUMBER_OF_MOVING_DAYS_NAME));
+        MAX_COLUMNS = Integer.valueOf(getSetting(MAX_COLUMNS_NAME));
 
         focusDay = LocalDate.now(); // set focus day to today
         setupGridPane(focusDay);
@@ -126,6 +130,8 @@ public class Controller implements Initializable {
         settingsPane.settingsButton = this.settingsButton;
         settingsPane.applyNumberOfDays = this.applyNumberOfDays;
         settingsPane.applyNumberOfShowDays = this.applyNumberOfShowDays;
+        settingsPane.autoColumnsCheckBox = this.autoColumnCheckBox;
+        settingsPane.applyMaxColumns = this.applyMaxColumns;
     }
 
     /**

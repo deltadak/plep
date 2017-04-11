@@ -296,6 +296,7 @@ public enum Database {
         // insert the default settings
         insertSetting("number_of_days", "9");
         insertSetting("number_of_moving_days", "7");
+        insertSetting("max_columns", "3");
         
     }
     

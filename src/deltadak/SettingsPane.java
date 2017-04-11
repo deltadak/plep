@@ -37,10 +37,13 @@ public class SettingsPane {
     public GridPane editDaysPane;
     public Button applyNumberOfDays;
     public Button applyNumberOfShowDays;
+    public CheckBox autoColumnsCheckBox;
+    public Button applyMaxColumns;
 
     private ListView<String> labelsList;
     private Spinner<Integer> numberOfMovingDaysSpinner;
     private Spinner<Integer> numberOfShowDaysSpinner;
+    private Spinner<Integer> maxColumnsSpinner;
 
     // layout globals for the settings pane
     private static final int SETTINGS_WIDTH = 400;
@@ -73,6 +76,7 @@ public class SettingsPane {
         removeLabelButton.setOnAction(event -> removeLabel());
         applyNumberOfDays.setOnAction(event -> applyNumberOfMovingDaysChange());
         applyNumberOfShowDays.setOnAction(event -> applyNumberOfShowDaysChange());
+        applyMaxColumns.setOnAction(event -> applyMaxColumnsChange());
     }
 
     /**
@@ -204,7 +208,7 @@ public class SettingsPane {
         numberOfMovingDaysSpinner.setValueFactory(valueFactory);
         numberOfMovingDaysSpinner.setId("numberOfMovingDaysSpinner");
         numberOfMovingDaysSpinner.setPrefWidth(70);
-        GridPane.setColumnIndex(numberOfMovingDaysSpinner, 1);
+        GridPane.setColumnIndex(numberOfMovingDaysSpinner, 2);
         editDaysPane.getChildren().add(numberOfMovingDaysSpinner);
 
 
@@ -217,10 +221,25 @@ public class SettingsPane {
         numberOfShowDaysSpinner.setValueFactory(valueShowFactory);
         numberOfShowDaysSpinner.setId("numberOfShowDaysSpinner");
         numberOfShowDaysSpinner.setPrefWidth(70);
-        GridPane.setColumnIndex(numberOfShowDaysSpinner, 1);
+        GridPane.setColumnIndex(numberOfShowDaysSpinner, 2);
         GridPane.setRowIndex(numberOfShowDaysSpinner,1);
         editDaysPane.getChildren().add(numberOfShowDaysSpinner);
+        
+        
+        maxColumnsSpinner = new Spinner<>();
+        SpinnerValueFactory<Integer> valueColumnFactory = new
+                SpinnerValueFactory.IntegerSpinnerValueFactory(
+                        1, 14, controller.MAX_COLUMNS);
+        
+        maxColumnsSpinner.setValueFactory(valueColumnFactory);
+        maxColumnsSpinner.setId("maxColumnsSpinner");
+        maxColumnsSpinner.setPrefWidth(70);
+        GridPane.setColumnIndex(maxColumnsSpinner, 2);
+        GridPane.setRowIndex(maxColumnsSpinner, 2);
+        editDaysPane.getChildren().add(maxColumnsSpinner);
     }
+    
+    
 
     /**
      * Toggles the visibility of the listview with labels.
@@ -264,12 +283,17 @@ public class SettingsPane {
      */
     @FXML protected void applyNumberOfShowDaysChange() {
         controller.NUMBER_OF_DAYS = numberOfShowDaysSpinner.getValue();
-        controller.MAX_COLUMNS = maxColumns(controller.NUMBER_OF_DAYS);
 
         updateSetting(Controller.NUMBER_OF_DAYS_NAME,
                 String.valueOf(controller.NUMBER_OF_DAYS));
         controller.setupGridPane(controller.focusDay);
-
+    }
+    
+    @FXML protected void applyMaxColumnsChange() {
+        controller.MAX_COLUMNS = maxColumnsSpinner.getValue();
+        updateSetting(Controller.MAX_COLUMNS_NAME,
+                      String.valueOf(controller.MAX_COLUMNS));
+        controller.setupGridPane(controller.focusDay);
     }
 
     /**
