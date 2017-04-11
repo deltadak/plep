@@ -315,8 +315,7 @@ public class SettingsPane {
         updateSetting(Controller.MAX_COLUMNS_NAME,
                       String.valueOf(controller.MAX_COLUMNS));
         autoColumnsCheckBox.setSelected(false);
-        // No need to explicitly setup the GridPane here, that's already done
-        // in autoColumnsCheckBoxToggled().
+        controller.setupGridPane(controller.focusDay);
     }
     
     /**
