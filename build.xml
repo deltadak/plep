@@ -181,6 +181,12 @@
     </dirset>
   </path>
   
+  <path id="plep.module.test.sourcepath">
+    <dirset dir="${module.plep.basedir}">
+      <include name="test"/>
+    </dirset>
+  </path>
+  
   
   <target name="compile.module.plep" depends="compile.module.plep.production,compile.module.plep.tests" description="Compile module plep"/>
   
@@ -202,7 +208,23 @@
     </copy>
   </target>
   
-  <target name="compile.module.plep.tests" depends="register.custom.compilers,compile.module.plep.production" description="compile module plep; test classes" unless="skip.tests"/>
+  <target name="compile.module.plep.tests" depends="register.custom.compilers,compile.module.plep.production" description="compile module plep; test classes" unless="skip.tests">
+    <mkdir dir="${plep.testoutput.dir}"/>
+    <javac2 destdir="${plep.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.plep}/javac">
+      <compilerarg line="${compiler.args.plep}"/>
+      <bootclasspath refid="plep.module.bootclasspath"/>
+      <classpath refid="plep.module.classpath"/>
+      <src refid="plep.module.test.sourcepath"/>
+      <patternset refid="excluded.from.compilation.plep"/>
+    </javac2>
+    
+    <copy todir="${plep.testoutput.dir}">
+      <fileset dir="${module.plep.basedir}/test">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
   
   <target name="clean.module.plep" description="cleanup module">
     <delete dir="${plep.output.dir}"/>
