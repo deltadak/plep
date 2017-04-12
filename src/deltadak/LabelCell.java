@@ -18,7 +18,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Objects;
 
 import static java.lang.Integer.min;
@@ -141,7 +140,7 @@ class LabelCell extends TextFieldListCell<HomeworkTask> {
             @Override
             public void invalidated(Observable observable) {
                 controller.updateDatabase(day, controller
-                        .convertObservableToArrayList(
+                        .convertObservableListToList(
                                 list.getItems()));
                 // We do not need to cleanup here, as no tasks
                 // were added or deleted.
@@ -182,7 +181,7 @@ class LabelCell extends TextFieldListCell<HomeworkTask> {
             if (!getItem().getText().equals("")) {
                 Dragboard db = startDragAndDrop(TransferMode.MOVE);
                 ClipboardContent content = new ClipboardContent();
-                content.put(controller.dataFormat, getItem());
+                content.put(controller.DATA_FORMAT, getItem());
                 db.setContent(content);
             }
             event.consume();
@@ -195,7 +194,7 @@ class LabelCell extends TextFieldListCell<HomeworkTask> {
     void setOnDragOver() {
         setOnDragOver(event -> {
             if (!Objects.equals(event.getGestureSource(), this) && event
-                    .getDragboard().hasContent(controller.dataFormat)) {
+                    .getDragboard().hasContent(controller.DATA_FORMAT)) {
                 event.acceptTransferModes(TransferMode.MOVE);
             }
             event.consume();
@@ -208,7 +207,7 @@ class LabelCell extends TextFieldListCell<HomeworkTask> {
     void setOnDragEntered() {
         setOnDragEntered(event -> {
             if ((!Objects.equals(event.getGestureSource(), this)) && event
-                    .getDragboard().hasContent(controller.dataFormat)) {
+                    .getDragboard().hasContent(controller.DATA_FORMAT)) {
 //                System.out.println("TODO: change color of listview"); //todo
             }
         
@@ -237,9 +236,9 @@ class LabelCell extends TextFieldListCell<HomeworkTask> {
         setOnDragDropped(event -> {
             Dragboard db = event.getDragboard();
             boolean success = false;
-            if (db.hasContent(controller.dataFormat)) {
+            if (db.hasContent(controller.DATA_FORMAT)) {
                 HomeworkTask newHomeworkTask
-                        = (HomeworkTask)db.getContent(controller.dataFormat);
+                        = (HomeworkTask)db.getContent(controller.DATA_FORMAT);
                 //insert new task, removing will happen in onDragDone
                 int index = min(getIndex(), list.getItems()
                         .size()); // item can be dropped way below
@@ -255,7 +254,7 @@ class LabelCell extends TextFieldListCell<HomeworkTask> {
                 success = true;
                 // update tasks in database
                 controller.updateDatabase(
-                        day, controller.convertObservableToArrayList(list.getItems()));
+                        day, controller.convertObservableListToList(list.getItems()));
             }
             
             
@@ -279,7 +278,7 @@ class LabelCell extends TextFieldListCell<HomeworkTask> {
             if (event.getTransferMode() == TransferMode.MOVE) {
                 Dragboard db = event.getDragboard();
                 HomeworkTask newHomeworkTask
-                        = (HomeworkTask)db.getContent(controller.dataFormat);
+                        = (HomeworkTask)db.getContent(controller.DATA_FORMAT);
                 HomeworkTask emptyHomeworkTask = new HomeworkTask("", "", "White");
                 //remove original item
                 //item can have been moved up (so index becomes one
@@ -301,7 +300,7 @@ class LabelCell extends TextFieldListCell<HomeworkTask> {
     
                 // update in database
                 controller.updateDatabase(day, controller
-                        .convertObservableToArrayList(
+                        .convertObservableListToList(
                                 list.getItems()));
                 
                 //prevent an empty list from refusing to receive

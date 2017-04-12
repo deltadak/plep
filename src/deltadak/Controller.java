@@ -54,8 +54,8 @@ public class Controller implements Initializable {
     @FXML Text numberOfMovingDaysText;
     @FXML Text numberOfShowDaysText;
 
-    // used to transfer tasks with drag and drop
-    DataFormat dataFormat = new DataFormat("com.deltadak.HomeworkTask");
+    /** used to transfer tasks with drag and drop */
+    static final DataFormat DATA_FORMAT = new DataFormat("com.deltadak.HomeworkTask");
 
     // layout globals, are public for the SettingsPane to access them
     public int NUMBER_OF_DAYS; // number of days shown
@@ -159,7 +159,7 @@ public class Controller implements Initializable {
             setupLabelCells(list, localDate);
             //update database when editing is finished
             list.setOnEditCommit(event -> updateDatabase(
-                    localDate, convertObservableToArrayList(list.getItems())));
+                    localDate, convertObservableListToList(list.getItems())));
             addDeleteKeyListener(list, localDate);
         }
 
@@ -234,7 +234,7 @@ public class Controller implements Initializable {
                 list.getItems()
                         .remove(list.getSelectionModel().getSelectedIndex());
                 updateDatabase(localDate,
-                        convertObservableToArrayList(list.getItems()));
+                        convertObservableListToList(list.getItems()));
                 cleanUp(list); //cleaning up has to happen in the listener
             }
         });
@@ -246,7 +246,7 @@ public class Controller implements Initializable {
      * @param list to convert
      * @return converted ObservableList
      */
-    List<HomeworkTask> convertObservableToArrayList(
+    List<HomeworkTask> convertObservableListToList(
             final ObservableList<HomeworkTask> list) {
         return new ArrayList<>(list);
     }
@@ -397,7 +397,7 @@ public class Controller implements Initializable {
             colorMenuItem.setOnAction(event1 -> {
                 System.out.println(colorMenuItem.getText() + " clicked");
                 setBackgroundColor(colorMenuItem, labelCell);
-                updateDatabase(day, convertObservableToArrayList(list.getItems()));
+                updateDatabase(day, convertObservableListToList(list.getItems()));
                 cleanUp(list);
 
             });
