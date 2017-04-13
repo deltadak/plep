@@ -1,5 +1,37 @@
 language: java
+sudo: false
 jdk:
   - oraclejdk8
 notification:
     email: false
+
+cache:
+  directories:
+    - $HOME/idea
+    - $HOME/.ant
+before_install:
+  # stack
+  - mkdir -p ~/.local/bin
+  - export PATH=~/.local/bin:$PATH
+install:
+  - IDEA_VERSION=2017.1
+  - IDEA_TAR=ideaIC-${IDEA_VERSION}.tar.gz
+  - IDEA_PARENT_DIR=$HOME/idea
+  - IDEA_DIR=$IDEA_PARENT_DIR/$IDEA_VERSION
+  - |
+    if [ -d $IDEA_DIR ]; then
+        echo "Using existing IDEA installation at $IDEA_DIR"
+    else
+        echo "Removing any existing IDEA installation."
+        rm -rf $IDEA_PARENT_DIR
+        mkdir -p $IDEA_PARENT_DIR
+        echo "Downloading IDEA archive."
+        travis_retry wget http://download.jetbrains.com/idea/$IDEA_TAR -P $HOME
+        echo "Installing IDEA to $IDEA_DIR"
+        tar xzvf $HOME/$IDEA_TAR -C $IDEA_PARENT_DIR
+        mv $IDEA_PARENT_DIR/idea-IC-* $IDEA_DIR
+    fi
+  - echo "Creating build.properties file for ant."
+  - cp .travis.properties build.properties
+  - echo "idea.home=$IDEA_DIR" >> build.properties
+script: ant
