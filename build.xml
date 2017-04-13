@@ -188,7 +188,7 @@
   </path>
   
   
-  <target name="compile.module.plep" depends="compile.module.plep.production,compile.module.plep.tests" description="Compile module plep"/>
+  <target name="compile.module.plep" depends="compile.module.plep.production,test" description="Compile module plep"/>
   
   <target name="compile.module.plep.production" depends="register.custom.compilers" description="Compile module plep; production classes">
     <mkdir dir="${plep.output.dir}"/>
