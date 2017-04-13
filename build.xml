@@ -188,7 +188,7 @@
   </path>
   
   
-  <target name="compile.module.plep" depends="compile.module.plep.production,test" description="Compile module plep"/>
+  <target name="compile.module.plep" depends="compile.module.plep.production,compile.module.plep.tests" description="Compile module plep"/>
   
   <target name="compile.module.plep.production" depends="register.custom.compilers" description="Compile module plep; production classes">
     <mkdir dir="${plep.output.dir}"/>
@@ -208,7 +208,7 @@
     </copy>
   </target>
   
-  <target name="test" depends="register.custom.compilers,compile.module.plep.production" description="compile module plep; test classes" unless="skip.tests">
+  <target name="compile.module.plep.tests" depends="register.custom.compilers,compile.module.plep.production" description="compile module plep; test classes" unless="skip.tests">
     <mkdir dir="${plep.testoutput.dir}"/>
     <javac2 destdir="${plep.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.plep}/javac">
       <compilerarg line="${compiler.args.plep}"/>
