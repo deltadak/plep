@@ -32,6 +32,5 @@ install:
         mv $IDEA_PARENT_DIR/idea-IC-* $IDEA_DIR
     fi
   - echo "Creating build.properties file for ant."
-  - cp .travis.properties build.properties
   - echo "idea.home=$IDEA_DIR" >> build.properties
 script: ant
