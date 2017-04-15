@@ -103,6 +103,7 @@
     <pathelement location="${basedir}/out/artifacts/plep_jar/plep.jar"/>
   </path>
   <!-- Register Custom Compiler Taskdefs -->
+    <!-- todo added below line to access travis idea directory -->
   <property name="idea.build" location="${basedir}/idea/" />
   <property name="javac2.home" value="${idea.build}/lib"/>
   <path id="javac2.classpath">
