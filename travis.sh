@@ -28,16 +28,16 @@ fi
 
 # Run the tests
 if [ "$1" = "-d" ]; then
-    ant -d -f build-test.xml -DIDEA_HOME=./idea
+    ant -d -f build.xml -DIDEA_HOME=./idea
 else
-    ant -f build-test.xml -DIDEA_HOME=./idea
+    ant -f build.xml -DIDEA_HOME=./idea
 fi
 
 # Was our build successful?
 stat=$?
 
 if [ "${TRAVIS}" != true ]; then
-    ant -f build-test.xml -q clean
+    ant -f build.xml -q clean
 
     if [ "$1" = "-r" ]; then
         rm -rf idea
