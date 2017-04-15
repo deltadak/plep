@@ -4,5 +4,4 @@ jdk:
   - oraclejdk8
 notification:
     email: false
-
-script: ant compile.module.plep.tests
+script: "./travis.sh"
