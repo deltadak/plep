@@ -2,7 +2,7 @@
 
 # from https://github.com/Sorien/silex-idea-plugin
 
-ideaVersion="2016.2"
+ideaVersion="2017.1"
 
 if [ ! -d ./idea ]; then
     # Get our IDEA dependency
@@ -15,15 +15,6 @@ if [ ! -d ./idea ]; then
     # Move the versioned IDEA folder to a known location
     ideaPath=$(find . -name 'idea-IU*' | head -n 1)
     mv ${ideaPath} ./idea
-fi
-
-if [ ! -d ./plugins ]; then
-    # Download required plugins
-    mkdir plugins
-
-    wget https://plugins.jetbrains.com/files/6610/27035/php-162.1121.34.zip
-    unzip -qo php-162.1121.34.zip -d ./plugins
-    rm -rf php-162.1121.34.zip
 fi
 
 # Run the tests
