@@ -57,8 +57,8 @@
   
   <!--<property name="jdk.bin.1.8" value="${jdk.home.1.8}/bin"/>-->
     <!--todo find jdk on travis -->
-    <property name = "jdk.home.1.8" value="/usr/lib/jvm/java-7-oracle/jre"/>
-    <property name="jdk.bin.1.8" value="${jdk.home.1.8}/bin"/>
+    <!--<property name = "jdk.home.1.8" value="/usr/lib/jvm/java-7-oracle/jre"/>-->
+    <property name="jdk.bin.1.8" value="$/usr/lib/jvm/java-7-oracle/jre/bin"/>
   <path id="jdk.classpath.1.8">
     <fileset dir="${jdk.home.1.8}">
       <include name="jre/lib/charsets.jar"/>
