@@ -87,8 +87,8 @@
     </fileset>
   </path>
   
-  <!--<property name="project.jdk.home" value="${jdk.home.1.8}"/>-->
-  <property name="project.jdk.home" value="$/usr/lib/jvm/java-8-oracle"/>
+  <property name="project.jdk.home" value="${jdk.home.1.8}"/>
+  <!--<property name="project.jdk.home" value="$/usr/lib/jvm/java-8-oracle"/>-->
   <property name="project.jdk.bin" value="${jdk.bin.1.8}"/>
   <property name="project.jdk.classpath" value="jdk.classpath.1.8"/>
   
@@ -198,13 +198,13 @@
   
   <target name="compile.module.plep.production" depends="register.custom.compilers" description="Compile module plep; production classes">
     <mkdir dir="${plep.output.dir}"/>
-    <javac2 destdir="${plep.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="/usr/lib/jvm/java-8-oracle/bin/javac">
-      <compilerarg line="${compiler.args.plep}"/>
-      <bootclasspath refid="plep.module.bootclasspath"/>
-      <classpath refid="plep.module.production.classpath"/>
-      <src refid="plep.module.sourcepath"/>
-      <patternset refid="excluded.from.compilation.plep"/>
-    </javac2>
+    <!--<javac2 destdir="${plep.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.plep}/javac">-->
+      <!--<compilerarg line="${compiler.args.plep}"/>-->
+      <!--<bootclasspath refid="plep.module.bootclasspath"/>-->
+      <!--<classpath refid="plep.module.production.classpath"/>-->
+      <!--<src refid="plep.module.sourcepath"/>-->
+      <!--<patternset refid="excluded.from.compilation.plep"/>-->
+    <!--</javac2>-->
     
     <copy todir="${plep.output.dir}">
       <fileset dir="${module.plep.basedir}/src">
