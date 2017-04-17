@@ -217,12 +217,13 @@
   <target name="compile.module.plep.tests" depends="register.custom.compilers,compile.module.plep.production" description="compile module plep; test classes" unless="skip.tests">
     <mkdir dir="${plep.testoutput.dir}"/>
     <!--<javac2 destdir="${plep.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.plep}/javac">-->
-      <!--<compilerarg line="${compiler.args.plep}"/>-->
-      <!--<bootclasspath refid="plep.module.bootclasspath"/>-->
-      <!--<classpath refid="plep.module.classpath"/>-->
-      <!--<src refid="plep.module.test.sourcepath"/>-->
-      <!--<patternset refid="excluded.from.compilation.plep"/>-->
-    <!--</javac2>-->
+    <javac2 destdir="${plep.testoutput.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="/usr/lib/jvm/java-8-oracle/bin/javac">
+      <compilerarg line="${compiler.args.plep}"/>
+      <bootclasspath refid="plep.module.bootclasspath"/>
+      <classpath refid="plep.module.classpath"/>
+      <src refid="plep.module.test.sourcepath"/>
+      <patternset refid="excluded.from.compilation.plep"/>
+    </javac2>
     
     <copy todir="${plep.testoutput.dir}">
       <fileset dir="${module.plep.basedir}/test">
