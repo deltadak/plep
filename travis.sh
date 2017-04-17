@@ -19,9 +19,9 @@ fi
 
 # Run the tests
 if [ "$1" = "-d" ]; then
-    ant -d -f build.xml -DIDEA_HOME=./idea -DJDK.HOME.1.8=/usr/lib/jvm/java-8-oracle
+    ant -d -f build.xml -DIDEA_HOME=./idea -DJAVE_HOME=/usr/lib/jvm/java-8-oracle
 else
-    ant -f build.xml -DIDEA_HOME=./idea -DJDK.HOME.1.8=/usr/lib/jvm/java-8-oracle
+    ant -f build.xml -DIDEA_HOME=./idea -DJAVA_HOME=/usr/lib/jvm/java-8-oracle
 fi
 
 # Was our build successful?
