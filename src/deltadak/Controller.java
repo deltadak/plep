@@ -144,23 +144,41 @@ public class Controller implements Initializable {
             // add days immediately, otherwise we can't use localDate in a
             // lambda expression (as it is not final)
             LocalDate localDate = focusDate.plusDays(index - 1);
-
-            ListView<HomeworkTask> list = new ListView<>();
-            VBox vbox = setTitle(list, localDate);
+            
+//            ListView<HomeworkTask> list = new ListView<>();
+            TreeItem<HomeworkTask> rootItem = new TreeItem<>(
+                    new HomeworkTask("root", "root", "white"));
+            rootItem.setExpanded(true);
+            final TreeView<HomeworkTask> tree = new TreeView<>(rootItem);
+    
+            tree.setEditable(true);
+            tree.setCellFactory(param -> {
+                CustomTreeCell treeCell = new CustomTreeCell(tree.getRoot());
+        
+                return treeCell;
+            });
+            
+            tree.setShowRoot(false);
+            
+            VBox vbox = setTitle(tree, localDate);
             addVBoxToGridPane(vbox, index);
 
             // Request content on a separate thread, and hope the content
             // will be set eventually.
-            refreshDay(list, localDate);
+            refreshDay(tree, localDate);
 
-            list.setEditable(true);
-            list.setPrefWidth(getListViewWidth());
-            list.setPrefHeight(getListViewHeight());
-            setupLabelCells(list, localDate);
-            //update database when editing is finished
-            list.setOnEditCommit(event -> updateDatabase(
-                    localDate, convertObservableToArrayList(list.getItems())));
-            addDeleteKeyListener(list, localDate);
+            tree.setPrefWidth(getListViewWidth());
+            tree.setPrefHeight(getListViewHeight());
+            // TODO update database
+            tree.setOnEditCommit(event -> System.out.println("edited"));
+//            list.setEditable(true);
+//            list.setPrefWidth(getListViewWidth());
+//            list.setPrefHeight(getListViewHeight());
+//            setupLabelCells(list, localDate);
+//            //update database when editing is finished
+//            list.setOnEditCommit(event -> updateDatabase(
+//                    localDate, convertObservableToArrayList(list.getItems())));
+//            addDeleteKeyListener(list, localDate);
         }
 
     }
@@ -196,14 +214,14 @@ public class Controller implements Initializable {
      * @param localDate from which to make a title
      * @return VBox with listview and title
      */
-    private VBox setTitle(final ListView<HomeworkTask> list,
+    private VBox setTitle(final TreeView<HomeworkTask> tree,
                           final LocalDate localDate) {
         // vbox will contain a title above a list of tasks
         VBox vbox = new VBox();
         Label title = new Label(localDate.getDayOfWeek() + " " + localDate);
         // the pane is used to align both properly (I think)
         Pane pane = new Pane();
-        vbox.getChildren().addAll(title, pane, list);
+        vbox.getChildren().addAll(title, pane, tree);
         VBox.setVgrow(pane, Priority.ALWAYS);
         return vbox;
     }
@@ -290,33 +308,33 @@ public class Controller implements Initializable {
      * @param list a ListView
      * @param day  and a specific date
      */
-    private void setupLabelCells(final ListView<HomeworkTask> list, final LocalDate day) {
-        //no idea why the callback needs a ListCell and not a TextFieldListCell
-        //anyway, editing is enabled by using TextFieldListCell instead of
-        // ListCell
-        list.setCellFactory(new Callback<ListView<HomeworkTask>, ListCell<HomeworkTask>>() {
-            @Override
-            public LabelCell call(final ListView<HomeworkTask> param) {
-                LabelCell labelCell = new LabelCell(Controller.this);
-                labelCell.setup(list, day);
-                return labelCell;
-            }
-        });
-        cleanUp(list);
-    }
+//    private void setupLabelCells(final ListView<HomeworkTask> list, final LocalDate day) {
+//        //no idea why the callback needs a ListCell and not a TextFieldListCell
+//        //anyway, editing is enabled by using TextFieldListCell instead of
+//        // ListCell
+//        list.setCellFactory(new Callback<ListView<HomeworkTask>, ListCell<HomeworkTask>>() {
+//            @Override
+//            public LabelCell call(final ListView<HomeworkTask> param) {
+//                LabelCell labelCell = new LabelCell(Controller.this);
+//                labelCell.setup(list, day);
+//                return labelCell;
+//            }
+//        });
+//        cleanUp(list);
+//    }
 
     /**
      * @return all ListViews in the gridPane
      */
-    private List<ListView<HomeworkTask>> getAllListViews() {
-        List<ListView<HomeworkTask>> listViews = new ArrayList<>();
+    private List<TreeView<HomeworkTask>> getAllListViews() {
+        List<TreeView<HomeworkTask>> listViews = new ArrayList<>();
         for (Node node : gridPane.getChildren()) {
             //gridpane contains vbox contains label, pane and listview
             if (node instanceof VBox) {
                 // we try to dig up the listviews in this vbox
                 for (Node subNode : ((Pane) node).getChildren()) {
-                    if (subNode instanceof ListView) {
-                        listViews.add((ListView) subNode);
+                    if (subNode instanceof TreeView) {
+                        listViews.add((TreeView) subNode);
                     }
                 }
             }
@@ -329,14 +347,14 @@ public class Controller implements Initializable {
      */
     void refreshAllDays() {
         // find all listviews
-        List<ListView<HomeworkTask>> listViews = getAllListViews();
+        List<TreeView<HomeworkTask>> listViews = getAllListViews();
 
         for (int i = 0; i < NUMBER_OF_DAYS; i++) {
-            ListView<HomeworkTask> list = listViews.get(i);
+            TreeView<HomeworkTask> list = listViews.get(i);
             // refresh the listview from database
             LocalDate localDate = focusDay.plusDays(i - 1);
             refreshDay(list, localDate);
-            cleanUp(list);
+//            cleanUp(list);
         }
     }
 
@@ -443,6 +461,26 @@ public class Controller implements Initializable {
         }
         refreshAllDays();
     }
+    
+    void cleanUp(TreeView<HomeworkTask> tree) {
+        int i;
+        for(i = 0; i < tree.getRoot().getChildren().size(); i++) {
+            if(tree.getTreeItem(i).getValue().getText().equals("")) {
+                // TODO remove item
+                // weird way to remove a tree item, isn't it?
+                tree.getTreeItem(i).getParent().getChildren()
+                        .remove(tree.getTreeItem(i));
+            }
+        }
+        
+        for(i = 0; i < MAX_LIST_LENGTH; i++) {
+            if(i >= tree.getRoot().getChildren().size()) {
+                TreeItem<HomeworkTask> item = new TreeItem<>(
+                        new HomeworkTask("", "", "White"));
+                tree.getRoot().getChildren().add(item);
+            }
+        }
+    }
 
     /**
      * removes empty rows, and then fills up with empty rows
@@ -526,7 +564,7 @@ public class Controller implements Initializable {
      * @param list      ListView to be updated.
      * @param localDate The day for which to request tasks.
      */
-    public void refreshDay(ListView<HomeworkTask> list, LocalDate localDate) {
+    public void refreshDay(TreeView<HomeworkTask> tree, LocalDate localDate) {
         progressIndicator.setVisible(true);
         Task<List<HomeworkTask>> task = new Task<List<HomeworkTask>>() {
             @Override
@@ -534,10 +572,18 @@ public class Controller implements Initializable {
                 return getDatabaseSynced(localDate);
             }
         };
-        task.setOnSucceeded(e -> {
+        task.setOnSucceeded(e -> { //TODO
+            for (int i = 0; i < convertArrayToObservableList(task.getValue()).size(); i++) {
+                TreeItem<HomeworkTask> item = new TreeItem<>(convertArrayToObservableList(task.getValue()).get(i));
+                tree.getRoot().getChildren().add(item);
+            }
+            
+            
+            // TODO actually update with things from database
             // Update the listview with the result from the database.
-            list.setItems(convertArrayToObservableList(task.getValue()));
-            cleanUp(list);
+//            list.setItems(convertArrayToObservableList(task.getValue()));
+//            cleanUp(list);
+            cleanUp(tree);
             progressIndicator.setVisible(false);
         });
         exec.execute(task);

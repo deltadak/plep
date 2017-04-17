@@ -1,6 +1,7 @@
 package deltadak;
 
 import javafx.scene.control.ListCell;
+import javafx.scene.control.TreeCell;
 import javafx.util.StringConverter;
 
 /**
@@ -9,9 +10,9 @@ import javafx.util.StringConverter;
  */
 class TaskConverter extends StringConverter<HomeworkTask> {
     
-    private final ListCell<HomeworkTask> cell;
+    private final TreeCell<HomeworkTask> cell;
     
-    TaskConverter(final ListCell<HomeworkTask> cell) {
+    TaskConverter(final TreeCell<HomeworkTask> cell) {
         this.cell = cell;
     }
     
