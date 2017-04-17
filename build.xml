@@ -258,11 +258,6 @@
     <jar destfile="${temp.jar.path.plep.jar}" duplicate="preserve" filesetmanifest="mergewithoutmain">
       <zipfileset dir="${plep.output.dir}"/>
       <zipfileset src="${basedir}/out/artifacts/plep_jar/plep.jar"/>
-      <zipfileset src="${basedir}/plep_v1.1.jar"/>
-      <zipfileset src="${basedir}/plep_v0.1.jar"/>
-      <zipfileset src="${basedir}/plep_v0.2.jar"/>
-      <zipfileset src="${basedir}/plep_v1.1.1.jar"/>
-      <zipfileset src="${basedir}/plep_v1.0.jar"/>
     </jar>
     <copy file="${temp.jar.path.plep.jar}" tofile="${artifact.temp.output.plep:jar}/plep.jar"/>
   </target>
