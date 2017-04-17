@@ -55,12 +55,12 @@
   
   <!-- JDK definitions -->
   
-  <property name="jdk.bin.1.8" value="${jdk.home.1.8}/bin"/>
+  <property name="jdk.bin.1.8" value="/usr/lib/jvm/java-8-oracle/bin"/>
     <!--todo find jdk on travis -->
     <!--<property name = "jdk.home.1.8" value="/usr/lib/jvm/java-7-oracle/jre"/>-->
     <!--<property name="jdk.bin.1.8" value="/usr/lib/jvm/java-8-oracle/jre/bin"/>-->
   <path id="jdk.classpath.1.8">
-    <fileset dir="${jdk.home.1.8}">
+    <fileset dir="/usr/lib/jvm/java-8-oracle">
       <include name="jre/lib/charsets.jar"/>
       <include name="jre/lib/deploy.jar"/>
       <include name="jre/lib/ext/access-bridge-64.jar"/>
@@ -87,7 +87,7 @@
     </fileset>
   </path>
   
-  <!--<property name="project.jdk.home" value="${jdk.home.1.8}"/>-->
+  <!--<property name="project.jdk.home" value="/usr/lib/jvm/java-8-oracle"/>-->
   <property name="project.jdk.home" value="/usr/lib/jvm/java-8-oracle"/>
   <property name="project.jdk.bin" value="${jdk.bin.1.8}"/>
   <property name="project.jdk.classpath" value="jdk.classpath.1.8"/>
