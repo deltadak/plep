@@ -31,6 +31,7 @@ class ControllerTest {
 
     @Test
     void convertColorToHex() {
+        fail("testing travis");
         Controller controller = new Controller();
         String hex = controller.convertColorToHex("Green");
         try {
