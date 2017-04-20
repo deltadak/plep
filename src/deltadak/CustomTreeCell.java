@@ -1,11 +1,6 @@
 package deltadak;
 
 import javafx.beans.InvalidationListener;
-import javafx.beans.Observable;
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanBinding;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.CheckBox;
@@ -20,17 +15,12 @@ import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.TextFieldTreeCell;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 
-import javax.print.DocFlavor;
-import java.awt.event.MouseEvent;
-import java.beans.EventHandler;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -81,6 +71,20 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         setOnDragExited();
         setOnDragDropped(tree, localDate);
         setOnDragDone(tree, localDate);
+        
+        tree.setOnEditCommit(event -> {
+            TreeItem<HomeworkTask> editingItem = getTreeView().getEditingItem();
+            if(!editingItem.getParent()
+                    .equals(root)) {
+                if(!event.getNewValue().getText().equals("")){
+                    createSubTask(editingItem.getParent());
+                }
+            }
+    
+            controller.updateDatabase(localDate,
+                          controller.convertTreeItemListToArrayList(
+                                  tree.getRoot().getChildren()));
+        });
         
         contextMenu = createContextMenu(tree, localDate);
     }
@@ -180,27 +184,10 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
     
         
         addSubTaskMenuItem.setOnAction(event -> {
-            // add a new subtask
-            TreeItem<HomeworkTask> emptyItem = new TreeItem<>(
-                    new HomeworkTask("", "", "White"));
-            getTreeItem().getChildren().add(emptyItem);
-            
-            // select the new subtask
-            getTreeView().getSelectionModel().select(emptyItem);
-            // get the index of the new subtask
-            int index = getTreeView().getSelectionModel().getSelectedIndex();
-            // layout the TreeView again (otherwise we can't directly
-            // edit an item)
-            getTreeView().layout();
-            // create a new TreeItem from the selected index, we need this
-            // to do this to be able to edit it (pointer to emptyItem
-            // is lost?)
-            TreeItem<HomeworkTask> item = getTreeView().getTreeItem(index);
-            // finnaly we can edit!
-            getTreeView().edit(item);
+            createSubTask(getTreeItem());
         });
         
-        for (int i = 1; i < contextMenu.getItems().size(); i++) {
+        for (int i = 2; i < contextMenu.getItems().size(); i++) {
             MenuItem colorMenuItem = contextMenu.getItems().get(i);
             colorMenuItem.setOnAction(event1 -> {
                 System.out.println(colorMenuItem.getText() + " clicked");
@@ -213,6 +200,28 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
             });
         }
         return contextMenu;
+    }
+    
+    public void createSubTask(TreeItem parentItem) {
+        // add a new subtask
+        TreeItem<HomeworkTask> emptyItem = new TreeItem<>(
+                new HomeworkTask("", "", "White"));
+        parentItem.getChildren().add(emptyItem);
+    
+        // select the new subtask
+        getTreeView().getSelectionModel().select(emptyItem);
+        // get the index of the new subtask
+        int index = getTreeView().getSelectionModel().getSelectedIndex();
+        // layout the TreeView again (otherwise we can't directly
+        // edit an item)
+        getTreeView().layout();
+        // create a new TreeItem from the selected index, we need this
+        // to do this to be able to edit it (pointer to emptyItem
+        // is lost?)
+        TreeItem<HomeworkTask> item = getTreeView().getTreeItem(index);
+        // finnaly we can edit!
+        getTreeView().edit(item);
+        
     }
     
     private Menu makeRepeatMenu(CustomTreeCell customTreeCell, LocalDate day) {

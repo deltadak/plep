@@ -52,7 +52,7 @@ public class Controller implements Initializable {
 
     @FXML Text numberOfMovingDaysText;
     @FXML Text numberOfShowDaysText;
-
+    
     // layout globals, are public for the SettingsPane to access them
     public int NUMBER_OF_DAYS; // number of days shown
     public int NUMBER_OF_MOVING_DAYS; // number of days to skip when using the forward/backward buttons
@@ -170,14 +170,15 @@ public class Controller implements Initializable {
             tree.setPrefWidth(getListViewWidth());
             tree.setPrefHeight(getListViewHeight());
             // update the database when editing the text of a task is done
-            tree.setOnEditCommit(event -> {
-                System.out.println("edited");
-                // gets a list from the children of the root
-                // (the main tasks) and updates that list in the database
-                updateDatabase(localDate,
-                            convertTreeItemListToArrayList(
-                                tree.getRoot().getChildren()));
-            });
+//            tree.setOnEditCommit(event -> {
+//                System.out.println("edited");
+//
+//                // gets a list from the children of the root
+//                // (the main tasks) and updates that list in the database
+//                updateDatabase(localDate,
+//                            convertTreeItemListToArrayList(
+//                                tree.getRoot().getChildren()));
+//            });
 //            list.setEditable(true);
 //            list.setPrefWidth(getListViewWidth());
 //            list.setPrefHeight(getListViewHeight());
@@ -401,8 +402,7 @@ public class Controller implements Initializable {
         TreeItem<HomeworkTask> root = tree.getRoot();
         for(i = 0; i < root.getChildren().size(); i++) {
             if(tree.getTreeItem(i).getValue().getText().equals("")) {
-                tree.getTreeItem(i).getParent().getChildren()
-                        .remove(tree.getTreeItem(i));
+                removeItemFromTreeView(tree.getTreeItem(i));
             }
         }
     
@@ -413,6 +413,14 @@ public class Controller implements Initializable {
                 tree.getRoot().getChildren().add(item);
             }
         }
+    }
+    
+    /**
+     * Removes the TreeItem from the TreeView it's in.
+     * @param item The TreeItem to be removed.
+     */
+    void removeItemFromTreeView(TreeItem<HomeworkTask> item) {
+        item.getParent().getChildren().remove(item);
     }
 
     /**
