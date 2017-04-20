@@ -53,9 +53,6 @@ public class Controller implements Initializable {
     @FXML Text numberOfMovingDaysText;
     @FXML Text numberOfShowDaysText;
 
-    // used to transfer tasks with drag and drop
-    DataFormat dataFormat = new DataFormat("com.deltadak.HomeworkTask");
-
     // layout globals, are public for the SettingsPane to access them
     public int NUMBER_OF_DAYS; // number of days shown
     public int NUMBER_OF_MOVING_DAYS; // number of days to skip when using the forward/backward buttons
@@ -67,6 +64,9 @@ public class Controller implements Initializable {
     public static final String NUMBER_OF_DAYS_NAME = "number_of_days";
     public static final String NUMBER_OF_MOVING_DAYS_NAME
             = "number_of_moving_days";
+    
+    /** used to transfer tasks with drag and drop */
+    static final DataFormat DATA_FORMAT = new DataFormat("com.deltadak.HomeworkTask");
 
     public LocalDate focusDay;
     private LocalDate today;

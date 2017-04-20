@@ -14,16 +14,23 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.TextFieldTreeCell;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.MouseButton;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 
 import javax.print.DocFlavor;
 import java.awt.event.MouseEvent;
+import java.beans.EventHandler;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
+import static java.lang.Math.min;
 
 /**
  * @Author s152337 14-4-2017
@@ -62,6 +69,13 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         );
         
         setOnLabelChangeListener(tree, localDate);
+        
+        setOnDragDetected();
+        setOnDragOver();
+        setOnDragEntered();
+        setOnDragExited();
+        setOnDragDropped(tree, localDate);
+        setOnDragDone(tree, localDate);
         
         setContextMenu(createContextMenu(tree, localDate));
         
@@ -203,5 +217,157 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
             controller.updateDatabase(day, homeworkTasks);
         }
         controller.refreshAllDays();
+    }
+    
+    /**
+     * When the dragging is detected, we place the content of the LabelCell
+     * in the DragBoard.
+     */
+    void setOnDragDetected() {
+        setOnDragDetected(event -> {
+            if (!getTreeItem().getValue().getText().equals("")) {
+                Dragboard db = startDragAndDrop(TransferMode.MOVE);
+                ClipboardContent content = new ClipboardContent();
+                content.put(controller.DATA_FORMAT, getTreeItem()
+                        .getValue());
+                db.setContent(content);
+            }
+            event.consume();
+        });
+    }
+    
+    /**
+     * Sets on drag over.
+     */
+    void setOnDragOver() {
+        setOnDragOver(event -> {
+            if (!Objects.equals(event.getGestureSource(), this) && event
+                    .getDragboard().hasContent(controller.DATA_FORMAT)) {
+                event.acceptTransferModes(TransferMode.MOVE);
+            }
+            event.consume();
+        });
+    }
+    
+    /**
+     * Sets on drag entered.
+     */
+    void setOnDragEntered() {
+        setOnDragEntered(event -> {
+            if ((!Objects.equals(event.getGestureSource(), this)) && event
+                    .getDragboard().hasContent(controller.DATA_FORMAT)) {
+                //                System.out.println("TODO: change color of listview"); //todo
+            }
+            
+            event.consume();
+        });
+    }
+    
+    /**
+     * Sets on drag exited.
+     */
+    void setOnDragExited() {
+        setOnDragExited(event -> {
+            //            System.out.println("TODO reset color of listview"); //todo
+            event.consume();
+        });
+    }
+    
+    /**
+     * updates the ListView and database when a LabelCell is being dropped
+     *
+     * @param tree ListView needed for updating the database
+     * @param day LocalDate needed for updating the database
+     */
+    void setOnDragDropped(final TreeView<HomeworkTask> tree,
+                          final LocalDate day) {
+        setOnDragDropped(event -> {
+            Dragboard db = event.getDragboard();
+            boolean success = false;
+            if (db.hasContent(controller.DATA_FORMAT)) {
+                HomeworkTask newHomeworkTask
+                        = (HomeworkTask)db.getContent(controller.DATA_FORMAT);
+                //insert new task, removing will happen in onDragDone
+                int index = min(getIndex(), tree.getRoot().getChildren()
+                        .size()); // item can be dropped way below
+                // the existing list
+                
+                //we have put an empty item instead of no items
+                //because otherwise there are no listCells that can
+                // receive an item
+                if (tree.getRoot().getChildren().get(index).getValue().getText().equals("")) {
+                    tree.getRoot().getChildren().get(index)
+                            .setValue(newHomeworkTask); //replace empty item
+                } else {
+                    TreeItem<HomeworkTask> item = new TreeItem<>(newHomeworkTask);
+                    tree.getRoot().getChildren().add(item);
+                }
+                success = true;
+                // update tasks in database
+                controller.updateDatabase(
+                        day, controller.convertTreeItemListToArrayList(tree.getRoot().getChildren()));
+            }
+            
+            
+            event.setDropCompleted(success);
+            event.consume();
+            // clean up immediately for a smooth reaction
+            controller.cleanUp(tree);
+        });
+    }
+    
+    /**
+     * removing the original copy
+     *
+     * @param tree ListView needed for updating the database
+     * @param day LocalDate needed for updating the database
+     */
+    void setOnDragDone(final TreeView<HomeworkTask> tree, final LocalDate day) {
+        setOnDragDone(event -> {
+            //ensures the original element is only removed on a
+            // valid copy transfer (no dropping outside listviews)
+            if (event.getTransferMode() == TransferMode.MOVE) {
+                Dragboard db = event.getDragboard();
+                HomeworkTask newHomeworkTask
+                        = (HomeworkTask)db.getContent(controller.DATA_FORMAT);
+                HomeworkTask emptyHomeworkTask = new HomeworkTask("", "", "White");
+                //remove original item
+                //item can have been moved up (so index becomes one
+                // too much)
+                // or such that the index didn't change, like to
+                // another day
+                
+                // If item was moved to an other day or down in same list
+                if (tree.getRoot().getChildren().get(getIndex())
+                            .getValue().getText()
+                                .equals(newHomeworkTask.getText())) {
+                    tree.getRoot().getChildren().get(getIndex())
+                            .setValue(emptyHomeworkTask);
+                    setGraphic(null);
+                    
+                    // deleting blank row from database which updating creates
+                } else { // item was moved up in same list
+                    int index = getIndex() + 1;
+                    tree.getRoot().getChildren().get(index)
+                            .setValue(emptyHomeworkTask);
+                }
+                
+                // update in database
+                controller.updateDatabase(day, controller
+                        .convertTreeItemListToArrayList(
+                                tree.getRoot().getChildren()));
+                
+                //prevent an empty list from refusing to receive
+                // items, as it wouldn't contain any listcell
+                if (tree.getRoot().getChildren().size() < 1) {
+                    TreeItem<HomeworkTask> item =
+                            new TreeItem<>(emptyHomeworkTask);
+                    tree.getRoot().getChildren().add(item);
+                }
+            }
+            event.consume();
+            // clean up immediately for a smooth reaction
+            controller.cleanUp(tree);
+        });
     }
 }
