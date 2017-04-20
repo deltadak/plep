@@ -2,6 +2,10 @@ package deltadak;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.CheckBox;
@@ -45,6 +49,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
     private CheckBox checkBox;
     private Label label;
     private ComboBox<String> comboBox;
+    private ContextMenu contextMenu;
     
     /**
      * Each LabelCell keeps a reference to the listener of the
@@ -77,8 +82,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         setOnDragDropped(tree, localDate);
         setOnDragDone(tree, localDate);
         
-        setContextMenu(createContextMenu(tree, localDate));
-        
+        contextMenu = createContextMenu(tree, localDate);
     }
     
     /**
@@ -115,9 +119,11 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                 
                 cellBox.getChildren().addAll(checkBox, label, region, comboBox);
 
+                setContextMenu(contextMenu);
                 setGraphic(cellBox);
                 setText(null);
             } else {
+                setContextMenu(null); // disable the context menu on subtasks
                 cellBox.getChildren().addAll(checkBox, label);
                 setGraphic(cellBox);
                 setText(null);
@@ -138,15 +144,12 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
     void setOnLabelChangeListener(TreeView<HomeworkTask> tree,
                                   LocalDate day) {
         
-        InvalidationListener invalidationListener = new InvalidationListener() {
-            @Override
-            public void invalidated(Observable observable) {
-                controller.updateDatabase(day, controller
-                        .convertTreeItemListToArrayList(
-                                tree.getRoot().getChildren()));
-                // We do not need to cleanup here, as no tasks
-                // were added or deleted.
-            }
+        InvalidationListener invalidationListener = observable -> {
+            controller.updateDatabase(day, controller
+                    .convertTreeItemListToArrayList(
+                            tree.getRoot().getChildren()));
+            // We do not need to cleanup here, as no tasks
+            // were added or deleted.
         };
         
         // Pass the invalidationlistener on to the custom listener
@@ -159,34 +162,57 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
     
     ContextMenu createContextMenu(final TreeView<HomeworkTask> tree,
                            final LocalDate day) {
-        
+    
         ContextMenu contextMenu = new ContextMenu();
+        MenuItem addSubTaskMenuItem = new MenuItem("Add subtask");
+    
         Menu repeatTasksMenu = makeRepeatMenu(this, day);
         SeparatorMenuItem separatorMenuItem = new SeparatorMenuItem();
-        
+    
         MenuItem firstColor = new MenuItem("Green");
         MenuItem secondColor = new MenuItem("Blue");
         MenuItem thirdColor = new MenuItem("Red");
         MenuItem defaultColor = new MenuItem("White");
+    
+        contextMenu.getItems()
+                .addAll(addSubTaskMenuItem, repeatTasksMenu, separatorMenuItem,
+                        firstColor, secondColor, thirdColor, defaultColor);
+    
         
-        contextMenu.getItems().addAll(repeatTasksMenu, separatorMenuItem,
-                                      firstColor, secondColor,
-                                      thirdColor, defaultColor);
+        addSubTaskMenuItem.setOnAction(event -> {
+            // add a new subtask
+            TreeItem<HomeworkTask> emptyItem = new TreeItem<>(
+                    new HomeworkTask("", "", "White"));
+            getTreeItem().getChildren().add(emptyItem);
+            
+            // select the new subtask
+            getTreeView().getSelectionModel().select(emptyItem);
+            // get the index of the new subtask
+            int index = getTreeView().getSelectionModel().getSelectedIndex();
+            // layout the TreeView again (otherwise we can't directly
+            // edit an item)
+            getTreeView().layout();
+            // create a new TreeItem from the selected index, we need this
+            // to do this to be able to edit it (pointer to emptyItem
+            // is lost?)
+            TreeItem<HomeworkTask> item = getTreeView().getTreeItem(index);
+            // finnaly we can edit!
+            getTreeView().edit(item);
+        });
         
         for (int i = 1; i < contextMenu.getItems().size(); i++) {
             MenuItem colorMenuItem = contextMenu.getItems().get(i);
             colorMenuItem.setOnAction(event1 -> {
                 System.out.println(colorMenuItem.getText() + " clicked");
                 controller.setBackgroundColor(colorMenuItem, this);
-                controller.updateDatabase(day,
-                               controller.convertTreeItemListToArrayList(
-                                       tree.getRoot().getChildren()));
+                controller.updateDatabase(day, controller
+                        .convertTreeItemListToArrayList(tree.getRoot()
+                                                                .getChildren()));
                 controller.cleanUp(tree);
-                
+    
             });
         }
         return contextMenu;
-//        contextMenu.show(customTreeCell, event.getScreenX(), event.getScreenY());
     }
     
     private Menu makeRepeatMenu(CustomTreeCell customTreeCell, LocalDate day) {
