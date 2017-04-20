@@ -166,6 +166,9 @@ public class Controller implements Initializable {
             // Request content on a separate thread, and hope the content
             // will be set eventually.
             refreshDay(tree, localDate);
+            
+            // add the delete key listener
+            addDeleteKeyListener(tree, localDate);
 
             tree.setPrefWidth(getListViewWidth());
             tree.setPrefHeight(getListViewHeight());
@@ -249,19 +252,19 @@ public class Controller implements Initializable {
     /**
      * add a Listener to a list for the delete key
      *
-     * @param list      ListView to add the Listener to
+     * @param tree      ListView to add the Listener to
      * @param localDate so we know for what day to update the database
      */
-    private void addDeleteKeyListener(final ListView<HomeworkTask> list,
+    private void addDeleteKeyListener(final TreeView<HomeworkTask> tree,
                                       final LocalDate localDate) {
         //add option to delete a task
-        list.setOnKeyPressed(event -> {
+        tree.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.DELETE) {
-                list.getItems()
-                        .remove(list.getSelectionModel().getSelectedIndex());
+                tree.getRoot().getChildren()
+                        .remove(tree.getSelectionModel().getSelectedIndex());
                 updateDatabase(localDate,
-                        convertObservableToArrayList(list.getItems()));
-                cleanUp(list); //cleaning up has to happen in the listener
+                        convertTreeItemListToArrayList(tree.getRoot().getChildren()));
+                cleanUp(tree); //cleaning up has to happen in the listener
             }
         });
     }

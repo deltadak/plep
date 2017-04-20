@@ -10,6 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.TreeCell;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.TextFieldTreeCell;
@@ -27,12 +28,13 @@ import java.util.Objects;
 import static java.lang.Math.min;
 
 /**
- * @Author s152337 14-4-2017
+ * Custom TextFieldTreeCell, because we can't set the converter on a regular
+ * TreeCell.
  */
 public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
     
     private ObservableList<String> comboList;
-    private TreeItem<HomeworkTask> root;
+    private TreeItem<HomeworkTask> root; // the root item of the TreeView
     private Controller controller;
     
     private HBox cellBox;
@@ -42,11 +44,17 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
     private ContextMenu contextMenu;
     
     /**
-     * Each LabelCell keeps a reference to the listener of the
+     * Each CustomTreeCell keeps a reference to the listener of the
      * ComboBox, in order to choose whether to block it temporarily or not.
      */
     ListenerWithBlocker labelChangeListener;
     
+    /**
+     * Constructor for the CustomTreeCell.
+     * @param controller To keep a reference to the Controller to access
+     *                   methods.
+     * @param root The root of the TreeView this CustomTreeCell is a part of.
+     */
     CustomTreeCell(Controller controller, TreeItem<HomeworkTask> root) {
         this.controller = controller;
         this.root = root;
@@ -55,6 +63,16 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         comboBox = new ComboBox<>(comboList);
     }
     
+    /**
+     * Adds to a cell:
+     *  - the converter,
+     *  - listeners for a changed value,
+     *  - drag and drop listeners,
+     *  - what has to happen when editing,
+     *  - context menu.
+     * @param tree
+     * @param localDate
+     */
     public void setup(TreeView<HomeworkTask> tree, LocalDate localDate) {
         setConverter(new TaskConverter(this));
         
@@ -74,8 +92,9 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         
         tree.setOnEditCommit(event -> {
             TreeItem<HomeworkTask> editingItem = getTreeView().getEditingItem();
-            if(!editingItem.getParent()
-                    .equals(root)) {
+            // if we are editing one of the subtasks
+            if(!editingItem.getParent().equals(root)) {
+                // if we're not adding an empty task, create another subtask
                 if(!event.getNewValue().getText().equals("")){
                     createSubTask(editingItem.getParent());
                 }
