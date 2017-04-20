@@ -13,7 +13,6 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import javafx.concurrent.Task;
 
 import java.net.URL;
@@ -153,8 +152,9 @@ public class Controller implements Initializable {
     
             tree.setEditable(true);
             tree.setCellFactory(param -> {
-                CustomTreeCell treeCell = new CustomTreeCell(tree.getRoot());
-        
+                CustomTreeCell treeCell = new CustomTreeCell(
+                        this, tree.getRoot());
+                treeCell.setup(tree, localDate);
                 return treeCell;
             });
             
@@ -169,8 +169,15 @@ public class Controller implements Initializable {
 
             tree.setPrefWidth(getListViewWidth());
             tree.setPrefHeight(getListViewHeight());
-            // TODO update database
-            tree.setOnEditCommit(event -> System.out.println("edited"));
+            // update the database when editing the text of a task is done
+            tree.setOnEditCommit(event -> {
+                System.out.println("edited");
+                // gets a list from the children of the root
+                // (the main tasks) and updates that list in the database
+                updateDatabase(localDate,
+                            convertTreeItemListToArrayList(
+                                tree.getRoot().getChildren()));
+            });
 //            list.setEditable(true);
 //            list.setPrefWidth(getListViewWidth());
 //            list.setPrefHeight(getListViewHeight());
@@ -268,6 +275,16 @@ public class Controller implements Initializable {
             final ObservableList<HomeworkTask> list) {
         return new ArrayList<>(list);
     }
+    
+    List<HomeworkTask> convertTreeItemListToArrayList(
+            ObservableList<TreeItem<HomeworkTask>> list) {
+        ArrayList<HomeworkTask> arrayList = new ArrayList<>();
+        for (TreeItem<HomeworkTask> aList : list) {
+            arrayList.add(aList.getValue());
+        }
+        return arrayList;
+    }
+    
 
     /**
      * convert (Array)List to ObservableList
@@ -326,7 +343,7 @@ public class Controller implements Initializable {
     /**
      * @return all ListViews in the gridPane
      */
-    private List<TreeView<HomeworkTask>> getAllListViews() {
+    private List<TreeView<HomeworkTask>> getAllTreeViews() {
         List<TreeView<HomeworkTask>> listViews = new ArrayList<>();
         for (Node node : gridPane.getChildren()) {
             //gridpane contains vbox contains label, pane and listview
@@ -346,133 +363,49 @@ public class Controller implements Initializable {
      * Refreshes all listviews using data from the database.
      */
     void refreshAllDays() {
-        // find all listviews
-        List<TreeView<HomeworkTask>> listViews = getAllListViews();
+        // find all treeviews from the gridpane
+        List<TreeView<HomeworkTask>> listViews = getAllTreeViews();
 
         for (int i = 0; i < NUMBER_OF_DAYS; i++) {
             TreeView<HomeworkTask> list = listViews.get(i);
             // refresh the listview from database
             LocalDate localDate = focusDay.plusDays(i - 1);
             refreshDay(list, localDate);
-//            cleanUp(list);
         }
-    }
-
-    /**
-     * Makes the menu with options to repeat for 1-8 weeks.
-     *
-     * @param labelCell task to repeat
-     * @param day       the day to repeat
-     * @return the menu with those options
-     */
-    private Menu makeRepeatMenu(LabelCell labelCell, LocalDate day) {
-        Menu repeatTasksMenu = new Menu("Repeat for x weeks");
-        for (int i = 1; i < 9; i++) {
-            MenuItem menuItem = new MenuItem(String.valueOf(i));
-            repeatTasksMenu.getItems().add(menuItem);
-        }
-
-        List<MenuItem> repeatMenuItems = repeatTasksMenu.getItems();
-        for (MenuItem repeatMenuItem : repeatMenuItems) {
-            repeatMenuItem.setOnAction(event12 -> {
-                int repeatNumber = Integer.valueOf(repeatMenuItem.getText());
-                System.out.println(repeatNumber + " clicked");
-                HomeworkTask homeworkTaskToRepeat = labelCell.getItem();
-                repeatTask(repeatNumber, homeworkTaskToRepeat, day);
-            });
-        }
-        return repeatTasksMenu;
-    }
-
-    /**
-     * create a context menu
-     *
-     * @param event     show context menu at place of mouse event
-     * @param labelCell to know which labelCell to color or repeat or ...
-     * @param list      to update and cleanup after changing labelCell
-     * @param day       needed for updating the database
-     */
-    void createContextMenu(final MouseEvent event,
-                           final LabelCell labelCell,
-                           final ListView<HomeworkTask> list,
-                           final LocalDate day) {
-
-        ContextMenu contextMenu = new ContextMenu();
-        Menu repeatTasksMenu = makeRepeatMenu(labelCell, day);
-        SeparatorMenuItem separatorMenuItem = new SeparatorMenuItem();
-
-        MenuItem firstColor = new MenuItem("Green");
-        MenuItem secondColor = new MenuItem("Blue");
-        MenuItem thirdColor = new MenuItem("Red");
-        MenuItem defaultColor = new MenuItem("White");
-
-        contextMenu.getItems().addAll(repeatTasksMenu, separatorMenuItem,
-                firstColor, secondColor,
-                thirdColor, defaultColor);
-
-        for (int i = 1; i < contextMenu.getItems().size(); i++) {
-            MenuItem colorMenuItem = contextMenu.getItems().get(i);
-            colorMenuItem.setOnAction(event1 -> {
-                System.out.println(colorMenuItem.getText() + " clicked");
-                setBackgroundColor(colorMenuItem, labelCell);
-                updateDatabase(day, convertObservableToArrayList(list.getItems()));
-                cleanUp(list);
-
-            });
-        }
-        contextMenu.show(labelCell, event.getScreenX(), event.getScreenY());
+        
     }
 
     /**
      * sets the background color of a LabelCell
      *
      * @param menuItem  MenuItem to retrieve the color from
-     * @param labelCell LabelCell of which to change the background color
+     * @param customTreeCell LabelCell of which to change the background color
      */
-    private void setBackgroundColor(final MenuItem menuItem,
-                                    final LabelCell labelCell) {
+    public void setBackgroundColor(final MenuItem menuItem,
+                                    final CustomTreeCell customTreeCell) {
         String colorWord = menuItem.getText();
         String colorString = convertColorToHex(colorWord);
         if (colorString.equals("#ffffffff")) {
-            labelCell.setStyle("-fx-text-fill: none");
+            customTreeCell.setStyle("-fx-text-fill: none");
         } else {
-            labelCell.setStyle(
+            customTreeCell.setStyle(
                     "-fx-control-inner-background: "
                             + colorString);
         }
-        labelCell.getItem().setColor(colorWord);
+        customTreeCell.getItem().setColor(colorWord);
 
-    }
-
-    /**
-     * repeats a homeworkTask for a number of weeks
-     *
-     * @param repeatNumber how many times to repeat a homeworkTask
-     * @param homeworkTask the homeworkTask to repeat
-     * @param day          the current day is needed to update the days on which the
-     *                     homeworkTask will be repeated
-     */
-    private void repeatTask(final int repeatNumber, final HomeworkTask homeworkTask, LocalDate day) {
-        for (int i = 0; i < repeatNumber; i++) {
-            day = day.plusWeeks(1);
-            List<HomeworkTask> homeworkTasks = getDatabaseSynced(day);
-            homeworkTasks.add(homeworkTask);
-            updateDatabase(day, homeworkTasks);
-        }
-        refreshAllDays();
     }
     
     void cleanUp(TreeView<HomeworkTask> tree) {
         int i;
-        for(i = 0; i < tree.getRoot().getChildren().size(); i++) {
+        TreeItem<HomeworkTask> root = tree.getRoot();
+        for(i = 0; i < root.getChildren().size(); i++) {
             if(tree.getTreeItem(i).getValue().getText().equals("")) {
-                // TODO remove item
-                // weird way to remove a tree item, isn't it?
                 tree.getTreeItem(i).getParent().getChildren()
                         .remove(tree.getTreeItem(i));
             }
         }
-        
+    
         for(i = 0; i < MAX_LIST_LENGTH; i++) {
             if(i >= tree.getRoot().getChildren().size()) {
                 TreeItem<HomeworkTask> item = new TreeItem<>(
@@ -542,6 +475,7 @@ public class Controller implements Initializable {
      */
     @FXML
     protected void goToToday() {
+//        refreshAllDays();
         focusDay = LocalDate.now();
         setupGridPane(focusDay);
     }
@@ -561,28 +495,30 @@ public class Controller implements Initializable {
     /**
      * Requests tasks from database, and when done updates the listview.
      *
-     * @param list      ListView to be updated.
+     * @param tree      TreeView to be updated.
      * @param localDate The day for which to request tasks.
      */
     public void refreshDay(TreeView<HomeworkTask> tree, LocalDate localDate) {
         progressIndicator.setVisible(true);
+        // get tasks from the database
         Task<List<HomeworkTask>> task = new Task<List<HomeworkTask>>() {
             @Override
             public List<HomeworkTask> call() throws Exception {
                 return getDatabaseSynced(localDate);
             }
         };
-        task.setOnSucceeded(e -> { //TODO
-            for (int i = 0; i < convertArrayToObservableList(task.getValue()).size(); i++) {
-                TreeItem<HomeworkTask> item = new TreeItem<>(convertArrayToObservableList(task.getValue()).get(i));
+        task.setOnSucceeded(e -> {
+            // list with the homework tasks
+            ObservableList<HomeworkTask> list =
+                    convertArrayToObservableList(task.getValue());
+            // clear all the items currently showing in the TreeView
+            tree.getRoot().getChildren().clear();
+            // add the items from the database to the TreeView
+            for (HomeworkTask aList : list) {
+                TreeItem<HomeworkTask> item = new TreeItem<>(aList);
                 tree.getRoot().getChildren().add(item);
             }
             
-            
-            // TODO actually update with things from database
-            // Update the listview with the result from the database.
-//            list.setItems(convertArrayToObservableList(task.getValue()));
-//            cleanUp(list);
             cleanUp(tree);
             progressIndicator.setVisible(false);
         });
@@ -635,7 +571,8 @@ public class Controller implements Initializable {
      * @param localDate Same.
      * @return Same.
      */
-    private synchronized List<HomeworkTask> getDatabaseSynced(final LocalDate localDate) {
+    public synchronized List<HomeworkTask> getDatabaseSynced(final LocalDate
+                                                                localDate) {
         return Database.INSTANCE.getTasksDay(localDate);
     }
 
