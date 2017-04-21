@@ -70,8 +70,9 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
      *  - drag and drop listeners,
      *  - what has to happen when editing,
      *  - context menu.
-     * @param tree
-     * @param localDate
+     * @param tree The TreeView this TreeCell is a part of.
+     * @param localDate The date to which this TreeView (and thus TreeCell)
+     *                  belong.
      */
     public void setup(TreeView<HomeworkTask> tree, LocalDate localDate) {
         setConverter(new TaskConverter(this));
@@ -100,11 +101,13 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                 }
             }
     
+            // update the database with the current first level items
             controller.updateDatabase(localDate,
                           controller.convertTreeItemListToArrayList(
                                   tree.getRoot().getChildren()));
         });
         
+        // create the context menu
         contextMenu = createContextMenu(tree, localDate);
     }
     
@@ -123,10 +126,15 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
             setGraphic(null);
             setText(null);
         } else {
+            // create the items that are on every cell
             cellBox = new HBox(10);
             checkBox = new CheckBox();
             label = new Label(homeworkTask.getText());
-//            getTreeItem().getParent().equals(root);
+            setStyle("-fx-control-inner-background: "
+                     + controller.convertColorToHex(homeworkTask.getColor()));
+            
+            // if the item is first level, it has to show a course label
+            // (ComboBox), and it has to have a context menu
             if(getTreeItem().getParent().equals(root)) {
     
                 // Before setting value, we need to temporarily disable the
@@ -137,11 +145,14 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                                   homeworkTask.getLabel() : "<null>");
                 labelChangeListener.setBlock(false);
                 
+                // create a region to make sure that the ComboBox is aligned
+                // on the right
                 Region region = new Region();
                 HBox.setHgrow(region, Priority.ALWAYS);
                 
                 cellBox.getChildren().addAll(checkBox, label, region, comboBox);
 
+                // set the context menu
                 setContextMenu(contextMenu);
                 setGraphic(cellBox);
                 setText(null);
@@ -151,8 +162,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                 setGraphic(cellBox);
                 setText(null);
             }
-            setStyle("-fx-control-inner-background: "
-            + controller.convertColorToHex(homeworkTask.getColor()));
+            
         }
     }
     
@@ -164,7 +174,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
      *             the database
      * @param day LocalDate which we need for updating the database
      */
-    void setOnLabelChangeListener(TreeView<HomeworkTask> tree,
+    private void setOnLabelChangeListener(TreeView<HomeworkTask> tree,
                                   LocalDate day) {
         
         InvalidationListener invalidationListener = observable -> {
@@ -183,29 +193,42 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                 .addListener(labelChangeListener);
     }
     
+    /**
+     * Creates a context menu to be able to add a subtask, repeat a task, or
+     * change the colour of a task.
+     * @param tree The TreeView this TreeCell is a part of.
+     * @param day The day to which this TreeView (and thus TreeCell) belongs.
+     * @return The ContextMenu.
+     */
     ContextMenu createContextMenu(final TreeView<HomeworkTask> tree,
                            final LocalDate day) {
     
+        // create the context menu
         ContextMenu contextMenu = new ContextMenu();
+        
+        // MenuItem to add a subtask
         MenuItem addSubTaskMenuItem = new MenuItem("Add subtask");
     
+        // MenuItem that holds a menu to choose for how long to repeat the task
         Menu repeatTasksMenu = makeRepeatMenu(this, day);
+        
+        // a separator; a horizontal line
         SeparatorMenuItem separatorMenuItem = new SeparatorMenuItem();
     
+        // the different colours to be added
         MenuItem firstColor = new MenuItem("Green");
         MenuItem secondColor = new MenuItem("Blue");
         MenuItem thirdColor = new MenuItem("Red");
         MenuItem defaultColor = new MenuItem("White");
     
+        // add all the items to the context menu
         contextMenu.getItems()
                 .addAll(addSubTaskMenuItem, repeatTasksMenu, separatorMenuItem,
                         firstColor, secondColor, thirdColor, defaultColor);
-    
         
-        addSubTaskMenuItem.setOnAction(event -> {
-            createSubTask(getTreeItem());
-        });
+        addSubTaskMenuItem.setOnAction(event -> createSubTask(getTreeItem()));
         
+        // sets an action on all the colour items
         for (int i = 2; i < contextMenu.getItems().size(); i++) {
             MenuItem colorMenuItem = contextMenu.getItems().get(i);
             colorMenuItem.setOnAction(event1 -> {
@@ -221,12 +244,16 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         return contextMenu;
     }
     
-    public void createSubTask(TreeItem parentItem) {
+    /**
+     * Creates a subtask, or a child, of the parentItem.
+     * @param parentItem The item to create a subtask in/under.
+     */
+    private void createSubTask(TreeItem parentItem) {
         // add a new subtask
         TreeItem<HomeworkTask> emptyItem = new TreeItem<>(
                 new HomeworkTask("", "", "White"));
         parentItem.getChildren().add(emptyItem);
-    
+        
         // select the new subtask
         getTreeView().getSelectionModel().select(emptyItem);
         // get the index of the new subtask
@@ -243,6 +270,14 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         
     }
     
+    /**
+     * Creates the Menu to be able to choose for how long to repeat a task.
+     * See {@link #createContextMenu}.
+     * @param customTreeCell The TreeCell to show the context menu on.
+     * @param day The day the TreeCell is in, to be able to calculate on what
+     *           other days the task will have to be placed.
+     * @return A drop down Menu.
+     */
     private Menu makeRepeatMenu(CustomTreeCell customTreeCell, LocalDate day) {
         Menu repeatTasksMenu = new Menu("Repeat for x weeks");
         for (int i = 1; i < 9; i++) {
@@ -262,6 +297,13 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         return repeatTasksMenu;
     }
     
+    /**
+     * Repeats a task for a number of weeks.
+     * @param repeatNumber The number of weeks to repeat the task.
+     * @param homeworkTask The HomeworkTask to be repeated.
+     * @param day The current day, to be able to calculate on what days to
+     *            add the task.
+     */
     private void repeatTask(final int repeatNumber, final HomeworkTask homeworkTask, LocalDate day) {
         for (int i = 0; i < repeatNumber; i++) {
             day = day.plusWeeks(1);
