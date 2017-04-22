@@ -16,9 +16,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 class ControllerTest {
 
-    // add constructor for travis
-    public ControllerTest() {}
-
     @Test
     void convertObservableToArrayList() {
         Controller controller = new Controller();
@@ -35,6 +32,7 @@ class ControllerTest {
 
     @Test
     void convertColorToHex() {
+        fail("testing travis");
         Controller controller = new Controller();
         String hex = controller.convertColorToHex("Green");
         try {
