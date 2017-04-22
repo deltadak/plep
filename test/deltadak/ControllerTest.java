@@ -15,6 +15,10 @@ import static org.junit.jupiter.api.Assertions.*;
  * Test some random Controller methods.
  */
 class ControllerTest {
+
+    // add constructor for travis
+    public ControllerTest() {}
+
     @Test
     void convertObservableToArrayList() {
         Controller controller = new Controller();
