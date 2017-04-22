@@ -2,7 +2,7 @@
 !releases/setup/*.iss
 !out/artifacts/plep_jar/plep.jar
 !releases/*.jar
-!lib/*.jar
+!lib/**/*.jar
 
 *.class
 
