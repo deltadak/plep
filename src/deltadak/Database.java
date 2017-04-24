@@ -74,6 +74,10 @@ public enum Database {
             
             }
             statement.close();
+            // don't close the connection, otherwise we get
+            // SQLException: Database has been closed
+            // when trying getLabels()... Even though that has a
+            // setConnection()...
 //            connection.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -120,6 +124,10 @@ public enum Database {
                 value = resultSet.getString("value");
             }
             statement.close();
+            // don't close the connection, otherwise we get
+            // SQLException: Database has been closed
+            // when trying getLabels()... Even though that has a
+            // setConnection()...
 //            connection.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -270,6 +278,10 @@ public enum Database {
                 countID = 1;
             }
             statement.close();
+            // don't close the connection, otherwise we get
+            // SQLException: Database has been closed
+            // when trying getLabels()... Even though that has a
+            // setConnection()...
 //            connection.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -419,6 +431,10 @@ public enum Database {
             statement = connection.createStatement();
             statement.executeUpdate(sql);
             statement.close();
+            // don't close the connection, otherwise we get
+            // SQLException: Database has been closed
+            // when trying getLabels()... Even though that has a
+            // setConnection()...
 //            connection.close();
             
         } catch (Exception e) {
