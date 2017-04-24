@@ -1,5 +1,7 @@
 package deltadak;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
+
 import java.io.File;
 import java.security.CodeSource;
 import java.sql.Connection;
@@ -45,7 +47,7 @@ public enum Database {
     public List<HomeworkTask> getTasksDay(final LocalDate day) {
         
         String dayString = day.toString();
-        String sql = "SELECT task, label, color " + "FROM tasks " + "WHERE day = '"
+        String sql = "SELECT done, task, label, color " + "FROM tasks " + "WHERE day = '"
                 + dayString + "' ORDER BY orderInDay";
         List<HomeworkTask> homeworkTasks = new ArrayList<>();
         
@@ -53,12 +55,26 @@ public enum Database {
         try {
             statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
+            List<HomeworkTask> tasks = new ArrayList<>();
             while (resultSet.next()) {
-                homeworkTasks.add(
-                        new HomeworkTask(resultSet.getString("task"),
-                                         resultSet.getString("label"),
-                                         resultSet.getString("color")));
+                
+                HomeworkTask homeworkTask = new HomeworkTask(
+                                resultSet.getBoolean("done"),
+                                resultSet.getString("task"),
+                                resultSet.getString("label"),
+                                resultSet.getString("color"));
+//                tasks.add(homeworkTask);
+                homeworkTasks.add(homeworkTask);
+//                homeworkTasks.add(
+//                        new HomeworkTask(
+//                                done,
+//                                resultSet.getString("task"),
+//                                resultSet.getString("label"),
+//                                resultSet.getString("color")));
+            
             }
+            statement.close();
+//            connection.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -103,6 +119,8 @@ public enum Database {
             while(resultSet.next()) {
                 value = resultSet.getString("value");
             }
+            statement.close();
+//            connection.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -198,7 +216,7 @@ public enum Database {
      * Creates table with all the tasks, if it doesn't exist yet.
      */
     private void createHomeworkTable() {
-        String sql = "CREATE TABLE IF NOT EXISTS tasks(" + "id INT PRIMARY KEY,"
+        String sql = "CREATE TABLE IF NOT EXISTS tasks(" + "id INT PRIMARY KEY, done BOOLEAN, "
                 + "day DATE," + "task CHAR(255)," + "label CHAR(10),"
                 + "color CHAR(50)," + "orderInDay INT)";
         query(sql);
@@ -221,8 +239,11 @@ public enum Database {
         
         String dayString = day.toString();
         
-        String sql = "INSERT INTO tasks(id, day, task, label, color, orderInDay) "
-                + "VALUES (" + countID + ", '" + dayString + "', '"
+        int doneInt = homeworkTask.getDone() ? 1 : 0;
+        
+        String sql = "INSERT INTO tasks(id, done, day, task, label, color, orderInDay) "
+                + "VALUES (" + countID + ", '" + doneInt + "', '" + dayString +
+                "', '"
                 + homeworkTask.getText() + "','" + homeworkTask.getLabel() + "','"
                 + homeworkTask.getColor() + "'," + order + ")";
         countID++;
@@ -249,7 +270,7 @@ public enum Database {
                 countID = 1;
             }
             statement.close();
-            connection.close();
+//            connection.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -398,7 +419,7 @@ public enum Database {
             statement = connection.createStatement();
             statement.executeUpdate(sql);
             statement.close();
-            connection.close();
+//            connection.close();
             
         } catch (Exception e) {
             e.printStackTrace();

@@ -8,14 +8,24 @@ import java.io.Serializable;
 //which I think should be fine here, as only content matters
 class HomeworkTask implements Serializable {
     
+    private boolean done;
     private String text;
     private String label;
     private String color;
     
-    public HomeworkTask(final String text, final String label, final String color) {
+    public HomeworkTask(final boolean done, final String text, final String label, final String color) {
+        this.done = done;
         this.text = text;
         this.label = label;
         this.color = color;
+    }
+    
+    public boolean getDone() {
+        return done;
+    }
+    
+    public void setDone(final boolean done) {
+        this.done = done;
     }
     
     public String getText() {

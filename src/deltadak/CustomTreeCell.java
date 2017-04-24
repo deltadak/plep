@@ -1,6 +1,9 @@
 package deltadak;
 
 import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.CheckBox;
@@ -22,6 +25,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -58,8 +62,15 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
     CustomTreeCell(Controller controller, TreeItem<HomeworkTask> root) {
         this.controller = controller;
         this.root = root;
+    
+        checkBox = new CheckBox();
         comboList = FXCollections
                 .observableArrayList(Database.INSTANCE.getLabels());
+//        ArrayList arrayList = new ArrayList();
+//        arrayList.add("one");
+//        arrayList.add("two");
+//        comboList = FXCollections.observableArrayList(arrayList);
+    
         comboBox = new ComboBox<>(comboList);
     }
     
@@ -83,6 +94,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         );
         
         setOnLabelChangeListener(tree, localDate);
+        setOnDoneChangeListener(tree, localDate);
         
         setOnDragDetected();
         setOnDragOver();
@@ -128,7 +140,13 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         } else {
             // create the items that are on every cell
             cellBox = new HBox(10);
-            checkBox = new CheckBox();
+    
+            if(!homeworkTask.getText().equals("")) {
+                System.out.println(homeworkTask.getText() + ": " + homeworkTask.getDone());
+            }
+            boolean done = homeworkTask.getDone();
+            checkBox.setSelected(done);
+            
             label = new Label(homeworkTask.getText());
             setStyle("-fx-control-inner-background: "
                      + controller.convertColorToHex(homeworkTask.getColor()));
@@ -193,6 +211,15 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                 .addListener(labelChangeListener);
     }
     
+    void setOnDoneChangeListener(TreeView<HomeworkTask> tree, LocalDate localDate) {
+        checkBox.selectedProperty().addListener(
+                (observable, oldValue, newValue) -> {
+                    System.out.println(newValue);
+                    getTreeItem().getValue().setDone(newValue);
+                    controller.updateDatabase(localDate, controller.convertTreeItemListToArrayList(tree.getRoot().getChildren()));
+                });
+    }
+    
     /**
      * Creates a context menu to be able to add a subtask, repeat a task, or
      * change the colour of a task.
@@ -251,7 +278,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
     private void createSubTask(TreeItem parentItem) {
         // add a new subtask
         TreeItem<HomeworkTask> emptyItem = new TreeItem<>(
-                new HomeworkTask("", "", "White"));
+                new HomeworkTask(false, "", "", "White"));
         parentItem.getChildren().add(emptyItem);
         
         // select the new subtask
@@ -426,7 +453,8 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                 Dragboard db = event.getDragboard();
                 HomeworkTask newHomeworkTask
                         = (HomeworkTask)db.getContent(controller.DATA_FORMAT);
-                HomeworkTask emptyHomeworkTask = new HomeworkTask("", "", "White");
+                HomeworkTask emptyHomeworkTask = new HomeworkTask(
+                        false, "", "", "White");
                 //remove original item
                 //item can have been moved up (so index becomes one
                 // too much)

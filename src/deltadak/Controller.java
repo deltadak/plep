@@ -15,6 +15,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.concurrent.Task;
 
+import javax.xml.crypto.Data;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
@@ -146,14 +147,13 @@ public class Controller implements Initializable {
             
 //            ListView<HomeworkTask> list = new ListView<>();
             TreeItem<HomeworkTask> rootItem = new TreeItem<>(
-                    new HomeworkTask("root", "root", "white"));
+                    new HomeworkTask(false, "root", "root", "white"));
             rootItem.setExpanded(true);
             final TreeView<HomeworkTask> tree = new TreeView<>(rootItem);
     
             tree.setEditable(true);
             tree.setCellFactory(param -> {
-                CustomTreeCell treeCell = new CustomTreeCell(
-                        this, tree.getRoot());
+                CustomTreeCell treeCell = new CustomTreeCell(this, tree.getRoot());
                 treeCell.setup(tree, localDate);
                 return treeCell;
             });
@@ -221,7 +221,7 @@ public class Controller implements Initializable {
     /**
      * add title to listview
      *
-     * @param list      to use
+     * @param tree      to use
      * @param localDate from which to make a title
      * @return VBox with listview and title
      */
@@ -412,7 +412,7 @@ public class Controller implements Initializable {
         for(i = 0; i < MAX_LIST_LENGTH; i++) {
             if(i >= tree.getRoot().getChildren().size()) {
                 TreeItem<HomeworkTask> item = new TreeItem<>(
-                        new HomeworkTask("", "", "White"));
+                        new HomeworkTask(false,"", "", "White"));
                 tree.getRoot().getChildren().add(item);
             }
         }
@@ -442,7 +442,8 @@ public class Controller implements Initializable {
         //fill up if necessary
         for (i = 0; i < MAX_LIST_LENGTH; i++) {
             if (i >= list.getItems().size()) {
-                list.getItems().add(i, new HomeworkTask("", "", "White"));
+                list.getItems().add(i, new HomeworkTask(
+                        false, "", "", "White"));
             }
         }
 
