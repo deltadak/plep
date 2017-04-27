@@ -140,10 +140,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         } else {
             // create the items that are on every cell
             cellBox = new HBox(10);
-    
-            if(!homeworkTask.getText().equals("")) {
-                System.out.println(homeworkTask.getText() + ": " + homeworkTask.getDone());
-            }
+            
             boolean done = homeworkTask.getDone();
             checkBox.setSelected(done);
             
@@ -211,10 +208,17 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                 .addListener(labelChangeListener);
     }
     
+    /**
+     * Sets a change listener on the CheckBox, to update the database on
+     * changes.
+     * @param tree The TreeView the current TreeCell is in. We need this to
+     *            update the database.
+     * @param localDate The date of the TreeView, and thus all the
+     *                  HomeworkTasks, in which the CheckBox is toggled.
+     */
     void setOnDoneChangeListener(TreeView<HomeworkTask> tree, LocalDate localDate) {
         checkBox.selectedProperty().addListener(
                 (observable, oldValue, newValue) -> {
-                    System.out.println(newValue);
                     getTreeItem().getValue().setDone(newValue);
                     controller.updateDatabase(localDate, controller.convertTreeItemListToArrayList(tree.getRoot().getChildren()));
                 });
