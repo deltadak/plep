@@ -20,7 +20,7 @@ import java.util.Objects;
 /**
  * A pane which provides settings.
  */
-public class SettingsPane {
+public class CustomSettingsPane {
     
     /** keep a reference to the controller to update some constants when settings are changed */
     private Controller controller;
@@ -50,10 +50,10 @@ public class SettingsPane {
     private static final int TOGGLE_SETTINGS_DURATION = 350;
 
     /**
-     * Construct a new SettingsPane.
+     * Construct a new CustomSettingsPane.
      * @param controller The controller which controls this.
      */
-    public SettingsPane(Controller controller) {
+    public CustomSettingsPane(Controller controller) {
         this.controller = controller;
 
     }

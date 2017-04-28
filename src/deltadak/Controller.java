@@ -38,7 +38,7 @@ public class Controller implements Initializable {
     @FXML ToolBar toolBar;
     @FXML ProgressIndicator progressIndicator;
 
-    private SettingsPane settingsPane;
+    private CustomSettingsPane settingsPane;
 
     // these have to be declared in controller because of fxml,
     // and then be passed on to the SettingsPane. Ah well.
@@ -101,7 +101,7 @@ public class Controller implements Initializable {
 
         progressIndicator.setVisible(false);
 
-        settingsPane = new SettingsPane(this);
+        settingsPane = new CustomSettingsPane(this);
         copySettingsPaneComponents(settingsPane);
         settingsPane.setup();
 
@@ -111,10 +111,10 @@ public class Controller implements Initializable {
     }
 
     /**
-     * Copy references from fxml components needed to the SettingsPane
+     * Copy references from fxml components needed to the CustomSettingsPane
      * @param settingsPane which needs the references
      */
-    private void copySettingsPaneComponents(SettingsPane settingsPane) {
+    private void copySettingsPaneComponents(CustomSettingsPane settingsPane) {
         settingsPane.main = this.main;
         settingsPane.gridPane = this.gridPane;
         settingsPane.toolBar = this.toolBar;
