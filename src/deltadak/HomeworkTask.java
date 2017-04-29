@@ -11,6 +11,12 @@ class HomeworkTask implements Serializable {
     private String text;
     private String label;
     private String color;
+
+    public HomeworkTask() {
+        this.text = "default text";
+        this.label = "default label";
+        this.color = "white";
+    }
     
     public HomeworkTask(final String text, final String label, final String color) {
         this.text = text;
