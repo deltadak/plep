@@ -1,0 +1,9 @@
+description = """ 
+Gradle build file originally written to let Travis access dependencies and build. 
+
+I had to set gradle home to C:\\Users\\s156757\\.gradle\\wrapper\\dists\\gradle-3.3-all\\55gk...\\gradle-3.3 in Settings - Build tools - Gradle and add the same with \\bin added to my path (Travis will use it's own gradle) """
+task hello {
+    doLast {
+        println 'Hello Gradle'
+    }
+}
