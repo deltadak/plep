@@ -1,9 +1,29 @@
 description = """ 
 Gradle build file originally written to let Travis access dependencies and build. 
 
-I had to set gradle home to C:\\Users\\s156757\\.gradle\\wrapper\\dists\\gradle-3.3-all\\55gk...\\gradle-3.3 in Settings - Build tools - Gradle and add the same with \\bin added to my path (Travis will use it's own gradle) """
-task assemble {
-    doLast {
-        println 'Hello Gradle'
+I had to set gradle home to C:\\Users\\s156757\\.gradle\\wrapper\\dists\\gradle-3.3-all\\55gk...\\gradle-3.3 in Settings - Build tools - Gradle and add the same with \\bin added to my path (Travis will use it's own gradle), similarly for jdk home\\lib """
+
+apply plugin: 'java'
+
+sourceSets {
+    main {
+        java {
+            srcDirs 'src'
+        }
     }
+    test {
+        java {
+            srcDirs 'test'
+        }
+    }
+}
+
+//task testgradle {
+//    doLast {
+//        println 'Hello Gradle'
+//    }
+//}
+
+dependencies {
+    compile fileTree(dir: 'lib', include: ['**/*.jar'])
 }
