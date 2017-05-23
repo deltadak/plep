@@ -14,10 +14,13 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Test some random Controller methods.
  */
-class ControllerTest {
+public class ControllerTest {
 
+    /**
+     * Test converter.
+     */
     @Test
-    void convertObservableToArrayList() {
+    public void convertObservableToArrayList() {
         Controller controller = new Controller();
         Collection<HomeworkTask> listToConvert = new ArrayList<>();
         HomeworkTask task1 = new HomeworkTask("asdf", "fda", "colooor");
@@ -30,8 +33,12 @@ class ControllerTest {
         assertTrue(convertedList.containsAll(listToConvert), "contents should be the same after converting");
     }
 
+    /**
+     * Test more converter.
+     */
     @Test
-    void convertColorToHex() {
+    public void convertColorToHex() {
+        fail("gradle test");
         Controller controller = new Controller();
         String hex = controller.convertColorToHex("Green");
         try {

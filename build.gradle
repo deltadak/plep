@@ -5,6 +5,12 @@ I had to set gradle home to C:\\Users\\s156757\\.gradle\\wrapper\\dists\\gradle-
 
 apply plugin: 'java'
 
+test {
+//    include "**/ControllerTest.class"
+    dependsOn 'cleanTest' // run tests every time
+    scanForTestClasses = false // I don't know but it works?
+}
+
 sourceSets {
     main {
         java {
@@ -24,6 +30,17 @@ sourceSets {
 //    }
 //}
 
+repositories {
+    mavenCentral()
+}
+
 dependencies {
     compile fileTree(dir: 'lib', include: ['**/*.jar'])
+    testCompile("org.junit.jupiter:junit-jupiter-api:5.0.0-M3")
+}
+
+test {
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
 }
