@@ -8,18 +8,23 @@ apply plugin: 'java'
 test {
 //    include "**/ControllerTest.class"
     dependsOn 'cleanTest' // run tests every time
-    scanForTestClasses = false // I don't know but it works?
+
+}
+
+tasks.withType(Test) {
+    scanForTestClasses = false
+    include "**/*Test.class"
 }
 
 sourceSets {
     main {
         java {
-            srcDirs 'src'
+            srcDirs 'src/deltadak'
         }
     }
     test {
         java {
-            srcDirs 'test'
+            srcDirs 'test/deltadak'
         }
     }
 }
@@ -32,11 +37,37 @@ sourceSets {
 
 repositories {
     mavenCentral()
+//    flatDir {
+//        dirs 'lib'
+//    }
 }
 
 dependencies {
-    compile fileTree(dir: 'lib', include: ['**/*.jar'])
+
+    //1.
     testCompile("org.junit.jupiter:junit-jupiter-api:5.0.0-M3")
+    //6.
+//    testCompile 'org.hamcrest:hamcrest-library:1.3'
+
+//    compile name: 'hamcrest-all-1.3'
+//    compile name: 'hamcrest-core-1.3'
+//    compile name: 'hamcrest-library-1.3'
+//    compile name: 'junit'
+//    compile name: 'junit-jupiter-api-5.0.0-M4'
+//    compile name:
+//    compile name: 'junit.jar'
+
+
+    // tries below to add from local lib didn't work
+//    compile fileTree(dir: 'lib', include: ['**/*.jar'])
+//    compile files('*.jar')
+//    compile name: 'lib/*.jar'
+//    compile name: '**'
+    // both tries below to download from maven repository didn't find hamcrest
+
+//    testCompile 'org.hamcrest:hamcrest-library:1.3'
+    // https://mvnrepository.com/artifact/org.hamcrest/hamcrest-all
+//    compile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
 }
 
 test {
