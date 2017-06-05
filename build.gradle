@@ -19,12 +19,12 @@ tasks.withType(Test) {
 sourceSets {
     main {
         java {
-            srcDirs 'src/deltadak'
+            srcDirs 'src'
         }
     }
     test {
         java {
-            srcDirs 'test/deltadak'
+            srcDirs 'test'
         }
     }
 }
@@ -48,6 +48,8 @@ dependencies {
     testCompile("org.junit.jupiter:junit-jupiter-api:5.0.0-M3")
     //6.
     testCompile 'org.hamcrest:hamcrest-library:1.3'
+    // https://mvnrepository.com/artifact/org.hamcrest/hamcrest-all
+    testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
 
 //    compile name: 'hamcrest-all-1.3'
 //    compile name: 'hamcrest-core-1.3'
