@@ -1,5 +1,6 @@
 package deltadak;
 
+import javafx.scene.control.ListView;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +23,17 @@ class DeleteCommandTest {
         List<HomeworkTask> list = new ArrayList<>();
         taskToDelete = new HomeworkTask("text", "label", "color");
         list.add(taskToDelete);
-        AbstractController dummy = (day, homeworkTasks) -> {};
+        AbstractController dummy = new AbstractController() {
+            @Override
+            public void updateDatabase(LocalDate day, List<HomeworkTask> homeworkTasks) {
+                // do nothing
+            }
+
+            @Override
+            public void cleanUp(ListView<HomeworkTask> list) {
+                // do nothing
+            }
+        };
         command = new DeleteCommand(dummy, dayState, list, 0, null);
     }
 
