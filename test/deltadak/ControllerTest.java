@@ -38,7 +38,6 @@ public class ControllerTest {
      */
     @Test
     public void convertColorToHex() {
-        fail("gradle test");
         Controller controller = new Controller();
         String hex = controller.convertColorToHex("Green");
         try {
