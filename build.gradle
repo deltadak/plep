@@ -2,10 +2,13 @@ description = """
 Gradle build file written to let Travis access dependencies and build. 
 
 This uses the gradle wrapper, so when running (the first time) use 'gradlew test' so then it downloads the right gradle automatically.
+
+Uses JavaFX plugin from https://github.com/FibreFoX/javafx-gradle-plugin
 """
 
 apply plugin: 'java'
 apply plugin: 'org.junit.platform.gradle.plugin'
+apply plugin: 'javafx-gradle-plugin'
 
 repositories {
     mavenCentral()
@@ -16,7 +19,10 @@ buildscript {
         mavenCentral()
     }
     dependencies {
+        // The JUnit plugin
         classpath ("org.junit.platform:junit-platform-gradle-plugin:1.0.0-M4")
+        // A JavaFX plugin
+        classpath group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.8.2'
     }
 }
 
