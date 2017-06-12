@@ -1,14 +1,15 @@
 language: java
-
 sudo: false
-addons:
-  apt:
-    packages:
-      - oracle-java8-installer
+#addons:
+#  apt:
+#    packages:
+#      - oracle-java8-installer
 jdk:
   - oraclejdk8
 notification:
     email: false
-#before_install:
-#  - chmod a+x ./travis.sh
+# make gradlew accessible
+before_install:
+ - chmod +x gradlew
+
 #script: "./travis.sh"
