@@ -1,15 +1,17 @@
 language: java
-sudo: false
+
 #addons:
 #  apt:
 #    packages:
 #      - oracle-java8-installer
+
+# default is not jdk8
 jdk:
   - oraclejdk8
+
 notification:
     email: false
-# make gradlew accessible
+
+# make gradlew accessible to travis
 before_install:
  - chmod +x gradlew
-
-#script: "./travis.sh"
