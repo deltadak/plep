@@ -42,6 +42,7 @@ out/*
 # Gradle:
 .idea/gradle.xml
 .idea/libraries
+.gradle/*
 
 # Mongo Explorer plugin:
 .idea/mongoSettings.xml
@@ -53,6 +54,7 @@ out/*
 
 # IntelliJ
 /out/
+build/*
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/
