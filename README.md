@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.org/deltadak/plep.svg?branch=master)](https://travis-ci.org/deltadak/plep)
-
 # plep
 Plepping is the new planning.
 
