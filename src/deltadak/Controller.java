@@ -50,6 +50,8 @@ public class Controller implements Initializable {
     @FXML Button removeLabelButton;
     @FXML Button applyNumberOfDays;
     @FXML Button applyNumberOfShowDays;
+    @FXML CheckBox autoColumnCheckBox;
+    @FXML Button applyMaxColumns;
 
     @FXML Text numberOfMovingDaysText;
     @FXML Text numberOfShowDaysText;
@@ -61,13 +63,15 @@ public class Controller implements Initializable {
     public int NUMBER_OF_DAYS; // number of days shown
     public int NUMBER_OF_MOVING_DAYS; // number of days to skip when using the forward/backward buttons
 
-    public int MAX_COLUMNS = 3;
+    public int MAX_COLUMNS; // number of columns to fill with lists with tasks
     private static final int MAX_LIST_LENGTH = 7;
 
     // name of setting in the database
     public static final String NUMBER_OF_DAYS_NAME = "number_of_days";
     public static final String NUMBER_OF_MOVING_DAYS_NAME
             = "number_of_moving_days";
+    public static final String MAX_COLUMNS_NAME = "max_columns";
+    public static final String MAX_COLUMNS_AUTO_NAME = "max_columns_auto";
 
     public LocalDate focusDay;
     private LocalDate today;
@@ -92,15 +96,18 @@ public class Controller implements Initializable {
         setDefaultDatabasePath();
         createTables(); // if not already exists
 
+        // get the current settings from the database
         NUMBER_OF_DAYS = Integer.valueOf(getSetting(NUMBER_OF_DAYS_NAME));
         NUMBER_OF_MOVING_DAYS = Integer.valueOf(getSetting(
                 NUMBER_OF_MOVING_DAYS_NAME));
+        MAX_COLUMNS = Integer.valueOf(getSetting(MAX_COLUMNS_NAME));
 
         focusDay = LocalDate.now(); // set focus day to today
         setupGridPane(focusDay);
 
         progressIndicator.setVisible(false);
 
+        // setup the settings pange
         settingsPane = new SettingsPane(this);
         copySettingsPaneComponents(settingsPane);
         settingsPane.setup();
@@ -126,6 +133,8 @@ public class Controller implements Initializable {
         settingsPane.settingsButton = this.settingsButton;
         settingsPane.applyNumberOfDays = this.applyNumberOfDays;
         settingsPane.applyNumberOfShowDays = this.applyNumberOfShowDays;
+        settingsPane.autoColumnsCheckBox = this.autoColumnCheckBox;
+        settingsPane.applyMaxColumns = this.applyMaxColumns;
     }
 
     /**
@@ -134,6 +143,15 @@ public class Controller implements Initializable {
      * @param focusDate date that is the top middle one (is today on default)
      */
     public void setupGridPane(LocalDate focusDate) {
+        // check if the number of columns should be calculated, or retrieved
+        // from the database
+        boolean isAuto = Boolean.valueOf(
+                getSetting(MAX_COLUMNS_AUTO_NAME));
+        if(isAuto) {
+            MAX_COLUMNS = maxColumns(NUMBER_OF_DAYS);
+        } else {
+            MAX_COLUMNS = Integer.valueOf(getSetting(MAX_COLUMNS_NAME));
+        }
 
         AnchorPane.setTopAnchor(gridPane, toolBar.getPrefHeight());
 
@@ -218,6 +236,15 @@ public class Controller implements Initializable {
         int row = index / MAX_COLUMNS;
         int column = index % MAX_COLUMNS;
         gridPane.add(vbox, column, row);
+    }
+    
+    /**
+     * Calculates and sets the value of MAX_COLUMNS
+     * @param numberOfDays number of days in total
+     * @return int for MAX_COLUMNS
+     */
+    private int maxColumns(int numberOfDays) {
+        return (int) Math.ceil(Math.sqrt(numberOfDays));
     }
 
     /**

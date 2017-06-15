@@ -1,6 +1,9 @@
 package deltadak;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import javafx.animation.TranslateTransition;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -37,10 +40,13 @@ public class SettingsPane {
     public GridPane editDaysPane;
     public Button applyNumberOfDays;
     public Button applyNumberOfShowDays;
+    public CheckBox autoColumnsCheckBox;
+    public Button applyMaxColumns;
 
     private ListView<String> labelsList;
     private Spinner<Integer> numberOfMovingDaysSpinner;
     private Spinner<Integer> numberOfShowDaysSpinner;
+    private Spinner<Integer> maxColumnsSpinner;
 
     // layout globals for the settings pane
     private static final int SETTINGS_WIDTH = 400;
@@ -62,17 +68,28 @@ public class SettingsPane {
      * Setup components, which are hopefully not null...
      */
     public void setup() {
-        controller.MAX_COLUMNS = maxColumns(controller.NUMBER_OF_DAYS);
+//        controller.MAX_COLUMNS = maxColumns(controller.NUMBER_OF_DAYS);
         setupSettingsMenu();
         prepareToggleSettings();
         setComponentListeners();
+        boolean isAuto = Boolean.valueOf(getSetting(
+                Controller.MAX_COLUMNS_AUTO_NAME));
+        autoColumnsCheckBox.setSelected(isAuto);
     }
 
     private void setComponentListeners() {
         editLabelsButton.setOnAction(event -> editCourseLabels());
         removeLabelButton.setOnAction(event -> removeLabel());
-        applyNumberOfDays.setOnAction(event -> applyNumberOfMovingDaysChange());
-        applyNumberOfShowDays.setOnAction(event -> applyNumberOfShowDaysChange());
+        applyNumberOfDays.setOnAction(event ->
+                applyNumberOfMovingDaysChange());
+        applyNumberOfShowDays.setOnAction(event ->
+                applyNumberOfShowDaysChange());
+        applyMaxColumns.setOnAction(event -> applyMaxColumnsChange());
+//        autoColumnsCheckBox.setOnAction(event ->
+//                autoColumnsCheckBoxToggled());
+        autoColumnsCheckBox.selectedProperty().addListener(
+                (observable, oldValue, newValue) ->
+                        autoColumnsCheckBoxToggled(newValue));
     }
 
     /**
@@ -204,7 +221,7 @@ public class SettingsPane {
         numberOfMovingDaysSpinner.setValueFactory(valueFactory);
         numberOfMovingDaysSpinner.setId("numberOfMovingDaysSpinner");
         numberOfMovingDaysSpinner.setPrefWidth(70);
-        GridPane.setColumnIndex(numberOfMovingDaysSpinner, 1);
+        GridPane.setColumnIndex(numberOfMovingDaysSpinner, 2);
         editDaysPane.getChildren().add(numberOfMovingDaysSpinner);
 
 
@@ -217,10 +234,28 @@ public class SettingsPane {
         numberOfShowDaysSpinner.setValueFactory(valueShowFactory);
         numberOfShowDaysSpinner.setId("numberOfShowDaysSpinner");
         numberOfShowDaysSpinner.setPrefWidth(70);
-        GridPane.setColumnIndex(numberOfShowDaysSpinner, 1);
+        GridPane.setColumnIndex(numberOfShowDaysSpinner, 2);
         GridPane.setRowIndex(numberOfShowDaysSpinner,1);
         editDaysPane.getChildren().add(numberOfShowDaysSpinner);
+        
+        // Adding the spinner to change the number of columns.
+        maxColumnsSpinner = new Spinner<>();
+        // Get the previous value from the database.
+        int defaultValue = Integer.valueOf(getSetting(
+                Controller.MAX_COLUMNS_NAME));
+        SpinnerValueFactory<Integer> valueColumnFactory = new
+                SpinnerValueFactory.IntegerSpinnerValueFactory(
+                        1, 14, defaultValue);
+        
+        maxColumnsSpinner.setValueFactory(valueColumnFactory);
+        maxColumnsSpinner.setId("maxColumnsSpinner");
+        maxColumnsSpinner.setPrefWidth(70);
+        GridPane.setColumnIndex(maxColumnsSpinner, 2);
+        GridPane.setRowIndex(maxColumnsSpinner, 2);
+        editDaysPane.getChildren().add(maxColumnsSpinner);
     }
+    
+    
 
     /**
      * Toggles the visibility of the listview with labels.
@@ -264,20 +299,35 @@ public class SettingsPane {
      */
     @FXML protected void applyNumberOfShowDaysChange() {
         controller.NUMBER_OF_DAYS = numberOfShowDaysSpinner.getValue();
-        controller.MAX_COLUMNS = maxColumns(controller.NUMBER_OF_DAYS);
 
         updateSetting(Controller.NUMBER_OF_DAYS_NAME,
                 String.valueOf(controller.NUMBER_OF_DAYS));
         controller.setupGridPane(controller.focusDay);
-
     }
-
+    
     /**
-     * Calculates and sets the value of MAX_COLUMNS
-     * @param numberOfDays number of days in total
+     * Applies the new number of columns to the main GridPane, and toggles the
+     * autoColumnsCheckBox to unselected. So the number of columns isn't
+     * automatically calculated, but manually set.
      */
-    private int maxColumns(int numberOfDays) {
-        return (int) Math.ceil(Math.sqrt(numberOfDays));
+    @FXML protected void applyMaxColumnsChange() {
+        controller.MAX_COLUMNS = maxColumnsSpinner.getValue();
+        updateSetting(Controller.MAX_COLUMNS_NAME,
+                      String.valueOf(controller.MAX_COLUMNS));
+        autoColumnsCheckBox.setSelected(false);
+        controller.setupGridPane(controller.focusDay);
+    }
+    
+    /**
+     * Updates the value of 'max_columns_auto' in the database to the new
+     * value of the check box.
+     * @param newValue a boolean with true or false. True if the box is
+     *                 selected, false if it is not selected.
+     */
+    @FXML protected void autoColumnsCheckBoxToggled(boolean newValue) {
+        updateSetting(Controller.MAX_COLUMNS_AUTO_NAME,
+                      String.valueOf(newValue));
+        controller.setupGridPane(controller.focusDay);
     }
 
     /**
