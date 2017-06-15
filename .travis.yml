@@ -9,6 +9,9 @@ language: java
 jdk:
   - oraclejdk8
 
+# Use the Trusty Beta, because the JDK version of the default is too low.
+dist: trusty
+
 notification:
     email: false
 
