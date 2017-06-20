@@ -1,0 +1,71 @@
+description = """ 
+Gradle build file written to let Travis access dependencies and build. 
+
+This uses the gradle wrapper, so when running (the first time) use 'gradlew test' so then it downloads the right gradle automatically.
+
+Uses JavaFX plugin from https://github.com/FibreFoX/javafx-gradle-plugin
+"""
+
+apply plugin: 'java'
+apply plugin: 'org.junit.platform.gradle.plugin'
+apply plugin: 'javafx-gradle-plugin'
+
+repositories {
+    mavenCentral()
+}
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        // The JUnit plugin
+        classpath ("org.junit.platform:junit-platform-gradle-plugin:1.0.0-M4")
+        // A JavaFX plugin
+        classpath group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.8.2'
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs 'src'
+        }
+        resources {
+            srcDirs 'src'
+        }
+    }
+    test {
+        java {
+            srcDirs 'test'
+        }
+        resources {
+            srcDirs 'test'
+        }
+    }
+}
+
+dependencies {
+
+    //**** Source dependencies ****//
+
+    // JDBC driver for database
+    // https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc
+    compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.18.0'
+
+    //**** Test dependencies ****//
+
+    testCompile("junit:junit:4.12")
+    testRuntime("org.junit.vintage:junit-vintage-engine:4.12.0-M4")
+
+    testCompile("org.junit.jupiter:junit-jupiter-api:5.0.0-M4")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.0-M4")
+
+    // Enable use of the JUnitPlatform Runner within the IDE
+    testCompile("org.junit.platform:junit-platform-runner:1.0.0-M4")
+
+}
+
+junitPlatform {
+    details 'tree'
+}
