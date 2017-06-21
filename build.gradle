@@ -12,11 +12,13 @@ apply plugin: 'javafx-gradle-plugin'
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 buildscript {
     repositories {
         mavenCentral()
+        mavenLocal()
     }
     dependencies {
         // The JUnit plugin
@@ -51,13 +53,16 @@ dependencies {
 
     // JDBC driver for database
     // https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc
-    compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.18.0'
+    // 'compile' is deprecated, now it is 'api' but that fails to build
+    api("org.xerial:sqlite-jdbc:3.18.0")
 
     //**** Test dependencies ****//
 
+    // Also compile junit 4, just in case
     testCompile("junit:junit:4.12")
     testRuntime("org.junit.vintage:junit-vintage-engine:4.12.0-M4")
 
+    // Use junit 5 for test cases
     testCompile("org.junit.jupiter:junit-jupiter-api:5.0.0-M4")
     testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.0-M4")
 

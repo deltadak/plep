@@ -21,7 +21,6 @@ public class Main extends Application {
     @Override
     public void start(final Stage primaryStage) throws Exception{
         FXMLLoader loader = new FXMLLoader(getClass().getResource("interface.fxml"));
-        System.out.println(System.getProperty("java.class.path"));
         Parent root = loader.load();
         
         //used to invoke a setup method in controller which needs the stage
