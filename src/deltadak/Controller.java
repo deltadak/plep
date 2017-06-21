@@ -10,6 +10,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
+import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -30,51 +31,113 @@ import java.util.concurrent.Executors;
 // true)
 @SuppressWarnings("TypeMayBeWeakened")
 public class Controller implements Initializable, AbstractController {
-    
     // main element of the UI is declared in interface.fxml
+    @FXML AnchorPane main;
     @FXML GridPane gridPane;
+    @FXML ToolBar toolBar;
     @FXML ProgressIndicator progressIndicator;
-    // used to transfer tasks with drag and drop
-    DataFormat dataFormat = new DataFormat("com.deltadak.HomeworkTask");
-    
-    // layout globals
-    private static final int NUMBER_OF_DAYS = 9;
-    private static final int MAX_COLUMNS = 3;
+
+    private CustomSettingsPane settingsPane;
+
+    // these have to be declared in controller because of fxml,
+    // and then be passed on to the SettingsPane. Ah well.
+    @FXML AnchorPane anchorPane;
+    @FXML GridPane editLabelsPane;
+    @FXML Button editLabelsButton;
+    @FXML Button settingsButton;
+    @FXML GridPane editDaysPane;
+    @FXML Button removeLabelButton;
+    @FXML Button applyNumberOfDays;
+    @FXML Button applyNumberOfShowDays;
+    @FXML CheckBox autoColumnCheckBox;
+    @FXML Button applyMaxColumns;
+
+    @FXML Text numberOfMovingDaysText;
+    @FXML Text numberOfShowDaysText;
+
+    /** used to transfer tasks with drag and drop */
+    static final DataFormat DATA_FORMAT = new DataFormat("com.deltadak.HomeworkTask");
+
+    // layout globals, are public for the SettingsPane to access them
+    public int NUMBER_OF_DAYS; // number of days shown
+    public int NUMBER_OF_MOVING_DAYS; // number of days to skip when using the forward/backward buttons
+
+    public int MAX_COLUMNS; // number of columns to fill with lists with tasks
     private static final int MAX_LIST_LENGTH = 7;
-    
-    private LocalDate focusDay;
+
+    // name of setting in the database
+    public static final String NUMBER_OF_DAYS_NAME = "number_of_days";
+    public static final String NUMBER_OF_MOVING_DAYS_NAME
+            = "number_of_moving_days";
+    public static final String MAX_COLUMNS_NAME = "max_columns";
+    public static final String MAX_COLUMNS_AUTO_NAME = "max_columns_auto";
+
+    public LocalDate focusDay;
     private LocalDate today;
-    private static final int NUMBER_OF_MOVING_DAYS = 7;
-    
     // Multithreading
     private Executor exec;
-
+    
     /** keep a reference to the undo facility */
     private UndoFacility undoFacility = new UndoFacility();
-    
     /**
      * Initialization method for the controller.
      */
+    @Override
     @FXML
     public void initialize(final URL location,
                            final ResourceBundle resourceBundle) {
-    
+
         // Initialize multithreading.
         exec = Executors.newCachedThreadPool(runnable -> {
             Thread t = new Thread(runnable);
             t.setDaemon(true);
             return t;
         });
-        
+
         setDefaultDatabasePath();
-        createTable(); // if not already exists
-        
+        createTables(); // if not already exists
+
+        // get the current settings from the database
+        NUMBER_OF_DAYS = Integer.valueOf(getSetting(NUMBER_OF_DAYS_NAME));
+        NUMBER_OF_MOVING_DAYS = Integer.valueOf(getSetting(
+                NUMBER_OF_MOVING_DAYS_NAME));
+        MAX_COLUMNS = Integer.valueOf(getSetting(MAX_COLUMNS_NAME));
+
         focusDay = LocalDate.now(); // set focus day to today
         setupGridPane(focusDay);
-        
+
         progressIndicator.setVisible(false);
 
+        // setup the settings pange
+        settingsPane = new CustomSettingsPane(this);
+        copySettingsPaneComponents(settingsPane);
+        settingsPane.setup();
+
+        // Notice that the listener which listens for day changes is called from
+        // Main, because it needs the primary Stage.
+
         addUndoKeyListener();
+
+    }
+
+    /**
+     * Copy references from fxml components needed to the CustomSettingsPane
+     * @param settingsPane which needs the references
+     */
+    private void copySettingsPaneComponents(CustomSettingsPane settingsPane) {
+        settingsPane.main = this.main;
+        settingsPane.gridPane = this.gridPane;
+        settingsPane.toolBar = this.toolBar;
+        settingsPane.settingsPane = this.anchorPane;
+        settingsPane.editDaysPane = this.editDaysPane;
+        settingsPane.editLabelsPane = this.editLabelsPane;
+        settingsPane.editLabelsButton = this.editLabelsButton;
+        settingsPane.removeLabelButton = this.removeLabelButton;
+        settingsPane.settingsButton = this.settingsButton;
+        settingsPane.applyNumberOfDays = this.applyNumberOfDays;
+        settingsPane.applyNumberOfShowDays = this.applyNumberOfShowDays;
+        settingsPane.autoColumnsCheckBox = this.autoColumnCheckBox;
+        settingsPane.applyMaxColumns = this.applyMaxColumns;
 
     }
 
@@ -85,44 +148,58 @@ public class Controller implements Initializable, AbstractController {
             }
         });
     }
-    
+
     /**
      * sets up listviews for each day, initializes drag and drop, editing items
+     *
      * @param focusDate date that is the top middle one (is today on default)
      */
-    private void setupGridPane(LocalDate focusDate) {
+    public void setupGridPane(LocalDate focusDate) {
+        // check if the number of columns should be calculated, or retrieved
+        // from the database
+        boolean isAuto = Boolean.valueOf(
+                getSetting(MAX_COLUMNS_AUTO_NAME));
+        if(isAuto) {
+            MAX_COLUMNS = maxColumns(NUMBER_OF_DAYS);
+        } else {
+            MAX_COLUMNS = Integer.valueOf(getSetting(MAX_COLUMNS_NAME));
+        }
+
+        AnchorPane.setTopAnchor(gridPane, toolBar.getPrefHeight());
+
         // first clear the gridpane so we don't get titles overlaying each other
         gridPane.getChildren().clear();
         for (int index = 0; index < NUMBER_OF_DAYS; index++) {
-            
+
             // add days immediately, otherwise we can't use localDate in a
             // lambda expression (as it is not final)
             LocalDate localDate = focusDate.plusDays(index - 1);
-            
+
             ListView<HomeworkTask> list = new ListView<>();
             VBox vbox = setTitle(list, localDate);
             addVBoxToGridPane(vbox, index);
-            
+
             // Request content on a separate thread, and hope the content
             // will be set eventually.
             refreshDay(list, localDate);
-            
+
             list.setEditable(true);
             list.setPrefWidth(getListViewWidth());
             list.setPrefHeight(getListViewHeight());
             setupLabelCells(list, localDate);
             //update database when editing is finished
             list.setOnEditCommit(event -> updateDatabase(
-                    localDate, convertObservableToArrayList(list.getItems())));
+                    localDate, convertObservableListToList(list.getItems())));
             addDeleteKeyListener(list, localDate);
         }
+
     }
-    
+
     /**
      * Sets a listener which checks if it is a new day,
      * when the window becomes focused.
      *
-     * @param primaryStage Stage to set listener on
+     * @param primaryStage Stage to set listener on.
      */
     public void setDayChangeListener(Stage primaryStage) {
         // debug line, also comment out the line to reset 'today'
@@ -141,15 +218,12 @@ public class Controller implements Initializable, AbstractController {
             }
         });
     }
-    
+
     /**
      * add title to listview
      *
-     * @param list
-     *         to use
-     * @param localDate
-     *         from which to make a title
-     *
+     * @param list      to use
+     * @param localDate from which to make a title
      * @return VBox with listview and title
      */
     private VBox setTitle(final ListView<HomeworkTask> list,
@@ -163,25 +237,32 @@ public class Controller implements Initializable, AbstractController {
         VBox.setVgrow(pane, Priority.ALWAYS);
         return vbox;
     }
-    
+
     /**
      * add a box containing listview and title
      *
-     * @param vbox
-     *         to be added
-     * @param index
-     *         at the i'th place (left to right, top to bottom)
+     * @param vbox  to be added
+     * @param index at the i'th place (left to right, top to bottom)
      */
     private void addVBoxToGridPane(final VBox vbox, final int index) {
         int row = index / MAX_COLUMNS;
         int column = index % MAX_COLUMNS;
         gridPane.add(vbox, column, row);
     }
-    
+
+    /**
+     * Calculates and sets the value of MAX_COLUMNS
+     * @param numberOfDays number of days in total
+     * @return int for MAX_COLUMNS
+     */
+    private int maxColumns(int numberOfDays) {
+        return (int) Math.ceil(Math.sqrt(numberOfDays));
+    }
+
     /**
      * add a Listener to a list for the delete key
      *
-     * @param list ListView to add the Listener to
+     * @param list      ListView to add the Listener to
      * @param localDate so we know for what day to update the database
      */
     private void addDeleteKeyListener(final ListView<HomeworkTask> list,
@@ -190,40 +271,36 @@ public class Controller implements Initializable, AbstractController {
         list.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.DELETE) {
                 DeleteCommand command = new DeleteCommand(this, localDate,
-                        convertObservableToArrayList(list.getItems()), list.getSelectionModel().getSelectedIndex(), list);
+                        convertObservableListToList(list.getItems()), list.getSelectionModel().getSelectedIndex(), list);
                 undoFacility.execute(command);
 
                 cleanUp(list); //cleaning up has to happen in the listener
             }
         });
     }
-    
+
     /**
      * convert ObservableList to ArrayList
      *
-     * @param list
-     *         to convert
-     *
+     * @param list to convert
      * @return converted ObservableList
      */
-    public static List<HomeworkTask> convertObservableToArrayList(
+    public static List<HomeworkTask> convertObservableListToList(
             final ObservableList<HomeworkTask> list) {
         return new ArrayList<>(list);
     }
-    
+
     /**
      * convert (Array)List to ObservableList
      *
-     * @param list
-     *         - List to be converted
-     *
+     * @param list - List to be converted
      * @return ObservableList
      */
     private ObservableList<HomeworkTask> convertArrayToObservableList(
             final List<HomeworkTask> list) {
         return FXCollections.observableList(list);
     }
-    
+
     /**
      * get height by total screen size
      *
@@ -231,10 +308,10 @@ public class Controller implements Initializable, AbstractController {
      */
     private int getListViewHeight() {
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-        int totalHeight = (int)primaryScreenBounds.getHeight();
+        int totalHeight = (int) primaryScreenBounds.getHeight();
         return totalHeight / (NUMBER_OF_DAYS / MAX_COLUMNS);
     }
-    
+
     /**
      * get width by total screen size
      *
@@ -242,15 +319,15 @@ public class Controller implements Initializable, AbstractController {
      */
     private int getListViewWidth() {
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-        int totalWidth = (int)primaryScreenBounds.getWidth();
+        int totalWidth = (int) primaryScreenBounds.getWidth();
         return totalWidth / MAX_COLUMNS;
     }
-    
+
     /**
      * sets up labelCells for
      *
      * @param list a ListView
-     * @param day and a specific date
+     * @param day  and a specific date
      */
     private void setupLabelCells(final ListView<HomeworkTask> list, final LocalDate day) {
         //no idea why the callback needs a ListCell and not a TextFieldListCell
@@ -266,7 +343,7 @@ public class Controller implements Initializable, AbstractController {
         });
         cleanUp(list);
     }
-    
+
     /**
      * @return all ListViews in the gridPane
      */
@@ -276,7 +353,7 @@ public class Controller implements Initializable, AbstractController {
             //gridpane contains vbox contains label, pane and listview
             if (node instanceof VBox) {
                 // we try to dig up the listviews in this vbox
-                for (Node subNode : ((Pane)node).getChildren()) {
+                for (Node subNode : ((Pane) node).getChildren()) {
                     if (subNode instanceof ListView) {
                         listViews.add((ListView) subNode);
                     }
@@ -292,7 +369,7 @@ public class Controller implements Initializable, AbstractController {
     void refreshAllDays() {
         // find all listviews
         List<ListView<HomeworkTask>> listViews = getAllListViews();
-        
+
         for (int i = 0; i < NUMBER_OF_DAYS; i++) {
             ListView<HomeworkTask> list = listViews.get(i);
             // refresh the listview from database
@@ -301,11 +378,12 @@ public class Controller implements Initializable, AbstractController {
             cleanUp(list);
         }
     }
-    
+
     /**
      * Makes the menu with options to repeat for 1-8 weeks.
+     *
      * @param labelCell task to repeat
-     * @param day the day to repeat
+     * @param day       the day to repeat
      * @return the menu with those options
      */
     private Menu makeRepeatMenu(LabelCell labelCell, LocalDate day) {
@@ -314,7 +392,7 @@ public class Controller implements Initializable, AbstractController {
             MenuItem menuItem = new MenuItem(String.valueOf(i));
             repeatTasksMenu.getItems().add(menuItem);
         }
-    
+
         List<MenuItem> repeatMenuItems = repeatTasksMenu.getItems();
         for (MenuItem repeatMenuItem : repeatMenuItems) {
             repeatMenuItem.setOnAction(event12 -> {
@@ -326,49 +404,50 @@ public class Controller implements Initializable, AbstractController {
         }
         return repeatTasksMenu;
     }
-    
+
     /**
      * create a context menu
-     * @param event show context menu at place of mouse event
+     *
+     * @param event     show context menu at place of mouse event
      * @param labelCell to know which labelCell to color or repeat or ...
-     * @param list to update and cleanup after changing labelCell
-     * @param day needed for updating the database
+     * @param list      to update and cleanup after changing labelCell
+     * @param day       needed for updating the database
      */
     void createContextMenu(final MouseEvent event,
-                                   final LabelCell labelCell,
-                                   final ListView<HomeworkTask> list,
-                                   final LocalDate day) {
-        
+                           final LabelCell labelCell,
+                           final ListView<HomeworkTask> list,
+                           final LocalDate day) {
+
         ContextMenu contextMenu = new ContextMenu();
         Menu repeatTasksMenu = makeRepeatMenu(labelCell, day);
         SeparatorMenuItem separatorMenuItem = new SeparatorMenuItem();
-        
+
         MenuItem firstColor = new MenuItem("Green");
         MenuItem secondColor = new MenuItem("Blue");
         MenuItem thirdColor = new MenuItem("Red");
         MenuItem defaultColor = new MenuItem("White");
-        
+
         contextMenu.getItems().addAll(repeatTasksMenu, separatorMenuItem,
-                                      firstColor, secondColor,
-                                      thirdColor, defaultColor);
-        
+                firstColor, secondColor,
+                thirdColor, defaultColor);
+
         for (int i = 1; i < contextMenu.getItems().size(); i++) {
-                MenuItem colorMenuItem = contextMenu.getItems().get(i);
-                colorMenuItem.setOnAction(event1 -> {
+            MenuItem colorMenuItem = contextMenu.getItems().get(i);
+            colorMenuItem.setOnAction(event1 -> {
                 System.out.println(colorMenuItem.getText() + " clicked");
                 setBackgroundColor(colorMenuItem, labelCell);
-                updateDatabase(day, convertObservableToArrayList(list.getItems()));
+                updateDatabase(day, convertObservableListToList(list.getItems()));
                 cleanUp(list);
 
             });
         }
         contextMenu.show(labelCell, event.getScreenX(), event.getScreenY());
     }
-    
+
     /**
      * sets the background color of a LabelCell
      *
-     * @param menuItem MenuItem to retrieve the color from
+     * @param menuItem  MenuItem to retrieve the color from
      * @param labelCell LabelCell of which to change the background color
      */
     private void setBackgroundColor(final MenuItem menuItem,
@@ -383,16 +462,16 @@ public class Controller implements Initializable, AbstractController {
                             + colorString);
         }
         labelCell.getItem().setColor(colorWord);
-    
+
     }
-    
+
     /**
      * repeats a homeworkTask for a number of weeks
      *
      * @param repeatNumber how many times to repeat a homeworkTask
      * @param homeworkTask the homeworkTask to repeat
-     * @param day the current day is needed to update the days on which the
-     *            homeworkTask will be repeated
+     * @param day          the current day is needed to update the days on which the
+     *                     homeworkTask will be repeated
      */
     private void repeatTask(final int repeatNumber, final HomeworkTask homeworkTask, LocalDate day) {
         for (int i = 0; i < repeatNumber; i++) {
@@ -403,12 +482,11 @@ public class Controller implements Initializable, AbstractController {
         }
         refreshAllDays();
     }
-    
+
     /**
      * removes empty rows, and then fills up with empty rows
      *
-     * @param list
-     *         to clean up
+     * @param list to clean up
      */
     public void cleanUp(ListView<HomeworkTask> list) {
         int i;
@@ -424,36 +502,9 @@ public class Controller implements Initializable, AbstractController {
                 list.getItems().add(i, new HomeworkTask("", "", "White"));
             }
         }
-        
+
     }
-    
-    /**
-     * called by the backward button
-     * moves the planner a (few) day(s) back
-     */
-    @FXML protected void dayBackward() {
-        focusDay = focusDay.plusDays(-NUMBER_OF_MOVING_DAYS);
-        setupGridPane(focusDay);
-    }
-    
-    /**
-     * called by the today button
-     * focuses the planner on today
-     */
-    @FXML protected void goToToday() {
-        focusDay = LocalDate.now();
-        setupGridPane(focusDay);
-    }
-    
-    /**
-     * called by the forward button
-     * moves the planner a (few) day(s) forward
-     */
-    @FXML protected void dayForward() {
-        focusDay = focusDay.plusDays(NUMBER_OF_MOVING_DAYS);
-        setupGridPane(focusDay);
-    }
-         
+
     /**
      * converts a String containing a color (e.g. Green) to a String with the
      * hex code of that color, so the styling can use it
@@ -462,26 +513,56 @@ public class Controller implements Initializable, AbstractController {
      * @return String with the hex code of
      */
     String convertColorToHex(final String colorName) {
-        String hex;
         switch (colorName) {
-            case "Green": hex = "#7ef202";
-                break;
-            case "Blue": hex = "#4286f4";
-                break;
-            case "Red": hex = "#e64d4d";
-                break;
-            case "White" : hex = "#ffffffff";
-                break;
-            default: hex = "#ffffffff";
+            case "Green":
+                return "#7ef202";
+            case "Blue":
+                return "#00cbef";
+            case "Red":
+                return "#ff2600";
+            case "White":
+                return "#ffffffff";
+            default:
+                return "#ffffffff";
         }
-        return hex;
     }
-    
+
+    /**
+     * called by the backward button
+     * moves the planner a (few) day(s) back
+     */
+    @FXML
+    protected void dayBackward() {
+        focusDay = focusDay.plusDays(-NUMBER_OF_MOVING_DAYS);
+        setupGridPane(focusDay);
+    }
+
+    /**
+     * called by the today button
+     * focuses the planner on today
+     */
+    @FXML
+    protected void goToToday() {
+        focusDay = LocalDate.now();
+        setupGridPane(focusDay);
+    }
+
+    /**
+     * called by the forward button
+     * moves the planner a (few) day(s) forward
+     */
+    @FXML
+    protected void dayForward() {
+        focusDay = focusDay.plusDays(NUMBER_OF_MOVING_DAYS);
+        setupGridPane(focusDay);
+    }
+
     //todo should these methods be in Database class?
+
     /**
      * Requests tasks from database, and when done updates the listview.
      *
-     * @param list ListView to be updated.
+     * @param list      ListView to be updated.
      * @param localDate The day for which to request tasks.
      */
     public void refreshDay(ListView<HomeworkTask> list, LocalDate localDate) {
@@ -500,10 +581,11 @@ public class Controller implements Initializable, AbstractController {
         });
         exec.execute(task);
     }
-    
+
     /**
      * Updates database using the given homework tasks for a day.
-     * @param day Date from which the tasks are.
+     *
+     * @param day           Date from which the tasks are.
      * @param homeworkTasks Tasks to be put in the database.
      */
     public void updateDatabase(LocalDate day, List<HomeworkTask> homeworkTasks) {
@@ -525,42 +607,49 @@ public class Controller implements Initializable, AbstractController {
      * Database methods, Database is a singleton using the enum structure.
      * For corresponding javadoc see Database.
      */
-    
+
     /**
      * See {@link Database#setDefaultDatabasePath()}.
      */
     private void setDefaultDatabasePath() {
         Database.INSTANCE.setDefaultDatabasePath();
     }
-    
+
     /**
-     * See {@link Database#createTable()}.
+     * See {@link Database#createTables()}.
      */
-    private void createTable() {
-        Database.INSTANCE.createTable();
+    private void createTables() {
+        Database.INSTANCE.createTables();
     }
-    
+
     /**
      * See {@link Database#getTasksDay(LocalDate)}.
+     *
      * @param localDate Same.
      * @return Same.
      */
     private synchronized List<HomeworkTask> getDatabaseSynced(final LocalDate localDate) {
         return Database.INSTANCE.getTasksDay(localDate);
     }
-    
+
     /**
      * See {@link Database#updateTasksDay(LocalDate, List)}
-     * @param day Same.
+     *
+     * @param day           Same.
      * @param homeworkTasks Same.
      */
     synchronized void updateDatabaseSynced(final LocalDate day,
-                                             final List<HomeworkTask> homeworkTasks) {
+                                           final List<HomeworkTask> homeworkTasks) {
         Database.INSTANCE.updateTasksDay(day, homeworkTasks);
     }
-    
-    /*
-     * End of database methods
+
+    /**
+     * See {@link Database#getSetting(String)}
+     *
+     * @param name Same.
+     * @return Same.
      */
-    
+    private String getSetting(String name) {
+        return Database.INSTANCE.getSetting(name);
+    }
 }
