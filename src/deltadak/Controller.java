@@ -284,7 +284,7 @@ public class Controller implements Initializable {
      * @param list - List to be converted
      * @return ObservableList
      */
-    private ObservableList<HomeworkTask> convertArrayToObservableList(
+    private ObservableList<HomeworkTask> convertListToObservableList(
             final List<HomeworkTask> list) {
         return FXCollections.observableList(list);
     }
@@ -563,7 +563,7 @@ public class Controller implements Initializable {
         };
         task.setOnSucceeded(e -> {
             // Update the listview with the result from the database.
-            list.setItems(convertArrayToObservableList(task.getValue()));
+            list.setItems(convertListToObservableList(task.getValue()));
             cleanUp(list);
             progressIndicator.setVisible(false);
         });
