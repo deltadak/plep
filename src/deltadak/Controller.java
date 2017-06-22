@@ -271,7 +271,7 @@ public class Controller implements Initializable, AbstractController {
         list.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.DELETE) {
                 DeleteCommand command = new DeleteCommand(this, localDate,
-                        convertObservableListToList(list.getItems()), list.getSelectionModel().getSelectedIndex(), list);
+                        convertObservableListToArrayList(list.getItems()), list.getSelectionModel().getSelectedIndex(), list);
                 undoFacility.execute(command);
 
                 cleanUp(list); //cleaning up has to happen in the listener
@@ -285,7 +285,7 @@ public class Controller implements Initializable, AbstractController {
      * @param list to convert
      * @return converted ObservableList
      */
-    public static List<HomeworkTask> convertObservableListToArrayList(
+    public List<HomeworkTask> convertObservableListToArrayList(
             final ObservableList<HomeworkTask> list) {
         return new ArrayList<>(list);
     }
