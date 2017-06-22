@@ -20,7 +20,7 @@ object ControllerTest: Spek({
             listToConvert.add(task1)
             listToConvert.add(task2)
             val observableList = FXCollections.observableArrayList<HomeworkTask>(listToConvert)
-            val convertedList = controller.convertObservableListToList(observableList)
+            val convertedList = controller.convertObservableListToArrayList(observableList)
             it("should keep the same size, and the same elements") {
                 assertTrue(convertedList.size == 2, "size should be the same after converting")
                 assertTrue(convertedList.containsAll(listToConvert), "contents should be the same after converting")

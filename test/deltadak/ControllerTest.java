@@ -28,7 +28,7 @@ public class ControllerTest {
         listToConvert.add(task1);
         listToConvert.add(task2);
         ObservableList<HomeworkTask> observableList = FXCollections.observableArrayList(listToConvert);
-        List<HomeworkTask> convertedList = controller.convertObservableListToList(observableList);
+        List<HomeworkTask> convertedList = controller.convertObservableListToArrayList(observableList);
         assertTrue(convertedList.size() == 2, "size should be the same after converting");
         assertTrue(convertedList.containsAll(listToConvert), "contents should be the same after converting");
     }

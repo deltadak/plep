@@ -76,7 +76,7 @@ public class Controller implements Initializable, AbstractController {
     private LocalDate today;
     // Multithreading
     private Executor exec;
-    
+
     /** keep a reference to the undo facility */
     private UndoFacility undoFacility = new UndoFacility();
     /**
@@ -189,7 +189,7 @@ public class Controller implements Initializable, AbstractController {
             setupLabelCells(list, localDate);
             //update database when editing is finished
             list.setOnEditCommit(event -> updateDatabase(
-                    localDate, convertObservableListToList(list.getItems())));
+                    localDate, convertObservableListToArrayList(list.getItems())));
             addDeleteKeyListener(list, localDate);
         }
 
@@ -285,7 +285,7 @@ public class Controller implements Initializable, AbstractController {
      * @param list to convert
      * @return converted ObservableList
      */
-    public static List<HomeworkTask> convertObservableListToList(
+    public static List<HomeworkTask> convertObservableListToArrayList(
             final ObservableList<HomeworkTask> list) {
         return new ArrayList<>(list);
     }
@@ -296,7 +296,7 @@ public class Controller implements Initializable, AbstractController {
      * @param list - List to be converted
      * @return ObservableList
      */
-    private ObservableList<HomeworkTask> convertArrayToObservableList(
+    private ObservableList<HomeworkTask> convertListToObservableList(
             final List<HomeworkTask> list) {
         return FXCollections.observableList(list);
     }
@@ -436,7 +436,7 @@ public class Controller implements Initializable, AbstractController {
             colorMenuItem.setOnAction(event1 -> {
                 System.out.println(colorMenuItem.getText() + " clicked");
                 setBackgroundColor(colorMenuItem, labelCell);
-                updateDatabase(day, convertObservableListToList(list.getItems()));
+                updateDatabase(day, convertObservableListToArrayList(list.getItems()));
                 cleanUp(list);
 
             });
@@ -575,7 +575,7 @@ public class Controller implements Initializable, AbstractController {
         };
         task.setOnSucceeded(e -> {
             // Update the listview with the result from the database.
-            list.setItems(convertArrayToObservableList(task.getValue()));
+            list.setItems(convertListToObservableList(task.getValue()));
             cleanUp(list);
             progressIndicator.setVisible(false);
         });
