@@ -177,7 +177,7 @@ public class Controller implements Initializable {
             setupLabelCells(list, localDate);
             //update database when editing is finished
             list.setOnEditCommit(event -> updateDatabase(
-                    localDate, convertObservableListToList(list.getItems())));
+                    localDate, convertObservableListToArrayList(list.getItems())));
             addDeleteKeyListener(list, localDate);
         }
 
@@ -261,7 +261,7 @@ public class Controller implements Initializable {
                 list.getItems()
                         .remove(list.getSelectionModel().getSelectedIndex());
                 updateDatabase(localDate,
-                        convertObservableListToList(list.getItems()));
+                        convertObservableListToArrayList(list.getItems()));
                 cleanUp(list); //cleaning up has to happen in the listener
             }
         });
@@ -273,7 +273,7 @@ public class Controller implements Initializable {
      * @param list to convert
      * @return converted ObservableList
      */
-    public List<HomeworkTask> convertObservableListToList(
+    public List<HomeworkTask> convertObservableListToArrayList(
             final ObservableList<HomeworkTask> list) {
         return new ArrayList<>(list);
     }
@@ -424,7 +424,7 @@ public class Controller implements Initializable {
             colorMenuItem.setOnAction(event1 -> {
                 System.out.println(colorMenuItem.getText() + " clicked");
                 setBackgroundColor(colorMenuItem, labelCell);
-                updateDatabase(day, convertObservableListToList(list.getItems()));
+                updateDatabase(day, convertObservableListToArrayList(list.getItems()));
                 cleanUp(list);
 
             });

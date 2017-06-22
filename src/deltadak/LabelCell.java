@@ -140,7 +140,7 @@ class LabelCell extends TextFieldListCell<HomeworkTask> {
             @Override
             public void invalidated(Observable observable) {
                 controller.updateDatabase(day, controller
-                        .convertObservableListToList(
+                        .convertObservableListToArrayList(
                                 list.getItems()));
                 // We do not need to cleanup here, as no tasks
                 // were added or deleted.
@@ -254,7 +254,7 @@ class LabelCell extends TextFieldListCell<HomeworkTask> {
                 success = true;
                 // update tasks in database
                 controller.updateDatabase(
-                        day, controller.convertObservableListToList(list.getItems()));
+                        day, controller.convertObservableListToArrayList(list.getItems()));
             }
             
             
@@ -300,7 +300,7 @@ class LabelCell extends TextFieldListCell<HomeworkTask> {
     
                 // update in database
                 controller.updateDatabase(day, controller
-                        .convertObservableListToList(
+                        .convertObservableListToArrayList(
                                 list.getItems()));
                 
                 //prevent an empty list from refusing to receive
