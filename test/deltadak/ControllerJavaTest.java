@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Test some random Controller methods.
  */
-public class ControllerTest {
+public class ControllerJavaTest {
 
     /**
      * Test converter.

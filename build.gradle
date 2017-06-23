@@ -94,11 +94,6 @@ dependencies {
 }
 
 junitPlatform {
+    // show test results in output in tree form
     details 'tree'
-
-    filters {
-        engines {
-            include 'spek'
-        }
-    }
 }
