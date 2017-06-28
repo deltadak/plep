@@ -10,9 +10,10 @@ import java.util.List;
 public class EditTextCommand extends Command {
 
     /** Store state in order to undo */
-    LocalDate dayState;
-    List<HomeworkTask> listState;
-    String stuff;
+    private AbstractController controller;
+    private LocalDate dayState;
+    private List<HomeworkTask> listState;
+    private String stuff;
     // and instance variables to store what to change...
 
     /**

@@ -12,7 +12,11 @@ import java.util.List;
 public class DeleteCommand extends Command {
 
     /** remember state */
-    private AbstractController controller; // program to an interface so tests can provide a dummy
+
+    // program to an interface so tests can provide a dummy
+    // Does not call the {@link Database} instance directly in order for tests to be run on this command.
+    private AbstractController controller;
+
     private LocalDate dayState;
     private List<HomeworkTask> listViewItems;
     private ListView<HomeworkTask> listView;
@@ -21,7 +25,7 @@ public class DeleteCommand extends Command {
 
     /**
      * Constructor, gets selected index to find out what to delete.
-     * @param controller the controller which needs to be updated after deletion
+     * @param controller the controller which needs to be updated after deletion. Does not call the {@link Database} instance directly in order for tests to be run on this command.
      * @param day from which to delete the task
      * @param listViewItems corresponding to the day, items of listview, needed as parameter for testing (which can't use a listview)
      * @param index index of task in listViewItems to delete, needed as parameter for testing (which can't use a listview)
