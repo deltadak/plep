@@ -1,9 +1,8 @@
-package deltadak;
+package deltadak.ui;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
+import deltadak.Database;
+import deltadak.ui.Controller;
 import javafx.animation.TranslateTransition;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;

@@ -1,5 +1,9 @@
-package deltadak;
+package deltadak.ui;
 
+import deltadak.Database;
+import deltadak.HomeworkTask;
+import deltadak.commands.DeleteCommand;
+import deltadak.commands.UndoFacility;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -56,7 +60,7 @@ public class Controller implements Initializable, AbstractController {
     @FXML Text numberOfShowDaysText;
 
     /** used to transfer tasks with drag and drop */
-    static final DataFormat DATA_FORMAT = new DataFormat("com.deltadak.HomeworkTask");
+    public static final DataFormat DATA_FORMAT = new DataFormat("com.deltadak.HomeworkTask");
 
     // layout globals, are public for the SettingsPane to access them
     public int NUMBER_OF_DAYS; // number of days shown
@@ -512,7 +516,7 @@ public class Controller implements Initializable, AbstractController {
      * @param colorName String containing the color
      * @return String with the hex code of
      */
-    String convertColorToHex(final String colorName) {
+    public String convertColorToHex(final String colorName) {
         switch (colorName) {
             case "Green":
                 return "#7ef202";

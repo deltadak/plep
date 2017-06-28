@@ -10,7 +10,7 @@
 <?import javafx.scene.control.CheckBox?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1"
             xmlns="http://javafx.com/javafx/2.2"
-            fx:controller="deltadak.Controller"
+            fx:controller="deltadak.ui.Controller"
             fx:id="main">
 
     <ToolBar fx:id="toolBar"

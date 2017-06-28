@@ -1,4 +1,4 @@
-package deltadak;
+package deltadak.ui;
 
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;

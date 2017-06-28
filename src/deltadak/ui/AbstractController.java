@@ -1,5 +1,7 @@
-package deltadak;
+package deltadak.ui;
 
+import deltadak.HomeworkTask;
+import deltadak.commands.DeleteCommand;
 import javafx.scene.control.ListView;
 
 import java.time.LocalDate;
