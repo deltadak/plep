@@ -44,13 +44,10 @@ public class Main extends Application {
         // (the latter has the plep logo)
         boolean isDebug = java.lang.management.ManagementFactory.getRuntimeMXBean().
                 getInputArguments().toString().indexOf("-agentlib:jdwp") > 0;
-        if(isDebug) {
-            System.out.println("debug");
-        } else {
-            System.out.println("no debug");
+        if (!isDebug) {
             primaryStage.getIcons().add(new Image(this.getClass().getResourceAsStream("/icon.png")));
         }
-    
+
         primaryStage.show();
 
     }

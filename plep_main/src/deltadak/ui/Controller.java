@@ -40,14 +40,19 @@ public class Controller implements Initializable, AbstractController {
     @FXML ToolBar toolBar;
     @FXML ProgressIndicator progressIndicator;
 
-    private SlidingSettingsPane settingsPane;
+    // All these references have to be declared in controller because of fxml,
+    // and then be passed on to the SlidingPane. Ah well.
 
-    // these have to be declared in controller because of fxml,
-    // and then be passed on to the SettingsPane. Ah well.
-    @FXML AnchorPane anchorPane;
+    // help pane
+    @FXML AnchorPane helpPane;
+    @FXML Button helpButton;
+
+    // settings pane
+    @FXML AnchorPane settingsPane;
+    @FXML Button settingsButton;
+
     @FXML GridPane editLabelsPane;
     @FXML Button editLabelsButton;
-    @FXML Button settingsButton;
     @FXML GridPane editDaysPane;
     @FXML Button removeLabelButton;
     @FXML Button applyNumberOfDays;
@@ -59,19 +64,26 @@ public class Controller implements Initializable, AbstractController {
     public static final DataFormat DATA_FORMAT = new DataFormat("com.deltadak.HomeworkTask");
 
     // layout globals, are public for the SettingsPane to access them
-    public int NUMBER_OF_DAYS; // number of days shown
-    public int NUMBER_OF_MOVING_DAYS; // number of days to skip when using the forward/backward buttons
+    /** number of days shown */
+    public int NUMBER_OF_DAYS;
+    /** number of days to skip when using the forward/backward buttons */
+    public int NUMBER_OF_MOVING_DAYS;
 
-    public int MAX_COLUMNS; // number of columns to fill with lists with tasks
+    /** number of columns to fill with lists with tasks */
+    public int MAX_COLUMNS;
     private static final int MAX_LIST_LENGTH = 7;
 
-    // name of setting in the database
+    /** name of setting in the database */
     public static final String NUMBER_OF_DAYS_NAME = "number_of_days";
+    /** name of setting in the database */
     public static final String NUMBER_OF_MOVING_DAYS_NAME
             = "number_of_moving_days";
+    /** name of setting in the database */
     public static final String MAX_COLUMNS_NAME = "max_columns";
+    /** name of setting in the database */
     public static final String MAX_COLUMNS_AUTO_NAME = "max_columns_auto";
 
+    /** Day on which the gridpane is 'focused': the second day shown will be this day */
     public LocalDate focusDay;
     private LocalDate today;
     // Multithreading
@@ -79,6 +91,7 @@ public class Controller implements Initializable, AbstractController {
 
     /** keep a reference to the undo facility */
     private UndoFacility undoFacility = new UndoFacility();
+
     /**
      * Initialization method for the controller.
      */
@@ -108,10 +121,15 @@ public class Controller implements Initializable, AbstractController {
 
         progressIndicator.setVisible(false);
 
-        // setup the settings pange
-        settingsPane = new SlidingSettingsPane(this);
+        // setup the settings page
+        SlidingSettingsPane settingsPane = new SlidingSettingsPane(this);
         copySettingsPaneComponents(settingsPane);
         settingsPane.setup();
+
+        // setup help page
+        SlidingPane helpPane = new SlidingPane(this);
+        copyHelpPageComponents(helpPane);
+        helpPane.setup();
 
         // Notice that the listener which listens for day changes is called from
         // Main, because it needs the primary Stage.
@@ -128,7 +146,7 @@ public class Controller implements Initializable, AbstractController {
         settingsPane.main = this.main;
         settingsPane.gridPane = this.gridPane;
         settingsPane.toolBar = this.toolBar;
-        settingsPane.customPane = this.anchorPane;
+        settingsPane.slidingPane = this.settingsPane;
         settingsPane.editDaysPane = this.editDaysPane;
         settingsPane.editLabelsPane = this.editLabelsPane;
         settingsPane.editLabelsButton = this.editLabelsButton;
@@ -139,6 +157,18 @@ public class Controller implements Initializable, AbstractController {
         settingsPane.autoColumnsCheckBox = this.autoColumnCheckBox;
         settingsPane.applyMaxColumns = this.applyMaxColumns;
 
+    }
+
+    /**
+     * Copy references from fxml components needed to the SlidingPane
+     * @param helpPane which needs the references
+     */
+    private void copyHelpPageComponents(SlidingPane helpPane) {
+        helpPane.main = this.main;
+        helpPane.gridPane = this.gridPane;
+        helpPane.toolBar = this.toolBar;
+        helpPane.slidingPane = this.helpPane;
+        helpPane.openCloseButton = this.helpButton;
     }
 
     private void addUndoKeyListener() {

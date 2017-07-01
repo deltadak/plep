@@ -1,22 +1,14 @@
 package deltadak.ui;
 
-import deltadak.Database;
-import javafx.animation.TranslateTransition;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldListCell;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import javafx.util.Duration;
 
 import java.util.ArrayList;
-import java.util.Objects;
 
 /**
  * A pane which provides settings.
@@ -272,7 +264,7 @@ public class SlidingSettingsPane extends SlidingPane {
      * @param id The fx:id of the object to be moved.
      */
     private void toggleYsettingsObject(String id) {
-        Node node = customPane.lookup("#" + id);
+        Node node = slidingPane.lookup("#" + id);
         if(node.getTranslateY() == 0) {
             node.setTranslateY(editLabelsPane.getHeight());
         } else {
