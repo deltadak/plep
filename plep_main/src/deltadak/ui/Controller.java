@@ -14,7 +14,6 @@ import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
-import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Callback;
@@ -41,7 +40,7 @@ public class Controller implements Initializable, AbstractController {
     @FXML ToolBar toolBar;
     @FXML ProgressIndicator progressIndicator;
 
-    private CustomSettingsPane settingsPane;
+    private SlidingSettingsPane settingsPane;
 
     // these have to be declared in controller because of fxml,
     // and then be passed on to the SettingsPane. Ah well.
@@ -55,9 +54,6 @@ public class Controller implements Initializable, AbstractController {
     @FXML Button applyNumberOfShowDays;
     @FXML CheckBox autoColumnCheckBox;
     @FXML Button applyMaxColumns;
-
-    @FXML Text numberOfMovingDaysText;
-    @FXML Text numberOfShowDaysText;
 
     /** used to transfer tasks with drag and drop */
     public static final DataFormat DATA_FORMAT = new DataFormat("com.deltadak.HomeworkTask");
@@ -113,7 +109,7 @@ public class Controller implements Initializable, AbstractController {
         progressIndicator.setVisible(false);
 
         // setup the settings pange
-        settingsPane = new CustomSettingsPane(this);
+        settingsPane = new SlidingSettingsPane(this);
         copySettingsPaneComponents(settingsPane);
         settingsPane.setup();
 
@@ -125,19 +121,19 @@ public class Controller implements Initializable, AbstractController {
     }
 
     /**
-     * Copy references from fxml components needed to the CustomSettingsPane
+     * Copy references from fxml components needed to the SlidingSettingsPane
      * @param settingsPane which needs the references
      */
-    private void copySettingsPaneComponents(CustomSettingsPane settingsPane) {
+    private void copySettingsPaneComponents(SlidingSettingsPane settingsPane) {
         settingsPane.main = this.main;
         settingsPane.gridPane = this.gridPane;
         settingsPane.toolBar = this.toolBar;
-        settingsPane.settingsPane = this.anchorPane;
+        settingsPane.customPane = this.anchorPane;
         settingsPane.editDaysPane = this.editDaysPane;
         settingsPane.editLabelsPane = this.editLabelsPane;
         settingsPane.editLabelsButton = this.editLabelsButton;
         settingsPane.removeLabelButton = this.removeLabelButton;
-        settingsPane.settingsButton = this.settingsButton;
+        settingsPane.openCloseButton = this.settingsButton;
         settingsPane.applyNumberOfDays = this.applyNumberOfDays;
         settingsPane.applyNumberOfShowDays = this.applyNumberOfShowDays;
         settingsPane.autoColumnsCheckBox = this.autoColumnCheckBox;

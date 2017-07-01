@@ -69,7 +69,7 @@
                   AnchorPane.topAnchor="44.0"
                   AnchorPane.leftAnchor="10.0">
 
-            <Text fx:id="numberOfMovingDaysText"
+            <Text id="numberOfMovingDaysText"
                   GridPane.columnSpan="2"
                   text="Number of days to go forward:"/>
 
@@ -77,7 +77,7 @@
                     GridPane.columnIndex="3"
                     text="Apply"/>
 
-            <Text fx:id="numberOfShowDaysText"
+            <Text id="numberOfShowDaysText"
                   GridPane.columnSpan="2"
                   text="Number of days to show:"
                   GridPane.rowIndex="1"/>
@@ -87,7 +87,7 @@
                     GridPane.rowIndex="1"
                     text="Apply"/>
 
-            <Text fx:id="maxColumnsText"
+            <Text id="maxColumnsText"
                   text="Number of columns:"
                   GridPane.rowIndex="2"/>
 
