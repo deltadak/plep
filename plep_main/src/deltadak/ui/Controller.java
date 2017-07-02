@@ -438,7 +438,6 @@ public class Controller implements Initializable, AbstractController {
         for (int i = 1; i < contextMenu.getItems().size(); i++) {
             MenuItem colorMenuItem = contextMenu.getItems().get(i);
             colorMenuItem.setOnAction(event1 -> {
-                System.out.println(colorMenuItem.getText() + " clicked");
                 setBackgroundColor(colorMenuItem, labelCell);
                 updateDatabase(day, convertObservableListToArrayList(list.getItems()));
                 cleanUp(list);
