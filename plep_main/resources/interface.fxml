@@ -19,7 +19,7 @@
              AnchorPane.topAnchor="0.0"
              AnchorPane.rightAnchor="0.0"
              AnchorPane.leftAnchor="0.0">
-        <items>
+        <!--<items>--> <!-- default property tag -->
             <Button fx:id="settingsButton" text="Settings" />
             <Button fx:id="helpButton" text="Hidden Features" />
             <Pane prefWidth="20.0" HBox.hgrow="SOMETIMES" />
@@ -29,7 +29,7 @@
             <Pane prefWidth="20.0" HBox.hgrow="SOMETIMES" />
             <ProgressIndicator fx:id="progressIndicator" />
 
-        </items>
+        <!--</items>-->
     </ToolBar>
 
     <GridPane fx:id="gridPane"
