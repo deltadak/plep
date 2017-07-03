@@ -4,8 +4,11 @@ import deltadak.Database;
 import deltadak.HomeworkTask;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -18,6 +21,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.VBox;
 
 import java.time.LocalDate;
 import java.util.Objects;
@@ -75,7 +79,29 @@ public class LabelCell extends TextFieldListCell<HomeworkTask> {
         comboBox.valueProperty().addListener(
                 (observable, oldValue, newValue) -> this.getItem()
                         .setLabel(newValue));
-    
+
+        list.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            // We want to clear the selection on all the other listviews, otherwise weird 'half-selected' greyed out cells are left behind.
+
+            // A ListView is inside a HBox inside the GridPane, so node will be a VBox
+            // Hence we need to circumvent a little to clear selection of all other listviews
+            for(Node node : list.getParent().getParent().getChildrenUnmodifiable()) {
+                if (node instanceof VBox) {
+                    // We assume the title (a Label) is first, Pane is second, listview is third
+                    Node listNode = ((VBox) node).getChildren().get(2);
+                    // First deselect all of them...
+                    if ((listNode instanceof ListView) ) {
+                        ((ListView) listNode).getSelectionModel().clearSelection();
+                    }
+                }
+
+            }
+
+            // ... then reselect this one
+            list.getSelectionModel().select(newValue);
+
+        });
+
         setOnLabelChangeListener(list, day);
     
         setOnDragDetected();
