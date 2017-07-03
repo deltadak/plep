@@ -1,4 +1,4 @@
-package deltadak;
+package deltadak.commands;
 
 import java.util.ArrayDeque;
 import java.util.Deque;

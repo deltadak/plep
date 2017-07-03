@@ -1,5 +1,7 @@
-package deltadak;
+package deltadak.ui;
 
+import deltadak.Database;
+import deltadak.HomeworkTask;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
@@ -25,7 +27,7 @@ import static java.lang.Integer.min;
 /**
  * custom ListCell
  */
-class LabelCell extends TextFieldListCell<HomeworkTask> {
+public class LabelCell extends TextFieldListCell<HomeworkTask> {
 
     private Controller controller;
     HBox hbox = new HBox();

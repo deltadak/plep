@@ -1,4 +1,7 @@
-package deltadak;
+package deltadak.commands;
+
+import deltadak.Database;
+import deltadak.HomeworkTask;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

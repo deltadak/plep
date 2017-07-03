@@ -37,10 +37,10 @@ buildscript {
 sourceSets {
     main {
         java {
-            srcDirs 'src'
+            srcDirs 'plep_main/src'
         }
         resources {
-            srcDirs 'src'
+            srcDirs 'plep_main/resources'
         }
     }
     test {
@@ -48,7 +48,7 @@ sourceSets {
             srcDirs 'test'
         }
         resources {
-            srcDirs 'test'
+            srcDirs 'resources'
         }
     }
 

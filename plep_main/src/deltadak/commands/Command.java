@@ -1,4 +1,4 @@
-package deltadak;
+package deltadak.commands;
 
 /**
  * Default command, conform the command pattern.

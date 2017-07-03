@@ -1,5 +1,6 @@
 package deltadak
 
+import deltadak.ui.Controller
 import javafx.collections.FXCollections
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
