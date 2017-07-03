@@ -1,6 +1,11 @@
 /* Selected rows */
 .list-view:focused > .virtual-flow > .clipped-container > .sheet > .text-field-list-cell:filled:selected {
-    -fx-background-color: -fx-selection-bar;
+    /*-fx-background-color: -fx-selection-bar; !* default *!*/
+    /*-fx-border-color: black; !* change border instead of background so it doesn't override item colors *!*/
+
+    /* First two are the borders, the last one the color of the listcell background. Here we take it the color it already is so the item colors do not get overridden, but darker so the white ones are also readable (the text is forced to white when selected, didn't find out how to change that) */
+    -fx-background-color: derive(-fx-control-inner-background, -35%), derive(-fx-control-inner-background, -35%), derive(-fx-control-inner-background, -35%);
+
     -fx-table-cell-border-color: derive(-fx-selection-bar, 20%);
 }
 
@@ -11,5 +16,7 @@
 }
 
 .text-field-list-cell:filled:selected:odd {
+    -fx-text-fill: red;
+
     -fx-background-color: -fx-control-inner-background-alt;
 } 
