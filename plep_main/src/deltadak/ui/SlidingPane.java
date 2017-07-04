@@ -17,7 +17,7 @@ import java.util.Objects;
 /**
  * A general Pane which slides in from the left.
  */
-public abstract class SlidingPane {
+public class SlidingPane {
     /** keep a reference to the controller to update some constants when settings are changed */
     protected Controller controller;
 
@@ -25,7 +25,7 @@ public abstract class SlidingPane {
     public AnchorPane main;
     public GridPane gridPane;
     public ToolBar toolBar;
-    public AnchorPane customPane;
+    public AnchorPane slidingPane;
     public Button openCloseButton;
 
     // layout globals for the settings pane
@@ -46,7 +46,7 @@ public abstract class SlidingPane {
      * Setup components, which are hopefully not null...
      */
     public void setup() {
-        AnchorPane.setTopAnchor(customPane, toolBar.getPrefHeight());
+        AnchorPane.setTopAnchor(slidingPane, toolBar.getPrefHeight());
         preparePaneToggle();
         setupHook();
     }
@@ -54,35 +54,37 @@ public abstract class SlidingPane {
     /**
      * Allow hooking into {@link #setup()}.
      */
-    public abstract void setupHook();
+    public void setupHook() {
+
+    }
 
     /**
      * Sets up the animations for the settings pane, so we can open and close
      * the settings menu.
      */
     private void preparePaneToggle() {
-        customPane.setPrefWidth(PANE_WIDTH);
+        slidingPane.setPrefWidth(PANE_WIDTH);
         // set the left x coordinate of the settings pane at -PANE_WIDTH
         // on initialization, so the entire pane is outside of the window
-        customPane.setTranslateX(-PANE_WIDTH);
+        slidingPane.setTranslateX(-PANE_WIDTH);
 
         // setup the animation to open the settings pane
         TranslateTransition openNav =
                 new TranslateTransition(new Duration(TOGGLE_DURATION),
-                        customPane);
+                        slidingPane);
         openNav.setToX(0);
 
         // setup the animation to close the settings pane
         TranslateTransition closeNav =
                 new TranslateTransition(new Duration(TOGGLE_DURATION),
-                        customPane);
+                        slidingPane);
 
         // EventHandler to close the settings pane when the user clicks
         // somewhere outside the settings pane
         EventHandler<MouseEvent> filter = event -> {
             // check if the region in the gridpane, outside the settings
             // pane is clicked
-            if (!inHierarchy(event.getPickResult().getIntersectedNode(), customPane)) {
+            if (!inHierarchy(event.getPickResult().getIntersectedNode(), slidingPane)) {
                 // fire the settings button so it will close the settings
                 // pane and remove this EventHandler
                 openCloseButton.fire();
@@ -92,7 +94,7 @@ public abstract class SlidingPane {
         };
 
         openCloseButton.setOnAction((ActionEvent evt) -> {
-            if (customPane.getTranslateX() != 0) {
+            if (slidingPane.getTranslateX() != 0) {
 
                 // add the event filter to close the settings pane
                 main.addEventFilter(MouseEvent.MOUSE_CLICKED, filter);
@@ -102,7 +104,7 @@ public abstract class SlidingPane {
 
 
             } else {
-                closeNav.setToX(-customPane.getWidth());
+                closeNav.setToX(-slidingPane.getWidth());
                 closeNav.play();
                 // remove the event filter to close the settings pane
                 main.removeEventFilter(MouseEvent.MOUSE_CLICKED, filter);

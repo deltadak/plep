@@ -19,4 +19,8 @@
     -fx-text-fill: red;
 
     -fx-background-color: -fx-control-inner-background-alt;
-} 
+}
+
+#helpTextTitle {
+    -fx-font-style: oblique;
+}
