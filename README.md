@@ -26,9 +26,12 @@ To install plep, download the version you want. The first time plep is runned, i
 ## Release Notes
 Bugs solved and features, listed by the version in which they were added.
 
-#### v1.2.2 pre-release
+#### [v1.2.2](https://github.com/deltadak/plep/blob/master/releases/plep_v1.2.2.jar?raw=true)
 + Option to choose how much columns to display, or let it be calculated automatically.
 + `Ctrl+Z` undoes deletion of an item.
++ Added a features page with some keyboard shortcuts.
++ Fixed a bug which allowed half-selected cells to be everywhere.
++ Fixed a bug in which the selector overrided the colors.
 
 #### [v1.2.1](https://github.com/deltadak/plep/blob/master/releases/plep_v1.2.1.jar?raw=true)
 + Plep now installs with a setup.exe
