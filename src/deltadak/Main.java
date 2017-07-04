@@ -13,6 +13,9 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+import java.io.File;
+import java.net.URL;
+
 /**
  * main class
  */
@@ -20,7 +23,12 @@ public class Main extends Application {
 
     @Override
     public void start(final Stage primaryStage) throws Exception{
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("interface.fxml"));
+        System.out.println(getClass().getResource
+                ("interface.fxml"));
+        URL interfaceURL = new File("src/deltadak/interface.fxml")
+                .toURL();
+        System.out.println(interfaceURL);
+        FXMLLoader loader = new FXMLLoader(interfaceURL);
         Parent root = loader.load();
         
         //used to invoke a setup method in controller which needs the stage
@@ -37,8 +45,10 @@ public class Main extends Application {
         primaryStage.setY(primaryScreenBounds.getMinY());
         primaryStage.setWidth(primaryScreenBounds.getWidth()/2);
         primaryStage.setHeight(primaryScreenBounds.getHeight());
-        
-        String listViewCSS = this.getClass().getResource("listview.css").toExternalForm();
+    
+        URL listviewURL = new File("src/deltadak/listview.css").toURL();
+    
+        String listViewCSS = listviewURL.toExternalForm();
         primaryStage.getScene().getStylesheets().addAll(listViewCSS);
     
         // check if running in debug mode
