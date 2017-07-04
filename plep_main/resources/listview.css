@@ -11,8 +11,8 @@
 
 /* Selected when control is not focused */
 .text-field-list-cell:filled:selected {
-    -fx-background-color: inherit;
-    -fx-table-cell-border-color: derive(-fx-selection-bar-non-focused, 20%);
+    /*-fx-background-color: inherit;*/
+    /*-fx-table-cell-border-color: derive(-fx-selection-bar-non-focused, 20%);*/
 }
 
 .text-field-list-cell:filled:selected:odd {
