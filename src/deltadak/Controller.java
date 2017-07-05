@@ -30,15 +30,14 @@ import java.util.concurrent.Executors;
 // incorrect warning about LocalDate may be weakened to ChronoLocalDate (not
 // true)
 @SuppressWarnings("TypeMayBeWeakened")
-public class Controller implements Initializable {
-
+public class Controller implements Initializable, AbstractController {
     // main element of the UI is declared in interface.fxml
     @FXML AnchorPane main;
     @FXML GridPane gridPane;
     @FXML ToolBar toolBar;
     @FXML ProgressIndicator progressIndicator;
 
-    private SettingsPane settingsPane;
+    private CustomSettingsPane settingsPane;
 
     // these have to be declared in controller because of fxml,
     // and then be passed on to the SettingsPane. Ah well.
@@ -50,30 +49,46 @@ public class Controller implements Initializable {
     @FXML Button removeLabelButton;
     @FXML Button applyNumberOfDays;
     @FXML Button applyNumberOfShowDays;
+    @FXML CheckBox autoColumnCheckBox;
+    @FXML Button applyMaxColumns;
 
     @FXML Text numberOfMovingDaysText;
     @FXML Text numberOfShowDaysText;
+<<<<<<< HEAD
     
+=======
+
+    /** used to transfer tasks with drag and drop */
+    static final DataFormat DATA_FORMAT = new DataFormat("com.deltadak.HomeworkTask");
+
+>>>>>>> master
     // layout globals, are public for the SettingsPane to access them
     public int NUMBER_OF_DAYS; // number of days shown
     public int NUMBER_OF_MOVING_DAYS; // number of days to skip when using the forward/backward buttons
 
-    public int MAX_COLUMNS = 3;
+    public int MAX_COLUMNS; // number of columns to fill with lists with tasks
     private static final int MAX_LIST_LENGTH = 7;
 
     // name of setting in the database
     public static final String NUMBER_OF_DAYS_NAME = "number_of_days";
     public static final String NUMBER_OF_MOVING_DAYS_NAME
             = "number_of_moving_days";
+<<<<<<< HEAD
     
     /** used to transfer tasks with drag and drop */
     static final DataFormat DATA_FORMAT = new DataFormat("com.deltadak.HomeworkTask");
+=======
+    public static final String MAX_COLUMNS_NAME = "max_columns";
+    public static final String MAX_COLUMNS_AUTO_NAME = "max_columns_auto";
+>>>>>>> master
 
     public LocalDate focusDay;
     private LocalDate today;
     // Multithreading
     private Executor exec;
 
+    /** keep a reference to the undo facility */
+    private UndoFacility undoFacility = new UndoFacility();
     /**
      * Initialization method for the controller.
      */
@@ -92,29 +107,34 @@ public class Controller implements Initializable {
         setDefaultDatabasePath();
         createTables(); // if not already exists
 
+        // get the current settings from the database
         NUMBER_OF_DAYS = Integer.valueOf(getSetting(NUMBER_OF_DAYS_NAME));
         NUMBER_OF_MOVING_DAYS = Integer.valueOf(getSetting(
                 NUMBER_OF_MOVING_DAYS_NAME));
+        MAX_COLUMNS = Integer.valueOf(getSetting(MAX_COLUMNS_NAME));
 
         focusDay = LocalDate.now(); // set focus day to today
         setupGridPane(focusDay);
 
         progressIndicator.setVisible(false);
 
-        settingsPane = new SettingsPane(this);
+        // setup the settings pange
+        settingsPane = new CustomSettingsPane(this);
         copySettingsPaneComponents(settingsPane);
         settingsPane.setup();
 
         // Notice that the listener which listens for day changes is called from
         // Main, because it needs the primary Stage.
 
+        addUndoKeyListener();
+
     }
 
     /**
-     * Copy references from fxml components needed to the SettingsPane
+     * Copy references from fxml components needed to the CustomSettingsPane
      * @param settingsPane which needs the references
      */
-    private void copySettingsPaneComponents(SettingsPane settingsPane) {
+    private void copySettingsPaneComponents(CustomSettingsPane settingsPane) {
         settingsPane.main = this.main;
         settingsPane.gridPane = this.gridPane;
         settingsPane.toolBar = this.toolBar;
@@ -126,6 +146,17 @@ public class Controller implements Initializable {
         settingsPane.settingsButton = this.settingsButton;
         settingsPane.applyNumberOfDays = this.applyNumberOfDays;
         settingsPane.applyNumberOfShowDays = this.applyNumberOfShowDays;
+        settingsPane.autoColumnsCheckBox = this.autoColumnCheckBox;
+        settingsPane.applyMaxColumns = this.applyMaxColumns;
+
+    }
+
+    private void addUndoKeyListener() {
+        gridPane.setOnKeyPressed(event -> {
+            if (event.isControlDown() && (event.getCode() == KeyCode.Z)) {
+                undoFacility.undo();
+            }
+        });
     }
 
     /**
@@ -134,6 +165,15 @@ public class Controller implements Initializable {
      * @param focusDate date that is the top middle one (is today on default)
      */
     public void setupGridPane(LocalDate focusDate) {
+        // check if the number of columns should be calculated, or retrieved
+        // from the database
+        boolean isAuto = Boolean.valueOf(
+                getSetting(MAX_COLUMNS_AUTO_NAME));
+        if(isAuto) {
+            MAX_COLUMNS = maxColumns(NUMBER_OF_DAYS);
+        } else {
+            MAX_COLUMNS = Integer.valueOf(getSetting(MAX_COLUMNS_NAME));
+        }
 
         AnchorPane.setTopAnchor(gridPane, toolBar.getPrefHeight());
 
@@ -165,6 +205,7 @@ public class Controller implements Initializable {
 
             // Request content on a separate thread, and hope the content
             // will be set eventually.
+<<<<<<< HEAD
             refreshDay(tree, localDate);
             
             // add the delete key listener
@@ -190,6 +231,18 @@ public class Controller implements Initializable {
 //            list.setOnEditCommit(event -> updateDatabase(
 //                    localDate, convertObservableToArrayList(list.getItems())));
 //            addDeleteKeyListener(list, localDate);
+=======
+            refreshDay(list, localDate);
+
+            list.setEditable(true);
+            list.setPrefWidth(getListViewWidth());
+            list.setPrefHeight(getListViewHeight());
+            setupLabelCells(list, localDate);
+            //update database when editing is finished
+            list.setOnEditCommit(event -> updateDatabase(
+                    localDate, convertObservableListToArrayList(list.getItems())));
+            addDeleteKeyListener(list, localDate);
+>>>>>>> master
         }
 
     }
@@ -250,6 +303,15 @@ public class Controller implements Initializable {
     }
 
     /**
+     * Calculates and sets the value of MAX_COLUMNS
+     * @param numberOfDays number of days in total
+     * @return int for MAX_COLUMNS
+     */
+    private int maxColumns(int numberOfDays) {
+        return (int) Math.ceil(Math.sqrt(numberOfDays));
+    }
+
+    /**
      * add a Listener to a list for the delete key
      *
      * @param tree      ListView to add the Listener to
@@ -260,11 +322,19 @@ public class Controller implements Initializable {
         //add option to delete a task
         tree.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.DELETE) {
+<<<<<<< HEAD
                 tree.getRoot().getChildren()
                         .remove(tree.getSelectionModel().getSelectedIndex());
                 updateDatabase(localDate,
                         convertTreeItemListToArrayList(tree.getRoot().getChildren()));
                 cleanUp(tree); //cleaning up has to happen in the listener
+=======
+                DeleteCommand command = new DeleteCommand(this, localDate,
+                        convertObservableListToArrayList(list.getItems()), list.getSelectionModel().getSelectedIndex(), list);
+                undoFacility.execute(command);
+
+                cleanUp(list); //cleaning up has to happen in the listener
+>>>>>>> master
             }
         });
     }
@@ -275,7 +345,7 @@ public class Controller implements Initializable {
      * @param list to convert
      * @return converted ObservableList
      */
-    List<HomeworkTask> convertObservableToArrayList(
+    public List<HomeworkTask> convertObservableListToArrayList(
             final ObservableList<HomeworkTask> list) {
         return new ArrayList<>(list);
     }
@@ -296,7 +366,7 @@ public class Controller implements Initializable {
      * @param list - List to be converted
      * @return ObservableList
      */
-    private ObservableList<HomeworkTask> convertArrayToObservableList(
+    private ObservableList<HomeworkTask> convertListToObservableList(
             final List<HomeworkTask> list) {
         return FXCollections.observableList(list);
     }
@@ -376,7 +446,75 @@ public class Controller implements Initializable {
             LocalDate localDate = focusDay.plusDays(i - 1);
             refreshDay(list, localDate);
         }
+<<<<<<< HEAD
         
+=======
+    }
+
+    /**
+     * Makes the menu with options to repeat for 1-8 weeks.
+     *
+     * @param labelCell task to repeat
+     * @param day       the day to repeat
+     * @return the menu with those options
+     */
+    private Menu makeRepeatMenu(LabelCell labelCell, LocalDate day) {
+        Menu repeatTasksMenu = new Menu("Repeat for x weeks");
+        for (int i = 1; i < 9; i++) {
+            MenuItem menuItem = new MenuItem(String.valueOf(i));
+            repeatTasksMenu.getItems().add(menuItem);
+        }
+
+        List<MenuItem> repeatMenuItems = repeatTasksMenu.getItems();
+        for (MenuItem repeatMenuItem : repeatMenuItems) {
+            repeatMenuItem.setOnAction(event12 -> {
+                int repeatNumber = Integer.valueOf(repeatMenuItem.getText());
+                System.out.println(repeatNumber + " clicked");
+                HomeworkTask homeworkTaskToRepeat = labelCell.getItem();
+                repeatTask(repeatNumber, homeworkTaskToRepeat, day);
+            });
+        }
+        return repeatTasksMenu;
+    }
+
+    /**
+     * create a context menu
+     *
+     * @param event     show context menu at place of mouse event
+     * @param labelCell to know which labelCell to color or repeat or ...
+     * @param list      to update and cleanup after changing labelCell
+     * @param day       needed for updating the database
+     */
+    void createContextMenu(final MouseEvent event,
+                           final LabelCell labelCell,
+                           final ListView<HomeworkTask> list,
+                           final LocalDate day) {
+
+        ContextMenu contextMenu = new ContextMenu();
+        Menu repeatTasksMenu = makeRepeatMenu(labelCell, day);
+        SeparatorMenuItem separatorMenuItem = new SeparatorMenuItem();
+
+        MenuItem firstColor = new MenuItem("Green");
+        MenuItem secondColor = new MenuItem("Blue");
+        MenuItem thirdColor = new MenuItem("Red");
+        MenuItem defaultColor = new MenuItem("White");
+
+        contextMenu.getItems().addAll(repeatTasksMenu, separatorMenuItem,
+                firstColor, secondColor,
+                thirdColor, defaultColor);
+
+        for (int i = 1; i < contextMenu.getItems().size(); i++) {
+            MenuItem colorMenuItem = contextMenu.getItems().get(i);
+            colorMenuItem.setOnAction(event1 -> {
+                System.out.println(colorMenuItem.getText() + " clicked");
+                setBackgroundColor(colorMenuItem, labelCell);
+                updateDatabase(day, convertObservableListToArrayList(list.getItems()));
+                cleanUp(list);
+
+            });
+        }
+        contextMenu.show(labelCell, event.getScreenX(), event.getScreenY());
+>>>>>>> master
     }
 
     /**
@@ -431,7 +569,7 @@ public class Controller implements Initializable {
      *
      * @param list to clean up
      */
-    void cleanUp(ListView<HomeworkTask> list) {
+    public void cleanUp(ListView<HomeworkTask> list) {
         int i;
         //first remove empty items
         for (i = 0; i < list.getItems().size(); i++) {
@@ -520,6 +658,7 @@ public class Controller implements Initializable {
             }
         };
         task.setOnSucceeded(e -> {
+<<<<<<< HEAD
             // list with the homework tasks
             ObservableList<HomeworkTask> list =
                     convertArrayToObservableList(task.getValue());
@@ -532,6 +671,11 @@ public class Controller implements Initializable {
             }
             
             cleanUp(tree);
+=======
+            // Update the listview with the result from the database.
+            list.setItems(convertListToObservableList(task.getValue()));
+            cleanUp(list);
+>>>>>>> master
             progressIndicator.setVisible(false);
         });
         exec.execute(task);

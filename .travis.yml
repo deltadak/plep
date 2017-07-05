@@ -1,0 +1,20 @@
+language: java
+
+#addons:
+#  apt:
+#    packages:
+#      - oracle-java8-installer
+
+# default is not jdk8
+jdk:
+  - oraclejdk8
+
+# Use the Trusty Beta, because the JDK version of the default is too low.
+dist: trusty
+
+notification:
+    email: false
+
+# make gradlew accessible to travis
+before_install:
+ - chmod +x gradlew
