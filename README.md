@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.org/deltadak/plep.svg?branch=master)](https://travis-ci.org/deltadak/plep)
-
 # plep
 Plepping is the new planning.
 
@@ -25,10 +23,6 @@ To install plep, download the version you want. The first time plep is runned, i
 
 ## Release Notes
 Bugs solved and features, listed by the version in which they were added.
-
-#### v1.2.2 pre-release
-+ Option to choose how much columns to display, or let it be calculated automatically.
-+ `Ctrl+Z` undoes deletion of an item.
 
 #### [v1.2.1](https://github.com/deltadak/plep/blob/master/releases/plep_v1.2.1.jar?raw=true)
 + Plep now installs with a setup.exe
@@ -65,6 +59,6 @@ Bugs solved and features, listed by the version in which they were added.
 
 ## Instructions for building from source in IntelliJ
 This application works with a database, so you need to add the sqlite library by going to project structure -> libaries -> add new one and then selecting the file located at something like C:\Users\s156757\.IntelliJIdea2016.2\config\jdbc-drivers\sqlite-jdbc-3.8.11.2.jar
-To add the database to IntelliJ, go to View -> Tool Windows -> Database and add an SQLite data source. To find out the path to your database file (plep.db), look for a method in `Database.java` called `setDefaultDatabasePath()` and find out the value of `jarDir`. The database file will be in the same folder as the plep folder.
+Then you go to view -> tool windows -> database and follow the instructions to add an SQLite data source.
 
 ## [Javadoc](http://htmlpreview.github.io/?https://github.com/deltadak/plep/blob/master/Javadoc/index.html)
