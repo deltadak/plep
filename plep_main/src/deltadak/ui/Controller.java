@@ -1,5 +1,9 @@
-package deltadak;
+package deltadak.ui;
 
+import deltadak.Database;
+import deltadak.HomeworkTask;
+import deltadak.commands.DeleteCommand;
+import deltadak.commands.UndoFacility;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -10,7 +14,6 @@ import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
-import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.concurrent.Task;
@@ -38,41 +41,58 @@ public class Controller implements Initializable {
     @FXML ToolBar toolBar;
     @FXML ProgressIndicator progressIndicator;
 
-    private SettingsPane settingsPane;
+    // All these references have to be declared in controller because of fxml,
+    // and then be passed on to the SlidingPane. Ah well.
 
-    // these have to be declared in controller because of fxml,
-    // and then be passed on to the SettingsPane. Ah well.
-    @FXML AnchorPane anchorPane;
+    // help pane
+    @FXML AnchorPane helpPane;
+    @FXML Button helpButton;
+
+    // settings pane
+    @FXML AnchorPane settingsPane;
+    @FXML Button settingsButton;
+
     @FXML GridPane editLabelsPane;
     @FXML Button editLabelsButton;
-    @FXML Button settingsButton;
     @FXML GridPane editDaysPane;
     @FXML Button removeLabelButton;
     @FXML Button applyNumberOfDays;
     @FXML Button applyNumberOfShowDays;
+    @FXML CheckBox autoColumnCheckBox;
+    @FXML Button applyMaxColumns;
 
-    @FXML Text numberOfMovingDaysText;
-    @FXML Text numberOfShowDaysText;
-    
+    /** used to transfer tasks with drag and drop */
+    public static final DataFormat DATA_FORMAT = new DataFormat("com.deltadak.HomeworkTask");
+
     // layout globals, are public for the SettingsPane to access them
-    public int NUMBER_OF_DAYS; // number of days shown
-    public int NUMBER_OF_MOVING_DAYS; // number of days to skip when using the forward/backward buttons
+    /** number of days shown */
+    public int NUMBER_OF_DAYS;
+    /** number of days to skip when using the forward/backward buttons */
+    public int NUMBER_OF_MOVING_DAYS;
 
-    public int MAX_COLUMNS = 3;
+    /** number of columns to fill with lists with tasks */
+    public int MAX_COLUMNS;
     private static final int MAX_LIST_LENGTH = 7;
 
-    // name of setting in the database
+    /** name of setting in the database */
     public static final String NUMBER_OF_DAYS_NAME = "number_of_days";
+    /** name of setting in the database */
     public static final String NUMBER_OF_MOVING_DAYS_NAME
             = "number_of_moving_days";
+    /** name of setting in the database */
+    public static final String MAX_COLUMNS_NAME = "max_columns";
+    /** name of setting in the database */
+    public static final String MAX_COLUMNS_AUTO_NAME = "max_columns_auto";
     
-    /** used to transfer tasks with drag and drop */
-    static final DataFormat DATA_FORMAT = new DataFormat("com.deltadak.HomeworkTask");
 
+    /** Day on which the gridpane is 'focused': the second day shown will be this day */
     public LocalDate focusDay;
     private LocalDate today;
     // Multithreading
     private Executor exec;
+
+    /** keep a reference to the undo facility */
+    private UndoFacility undoFacility = new UndoFacility();
 
     /**
      * Initialization method for the controller.
@@ -101,12 +121,20 @@ public class Controller implements Initializable {
 
         progressIndicator.setVisible(false);
 
-        settingsPane = new SettingsPane(this);
+        // setup the settings page
+        SlidingSettingsPane settingsPane = new SlidingSettingsPane(this);
         copySettingsPaneComponents(settingsPane);
         settingsPane.setup();
 
+        // setup help page
+        SlidingPane helpPane = new SlidingPane(this);
+        copyHelpPageComponents(helpPane);
+        helpPane.setup();
+
         // Notice that the listener which listens for day changes is called from
         // Main, because it needs the primary Stage.
+        
+        addUndoKeyListener();
 
     }
 
@@ -114,18 +142,41 @@ public class Controller implements Initializable {
      * Copy references from fxml components needed to the SettingsPane
      * @param settingsPane which needs the references
      */
-    private void copySettingsPaneComponents(SettingsPane settingsPane) {
+    private void copySettingsPaneComponents(SlidingSettingsPane settingsPane) {
         settingsPane.main = this.main;
         settingsPane.gridPane = this.gridPane;
         settingsPane.toolBar = this.toolBar;
-        settingsPane.settingsPane = this.anchorPane;
+        settingsPane.slidingPane = this.settingsPane;
         settingsPane.editDaysPane = this.editDaysPane;
         settingsPane.editLabelsPane = this.editLabelsPane;
         settingsPane.editLabelsButton = this.editLabelsButton;
         settingsPane.removeLabelButton = this.removeLabelButton;
-        settingsPane.settingsButton = this.settingsButton;
+        settingsPane.openCloseButton = this.settingsButton;
         settingsPane.applyNumberOfDays = this.applyNumberOfDays;
         settingsPane.applyNumberOfShowDays = this.applyNumberOfShowDays;
+        settingsPane.autoColumnsCheckBox = this.autoColumnCheckBox;
+        settingsPane.applyMaxColumns = this.applyMaxColumns;
+
+    }
+
+    /**
+     * Copy references from fxml components needed to the SlidingPane
+     * @param helpPane which needs the references
+     */
+    private void copyHelpPageComponents(SlidingPane helpPane) {
+        helpPane.main = this.main;
+        helpPane.gridPane = this.gridPane;
+        helpPane.toolBar = this.toolBar;
+        helpPane.slidingPane = this.helpPane;
+        helpPane.openCloseButton = this.helpButton;
+    }
+
+    private void addUndoKeyListener() {
+        gridPane.setOnKeyPressed(event -> {
+            if (event.isControlDown() && (event.getCode() == KeyCode.Z)) {
+                undoFacility.undo();
+            }
+        });
     }
 
     /**
@@ -134,6 +185,14 @@ public class Controller implements Initializable {
      * @param focusDate date that is the top middle one (is today on default)
      */
     public void setupGridPane(LocalDate focusDate) {
+    
+        boolean isAuto = Boolean.valueOf(
+                getSetting(MAX_COLUMNS_AUTO_NAME));
+        if(isAuto) {
+            MAX_COLUMNS = maxColumns(NUMBER_OF_DAYS);
+        } else {
+            MAX_COLUMNS = Integer.valueOf(getSetting(MAX_COLUMNS_NAME));
+        }
 
         AnchorPane.setTopAnchor(gridPane, toolBar.getPrefHeight());
 
@@ -247,6 +306,15 @@ public class Controller implements Initializable {
         int row = index / MAX_COLUMNS;
         int column = index % MAX_COLUMNS;
         gridPane.add(vbox, column, row);
+    }
+    
+    /**
+     * Calculates and sets the value of MAX_COLUMNS
+     * @param numberOfDays number of days in total
+     * @return int for MAX_COLUMNS
+     */
+    private int maxColumns(int numberOfDays) {
+        return (int) Math.ceil(Math.sqrt(numberOfDays));
     }
 
     /**
@@ -375,8 +443,8 @@ public class Controller implements Initializable {
             // refresh the listview from database
             LocalDate localDate = focusDay.plusDays(i - 1);
             refreshDay(list, localDate);
+            cleanUp(list); // TODO wasn't in subtasks branch, do we need it?
         }
-        
     }
 
     /**
@@ -456,7 +524,7 @@ public class Controller implements Initializable {
      * @param colorName String containing the color
      * @return String with the hex code of
      */
-    String convertColorToHex(final String colorName) {
+    public String convertColorToHex(final String colorName) {
         switch (colorName) {
             case "Green":
                 return "#7ef202";

@@ -2,11 +2,10 @@ package deltadak;
 
 import java.io.Serializable;
 
-//when transferred with the dragboard, the object is serialized
-//which I think means that a new object is created and you lose the
-// reference to the old one
-//which I think should be fine here, as only content matters
-class HomeworkTask implements Serializable {
+/** Serializable: When transferred with the dragboard, the object is serialized
+which I think means that a new object is created and you lose the
+reference to the old one which I think should be fine here, as only content matters */
+public class HomeworkTask implements Serializable {
     
     private boolean done;
     private String text;

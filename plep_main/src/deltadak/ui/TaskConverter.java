@@ -1,5 +1,6 @@
-package deltadak;
+package deltadak.ui;
 
+import deltadak.HomeworkTask;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.TreeCell;
 import javafx.util.StringConverter;
@@ -8,7 +9,7 @@ import javafx.util.StringConverter;
  * custom stringconverter to define what editing a listcell means
  * this converter is set on each listcell
  */
-class TaskConverter extends StringConverter<HomeworkTask> {
+public class TaskConverter extends StringConverter<HomeworkTask> {
     
     private final TreeCell<HomeworkTask> cell;
     

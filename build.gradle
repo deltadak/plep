@@ -1,0 +1,99 @@
+description = """ 
+Gradle build file written to let Travis access dependencies and build. 
+
+This uses the gradle wrapper, so when running (the first time) use 'gradlew test' so then it downloads the right gradle automatically.
+
+Uses JavaFX plugin from https://github.com/FibreFoX/javafx-gradle-plugin
+"""
+
+apply plugin: 'java'
+apply plugin: 'org.junit.platform.gradle.plugin'
+apply plugin: 'javafx-gradle-plugin'
+apply plugin: 'kotlin'
+
+repositories {
+    maven { url "http://dl.bintray.com/jetbrains/spek" }
+    mavenCentral()
+    mavenLocal()
+}
+
+buildscript {
+    ext.kotlin_version = '1.1.2-2'
+
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
+    dependencies {
+        // The JUnit plugin
+        classpath ("org.junit.platform:junit-platform-gradle-plugin:1.0.0-M4")
+        // A JavaFX plugin
+        classpath group: 'de.dynamicfiles.projects.gradle.plugins', name: 'javafx-gradle-plugin', version: '8.8.2'
+        // Kotlin plugin
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs 'plep_main/src'
+        }
+        resources {
+            srcDirs 'plep_main/resources'
+        }
+    }
+    test {
+        java {
+            srcDirs 'test'
+        }
+        resources {
+            srcDirs 'resources'
+        }
+    }
+
+    main.kotlin.srcDirs += 'src'
+    test.kotlin.srcDirs += 'test'
+}
+
+dependencies {
+
+    //**** Source dependencies ****//
+
+    // JDBC driver for database
+    // https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc
+    // 'compile' is deprecated, now it is 'api' but that fails to build with
+//    Could not find method api() for arguments [org.xerial:sqlite-jdbc:3.18.0] on object of type org.gradle.api.internal.artifacts.dsl.dependencies.DefaultDependencyHandler.
+    compile("org.xerial:sqlite-jdbc:3.18.0")
+
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8"
+
+    // just in case, version number specified in buildscript is used by default
+    compile "org.jetbrains.kotlin:kotlin-reflect"
+
+    //**** Test dependencies ****//
+
+    // Also compile junit 4, just in case
+    testCompile("junit:junit:4.12")
+    testRuntime("org.junit.vintage:junit-vintage-engine:4.12.0-M4")
+
+    // Use junit 5 for test cases
+    testCompile("org.junit.jupiter:junit-jupiter-api:5.0.0-M4")
+    testRuntime("org.junit.jupiter:junit-jupiter-engine:5.0.0-M4")
+
+    // Enable use of the JUnitPlatform Runner within the IDE
+    testCompile("org.junit.platform:junit-platform-runner:1.0.0-M4")
+
+    // just in case
+    testCompile "org.jetbrains.kotlin:kotlin-test"
+    testCompile "org.jetbrains.kotlin:kotlin-test-junit"
+
+    testCompile 'org.jetbrains.spek:spek-api:1.1.2'
+    testRuntime 'org.jetbrains.spek:spek-junit-platform-engine:1.1.2'
+
+}
+
+junitPlatform {
+    // show test results in output in tree form
+    details 'tree'
+}
