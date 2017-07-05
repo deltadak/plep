@@ -26,8 +26,8 @@ public enum Database {
     INSTANCE;
     
     
-    private Connection connection;
-    private Statement statement;
+//    private Connection connection;
+//    private Statement statement;
     private String databasePath;
     private int countID = 1;
     
@@ -50,10 +50,10 @@ public enum Database {
         String sql = "SELECT done, task, label, color " + "FROM tasks " + "WHERE day = '"
                 + dayString + "' ORDER BY orderInDay";
         List<HomeworkTask> homeworkTasks = new ArrayList<>();
-        
-        setConnection();
+    
+        Connection connection = setConnection();
         try {
-            statement = connection.createStatement();
+            Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
             List<HomeworkTask> tasks = new ArrayList<>();
             while (resultSet.next()) {
@@ -78,7 +78,7 @@ public enum Database {
             // SQLException: Database has been closed
             // when trying getLabels()... Even though that has a
             // setConnection()...
-//            connection.close();
+            connection.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -116,9 +116,9 @@ public enum Database {
     public String getSetting(String name) {
         String value = "";
         String sql = "SELECT value FROM settings where name = '" + name + "'";
-        setConnection();
+        Connection connection = setConnection();
         try{
-            statement = connection.createStatement();
+            Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
             while(resultSet.next()) {
                 value = resultSet.getString("value");
@@ -128,7 +128,7 @@ public enum Database {
             // SQLException: Database has been closed
             // when trying getLabels()... Even though that has a
             // setConnection()...
-//            connection.close();
+            connection.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -156,10 +156,10 @@ public enum Database {
     public ArrayList<String> getLabels() {
         String sql = "SELECT * FROM labels ORDER BY id";
         ArrayList<String> labels = new ArrayList<>();
-        
-        setConnection();
+    
+        Connection connection = setConnection();
         try {
-            statement = connection.createStatement();
+            Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
             while(resultSet.next()) {
 //                System.out.println(resultSet.getString("label"));
@@ -265,10 +265,10 @@ public enum Database {
      */
     private void setHighestID() {
         String sql = "SELECT * FROM tasks ORDER BY id DESC";
-        
-        setConnection();
+    
+        Connection connection = setConnection();
         try {
-            statement = connection.createStatement();
+            Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
             if (resultSet.isBeforeFirst()) {
                 // if the database is not empty, we set the id to be the
@@ -283,7 +283,7 @@ public enum Database {
             // SQLException: Database has been closed
             // when trying getLabels()... Even though that has a
             // setConnection()...
-//            connection.close();
+            connection.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -383,14 +383,17 @@ public enum Database {
     
     /**
      * create a connection with the database
+     *
+     * @return Connection
      */
-    private void setConnection() {
+    private Connection setConnection() {
         try {
             Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection(databasePath);
-            
+            Connection connection = DriverManager.getConnection(databasePath);
+            return connection;
         } catch (Exception e) {
             e.printStackTrace();
+            return null;
         }
     }
     
@@ -428,16 +431,16 @@ public enum Database {
      *         - string with the sql query
      */
     private void query(final String sql) {
-        setConnection();
+        Connection connection = setConnection();
         try {
-            statement = connection.createStatement();
+            Statement statement = connection.createStatement();
             statement.executeUpdate(sql);
             statement.close();
             // don't close the connection, otherwise we get
             // SQLException: Database has been closed
             // when trying getLabels()... Even though that has a
             // setConnection()...
-//            connection.close();
+            connection.close();
             
         } catch (Exception e) {
             e.printStackTrace();

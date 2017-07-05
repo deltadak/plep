@@ -24,8 +24,11 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.ArrayList;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Class to control the UI
@@ -170,7 +173,7 @@ public class Controller implements Initializable {
         helpPane.slidingPane = this.helpPane;
         helpPane.openCloseButton = this.helpButton;
     }
-
+    
     private void addUndoKeyListener() {
         gridPane.setOnKeyPressed(event -> {
             if (event.isControlDown() && (event.getCode() == KeyCode.Z)) {
@@ -348,6 +351,11 @@ public class Controller implements Initializable {
         return new ArrayList<>(list);
     }
     
+    /**
+     * Convert TreeItemList to ArrayList.
+     * @param list to convert
+     * @return converted ArrayList
+     */
     List<HomeworkTask> convertTreeItemListToArrayList(
             ObservableList<TreeItem<HomeworkTask>> list) {
         ArrayList<HomeworkTask> arrayList = new ArrayList<>();
@@ -468,6 +476,12 @@ public class Controller implements Initializable {
 
     }
     
+    /**
+     * Removes empty items in the tree view, and then fills it up with empty
+     * items. To avoid gaps.
+     *
+     * @param tree The treeview to be cleaned up.
+     */
     void cleanUp(TreeView<HomeworkTask> tree) {
         int i;
         TreeItem<HomeworkTask> root = tree.getRoot();

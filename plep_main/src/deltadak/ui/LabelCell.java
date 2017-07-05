@@ -33,6 +33,7 @@ import static java.lang.Integer.min;
  * custom ListCell
  */
 public class LabelCell extends TextFieldListCell<HomeworkTask> {
+    // TODO remove this when the treeview thingy works
 
 //    private Controller controller;
 //    HBox hbox = new HBox();

@@ -63,10 +63,6 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         checkBox = new CheckBox();
         comboList = FXCollections
                 .observableArrayList(Database.INSTANCE.getLabels());
-//        ArrayList arrayList = new ArrayList();
-//        arrayList.add("one");
-//        arrayList.add("two");
-//        comboList = FXCollections.observableArrayList(arrayList);
     
         comboBox = new ComboBox<>(comboList);
     }
@@ -217,7 +213,9 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         checkBox.selectedProperty().addListener(
                 (observable, oldValue, newValue) -> {
                     getTreeItem().getValue().setDone(newValue);
-                    controller.updateDatabase(localDate, controller.convertTreeItemListToArrayList(tree.getRoot().getChildren()));
+                    controller.updateDatabase(localDate, controller
+                            .convertTreeItemListToArrayList
+                            (tree.getRoot().getChildren()));
                 });
     }
     
@@ -482,7 +480,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                         .convertTreeItemListToArrayList(
                                 tree.getRoot().getChildren()));
                 
-                //prevent an empty list from refusing to receive
+                // prevent an empty list from refusing to receive
                 // items, as it wouldn't contain any listcell
                 if (tree.getRoot().getChildren().size() < 1) {
                     TreeItem<HomeworkTask> item =
