@@ -1,0 +1,13 @@
+.button {
+    -fx-background-color: Transparent;
+    -fx-text-fill: #2397F3;
+}
+
+.button:hover {
+    /* The last two numbers is opacity */
+    -fx-background-color: #D9D9D940;
+}
+
+.button:pressed {
+    -fx-background-color: #D9D9D9;
+}

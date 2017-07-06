@@ -45,7 +45,6 @@
 
     <!-- help -->
     <AnchorPane fx:id="helpPane"
-                style="-fx-background-color: lightskyblue"
                 AnchorPane.bottomAnchor="0.0">
         <GridPane
                 AnchorPane.topAnchor="10.0"
@@ -83,7 +82,6 @@
 
     <!-- settings -->
     <AnchorPane fx:id="settingsPane"
-                style="-fx-background-color: lightskyblue"
                 AnchorPane.bottomAnchor="0.0">
 
         <GridPane fx:id="editLabelsPane"

@@ -1,18 +1,20 @@
+/* Following the Material design guidelines at material.io */
 @font-face {
-    /*-fx-font-family: "Courier New";*/
     -fx-font-family: "Roboto";
-    src: url('../font/Roboto/Roboto-Regular.ttf');
+    src: url('../font/Roboto/Roboto-Medium.ttf');
 }
 
 .root {
     -fx-font-family: Roboto;
+    -fx-font-size: 13pt;
+    -fx-background-color: #EEEEEE;
+    -fx-base: #EEEEEE;
 }
 
-.button {
-    -fx-padding: 0.7em 0.57em;
-    -fx-font-size: 14px;
-    -jfx-button-type: RAISED;
-    -fx-background-color: rgb(77,102,204);
-    /*-fx-pref-width: 200;*/
-    -fx-text-fill: WHITE;
+#settingsPane {
+    -fx-background-color: #EEEEEE;
+}
+
+#helpPane {
+    -fx-background-color: #EEEEEE;
 }
