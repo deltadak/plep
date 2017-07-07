@@ -11,6 +11,7 @@ public class HomeworkTask implements Serializable {
     private String text;
     private String label;
     private String color;
+    private int databaseID;
     
     public HomeworkTask(final boolean done, final String text, final String label, final String color) {
         this.done = done;
@@ -49,5 +50,13 @@ public class HomeworkTask implements Serializable {
     
     public void setColor(final String color) {
         this.color = color;
+    }
+    
+    public int getDatabaseID() {
+        return databaseID;
+    }
+    
+    public void setDatabaseID(int databaseID) {
+        this.databaseID = databaseID;
     }
 }

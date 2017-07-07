@@ -100,7 +100,10 @@ public enum Database {
         
         // then add the new homeworkTasks
         for (int i = 0; i < homeworkTasks.size(); i++) {
-            insertTask(day, homeworkTasks.get(i), i);
+            // only add a non empty task to the database
+            if(!homeworkTasks.get(i).getText().equals("")) {
+                insertTask(day, homeworkTasks.get(i), i);
+            }
         }
         
         deleteEmptyRows("tasks", "task");
@@ -189,6 +192,7 @@ public enum Database {
      */
     public void createTables() {
         createHomeworkTable();
+        createSubtaskTable();
         createSettingsTable();
         createLabelsTable();
     }
@@ -245,6 +249,10 @@ public enum Database {
     private void insertTask(final LocalDate day,
                             final HomeworkTask homeworkTask, final int order) {
         setHighestID(); // sets countID
+        
+        // update the parentID for all its subtasks
+        updateSubtasks(homeworkTask);
+        homeworkTask.setDatabaseID(countID);
         
         String dayString = day.toString();
         
@@ -310,6 +318,26 @@ public enum Database {
     private void deleteTasksDay(final LocalDate day) {
         
         String sql = "DELETE FROM tasks WHERE day = '" + day + "'";
+        query(sql);
+    }
+    
+    // subtasks -------------------------------------------------------------
+    
+    private void createSubtaskTable() {
+        String sql = "CREATE TABLE IF NOT EXISTS subtasks(" + "parentID INT, done BOOLEAN, "
+                + "task CHAR(255))";
+        query(sql);
+    }
+    
+    private void insertSubtask(final HomeworkTask subtask, final int parentID) {
+        int doneInt = subtask.getDone() ? 1 : 0;
+        String sql = "INSERT INTO subtasks(parentID, done, task) VALUES ("
+                + parentID + ", " + doneInt + ", '" + subtask.getText() + "')";
+        query(sql);
+    }
+    
+    private void updateSubtasks(HomeworkTask parentTask) {
+        String sql = "UPDATE subtasks SET parentID = " + countID + " WHERE parentID = " + parentTask.getDatabaseID();
         query(sql);
     }
     
