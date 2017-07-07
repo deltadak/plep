@@ -1,7 +1,5 @@
 package deltadak;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
-
 import java.io.File;
 import java.security.CodeSource;
 import java.sql.Connection;
@@ -44,31 +42,64 @@ public enum Database {
      *
      * @return List<HomeworkTask>
      */
-    public List<HomeworkTask> getTasksDay(final LocalDate day) {
+    public List<HomeworkTask> getParentTasksDay(final LocalDate day) {
         
         String dayString = day.toString();
         String sql = "SELECT done, task, label, color " + "FROM tasks " + "WHERE day = '"
                 + dayString + "' ORDER BY orderInDay";
         List<HomeworkTask> homeworkTasks = new ArrayList<>();
-    
+
         Connection connection = setConnection();
         try {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
             while (resultSet.next()) {
-                
+
                 HomeworkTask homeworkTask = new HomeworkTask(
                                 resultSet.getBoolean("done"),
                                 resultSet.getString("task"),
                                 resultSet.getString("label"),
                                 resultSet.getString("color"));
                 homeworkTasks.add(homeworkTask);
-            
+
             }
             statement.close();
             connection.close();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        return homeworkTasks;
+    }
+    
+    public List<List<HomeworkTask>> getTasksDay(final LocalDate day) {
+        
+        List<List<HomeworkTask>> homeworkTasks = new ArrayList<>();
+        
+        List<HomeworkTask> parentTasks = getParentTasksDay(day);
+    
+        for (int i = 0; i < parentTasks.size(); i++) {
+            String sql = "SELECT done, task FROM subtasks WHERE parentID = " +
+                    parentTasks.get(i).getDatabaseID();
+            
+            List<HomeworkTask> oneFamily = new ArrayList<>();
+            oneFamily.add(parentTasks.get((i)));
+            
+            Connection connection = setConnection();
+            try {
+                Statement statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery(sql);
+                while(resultSet.next()) {
+                    HomeworkTask childTask = new HomeworkTask(
+                            resultSet.getBoolean("done"),
+                            resultSet.getString("task"), "", "");
+                    oneFamily.add(childTask);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            
+            homeworkTasks.add(oneFamily);
+            
         }
         return homeworkTasks;
     }
@@ -79,7 +110,7 @@ public enum Database {
      * @param day date for which to update
      * @param homeworkTasks List<HomeworkTask> with the new homeworkTasks
      */
-    public void updateTasksDay(final LocalDate day, final List<HomeworkTask> homeworkTasks) {
+    public void updateTasksDay(final LocalDate day, final List<List<HomeworkTask>> homeworkTasks) {
         
         // first remove all the items for this day that are currently in the
         // database before we add the new ones,
@@ -89,9 +120,15 @@ public enum Database {
         // then add the new homeworkTasks
         for (int i = 0; i < homeworkTasks.size(); i++) {
             // only add a non empty task to the database
-            if(!homeworkTasks.get(i).getText().equals("")) {
-                insertTask(day, homeworkTasks.get(i), i);
-            }
+                
+                // add the parent task to the database
+                insertTask(day, homeworkTasks.get(i).get(0), i);
+                // add the subtasks of the parent tasks to the database
+                for (int j = 1; j < homeworkTasks.get(i).size(); j++) {
+                    insertSubtask(homeworkTasks.get(i).get(j),
+                                  homeworkTasks.get(i).get(0).getDatabaseID());
+                }
+            
         }
         
         deleteEmptyRows("tasks", "task");
@@ -232,23 +269,27 @@ public enum Database {
      */
     private void insertTask(final LocalDate day,
                             final HomeworkTask homeworkTask, final int order) {
-        setHighestID(); // sets countID
-        
-        // update the parentID for all its subtasks
-        updateSubtasks(homeworkTask);
-        homeworkTask.setDatabaseID(countID);
-        
-        String dayString = day.toString();
-        
-        int doneInt = homeworkTask.getDone() ? 1 : 0;
-        
-        String sql = "INSERT INTO tasks(id, done, day, task, label, color, orderInDay) "
-                + "VALUES (" + countID + ", '" + doneInt + "', '" + dayString +
-                "', '"
-                + homeworkTask.getText() + "','" + homeworkTask.getLabel() + "','"
-                + homeworkTask.getColor() + "'," + order + ")";
-        countID++;
-        query(sql);
+        // don't add empty tasks
+        if(!homeworkTask.getText().equals("")) {
+            setHighestID(); // sets countID
+    
+            // update the parentID for all its subtasks
+            updateSubtasksID(homeworkTask);
+            homeworkTask.setDatabaseID(countID);
+    
+            String dayString = day.toString();
+    
+            int doneInt = homeworkTask.getDone() ? 1 : 0;
+    
+            String sql =
+                    "INSERT INTO tasks(id, done, day, task, label, color, orderInDay) "
+                            
+                            + "VALUES (" + countID + ", '" + doneInt + "', '" + dayString + "', '"
+                            + homeworkTask.getText() + "','" + homeworkTask.getLabel() + "','"
+                            + homeworkTask.getColor() + "'," + order + ")";
+            countID++;
+            query(sql);
+        }
     }
     
     /**
@@ -296,9 +337,31 @@ public enum Database {
      *         object.
      */
     private void deleteTasksDay(final LocalDate day) {
+    
+        String getIDs = "SELECT id FROM tasks WHERE day = '" + day + "'";
+        ArrayList<Integer> parentIDs = new ArrayList<>();
         
+        Connection connection = setConnection();
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(getIDs);
+            while(resultSet.next()) {
+                parentIDs.add(resultSet.getInt("id"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    
+        for (Integer parentID : parentIDs) {
+            String query = "DELETE FROM subtasks WHERE parentID = " + parentID;
+            query(query);
+        }
+        
+        // delete the parent tasks
         String sql = "DELETE FROM tasks WHERE day = '" + day + "'";
         query(sql);
+        
+        
     }
     
     // subtasks -------------------------------------------------------------
@@ -310,13 +373,17 @@ public enum Database {
     }
     
     private void insertSubtask(final HomeworkTask subtask, final int parentID) {
-        int doneInt = subtask.getDone() ? 1 : 0;
-        String sql = "INSERT INTO subtasks(parentID, done, task) VALUES ("
-                + parentID + ", " + doneInt + ", '" + subtask.getText() + "')";
-        query(sql);
+        // check if the task is not empty, because then it shouldn't
+        // be in the database
+        if(!subtask.getText().equals("")) {
+            int doneInt = subtask.getDone() ? 1 : 0;
+            String sql = "INSERT INTO subtasks(parentID, done, task) VALUES (" + parentID + ", " + doneInt + ", '" + subtask.getText()
+                    + "')";
+            query(sql);
+        }
     }
     
-    private void updateSubtasks(HomeworkTask parentTask) {
+    private void updateSubtasksID(HomeworkTask parentTask) {
         String sql = "UPDATE subtasks SET parentID = " + countID + " WHERE parentID = " + parentTask.getDatabaseID();
         query(sql);
     }

@@ -18,6 +18,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.concurrent.Task;
 
+import javax.lang.model.type.ArrayType;
 import javax.xml.crypto.Data;
 import java.net.URL;
 import java.time.LocalDate;
@@ -334,7 +335,7 @@ public class Controller implements Initializable {
                 tree.getRoot().getChildren()
                         .remove(tree.getSelectionModel().getSelectedIndex());
                 updateDatabase(localDate,
-                        convertTreeItemListToArrayList(tree.getRoot().getChildren()));
+                        convertTreeToArrayList(tree));
                 cleanUp(tree); //cleaning up has to happen in the listener
             }
         });
@@ -358,11 +359,56 @@ public class Controller implements Initializable {
      */
     List<HomeworkTask> convertTreeItemListToArrayList(
             ObservableList<TreeItem<HomeworkTask>> list) {
+        
         ArrayList<HomeworkTask> arrayList = new ArrayList<>();
+        
         for (TreeItem<HomeworkTask> aList : list) {
             arrayList.add(aList.getValue());
         }
+        
         return arrayList;
+    }
+    
+    List<List<HomeworkTask>> convertTreeToArrayList
+            (TreeView<HomeworkTask> tree) {
+        
+        // create a list with the tree items of the parent tasks
+        ObservableList<TreeItem<HomeworkTask>> parentItems =
+                tree.getRoot().getChildren();
+        // create a list with homework tasks of the parent tasks
+        List<HomeworkTask> parentTasks = 
+                convertTreeItemListToArrayList(parentItems);
+        
+        // create the list to eventually return
+        List<List<HomeworkTask>> tasks = new ArrayList<>();
+        
+        
+        for (int i = 0; i < parentItems.size(); i++) {
+            
+            // get the sub tree items of parent task i, and store them in a list
+            ObservableList<TreeItem<HomeworkTask>> childItems = parentItems.get(i).getChildren();
+            // store the subtasks of parent task i in a list
+            List<HomeworkTask> childTasks =
+                    convertTreeItemListToArrayList(childItems);
+            
+            // create a list containing one parent and its children
+            List<HomeworkTask> oneFamily = new ArrayList<>();
+            
+            oneFamily.add(parentTasks.get(i)); // add the parent to the family
+            oneFamily.addAll(childTasks); // add its children to the family
+            
+            tasks.add(oneFamily); // add the family to the nested list of tasks
+        }
+        
+        return tasks;
+    }
+    
+    private List<HomeworkTask> getParentTasks(List<List<HomeworkTask>> homeworkFamilies) {
+        List<HomeworkTask> parentTasks = new ArrayList<>();
+        for (int i = 0; i < homeworkFamilies.size(); i++) {
+            parentTasks.add(homeworkFamilies.get(i).get(0));
+        }
+        return parentTasks;
     }
     
 
@@ -595,16 +641,16 @@ public class Controller implements Initializable {
     public void refreshDay(TreeView<HomeworkTask> tree, LocalDate localDate) {
         progressIndicator.setVisible(true);
         // get tasks from the database
-        Task<List<HomeworkTask>> task = new Task<List<HomeworkTask>>() {
+        Task<List<List<HomeworkTask>>> task = new Task<List<List<HomeworkTask>>>() {
             @Override
-            public List<HomeworkTask> call() throws Exception {
+            public List<List<HomeworkTask>> call() throws Exception {
                 return getDatabaseSynced(localDate);
             }
         };
         task.setOnSucceeded(e -> {
             // list with the homework tasks
             ObservableList<HomeworkTask> list =
-                    convertArrayToObservableList(task.getValue());
+                    convertArrayToObservableList(getParentTasks(task.getValue()));
             // clear all the items currently showing in the TreeView
             tree.getRoot().getChildren().clear();
             // add the items from the database to the TreeView
@@ -625,7 +671,7 @@ public class Controller implements Initializable {
      * @param day           Date from which the tasks are.
      * @param homeworkTasks Tasks to be put in the database.
      */
-    public void updateDatabase(LocalDate day, List<HomeworkTask> homeworkTasks) {
+    public void updateDatabase(LocalDate day, List<List<HomeworkTask>> homeworkTasks) {
         progressIndicator.setVisible(true);
         Task<List<HomeworkTask>> task = new Task<List<HomeworkTask>>() {
             @Override
@@ -665,7 +711,7 @@ public class Controller implements Initializable {
      * @param localDate Same.
      * @return Same.
      */
-    public synchronized List<HomeworkTask> getDatabaseSynced(final LocalDate
+    public synchronized List<List<HomeworkTask>> getDatabaseSynced(final LocalDate
                                                                 localDate) {
         return Database.INSTANCE.getTasksDay(localDate);
     }
@@ -677,7 +723,7 @@ public class Controller implements Initializable {
      * @param homeworkTasks Same.
      */
     synchronized void updateDatabaseSynced(final LocalDate day,
-                                           final List<HomeworkTask> homeworkTasks) {
+                                           final List<List<HomeworkTask>> homeworkTasks) {
         Database.INSTANCE.updateTasksDay(day, homeworkTasks);
     }
 

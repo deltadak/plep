@@ -84,6 +84,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         comboBox.valueProperty().addListener(
                 (observable, oldValue, newValue) -> this.getTreeItem()
                     .getValue().setLabel(newValue)
+                
         );
         
         setOnLabelChangeListener(tree, localDate);
@@ -105,11 +106,9 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                     createSubTask(editingItem.getParent());
                 }
             }
-    
+            
             // update the database with the current first level items
-            controller.updateDatabase(localDate,
-                          controller.convertTreeItemListToArrayList(
-                                  tree.getRoot().getChildren()));
+            controller.updateDatabase(localDate, controller.convertTreeToArrayList(tree));
         });
         
         // create the context menu
@@ -187,8 +186,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         
         InvalidationListener invalidationListener = observable -> {
             controller.updateDatabase(day, controller
-                    .convertTreeItemListToArrayList(
-                            tree.getRoot().getChildren()));
+                    .convertTreeToArrayList(tree));
             // We do not need to cleanup here, as no tasks
             // were added or deleted.
         };
@@ -214,8 +212,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                 (observable, oldValue, newValue) -> {
                     getTreeItem().getValue().setDone(newValue);
                     controller.updateDatabase(localDate, controller
-                            .convertTreeItemListToArrayList
-                            (tree.getRoot().getChildren()));
+                            .convertTreeToArrayList(tree));
                 });
     }
     
@@ -261,8 +258,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                 System.out.println(colorMenuItem.getText() + " clicked");
                 controller.setBackgroundColor(colorMenuItem, this);
                 controller.updateDatabase(day, controller
-                        .convertTreeItemListToArrayList(tree.getRoot()
-                                                                .getChildren()));
+                        .convertTreeToArrayList(tree));
                 controller.cleanUp(tree);
     
             });
@@ -332,11 +328,12 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
      */
     private void repeatTask(final int repeatNumber, final HomeworkTask homeworkTask, LocalDate day) {
         for (int i = 0; i < repeatNumber; i++) {
-            day = day.plusWeeks(1);
-            List<HomeworkTask> homeworkTasks = controller.getDatabaseSynced
-                    (day);
-            homeworkTasks.add(homeworkTask);
-            controller.updateDatabase(day, homeworkTasks);
+            // TODO
+//            day = day.plusWeeks(1);
+//            List<HomeworkTask> homeworkTasks = controller.getDatabaseSynced
+//                    (day);
+//            homeworkTasks.add(homeworkTask);
+//            controller.updateDatabase(day, homeworkTasks);
         }
         controller.refreshAllDays();
     }
@@ -427,7 +424,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                 success = true;
                 // update tasks in database
                 controller.updateDatabase(
-                        day, controller.convertTreeItemListToArrayList(tree.getRoot().getChildren()));
+                        day, controller.convertTreeToArrayList(tree));
             }
             
             
@@ -477,8 +474,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                 
                 // update in database
                 controller.updateDatabase(day, controller
-                        .convertTreeItemListToArrayList(
-                                tree.getRoot().getChildren()));
+                        .convertTreeToArrayList(tree));
                 
                 // prevent an empty list from refusing to receive
                 // items, as it wouldn't contain any listcell

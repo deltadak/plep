@@ -14,7 +14,7 @@ public class EditTextCommand extends Command {
 
     /** Store state in order to undo */
     LocalDate dayState;
-    List<HomeworkTask> listState;
+    List<List<HomeworkTask>> listState;
     String stuff;
     // and instance variables to store what to change...
 
@@ -23,14 +23,14 @@ public class EditTextCommand extends Command {
      * @param day of the listview which is edited
      * @param list all the HomeworkTasks of the day which is edited
      */
-    public EditTextCommand(LocalDate day, List<HomeworkTask> list) {
+    public EditTextCommand(LocalDate day, List<List<HomeworkTask>> list) {
         this.dayState = day;
         this.listState = list;
     }
 
     @Override
     protected void executionHook() {
-        List<HomeworkTask> newList = new ArrayList<>(listState);
+        List<List<HomeworkTask>> newList = new ArrayList<>(listState);
 //        newList.add(stuff); //todo
         Database.INSTANCE.updateTasksDay(dayState, newList);
     }
