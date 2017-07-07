@@ -55,7 +55,6 @@ public enum Database {
         try {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
-            List<HomeworkTask> tasks = new ArrayList<>();
             while (resultSet.next()) {
                 
                 HomeworkTask homeworkTask = new HomeworkTask(
@@ -63,21 +62,10 @@ public enum Database {
                                 resultSet.getString("task"),
                                 resultSet.getString("label"),
                                 resultSet.getString("color"));
-//                tasks.add(homeworkTask);
                 homeworkTasks.add(homeworkTask);
-//                homeworkTasks.add(
-//                        new HomeworkTask(
-//                                done,
-//                                resultSet.getString("task"),
-//                                resultSet.getString("label"),
-//                                resultSet.getString("color")));
             
             }
             statement.close();
-            // don't close the connection, otherwise we get
-            // SQLException: Database has been closed
-            // when trying getLabels()... Even though that has a
-            // setConnection()...
             connection.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -127,10 +115,6 @@ public enum Database {
                 value = resultSet.getString("value");
             }
             statement.close();
-            // don't close the connection, otherwise we get
-            // SQLException: Database has been closed
-            // when trying getLabels()... Even though that has a
-            // setConnection()...
             connection.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -287,10 +271,6 @@ public enum Database {
                 countID = 1;
             }
             statement.close();
-            // don't close the connection, otherwise we get
-            // SQLException: Database has been closed
-            // when trying getLabels()... Even though that has a
-            // setConnection()...
             connection.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -464,10 +444,6 @@ public enum Database {
             Statement statement = connection.createStatement();
             statement.executeUpdate(sql);
             statement.close();
-            // don't close the connection, otherwise we get
-            // SQLException: Database has been closed
-            // when trying getLabels()... Even though that has a
-            // setConnection()...
             connection.close();
             
         } catch (Exception e) {
