@@ -273,7 +273,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
     private void createSubTask(TreeItem parentItem) {
         // add a new subtask
         TreeItem<HomeworkTask> emptyItem = new TreeItem<>(
-                new HomeworkTask(false, "", "", "White"));
+                new HomeworkTask(false, "", "", "White", -1));
         parentItem.getChildren().add(emptyItem);
         
         // select the new subtask
@@ -388,12 +388,15 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
     void setOnDragExited() {
         setOnDragExited(event -> {
             //            System.out.println("TODO reset color of listview"); //todo
+    
             event.consume();
+            controller.refreshAllDays();
+    
         });
     }
     
     /**
-     * updates the ListView and database when a LabelCell is being dropped
+     * updates the ListView and database when a CustomTreeCell is being dropped
      *
      * @param tree ListView needed for updating the database
      * @param day LocalDate needed for updating the database
@@ -450,7 +453,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                 HomeworkTask newHomeworkTask
                         = (HomeworkTask)db.getContent(controller.DATA_FORMAT);
                 HomeworkTask emptyHomeworkTask = new HomeworkTask(
-                        false, "", "", "White");
+                        false, "", "", "White", -1);
                 //remove original item
                 //item can have been moved up (so index becomes one
                 // too much)
@@ -487,6 +490,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
             event.consume();
             // clean up immediately for a smooth reaction
             controller.cleanUp(tree);
+    
         });
     }
 }

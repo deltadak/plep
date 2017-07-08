@@ -13,11 +13,13 @@ public class HomeworkTask implements Serializable {
     private String color;
     private int databaseID;
     
-    public HomeworkTask(final boolean done, final String text, final String label, final String color) {
+    public HomeworkTask(final boolean done, final String text, final String
+            label, final String color, final int databaseID) {
         this.done = done;
         this.text = text;
         this.label = label;
         this.color = color;
+        this.databaseID = databaseID;
     }
     
     public boolean getDone() {

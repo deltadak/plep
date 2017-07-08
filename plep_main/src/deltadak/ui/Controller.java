@@ -210,7 +210,7 @@ public class Controller implements Initializable {
             
 //            ListView<HomeworkTask> list = new ListView<>();
             TreeItem<HomeworkTask> rootItem = new TreeItem<>(
-                    new HomeworkTask(false, "root", "root", "white"));
+                    new HomeworkTask(false, "root", "root", "white", -1));
             rootItem.setExpanded(true);
             final TreeView<HomeworkTask> tree = new TreeView<>(rootItem);
     
@@ -540,7 +540,7 @@ public class Controller implements Initializable {
         for(i = 0; i < MAX_LIST_LENGTH; i++) {
             if(i >= tree.getRoot().getChildren().size()) {
                 TreeItem<HomeworkTask> item = new TreeItem<>(
-                        new HomeworkTask(false,"", "", "White"));
+                        new HomeworkTask(false,"", "", "White", -1));
                 tree.getRoot().getChildren().add(item);
             }
         }
@@ -571,7 +571,7 @@ public class Controller implements Initializable {
         for (i = 0; i < MAX_LIST_LENGTH; i++) {
             if (i >= list.getItems().size()) {
                 list.getItems().add(i, new HomeworkTask(
-                        false, "", "", "White"));
+                        false, "", "", "White", -1));
             }
         }
 
@@ -633,7 +633,7 @@ public class Controller implements Initializable {
     //todo should these methods be in Database class?
 
     /**
-     * Requests tasks from database, and when done updates the listview.
+     * Requests tasks from database, and when done updates the treeview.
      *
      * @param tree      TreeView to be updated.
      * @param localDate The day for which to request tasks.
@@ -647,16 +647,28 @@ public class Controller implements Initializable {
                 return getDatabaseSynced(localDate);
             }
         };
+        
         task.setOnSucceeded(e -> {
-            // list with the homework tasks
+            // list with the parent tasks
             ObservableList<HomeworkTask> list =
                     convertArrayToObservableList(getParentTasks(task.getValue()));
             // clear all the items currently showing in the TreeView
             tree.getRoot().getChildren().clear();
+            
             // add the items from the database to the TreeView
-            for (HomeworkTask aList : list) {
-                TreeItem<HomeworkTask> item = new TreeItem<>(aList);
+            for (int i = 0; i < list.size(); i++) {
+                // add the parent task to the tree
+                TreeItem<HomeworkTask> item = new TreeItem<>(list.get(i));
                 tree.getRoot().getChildren().add(item);
+                
+                int familySize = task.getValue().get(i).size();
+                
+                for (int j = 1; j < familySize; j++) {
+                    TreeItem<HomeworkTask> childTask = new TreeItem<>(
+                            task.getValue().get(i).get(j));
+                    tree.getRoot().getChildren().get(i).getChildren().add
+                            (childTask);
+                }
             }
             
             cleanUp(tree);
@@ -711,8 +723,8 @@ public class Controller implements Initializable {
      * @param localDate Same.
      * @return Same.
      */
-    public synchronized List<List<HomeworkTask>> getDatabaseSynced(final LocalDate
-                                                                localDate) {
+    public synchronized List<List<HomeworkTask>> getDatabaseSynced(
+            final LocalDate localDate) {
         return Database.INSTANCE.getTasksDay(localDate);
     }
 
