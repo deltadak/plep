@@ -235,24 +235,6 @@ public class Controller implements Initializable {
 
             tree.setPrefWidth(getListViewWidth());
             tree.setPrefHeight(getListViewHeight());
-            // update the database when editing the text of a task is done
-//            tree.setOnEditCommit(event -> {
-//                System.out.println("edited");
-//
-//                // gets a list from the children of the root
-//                // (the main tasks) and updates that list in the database
-//                updateDatabase(localDate,
-//                            convertTreeItemListToArrayList(
-//                                tree.getRoot().getChildren()));
-//            });
-//            list.setEditable(true);
-//            list.setPrefWidth(getListViewWidth());
-//            list.setPrefHeight(getListViewHeight());
-//            setupLabelCells(list, localDate);
-//            //update database when editing is finished
-//            list.setOnEditCommit(event -> updateDatabase(
-//                    localDate, convertObservableToArrayList(list.getItems())));
-//            addDeleteKeyListener(list, localDate);
         }
 
     }
@@ -369,6 +351,13 @@ public class Controller implements Initializable {
         return arrayList;
     }
     
+    /**
+     * Converts a TreeView to a list of lists of tasks. The first item of
+     * each list is the parent task, the items after that are its subtasks.
+     *
+     * @param tree The TreeView to convert.
+     * @return List<List<HomeworkTask>>
+     */
     List<List<HomeworkTask>> convertTreeToArrayList
             (TreeView<HomeworkTask> tree) {
         
@@ -403,8 +392,19 @@ public class Controller implements Initializable {
         return tasks;
     }
     
+    /**
+     * Get all the parents (or head tasks) when given a list of lists of
+     * HomeworkTasks.
+     *
+     * @param homeworkFamilies The list of lists to get the parent tasks from.
+     * @return A list of HomeworkTasks, which are the parent tasks.
+     */
     private List<HomeworkTask> getParentTasks(List<List<HomeworkTask>> homeworkFamilies) {
+        
+        // create the list with HomeworkTasks to return
         List<HomeworkTask> parentTasks = new ArrayList<>();
+        
+        // add the first item of each list to parentTasks
         for (int i = 0; i < homeworkFamilies.size(); i++) {
             parentTasks.add(homeworkFamilies.get(i).get(0));
         }
@@ -444,37 +444,17 @@ public class Controller implements Initializable {
         int totalWidth = (int) primaryScreenBounds.getWidth();
         return totalWidth / MAX_COLUMNS;
     }
+    
 
     /**
-     * sets up labelCells for
-     *
-     * @param list a ListView
-     * @param day  and a specific date
-     */
-//    private void setupLabelCells(final ListView<HomeworkTask> list, final LocalDate day) {
-//        //no idea why the callback needs a ListCell and not a TextFieldListCell
-//        //anyway, editing is enabled by using TextFieldListCell instead of
-//        // ListCell
-//        list.setCellFactory(new Callback<ListView<HomeworkTask>, ListCell<HomeworkTask>>() {
-//            @Override
-//            public LabelCell call(final ListView<HomeworkTask> param) {
-//                LabelCell labelCell = new LabelCell(Controller.this);
-//                labelCell.setup(list, day);
-//                return labelCell;
-//            }
-//        });
-//        cleanUp(list);
-//    }
-
-    /**
-     * @return all ListViews in the gridPane
+     * @return all TreeViews in the gridPane
      */
     private List<TreeView<HomeworkTask>> getAllTreeViews() {
         List<TreeView<HomeworkTask>> listViews = new ArrayList<>();
         for (Node node : gridPane.getChildren()) {
-            //gridpane contains vbox contains label, pane and listview
+            //gridpane contains vbox contains label, pane and treeview
             if (node instanceof VBox) {
-                // we try to dig up the listviews in this vbox
+                // we try to dig up the treeview in this vbox
                 for (Node subNode : ((Pane) node).getChildren()) {
                     if (subNode instanceof TreeView) {
                         listViews.add((TreeView) subNode);
@@ -490,14 +470,14 @@ public class Controller implements Initializable {
      */
     void refreshAllDays() {
         // find all treeviews from the gridpane
-        List<TreeView<HomeworkTask>> listViews = getAllTreeViews();
+        List<TreeView<HomeworkTask>> treeViews = getAllTreeViews();
 
         for (int i = 0; i < NUMBER_OF_DAYS; i++) {
-            TreeView<HomeworkTask> list = listViews.get(i);
-            // refresh the listview from database
+            TreeView<HomeworkTask> tree = treeViews.get(i);
+            // refresh the treeview from database
             LocalDate localDate = focusDay.plusDays(i - 1);
-            refreshDay(list, localDate);
-            cleanUp(list); // TODO wasn't in subtasks branch, do we need it?
+            refreshDay(tree, localDate);
+            cleanUp(tree); // TODO wasn't in subtasks branch, do we need it?
         }
     }
 
@@ -554,28 +534,6 @@ public class Controller implements Initializable {
         item.getParent().getChildren().remove(item);
     }
 
-    /**
-     * removes empty rows, and then fills up with empty rows
-     *
-     * @param list to clean up
-     */
-    void cleanUp(ListView<HomeworkTask> list) {
-        int i;
-        //first remove empty items
-        for (i = 0; i < list.getItems().size(); i++) {
-            if (list.getItems().get(i).getText().equals("")) {
-                list.getItems().remove(i);
-            }
-        }
-        //fill up if necessary
-        for (i = 0; i < MAX_LIST_LENGTH; i++) {
-            if (i >= list.getItems().size()) {
-                list.getItems().add(i, new HomeworkTask(
-                        false, "", "", "White", -1));
-            }
-        }
-
-    }
 
     /**
      * converts a String containing a color (e.g. Green) to a String with the
@@ -661,11 +619,17 @@ public class Controller implements Initializable {
                 TreeItem<HomeworkTask> item = new TreeItem<>(list.get(i));
                 tree.getRoot().getChildren().add(item);
                 
+                // get the size of the current family, or the number of
+                // subtasks + 1
                 int familySize = task.getValue().get(i).size();
                 
+                // add every subtask to the tree as a child of the parent task
+                // we start at j=1 because the first item is the parent task
                 for (int j = 1; j < familySize; j++) {
+                    // get the subtask
                     TreeItem<HomeworkTask> childTask = new TreeItem<>(
                             task.getValue().get(i).get(j));
+                    // add the subtask
                     tree.getRoot().getChildren().get(i).getChildren().add
                             (childTask);
                 }

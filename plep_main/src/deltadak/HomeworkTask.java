@@ -11,7 +11,8 @@ public class HomeworkTask implements Serializable {
     private String text;
     private String label;
     private String color;
-    private int databaseID;
+    private int databaseID; // The id (primary key) in the database, used for
+    // the subtasks to link to their parent. For the subtasks, this id is -1.
     
     public HomeworkTask(final boolean done, final String text, final String
             label, final String color, final int databaseID) {

@@ -36,14 +36,16 @@ public enum Database {
     // homework tasks --------------------------------------------------
     
     /**
-     * Gets all the tasks on a given day.
+     * Gets all the parent tasks on a given day.
      *
-     * @param day the date for which to get all the tasks
+     * @param day the date for which to get all the parent tasks
      *
      * @return List<HomeworkTask>
      */
     public List<HomeworkTask> getParentTasksDay(final LocalDate day) {
         
+        // convert the day to a string so we can compare it to the value in
+        // the database
         String dayString = day.toString();
         String sql = "SELECT id, done, task, label, color " + "FROM tasks " +
                 "WHERE day = '"
@@ -55,7 +57,8 @@ public enum Database {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
             while (resultSet.next()) {
-
+                // create a HomeworkTask with the values from the database,
+                // and add this to the List
                 HomeworkTask homeworkTask = new HomeworkTask(
                                 resultSet.getBoolean("done"),
                                 resultSet.getString("task"),
@@ -73,24 +76,38 @@ public enum Database {
         return homeworkTasks;
     }
     
+    /**
+     * Gets all the task of a given day. Parent- and subtasks.
+     *
+     * @param day The date for which to get all the tasks.
+     * @return List<List<HomeworkTask>>
+     */
     public List<List<HomeworkTask>> getTasksDay(final LocalDate day) {
         
+        // create the list to eventually return
         List<List<HomeworkTask>> homeworkTasks = new ArrayList<>();
         
+        // get the parent tasks of this day
         List<HomeworkTask> parentTasks = getParentTasksDay(day);
     
-        for (int i = 0; i < parentTasks.size(); i++) {
+        // for each parent task:
+        for (HomeworkTask parentTask : parentTasks) {
+            // get their subtasks from the database
             String sql = "SELECT done, task FROM subtasks WHERE parentID = "
-                    + parentTasks.get(i).getDatabaseID();
-            
+                    + parentTask.getDatabaseID();
+        
+            // create a list to contain the parent task and its children
             List<HomeworkTask> oneFamily = new ArrayList<>();
-            oneFamily.add(parentTasks.get(i));
-            
+            // add the parent task as first item of the family
+            oneFamily.add(parentTask);
+        
             Connection connection = setConnection();
             try {
                 Statement statement = connection.createStatement();
                 ResultSet resultSet = statement.executeQuery(sql);
-                while(resultSet.next()) {
+                while (resultSet.next()) {
+                    // create a subtask with the values from the
+                    // database, and add the subtask to the family
                     HomeworkTask childTask = new HomeworkTask(
                             resultSet.getBoolean("done"),
                             resultSet.getString("task"), "", "", -1);
@@ -99,9 +116,9 @@ public enum Database {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            
+        
             homeworkTasks.add(oneFamily);
-            
+        
         }
         return homeworkTasks;
     }
@@ -352,7 +369,6 @@ public enum Database {
             e.printStackTrace();
         }
     
-        // TODO uncomment this!
         // delete child tasks so we don't get double ones
         for (Integer parentID : parentIDs) {
             String query = "DELETE FROM subtasks WHERE parentID = " + parentID;
@@ -368,25 +384,42 @@ public enum Database {
     
     // subtasks -------------------------------------------------------------
     
+    /**
+     * Creates the subtasks table in the database.
+     */
     private void createSubtaskTable() {
         String sql = "CREATE TABLE IF NOT EXISTS subtasks(" + "parentID INT, done BOOLEAN, "
                 + "task CHAR(255))";
         query(sql);
     }
     
+    /**
+     * Inserts a subtask into the database, given the id of its parent.
+     *
+     * @param subtask HomeworkTask to insert.
+     * @param parentID id of the parent task.
+     */
     private void insertSubtask(final HomeworkTask subtask, final int parentID) {
         // check if the task is not empty, because then it shouldn't
         // be in the database
         if(!subtask.getText().equals("") && (parentID != -1)) {
             int doneInt = subtask.getDone() ? 1 : 0;
-            String sql = "INSERT INTO subtasks(parentID, done, task) VALUES (" + parentID + ", " + doneInt + ", '" + subtask.getText()
-                    + "')";
+            String sql = "INSERT INTO subtasks(parentID, done, task) VALUES (" +
+                    parentID + ", " + doneInt + ", '" + subtask.getText() + "')";
             query(sql);
         }
     }
     
+    /**
+     * Update all the ids of the subtasks when the id of their parent task
+     * has changed.
+     * NOTE: We have to call this method ourselves.
+     *
+     * @param parentTask The parent task of which the id has changed.
+     */
     private void updateSubtasksID(HomeworkTask parentTask) {
-        String sql = "UPDATE subtasks SET parentID = " + countID + " WHERE parentID = " + parentTask.getDatabaseID();
+        String sql = "UPDATE subtasks SET parentID = " + countID +
+                " WHERE parentID = " + parentTask.getDatabaseID();
         query(sql);
     }
     

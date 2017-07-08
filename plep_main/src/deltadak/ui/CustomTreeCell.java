@@ -390,6 +390,8 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
             //            System.out.println("TODO reset color of listview"); //todo
     
             event.consume();
+            // refresh the days immediately, so the (dragged) subtasks show
+            // up again
             controller.refreshAllDays();
     
         });
