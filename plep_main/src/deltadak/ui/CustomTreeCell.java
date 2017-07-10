@@ -211,6 +211,35 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         checkBox.selectedProperty().addListener(
                 (observable, oldValue, newValue) -> {
                     getTreeItem().getValue().setDone(newValue);
+                    
+                    // if the item of which the checkbox is toggled is
+                    // a subtask
+                    if(!getTreeItem().getParent().equals(root)) {
+                        
+                        // the total number of subtasks of its parent
+                        int totalSubtasks = getTreeItem().getParent()
+                                .getChildren().size();
+                        
+                        // the number of those tasks that are marked as done
+                        int doneSubtasks = getDoneSubtasks(getTreeItem().getParent());
+                        
+                        // if all the tasks are done, we mark the parent task
+                        // as done
+                        if(totalSubtasks == doneSubtasks) {
+                            // calling ...getparent().getValue().setDone(true)
+                            // is not enough to trigger the event listener of
+                            // the parent item
+                            HomeworkTask parentOld = getTreeItem().getParent().getValue();
+                            HomeworkTask parent = new
+                                    HomeworkTask(true,
+                                                 parentOld.getText(),
+                                                 parentOld.getLabel(),
+                                                 parentOld.getColor(),
+                                                 parentOld.getDatabaseID());
+                            getTreeItem().getParent().setValue(parent);
+                        }
+                    }
+                    
                     controller.updateDatabase(localDate, controller
                             .convertTreeToArrayList(tree));
                 });
@@ -332,12 +361,31 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
             List<HomeworkTask> homeworkTasks =
                     controller.getParentTasksDay(day);
             homeworkTasks.add(homeworkTask);
-//            controller.updateParentDatabase(day, homeworkTasks);
             Database.INSTANCE.updateParentsForRepeat(day, homeworkTasks);
             
         }
         controller.refreshAllDays();
     }
+    
+    /**
+     * Counts the number of subtasks of taskTreeItem that are marked as done.
+     *
+     * @param taskTreeItem The TreeItem<HomeworkTask> of which to count the
+     *                     done subtasks.
+     * @return int, the number of subtasks that are marked as done.
+     */
+    private int getDoneSubtasks(TreeItem<HomeworkTask> taskTreeItem) {
+        
+        List<TreeItem<HomeworkTask>> subtasks = taskTreeItem.getChildren();
+        int count = 0;
+        for (TreeItem<HomeworkTask> subtask : subtasks) {
+            if (subtask.getValue().getDone()) {
+                count++;
+            }
+        }
+        return count;
+    }
+    
     
     /**
      * When the dragging is detected, we place the content of the LabelCell
