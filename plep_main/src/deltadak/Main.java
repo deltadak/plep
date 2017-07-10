@@ -10,6 +10,9 @@ import javafx.scene.image.Image;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
+import java.io.File;
+import java.net.URL;
+
 /**
  * main class
  */
@@ -17,7 +20,10 @@ public class Main extends Application {
 
     @Override
     public void start(final Stage primaryStage) throws Exception{
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/interface.fxml"));
+        System.out.println(Main.class.getResource("/interface.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource
+                ("/interface.fxml"));
+        
         Parent root = loader.load();
         
         //used to invoke a setup method in controller which needs the stage

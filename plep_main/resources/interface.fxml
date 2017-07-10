@@ -111,7 +111,7 @@
                   text="Number of days to go forward:"/>
 
             <Button fx:id="applyNumberOfDays"
-                    GridPane.columnIndex="3"
+                    GridPane.columnIndex="2"
                     text="Apply"/>
 
             <Text id="numberOfShowDaysText"
@@ -120,7 +120,7 @@
                   GridPane.rowIndex="1"/>
 
             <Button fx:id="applyNumberOfShowDays"
-                    GridPane.columnIndex="3"
+                    GridPane.columnIndex="2"
                     GridPane.rowIndex="1"
                     text="Apply"/>
 
@@ -129,9 +129,9 @@
                   GridPane.rowIndex="2"/>
 
             <CheckBox fx:id="autoColumnCheckBox"
-                    text="Auto"
-                    GridPane.columnIndex="1"
-                    GridPane.rowIndex="2"/>
+                      text="Auto"
+                      GridPane.columnIndex="1"
+                      GridPane.rowIndex="2"/>
 
             <Button fx:id="applyMaxColumns"
                     GridPane.columnIndex="3"

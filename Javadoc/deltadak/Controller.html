@@ -40,7 +40,7 @@ var activeTableTab = "activeTableTab";
 <li><a href="../deltadak/package-summary.html">Package</a></li>
 <li class="navBarCell1Rev">Class</li>
 <li><a href="package-tree.html">Tree</a></li>
-<li><a href="../deprecated-listViewItems.html">Deprecated</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
 <li><a href="../index-files/index-1.html">Index</a></li>
 <li><a href="../help-doc.html">Help</a></li>
 </ul>
@@ -199,9 +199,9 @@ implements javafx.fxml.Initializable</pre>
 </tr>
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>private void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../deltadak/Controller.html#addDeleteKeyListener-javafx.scene.control.ListView-java.time.LocalDate-">addDeleteKeyListener</a></span>(javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;listViewItems,
+<td class="colLast"><code><span class="memberNameLink"><a href="../deltadak/Controller.html#addDeleteKeyListener-javafx.scene.control.ListView-java.time.LocalDate-">addDeleteKeyListener</a></span>(javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;list,
                     java.time.LocalDate&nbsp;localDate)</code>
-<div class="block">add a Listener to a listViewItems for the delete key</div>
+<div class="block">add a Listener to a list for the delete key</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
@@ -213,13 +213,13 @@ implements javafx.fxml.Initializable</pre>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>(package private) void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../deltadak/Controller.html#cleanUp-javafx.scene.control.ListView-">cleanUp</a></span>(javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;listViewItems)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../deltadak/Controller.html#cleanUp-javafx.scene.control.ListView-">cleanUp</a></span>(javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;list)</code>
 <div class="block">removes empty rows, and then fills up with empty rows</div>
 </td>
 </tr>
 <tr id="i3" class="rowColor">
 <td class="colFirst"><code>private javafx.collections.ObservableList&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../deltadak/Controller.html#convertArrayToObservableList-java.util.List-">convertArrayToObservableList</a></span>(java.util.List&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;listViewItems)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../deltadak/Controller.html#convertArrayToObservableList-java.util.List-">convertArrayToObservableList</a></span>(java.util.List&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;list)</code>
 <div class="block">convert (Array)List to ObservableList</div>
 </td>
 </tr>
@@ -231,7 +231,7 @@ implements javafx.fxml.Initializable</pre>
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>(package private) java.util.List&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../deltadak/Controller.html#convertObservableToArrayList-javafx.collections.ObservableList-">convertObservableToArrayList</a></span>(javafx.collections.ObservableList&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;listViewItems)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../deltadak/Controller.html#convertObservableToArrayList-javafx.collections.ObservableList-">convertObservableToArrayList</a></span>(javafx.collections.ObservableList&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;list)</code>
 <div class="block">convert ObservableList to ArrayList</div>
 </td>
 </tr>
@@ -239,7 +239,7 @@ implements javafx.fxml.Initializable</pre>
 <td class="colFirst"><code>(package private) void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../deltadak/Controller.html#createContextMenu-javafx.scene.input.MouseEvent-deltadak.ui.LabelCell-javafx.scene.control.ListView-java.time.LocalDate-">createContextMenu</a></span>(javafx.scene.input.MouseEvent&nbsp;event,
                  <a href="../deltadak/LabelCell.html" title="class in deltadak">LabelCell</a>&nbsp;labelCell,
-                 javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;listViewItems,
+                 javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;list,
                  java.time.LocalDate&nbsp;day)</code>
 <div class="block">create a context menu</div>
 </td>
@@ -343,7 +343,7 @@ implements javafx.fxml.Initializable</pre>
 </tr>
 <tr id="i22" class="altColor">
 <td class="colFirst"><code>private javafx.scene.layout.VBox</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../deltadak/Controller.html#setTitle-javafx.scene.control.ListView-java.time.LocalDate-">setTitle</a></span>(javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;listViewItems,
+<td class="colLast"><code><span class="memberNameLink"><a href="../deltadak/Controller.html#setTitle-javafx.scene.control.ListView-java.time.LocalDate-">setTitle</a></span>(javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;list,
         java.time.LocalDate&nbsp;localDate)</code>
 <div class="block">add title to listview</div>
 </td>
@@ -356,7 +356,7 @@ implements javafx.fxml.Initializable</pre>
 </tr>
 <tr id="i24" class="altColor">
 <td class="colFirst"><code>private void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../deltadak/Controller.html#setupLabelCells-javafx.scene.control.ListView-java.time.LocalDate-">setupLabelCells</a></span>(javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;listViewItems,
+<td class="colLast"><code><span class="memberNameLink"><a href="../deltadak/Controller.html#setupLabelCells-javafx.scene.control.ListView-java.time.LocalDate-">setupLabelCells</a></span>(javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;list,
                java.time.LocalDate&nbsp;day)</code>
 <div class="block">sets up labelCells for</div>
 </td>
@@ -553,12 +553,12 @@ implements javafx.fxml.Initializable</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>setTitle</h4>
-<pre>private&nbsp;javafx.scene.layout.VBox&nbsp;setTitle(javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;listViewItems,
+<pre>private&nbsp;javafx.scene.layout.VBox&nbsp;setTitle(javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;list,
                                           java.time.LocalDate&nbsp;localDate)</pre>
 <div class="block">add title to listview</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>listViewItems</code> - to use</dd>
+<dd><code>list</code> - to use</dd>
 <dd><code>localDate</code> - from which to make a title</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>VBox with listview and title</dd>
@@ -587,12 +587,12 @@ implements javafx.fxml.Initializable</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>addDeleteKeyListener</h4>
-<pre>private&nbsp;void&nbsp;addDeleteKeyListener(javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;listViewItems,
+<pre>private&nbsp;void&nbsp;addDeleteKeyListener(javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;list,
                                   java.time.LocalDate&nbsp;localDate)</pre>
-<div class="block">add a Listener to a listViewItems for the delete key</div>
+<div class="block">add a Listener to a list for the delete key</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>listViewItems</code> - ListView to add the Listener to</dd>
+<dd><code>list</code> - ListView to add the Listener to</dd>
 <dd><code>localDate</code> - so we know for what day to update the database</dd>
 </dl>
 </li>
@@ -603,11 +603,11 @@ implements javafx.fxml.Initializable</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>convertObservableToArrayList</h4>
-<pre>java.util.List&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;convertObservableToArrayList(javafx.collections.ObservableList&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;listViewItems)</pre>
+<pre>java.util.List&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;convertObservableToArrayList(javafx.collections.ObservableList&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;list)</pre>
 <div class="block">convert ObservableList to ArrayList</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>listViewItems</code> - to convert</dd>
+<dd><code>list</code> - to convert</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>converted ObservableList</dd>
 </dl>
@@ -619,11 +619,11 @@ implements javafx.fxml.Initializable</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>convertArrayToObservableList</h4>
-<pre>private&nbsp;javafx.collections.ObservableList&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;convertArrayToObservableList(java.util.List&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;listViewItems)</pre>
+<pre>private&nbsp;javafx.collections.ObservableList&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;convertArrayToObservableList(java.util.List&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;list)</pre>
 <div class="block">convert (Array)List to ObservableList</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>listViewItems</code> - - List to be converted</dd>
+<dd><code>list</code> - - List to be converted</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>ObservableList</dd>
 </dl>
@@ -663,12 +663,12 @@ implements javafx.fxml.Initializable</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>setupLabelCells</h4>
-<pre>private&nbsp;void&nbsp;setupLabelCells(javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;listViewItems,
+<pre>private&nbsp;void&nbsp;setupLabelCells(javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;list,
                              java.time.LocalDate&nbsp;day)</pre>
 <div class="block">sets up labelCells for</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>listViewItems</code> - a ListView</dd>
+<dd><code>list</code> - a ListView</dd>
 <dd><code>day</code> - and a specific date</dd>
 </dl>
 </li>
@@ -722,14 +722,14 @@ implements javafx.fxml.Initializable</pre>
 <h4>createContextMenu</h4>
 <pre>void&nbsp;createContextMenu(javafx.scene.input.MouseEvent&nbsp;event,
                        <a href="../deltadak/LabelCell.html" title="class in deltadak">LabelCell</a>&nbsp;labelCell,
-                       javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;listViewItems,
+                       javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;list,
                        java.time.LocalDate&nbsp;day)</pre>
 <div class="block">create a context menu</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>event</code> - show context menu at place of mouse event</dd>
 <dd><code>labelCell</code> - to know which labelCell to color or repeat or ...</dd>
-<dd><code>listViewItems</code> - to update and cleanup after changing labelCell</dd>
+<dd><code>list</code> - to update and cleanup after changing labelCell</dd>
 <dd><code>day</code> - needed for updating the database</dd>
 </dl>
 </li>
@@ -775,11 +775,11 @@ implements javafx.fxml.Initializable</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>cleanUp</h4>
-<pre>void&nbsp;cleanUp(javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;listViewItems)</pre>
+<pre>void&nbsp;cleanUp(javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;list)</pre>
 <div class="block">removes empty rows, and then fills up with empty rows</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>listViewItems</code> - to clean up</dd>
+<dd><code>list</code> - to clean up</dd>
 </dl>
 </li>
 </ul>
@@ -904,7 +904,7 @@ implements javafx.fxml.Initializable</pre>
 <li><a href="../deltadak/package-summary.html">Package</a></li>
 <li class="navBarCell1Rev">Class</li>
 <li><a href="package-tree.html">Tree</a></li>
-<li><a href="../deprecated-listViewItems.html">Deprecated</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
 <li><a href="../index-files/index-1.html">Index</a></li>
 <li><a href="../help-doc.html">Help</a></li>
 </ul>

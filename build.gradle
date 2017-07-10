@@ -1,8 +1,6 @@
 description = """ 
 Gradle build file written to let Travis access dependencies and build. 
-
 This uses the gradle wrapper, so when running (the first time) use 'gradlew test' so then it downloads the right gradle automatically.
-
 Uses JavaFX plugin from https://github.com/FibreFoX/javafx-gradle-plugin
 """
 
