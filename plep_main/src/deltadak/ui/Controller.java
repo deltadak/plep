@@ -735,6 +735,16 @@ public class Controller implements Initializable {
                           final List<HomeworkTask> parentTasks) {
         Database.INSTANCE.updateParentsDay(day, parentTasks);
     }
+    
+    /**
+     * See {@link Database#getParentTasksDay(LocalDate)}
+     *
+     * @param day Same.
+     * @return Same.
+     */
+    public List<HomeworkTask> getParentTasksDay(final LocalDate day) {
+        return Database.INSTANCE.getParentTasksDay(day);
+    }
 
     /**
      * See {@link Database#getSetting(String)}

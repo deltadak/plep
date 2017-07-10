@@ -328,12 +328,13 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
      */
     private void repeatTask(final int repeatNumber, final HomeworkTask homeworkTask, LocalDate day) {
         for (int i = 0; i < repeatNumber; i++) {
-            // TODO
-//            day = day.plusWeeks(1);
-//            List<HomeworkTask> homeworkTasks = controller.getDatabaseSynced
-//                    (day);
-//            homeworkTasks.add(homeworkTask);
-//            controller.updateDatabase(day, homeworkTasks);
+            day = day.plusWeeks(1);
+            List<HomeworkTask> homeworkTasks =
+                    controller.getParentTasksDay(day);
+            homeworkTasks.add(homeworkTask);
+//            controller.updateParentDatabase(day, homeworkTasks);
+            Database.INSTANCE.updateParentsForRepeat(day, homeworkTasks);
+            
         }
         controller.refreshAllDays();
     }
