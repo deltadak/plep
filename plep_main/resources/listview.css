@@ -24,3 +24,14 @@
 #helpTextTitle {
     -fx-font-style: oblique;
 }
+
+
+/* text of the tasks marked as done */
+.donelabel {
+    -fx-text-fill: #949494;
+    -fx-font-style: italic;
+}
+
+.donelabel .text {
+    -fx-strikethrough: true;
+}

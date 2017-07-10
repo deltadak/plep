@@ -22,6 +22,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 
+import java.awt.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -89,7 +90,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         
         setOnLabelChangeListener(tree, localDate);
         setOnDoneChangeListener(tree, localDate);
-        
+    
         setOnDragDetected();
         setOnDragOver();
         setOnDragEntered();
@@ -137,9 +138,10 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
             checkBox.setSelected(done);
             
             label = new Label(homeworkTask.getText());
-            setStyle("-fx-control-inner-background: "
-                     + controller.convertColorToHex(homeworkTask.getColor()));
             
+            // set the style on the label
+            setDoneStyle(done);
+    
             // if the item is first level, it has to show a course label
             // (ComboBox), and it has to have a context menu
             if(getTreeItem().getParent().equals(root)) {
@@ -210,10 +212,18 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
     void setOnDoneChangeListener(TreeView<HomeworkTask> tree, LocalDate localDate) {
         checkBox.selectedProperty().addListener(
                 (observable, oldValue, newValue) -> {
-                    getTreeItem().getValue().setDone(newValue);
                     
-                    // if the item of which the checkbox is toggled is
-                    // a subtask
+                    getTreeItem().getValue().setDone(newValue);
+    
+                    // set the style on the label
+                    if(label != null) {
+                        setDoneStyle(newValue);
+                    }
+                    
+                    /* If the item of which the checkbox is toggled is
+                     * a subtask, then we check if all subtasks are done.
+                     * If so, we mark its parent task as done.
+                     */
                     if(!getTreeItem().getParent().equals(root)) {
                         
                         // the total number of subtasks of its parent
@@ -365,6 +375,22 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
             
         }
         controller.refreshAllDays();
+    }
+    
+    /**
+     * Sets the style of the text of a task, depending on whether the task
+     * is done or not.
+     *
+     * @param done boolean, true if the task is done, false if not done.
+     */
+    private void setDoneStyle(boolean done) {
+        if(done) {
+            label.getStyleClass().remove("label");
+            label.getStyleClass().add("donelabel");
+        } else {
+            label.getStyleClass().remove("donelabel");
+            label.getStyleClass().add("label");
+        }
     }
     
     /**
