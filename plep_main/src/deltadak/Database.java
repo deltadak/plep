@@ -142,14 +142,39 @@ public enum Database {
                 insertTask(day, homeworkTasks.get(i).get(0), i);
                 // add the subtasks of the parent tasks to the database
                 for (int j = 1; j < homeworkTasks.get(i).size(); j++) {
+                    
                     insertSubtask(homeworkTasks.get(i).get(j),
-                          homeworkTasks.get(i).get(0).getDatabaseID());
+                                      homeworkTasks.get(i).get(0).getDatabaseID());
                 }
             
         }
         
         deleteEmptyRows("tasks", "task");
     }
+    
+    /**
+     * Updates the parents tasks in the database (tasks table).
+     *
+     * @param day The day for which to update the tasks.
+     * @param parentTasks The List<HomeworkTask> with 'new' parents.
+     */
+    public void updateParentsDay(final LocalDate day, final List<HomeworkTask> parentTasks) {
+        
+        // first remove all the items for this day that are currently in the
+        // database before we add the new ones,
+        // so we don't get double homeworkTasks
+        deleteParentTasksDay(day);
+        
+        // then add the new homeworkTasks
+        for (int i = 0; i < parentTasks.size(); i++) {
+            // add the parent task to the database
+            insertTask(day, parentTasks.get(i), i);
+            
+        }
+        
+        deleteEmptyRows("tasks", "task");
+    }
+    
     
     // settings ------------------------------------------------------
     
@@ -357,7 +382,7 @@ public enum Database {
     
         String getIDs = "SELECT id FROM tasks WHERE day = '" + day + "'";
         ArrayList<Integer> parentIDs = new ArrayList<>();
-        
+
         Connection connection = setConnection();
         try {
             Statement statement = connection.createStatement();
@@ -368,12 +393,26 @@ public enum Database {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    
+
         // delete child tasks so we don't get double ones
         for (Integer parentID : parentIDs) {
             String query = "DELETE FROM subtasks WHERE parentID = " + parentID;
             query(query);
         }
+        
+        // delete the parent tasks
+        String sql = "DELETE FROM tasks WHERE day = '" + day + "'";
+        query(sql);
+        
+        
+    }
+    
+    /**
+     * Deletes the parent tasks of the given day.
+     *
+     * @param day The day of which to delete the tasks.
+     */
+    private void deleteParentTasksDay(final LocalDate day) {
         
         // delete the parent tasks
         String sql = "DELETE FROM tasks WHERE day = '" + day + "'";

@@ -399,7 +399,7 @@ public class Controller implements Initializable {
      * @param homeworkFamilies The list of lists to get the parent tasks from.
      * @return A list of HomeworkTasks, which are the parent tasks.
      */
-    private List<HomeworkTask> getParentTasks(List<List<HomeworkTask>> homeworkFamilies) {
+    public List<HomeworkTask> getParentTasks(List<List<HomeworkTask>> homeworkFamilies) {
         
         // create the list with HomeworkTasks to return
         List<HomeworkTask> parentTasks = new ArrayList<>();
@@ -640,6 +640,28 @@ public class Controller implements Initializable {
         });
         exec.execute(task);
     }
+    
+    /**
+     * Update the parent tasks in the database.
+     * Used after dragging a task, we only have to update the parents,
+     * because the subtasks only depend on their parents, and are
+     * independent of the day and the order in the day.
+     *
+     * @param day The day of which to update the tasks.
+     * @param parentTasks The list with parents to update.
+     */
+    public void updateParentDatabase(LocalDate day, List<HomeworkTask> parentTasks) {
+        progressIndicator.setVisible(true);
+        Task<HomeworkTask> task =  new Task<HomeworkTask>() {
+            @Override
+            public HomeworkTask call() throws Exception {
+                updateParentsSynced(day, parentTasks);
+                return null;
+            }
+        };
+        task.setOnSucceeded(e -> progressIndicator.setVisible(false));
+        exec.execute(task);
+    }
 
     /**
      * Updates database using the given homework tasks for a day.
@@ -701,6 +723,17 @@ public class Controller implements Initializable {
     synchronized void updateDatabaseSynced(final LocalDate day,
                                            final List<List<HomeworkTask>> homeworkTasks) {
         Database.INSTANCE.updateTasksDay(day, homeworkTasks);
+    }
+    
+    /**
+     * See {@link Database#updateParentsDay(LocalDate, List)}
+     *
+     * @param day         Same.
+     * @param parentTasks Same.
+     */
+    synchronized void updateParentsSynced(final LocalDate day,
+                          final List<HomeworkTask> parentTasks) {
+        Database.INSTANCE.updateParentsDay(day, parentTasks);
     }
 
     /**

@@ -390,9 +390,6 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
             //            System.out.println("TODO reset color of listview"); //todo
     
             event.consume();
-            // refresh the days immediately, so the (dragged) subtasks show
-            // up again
-            controller.refreshAllDays();
     
         });
     }
@@ -400,7 +397,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
     /**
      * updates the ListView and database when a CustomTreeCell is being dropped
      *
-     * @param tree ListView needed for updating the database
+     * @param tree TreeView needed for updating the database
      * @param day LocalDate needed for updating the database
      */
     void setOnDragDropped(final TreeView<HomeworkTask> tree,
@@ -417,7 +414,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                 // the existing list
                 
                 //we have put an empty item instead of no items
-                //because otherwise there are no listCells that can
+                //because otherwise there are no treeCells that can
                 // receive an item
                 if (tree.getRoot().getChildren().get(index).getValue().getText().equals("")) {
                     tree.getRoot().getChildren().get(index)
@@ -428,8 +425,11 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                 }
                 success = true;
                 // update tasks in database
-                controller.updateDatabase(
-                        day, controller.convertTreeToArrayList(tree));
+                controller.updateParentDatabase(day,
+                        controller.getParentTasks(
+                            controller.convertTreeToArrayList(tree)
+                        )
+                );
             }
             
             
@@ -437,13 +437,16 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
             event.consume();
             // clean up immediately for a smooth reaction
             controller.cleanUp(tree);
+            
+            // works to le the subtasks show up after the drag, except when dragging a task with subtasks in the same list...
+            controller.refreshAllDays();
         });
     }
     
     /**
      * removing the original copy
      *
-     * @param tree ListView needed for updating the database
+     * @param tree TreeView needed for updating the database
      * @param day LocalDate needed for updating the database
      */
     void setOnDragDone(final TreeView<HomeworkTask> tree, final LocalDate day) {
@@ -462,7 +465,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                 // or such that the index didn't change, like to
                 // another day
                 
-                // If item was moved to an other day or down in same list
+                // If item was moved to an other day, or down in same list
                 if (tree.getRoot().getChildren().get(getIndex())
                             .getValue().getText()
                                 .equals(newHomeworkTask.getText())) {
@@ -471,18 +474,22 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                     setGraphic(null);
                     
                     // deleting blank row from database which updating creates
-                } else { // item was moved up in same list
+                } else { // item was moved up in same tree
+                    // we never get here...
                     int index = getIndex() + 1;
                     tree.getRoot().getChildren().get(index)
                             .setValue(emptyHomeworkTask);
                 }
                 
                 // update in database
-                controller.updateDatabase(day, controller
-                        .convertTreeToArrayList(tree));
+                controller.updateParentDatabase(day,
+                        controller.getParentTasks(
+                            controller.convertTreeToArrayList(tree)
+                        )
+                );
                 
                 // prevent an empty list from refusing to receive
-                // items, as it wouldn't contain any listcell
+                // items, as it wouldn't contain any treecell
                 if (tree.getRoot().getChildren().size() < 1) {
                     TreeItem<HomeworkTask> item =
                             new TreeItem<>(emptyHomeworkTask);
