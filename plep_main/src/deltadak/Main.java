@@ -38,8 +38,9 @@ public class Main extends Application {
         String listViewCSS = this.getClass().getResource("/css/listview.css").toExternalForm();
         String generalCSS = this.getClass().getResource("/css/general.css").toExternalForm();
         String buttonCSS = this.getClass().getResource("/css/button.css").toExternalForm();
+        String settingsCSS = this.getClass().getResource("/css/settings.css").toExternalForm();
 
-        primaryStage.getScene().getStylesheets().addAll(listViewCSS, generalCSS, buttonCSS);
+        primaryStage.getScene().getStylesheets().addAll(listViewCSS, generalCSS, buttonCSS, settingsCSS);
 
         // check if running in debug mode
         // to display the default java icon so we can distinguish between
