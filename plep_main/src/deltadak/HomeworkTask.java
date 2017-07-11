@@ -22,11 +22,11 @@ public class HomeworkTask implements Serializable {
         this.color = color;
         this.databaseID = databaseID;
     }
-    
+
     public boolean getDone() {
         return done;
     }
-    
+
     public void setDone(final boolean done) {
         this.done = done;
     }
@@ -54,11 +54,11 @@ public class HomeworkTask implements Serializable {
     public void setColor(final String color) {
         this.color = color;
     }
-    
+
     public int getDatabaseID() {
         return databaseID;
     }
-    
+
     public void setDatabaseID(int databaseID) {
         this.databaseID = databaseID;
     }
