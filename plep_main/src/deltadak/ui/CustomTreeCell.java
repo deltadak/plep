@@ -3,6 +3,8 @@ package deltadak.ui;
 import deltadak.Database;
 import deltadak.HomeworkTask;
 import javafx.beans.InvalidationListener;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.CheckBox;
@@ -22,6 +24,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 
+import javax.xml.crypto.Data;
 import java.awt.*;
 import java.time.LocalDate;
 import java.util.List;
@@ -100,12 +103,17 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         
         tree.setOnEditCommit(event -> {
             TreeItem<HomeworkTask> editingItem = getTreeView().getEditingItem();
+    
             // if we are editing one of the subtasks
             if(!editingItem.getParent().equals(root)) {
                 // if we're not adding an empty task, create another subtask
                 if(!event.getNewValue().getText().equals("")){
                     createSubTask(editingItem.getParent());
                 }
+            } else { // if we are not editing a subtask
+                // insert the task in the expanded table
+                controller.insertExpandedItem(editingItem.getValue()
+                  .getDatabaseID(), false);
             }
             
             // update the database with the current first level items
