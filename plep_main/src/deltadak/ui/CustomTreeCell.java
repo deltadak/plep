@@ -5,6 +5,7 @@ import deltadak.HomeworkTask;
 import javafx.beans.InvalidationListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContextMenu;
@@ -21,6 +22,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -86,6 +88,28 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                     .getValue().setLabel(newValue)
                 
         );
+
+        tree.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            // We want to clear the selection on all the other listviews, otherwise weird 'half-selected' greyed out cells are left behind.
+
+            // A ListView is inside a HBox inside the GridPane, so node will be a VBox
+            // Hence we need to circumvent a little to clear selection of all other listviews
+            for(Node node : tree.getParent().getParent().getChildrenUnmodifiable()) {
+                if (node instanceof VBox) {
+                    // We assume the title (a Label) is first, Pane is second, listview is third
+                    Node listNode = ((VBox) node).getChildren().get(2);
+                    // First deselect all of them...
+                    if ((listNode instanceof TreeView) ) {
+                        ((TreeView) listNode).getSelectionModel().clearSelection();
+                    }
+                }
+
+            }
+
+            // ... then reselect this one
+            tree.getSelectionModel().select(newValue);
+
+        });
         
         setOnLabelChangeListener(tree, localDate);
         setOnDoneChangeListener(tree, localDate);

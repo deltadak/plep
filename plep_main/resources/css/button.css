@@ -1,10 +1,11 @@
 .button {
     -fx-background-color: Transparent;
     -fx-text-fill: -fx-button;
+    /* increase font size to normal for buttons */
+    -fx-font-size: 13pt;
 }
 
 .button:hover {
-    /* The last two numbers is opacity */
     -fx-background-color: -fx-button-hover;
 }
 

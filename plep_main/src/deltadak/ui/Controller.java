@@ -76,7 +76,7 @@ public class Controller implements Initializable {
 
     /** number of columns to fill with lists with tasks */
     public int MAX_COLUMNS;
-    private static final int MAX_LIST_LENGTH = 7;
+    private static final int MAX_LIST_LENGTH = 6;
 
     /** name of setting in the database */
     public static final String NUMBER_OF_DAYS_NAME = "number_of_days";

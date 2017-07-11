@@ -6,12 +6,14 @@
 
 .root {
     -fx-font-family: Roboto;
-    -fx-font-size: 13pt;
+    /* should be 13 but this allows more tasks per day */
+    -fx-font-size: 12pt;
     -fx-base: #EEEEEE;
     -fx-background-color: -fx-base;
 
     /* custom base colors */
     -fx-button: #2397F3;
+    /* The last two numbers is opacity */
     -fx-button-hover: #D9D9D940;
     -fx-button-pressed: #D9D9D9;
 }
@@ -23,4 +25,9 @@
 
 #helpPane {
     -fx-background-color: -fx-base;
+}
+
+/* italic title on features page */
+#helpTextTitle {
+    -fx-font-style: oblique;
 }
