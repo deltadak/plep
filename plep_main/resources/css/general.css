@@ -18,6 +18,10 @@
     -fx-button-pressed: #D9D9D9;
 }
 
+.tool-bar {
+    -fx-background-color: -fx-base;
+}
+
 /* style panes apart because using .pane didn't work */
 #settingsPane {
     -fx-background-color: -fx-base;
