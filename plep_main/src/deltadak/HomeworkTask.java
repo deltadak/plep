@@ -23,6 +23,16 @@ public class HomeworkTask implements Serializable {
         this.databaseID = databaseID;
     }
 
+    /**
+     * Default constructor, without databaseID.
+     */
+    public HomeworkTask() {
+        this.done = false;
+        this.text = "default text";
+        this.label = "default label";
+        this.color = "white";
+    }
+
     public boolean getDone() {
         return done;
     }
