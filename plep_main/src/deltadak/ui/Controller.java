@@ -329,7 +329,7 @@ public class Controller implements Initializable {
      * @param list to convert
      * @return converted ObservableList
      */
-    List<HomeworkTask> convertObservableToArrayList(
+    public List<HomeworkTask> convertObservableListToArrayList(
             final ObservableList<HomeworkTask> list) {
         return new ArrayList<>(list);
     }
