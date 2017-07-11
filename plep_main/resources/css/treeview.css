@@ -7,7 +7,7 @@
     /*-fx-border-color: black; !* change border instead of background so it doesn't override item colors *!*/
 
     /* First two are the borders, the last one the color of the listcell background. Here we take it the color it already is so the item colors do not get overridden, but darker so the white ones are also readable (the text is forced to white when selected, didn't find out how to change that) */
-    -fx-background-color: derive(-fx-control-inner-background, -35%), derive(-fx-control-inner-background, -35%), derive(-fx-control-inner-background, -35%);
+    -fx-background-color: -fx-accent, -fx-accent, -fx-accent;
 
     -fx-table-cell-border-color: derive(-fx-selection-bar, 20%);
 }

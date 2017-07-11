@@ -16,6 +16,9 @@
     /* The last two numbers is opacity */
     -fx-button-hover: #D9D9D940;
     -fx-button-pressed: #D9D9D9;
+
+    /* Color of the selector */
+    -fx-accent: derive(-fx-control-inner-background, -15%);
 }
 
 .tool-bar {
