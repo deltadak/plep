@@ -279,7 +279,6 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         for (int i = 2; i < contextMenu.getItems().size(); i++) {
             MenuItem colorMenuItem = contextMenu.getItems().get(i);
             colorMenuItem.setOnAction(event1 -> {
-                System.out.println(colorMenuItem.getText() + " clicked");
                 controller.setBackgroundColor(colorMenuItem, this);
                 controller.updateDatabase(day, controller
                         .convertTreeToArrayList(tree));
@@ -445,7 +444,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                             .setValue(newHomeworkTask); //replace empty item
                 } else {
                     TreeItem<HomeworkTask> item = new TreeItem<>(newHomeworkTask);
-                    tree.getRoot().getChildren().add(item);
+                    tree.getRoot().getChildren().add(index, item);
                 }
                 success = true;
                 // update tasks in database
@@ -462,7 +461,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
             // clean up immediately for a smooth reaction
             controller.cleanUp(tree);
             
-            // works to le the subtasks show up after the drag, except when dragging a task with subtasks in the same list...
+            // works to let the subtasks show up after the drag, except when dragging a task with subtasks in the same list...
             controller.refreshAllDays();
         });
     }
@@ -490,9 +489,11 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                 // another day
                 
                 // If item was moved to an other day, or down in same list
-                if (tree.getRoot().getChildren().get(getIndex())
-                            .getValue().getText()
-                                .equals(newHomeworkTask.getText())) {
+                TreeItem<HomeworkTask> currentItem = tree.getRoot().getChildren().get(getIndex());
+                String currentText = currentItem.getValue().getText();
+                // if text at current location is equal to
+                String newText = newHomeworkTask.getText();
+                if (currentText.equals(newText)) {
                     tree.getRoot().getChildren().get(getIndex())
                             .setValue(emptyHomeworkTask);
                     setGraphic(null);
@@ -511,14 +512,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                             controller.convertTreeToArrayList(tree)
                         )
                 );
-                
-                // prevent an empty list from refusing to receive
-                // items, as it wouldn't contain any treecell
-                if (tree.getRoot().getChildren().size() < 1) {
-                    TreeItem<HomeworkTask> item =
-                            new TreeItem<>(emptyHomeworkTask);
-                    tree.getRoot().getChildren().add(item);
-                }
+
             }
             event.consume();
             // clean up immediately for a smooth reaction
