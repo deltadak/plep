@@ -1,0 +1,47 @@
+.spinner {
+
+    /* color of text border */
+    -fx-text-box-border: -fx-base;
+
+    /* background color of text, changing this leaves gradient intact */
+    -fx-control-inner-background: -fx-base;
+
+    /* border color of the border around the arrows */
+    -fx-inner-border: -fx-base;
+    -fx-outer-border: -fx-base;
+
+    /* background color of arrows */
+    -fx-body-color: -fx-base;
+
+    /* color of outside border (not the rounded one) */
+    /*-fx-border-color: -fx-base;*/
+
+    /* border glow when focused */
+    -fx-focus-color: -fx-base;
+
+    /* color of big border around text and small around arrows, when focused*/
+    -fx-faint-focus-color: -fx-base;
+
+}
+
+/* also remove gradient in text field */
+.spinner > .text-field {
+    -fx-background-color: -fx-base, -fx-base;
+}
+
+/* same as normal buttons */
+.spinner .increment-arrow-button:hover,
+.spinner .decrement-arrow-button:hover {
+    -fx-background-color: -fx-focus-color, -fx-body-color, -fx-faint-focus-color, -fx-button-hover;
+}
+
+.spinner .increment-arrow-button:pressed,
+.spinner .decrement-arrow-button:pressed {
+    -fx-background-color: -fx-focus-color, -fx-body-color, -fx-faint-focus-color, -fx-button-pressed;
+}
+
+/* color of arrow buttons */
+.spinner .increment-arrow-button .increment-arrow,
+.spinner .decrement-arrow-button .decrement-arrow {
+    -fx-background-color: -fx-button, -fx-button;
+}

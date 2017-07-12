@@ -10,9 +10,6 @@ import javafx.scene.image.Image;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 
-import java.io.File;
-import java.net.URL;
-
 /**
  * main class
  */
@@ -41,9 +38,15 @@ public class Main extends Application {
         primaryStage.setWidth(primaryScreenBounds.getWidth()/2);
         primaryStage.setHeight(primaryScreenBounds.getHeight());
         
-        String listViewCSS = this.getClass().getResource("/listview.css").toExternalForm();
-        primaryStage.getScene().getStylesheets().addAll(listViewCSS);
-    
+        String treeViewCSS = this.getClass().getResource("/css/treeview.css").toExternalForm();
+        String generalCSS = this.getClass().getResource("/css/general.css").toExternalForm();
+        String buttonCSS = this.getClass().getResource("/css/button.css").toExternalForm();
+        String spinnerCSS = this.getClass().getResource("/css/spinner.css").toExternalForm();
+        String checkboxCSS = this.getClass().getResource("/css/checkbox.css").toExternalForm();
+        String dropdownCSS = this.getClass().getResource("/css/dropdown.css").toExternalForm();
+
+        primaryStage.getScene().getStylesheets().addAll(treeViewCSS, generalCSS, buttonCSS, spinnerCSS, checkboxCSS, dropdownCSS);
+
         // check if running in debug mode
         // to display the default java icon so we can distinguish between
         // the program we are testing and the one we are actually using

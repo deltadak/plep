@@ -22,7 +22,7 @@ class DeleteCommandTest {
     private void setup() {
         LocalDate dayState = LocalDate.now();
         List<HomeworkTask> list = new ArrayList<>();
-        taskToDelete = new HomeworkTask("text", "label", "color");
+        taskToDelete = new HomeworkTask();
         list.add(taskToDelete);
         AbstractController dummy = new AbstractController() {
             @Override

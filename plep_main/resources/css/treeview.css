@@ -1,0 +1,62 @@
+/* TreeView and ListView */
+
+/* Selected rows */
+.tree-view:focused > .virtual-flow > .clipped-container > .sheet > .text-field-tree-cell:filled:selected,
+.list-view:focused > .virtual-flow > .clipped-container > .sheet > .text-field-list-cell:filled:selected {
+    /*-fx-background-color: -fx-selection-bar; !* default *!*/
+    /*-fx-border-color: black; !* change border instead of background so it doesn't override item colors *!*/
+
+    /* First two are the borders, the last one the color of the listcell background. Here we take it the color it already is so the item colors do not get overridden, but darker so the white ones are also readable (the text is forced to white when selected, didn't find out how to change that) */
+    -fx-background-color: -fx-accent, -fx-accent, -fx-accent;
+
+    -fx-table-cell-border-color: derive(-fx-selection-bar, 20%);
+}
+
+/* disable scrollbars which appeared because of a one pixel shortage somewhere */
+.tree-view *.column-header-background *.show-hide-columns-button,
+.tree-view *.scroll-bar:vertical *.increment-button,
+.tree-view *.scroll-bar:vertical *.decrement-button,
+.tree-view *.scroll-bar:vertical *.increment-arrow,
+.tree-view *.scroll-bar:vertical *.decrement-arrow,
+
+.list-view *.column-header-background *.show-hide-columns-button,
+.list-view *.scroll-bar:vertical *.increment-button,
+.list-view *.scroll-bar:vertical *.decrement-button,
+.list-view *.scroll-bar:vertical *.increment-arrow,
+.list-view *.scroll-bar:vertical *.decrement-arrow {
+    -fx-background-color: null;
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-shape: null;
+}
+
+.tree-view *.scroll-bar:horizontal,
+.tree-view *.scroll-bar:horizontal *.track,
+.tree-view *.scroll-bar:horizontal *.track-background,
+.tree-view *.scroll-bar:horizontal *.thumb,
+.tree-view *.scroll-bar:horizontal *.increment-button,
+.tree-view *.scroll-bar:horizontal *.decrement-button,
+.tree-view *.scroll-bar:horizontal *.increment-arrow,
+.tree-view *.scroll-bar:horizontal *.decrement-arrow {
+    -fx-base: transparent;
+    -fx-background-color: white;
+}
+
+.tree-view,
+.list-view {
+    /* remove border */
+    -fx-background-color: -fx-base;
+    /* text color */
+    /*-fx-text-background-color: yellow;*/
+    /* italic */
+    /*-fx-font-style: oblique;*/
+}
+
+.list-cell {
+    -fx-background: -fx-control-inner-background;
+}
+
+.list-cell:odd {
+    -fx-background: -fx-control-inner-background;
+}
