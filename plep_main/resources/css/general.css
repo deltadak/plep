@@ -4,6 +4,13 @@
     src: url('../font/Roboto/Roboto-Regular.ttf');
 }
 
+@font-face {
+    -fx-font-family: 'Roboto';
+    /*-fx-font-weight: lighter;*/
+    -fx-font-style: italic;
+    src: url('../font/Roboto/Roboto-Italic.ttf');
+}
+
 .root {
     -fx-font-family: Roboto;
     /* should be 13 but this allows more tasks per day */
@@ -36,5 +43,5 @@
 
 /* italic title on features page */
 #helpTextTitle {
-    -fx-font-style: oblique;
+    -fx-font-style: italic;
 }

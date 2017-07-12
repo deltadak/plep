@@ -60,3 +60,13 @@
 .list-cell:odd {
     -fx-background: -fx-control-inner-background;
 }
+
+/* text of the tasks marked as done */
+.donelabel {
+    -fx-text-fill: #949494;
+    -fx-font-style: oblique;
+}
+
+.donelabel .text {
+    -fx-strikethrough: true;
+}
