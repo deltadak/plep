@@ -118,8 +118,8 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         
         setOnDragDetected();
         setOnDragOver();
-        setOnDragEntered();
-        setOnDragExited();
+        setOnDragEntered(tree);
+        setOnDragExited(tree);
         setOnDragDropped(tree, localDate);
         setOnDragDone(tree, localDate);
         
@@ -395,12 +395,13 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
     
     /**
      * Sets on drag entered.
+     * @param tree TreeView to style as focused.
      */
-    void setOnDragEntered() {
+    void setOnDragEntered(TreeView<HomeworkTask> tree) {
         setOnDragEntered(event -> {
             if ((!Objects.equals(event.getGestureSource(), this)) && event
                     .getDragboard().hasContent(controller.DATA_FORMAT)) {
-                //                System.out.println("TODO: change color of listview"); //todo
+                tree.setStyle("-fx-background-color: -fx-accent;");
             }
             
             event.consume();
@@ -409,11 +410,11 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
     
     /**
      * Sets on drag exited.
+     * @param tree TreeView to style as not focused.
      */
-    void setOnDragExited() {
+    void setOnDragExited(TreeView<HomeworkTask> tree) {
         setOnDragExited(event -> {
-            //            System.out.println("TODO reset color of listview"); //todo
-    
+            tree.setStyle("-fx-background-color: -fx-base;");
             event.consume();
     
         });
