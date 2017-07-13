@@ -81,8 +81,10 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
      *                  belong.
      */
     public void setup(TreeView<HomeworkTask> tree, LocalDate localDate) {
+        // update text on changes
         setConverter(new TaskConverter(this));
-        
+
+        // update label on changes
         comboBox.valueProperty().addListener(
                 (observable, oldValue, newValue) -> this.getTreeItem()
                     .getValue().setLabel(newValue)
@@ -149,7 +151,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
     @Override
     public void updateItem(HomeworkTask homeworkTask, boolean empty) {
         super.updateItem(homeworkTask, empty);
-        
+
         if(isEmpty()) {
             setGraphic(null);
             setText(null);
@@ -423,8 +425,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
      * @param tree TreeView needed for updating the database
      * @param day LocalDate needed for updating the database
      */
-    void setOnDragDropped(final TreeView<HomeworkTask> tree,
-                          final LocalDate day) {
+    void setOnDragDropped(final TreeView<HomeworkTask> tree, final LocalDate day) {
         setOnDragDropped(event -> {
             Dragboard db = event.getDragboard();
             boolean success = false;

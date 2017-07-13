@@ -2,7 +2,6 @@ package deltadak.ui;
 
 import deltadak.Database;
 import deltadak.HomeworkTask;
-import deltadak.commands.DeleteCommand;
 import deltadak.commands.UndoFacility;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,18 +17,13 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.concurrent.Task;
 
-import javax.lang.model.type.ArrayType;
-import javax.xml.crypto.Data;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.ArrayList;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Class to control the UI
@@ -342,7 +336,7 @@ public class Controller implements Initializable {
     List<HomeworkTask> convertTreeItemListToArrayList(
             ObservableList<TreeItem<HomeworkTask>> list) {
         
-        ArrayList<HomeworkTask> arrayList = new ArrayList<>();
+        List<HomeworkTask> arrayList = new ArrayList<>();
         
         for (TreeItem<HomeworkTask> aList : list) {
             arrayList.add(aList.getValue());
@@ -356,7 +350,7 @@ public class Controller implements Initializable {
      * each list is the parent task, the items after that are its subtasks.
      *
      * @param tree The TreeView to convert.
-     * @return List<List<HomeworkTask>>
+     * @return List&lt;List&lt;HomeworkTask&gt;&gt;
      */
     List<List<HomeworkTask>> convertTreeToArrayList
             (TreeView<HomeworkTask> tree) {
@@ -405,8 +399,8 @@ public class Controller implements Initializable {
         List<HomeworkTask> parentTasks = new ArrayList<>();
         
         // add the first item of each list to parentTasks
-        for (int i = 0; i < homeworkFamilies.size(); i++) {
-            parentTasks.add(homeworkFamilies.get(i).get(0));
+        for (List<HomeworkTask> homeworkFamily : homeworkFamilies) {
+            parentTasks.add(homeworkFamily.get(0));
         }
         return parentTasks;
     }
@@ -457,7 +451,7 @@ public class Controller implements Initializable {
                 // we try to dig up the treeview in this vbox
                 for (Node subNode : ((Pane) node).getChildren()) {
                     if (subNode instanceof TreeView) {
-                        listViews.add((TreeView) subNode);
+                        listViews.add((TreeView<HomeworkTask>) subNode);
                     }
                 }
             }
@@ -477,7 +471,6 @@ public class Controller implements Initializable {
             // refresh the treeview from database
             LocalDate localDate = focusDay.plusDays(i - 1);
             refreshDay(tree, localDate);
-            cleanUp(tree); // TODO wasn't in subtasks branch, do we need it?
         }
     }
 
@@ -519,8 +512,7 @@ public class Controller implements Initializable {
     
         for(i = 0; i < MAX_LIST_LENGTH; i++) {
             if(i >= tree.getRoot().getChildren().size()) {
-                TreeItem<HomeworkTask> item = new TreeItem<>(
-                        new HomeworkTask(false,"", "", "White", -1));
+                TreeItem<HomeworkTask> item = new TreeItem<>(new HomeworkTask());
                 tree.getRoot().getChildren().add(item);
             }
         }
@@ -587,8 +579,6 @@ public class Controller implements Initializable {
         focusDay = focusDay.plusDays(NUMBER_OF_MOVING_DAYS);
         setupGridPane(focusDay);
     }
-
-    //todo should these methods be in Database class?
 
     /**
      * Requests tasks from database, and when done updates the treeview.
@@ -678,9 +668,7 @@ public class Controller implements Initializable {
                 return null;
             }
         };
-        task.setOnSucceeded(e -> {
-            progressIndicator.setVisible(false);
-        });
+        task.setOnSucceeded(e -> progressIndicator.setVisible(false));
         exec.execute(task);
     }
     
