@@ -103,7 +103,7 @@ Ctrl+Z: Undo a deletion. "
                   text="Number of days to go forward:"/>
 
             <Button fx:id="applyNumberOfDays"
-                    GridPane.columnIndex="2"
+                    GridPane.columnIndex="3"
                     text="Apply"/>
 
             <Text id="numberOfShowDaysText"
@@ -112,7 +112,7 @@ Ctrl+Z: Undo a deletion. "
                   GridPane.rowIndex="1"/>
 
             <Button fx:id="applyNumberOfShowDays"
-                    GridPane.columnIndex="2"
+                    GridPane.columnIndex="3"
                     GridPane.rowIndex="1"
                     text="Apply"/>
 

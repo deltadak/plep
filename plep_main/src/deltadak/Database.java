@@ -1,14 +1,19 @@
 package deltadak;
 
+import javafx.scene.control.TreeView;
+
 import java.io.File;
 import java.security.CodeSource;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Class to communicate with database, it is an enum by the singleton design pattern.
@@ -153,7 +158,7 @@ public enum Database {
     }
     
     /**
-     * Updates the parents tasks in the database (tasks table).
+     * Updates the parent tasks in the database (tasks table).
      *
      * @param day The day for which to update the tasks.
      * @param parentTasks The List<HomeworkTask> with 'new' parents.
@@ -171,10 +176,69 @@ public enum Database {
             insertTask(day, parentTasks.get(i), i);
             
         }
-        
         deleteEmptyRows("tasks", "task");
     }
     
+    /**
+     * Updates the parent tasks in the database. It also copies the subtasks,
+     * using
+     * {@link this#insertTaskForRepeat(LocalDate, HomeworkTask, int)}
+     * instead of {@link this#insertTask(LocalDate, HomeworkTask, int)}.
+     *
+     * @param day The day for which to update the tasks.
+     * @param parentTasks The new tasks to be updated.
+     */
+    public void updateParentsForRepeat(LocalDate day, List<HomeworkTask> parentTasks) {
+        
+        // first remove all the items for this day that are currently in the
+        // database before we add the new ones,
+        // so we don't get double homeworkTasks
+        deleteParentTasksDay(day);
+    
+        // then add the new homeworkTasks
+        for (int i = 0; i < parentTasks.size(); i++) {
+            // add the parent task to the database
+            insertTaskForRepeat(day, parentTasks.get(i), i);
+        }
+    
+        deleteEmptyRows("tasks", "task");
+    }
+    
+    /**
+     * Inserts a row in the expanded table.
+     *
+     * @param parentID The id of the homework task this boolean belongs to.
+     * @param expanded The boolean that states if the homework task is expanded or not.
+     */
+    public void insertExpandedItem(int parentID, boolean expanded) {
+        int expandedInt = expanded ? 1 : 0;
+        String sql = "INSERT OR IGNORE INTO expanded(parentID, expanded) "
+                + "VALUES(" + parentID + ", " + expandedInt + ")";
+        query(sql);
+    }
+    
+    /**
+     * Update a row in the expanded table with the new boolean.
+     *
+     * @param parentID The id from the row to update.
+     * @param expanded The new value of the boolean.
+     */
+    public void updateExpanded(int parentID, boolean expanded) {
+        int expandedInt = expanded ? 1 : 0;
+        String sql = "UPDATE expanded SET expanded = " + expandedInt
+                + " WHERE parentID = " + parentID;
+        query(sql);
+    }
+    
+    /**
+     * Delete a row from the expanded table.
+     *
+     * @param id The id of the row to delete.
+     */
+    public void deleteExpanded(int id) {
+        String sql = "DELETE FROM expanded WHERE parentID = " + id;
+        query(sql);
+    }
     
     // settings ------------------------------------------------------
     
@@ -255,6 +319,7 @@ public enum Database {
      */
     public void createTables() {
         createHomeworkTable();
+        createExpandedItemstable();
         createSubtaskTable();
         createSettingsTable();
         createLabelsTable();
@@ -300,6 +365,17 @@ public enum Database {
     }
     
     /**
+     * Creates the expanded table. This table holds ids of homework tasks
+     * (the primary key in the tasks table) and their corresponding boolean
+     * of their expanded state.
+     */
+    private void createExpandedItemstable() {
+        String sql = "CREATE TABLE IF NOT EXISTS expanded(parentID INT PRIMARY KEY,"
+                + " expanded BOOLEAN)";
+        query(sql);
+    }
+    
+    /**
      * inserts a homeworkTask into the database, given
      *
      * @param day
@@ -317,12 +393,101 @@ public enum Database {
     
             // update the parentID for all its subtasks
             updateSubtasksID(homeworkTask);
+            // update the id in the expanded table
+            updateExpandedID(homeworkTask);
+            
             homeworkTask.setDatabaseID(countID);
     
             String dayString = day.toString();
     
             int doneInt = homeworkTask.getDone() ? 1 : 0;
     
+            String sql =
+                    "INSERT INTO tasks(id, done, day, task, label, color, orderInDay) "
+                            
+                            + "VALUES (" + countID + ", '" + doneInt + "', '" + dayString + "', '"
+                            + homeworkTask.getText() + "','" + homeworkTask.getLabel() + "','"
+                            + homeworkTask.getColor() + "'," + order + ")";
+            countID++;
+            query(sql);
+        }
+    }
+    
+    /**
+     * Updates the id of a row in the expanded table with the new id from
+     * its task.
+     *
+     * @param parentTask The task of which to update the id.
+     */
+    private void updateExpandedID(HomeworkTask parentTask) {
+        String sql = "UPDATE expanded SET parentID = " + countID +
+                " WHERE parentID = " + parentTask.getDatabaseID();
+        query(sql);
+    }
+    
+    /**
+     * Gets tuples of the form (int id, boolean expanded) from the expanded
+     * table.
+     *
+     * @return List<Map.Entry<Integer, Boolean>>
+     */
+    public List<Map.Entry<Integer, Boolean>> getExpanded() {
+        
+        List<Map.Entry<Integer, Boolean>> expandedPairs = new ArrayList<>();
+        // select all the values from the expanded table
+        String sql = "SELECT * FROM expanded";
+        Connection connection = setConnection();
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+            while (resultSet.next()) {
+                int id = resultSet.getInt("parentID");
+                boolean expanded = resultSet.getBoolean("expanded");
+                // add a new pair with the values to the List
+                expandedPairs.add(new AbstractMap.SimpleEntry<>(
+                        id, expanded));
+            }
+            return expandedPairs;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return expandedPairs;
+        }
+    }
+    
+    /**
+     * Inserts a parent task, keeps the subtasks with the old IDs (of the to
+     * be repeated task) and creates new subtasks.
+     *
+     * @param day The day on which the to be repeated task is repeated.
+     * @param homeworkTask The task to be repeated.
+     * @param order The i-th parent task on the day.
+     */
+    private void insertTaskForRepeat(final LocalDate day,
+                            final HomeworkTask homeworkTask, final int order) {
+        // don't add empty tasks
+        if(!homeworkTask.getText().equals("")) {
+            setHighestID(); // sets countID
+            
+            // get all the subtasks for the task to be repeated
+            List<HomeworkTask> subtasks = getSubtasksByID(homeworkTask.getDatabaseID());
+            
+            // update the parent IDs of the subtasks
+            updateSubtasksID(homeworkTask);
+            // update the id in the expanded table
+            updateExpandedID(homeworkTask);
+            
+            // add the subtasks with the old parentID again. We can do this
+            // because the id of the task that is repeated does not change.
+            for (HomeworkTask subtask : subtasks) {
+                insertSubtask(subtask, homeworkTask.getDatabaseID());
+            }
+    
+            homeworkTask.setDatabaseID(countID);
+            
+            String dayString = day.toString();
+            
+            int doneInt = homeworkTask.getDone() ? 1 : 0;
+            
             String sql =
                     "INSERT INTO tasks(id, done, day, task, label, color, orderInDay) "
                             
@@ -379,7 +544,7 @@ public enum Database {
      *         object.
      */
     private void deleteTasksDay(final LocalDate day) {
-    
+        
         String getIDs = "SELECT id FROM tasks WHERE day = '" + day + "'";
         ArrayList<Integer> parentIDs = new ArrayList<>();
 
@@ -418,7 +583,6 @@ public enum Database {
         String sql = "DELETE FROM tasks WHERE day = '" + day + "'";
         query(sql);
         
-        
     }
     
     // subtasks -------------------------------------------------------------
@@ -438,7 +602,7 @@ public enum Database {
      * @param subtask HomeworkTask to insert.
      * @param parentID id of the parent task.
      */
-    private void insertSubtask(final HomeworkTask subtask, final int parentID) {
+    public void insertSubtask(final HomeworkTask subtask, final int parentID) {
         // check if the task is not empty, because then it shouldn't
         // be in the database
         if(!subtask.getText().equals("") && (parentID != -1)) {
@@ -460,6 +624,36 @@ public enum Database {
         String sql = "UPDATE subtasks SET parentID = " + countID +
                 " WHERE parentID = " + parentTask.getDatabaseID();
         query(sql);
+    }
+    
+    /**
+     * Gets the subtasks belonging to the HomeworkTask with the given id.
+     *
+     * @param parentID The id of the HomeworkTask.
+     * @return List<HomeworkTask> with subtasks.
+     */
+    private List<HomeworkTask> getSubtasksByID(int parentID) {
+        
+        String sql = "SELECT done, task FROM subtasks WHERE parentID = " +
+                parentID;
+        
+        List<HomeworkTask> subtasks = new ArrayList<>();
+        
+        Connection connection = setConnection();
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+            while(resultSet.next()) {
+                HomeworkTask subtask = new HomeworkTask(
+                        resultSet.getBoolean("done"),
+                        resultSet.getString("task"),
+                        "", "", -1);
+                subtasks.add(subtask);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return subtasks;
     }
     
     // settings -------------------------------------------------------------

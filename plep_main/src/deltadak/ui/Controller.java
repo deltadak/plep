@@ -1,5 +1,6 @@
 package deltadak.ui;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import deltadak.Database;
 import deltadak.HomeworkTask;
 import deltadak.commands.UndoFacility;
@@ -17,9 +18,11 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.concurrent.Task;
 
+import javax.xml.crypto.Data;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.ArrayList;
 import java.util.concurrent.Executor;
@@ -308,8 +311,13 @@ public class Controller implements Initializable {
         //add option to delete a task
         tree.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.DELETE) {
+
+                int id = tree.getRoot().getChildren().get(tree.getSelectionModel().getSelectedIndex()).getValue().getDatabaseID();
+                deleteExpanded(id);
+
                 tree.getRoot().getChildren()
                         .remove(tree.getSelectionModel().getSelectedIndex());
+
                 updateDatabase(localDate,
                         convertTreeToArrayList(tree));
                 cleanUp(tree); //cleaning up has to happen in the listener
@@ -468,6 +476,14 @@ public class Controller implements Initializable {
 
         for (int i = 0; i < NUMBER_OF_DAYS; i++) {
             TreeView<HomeworkTask> tree = treeViews.get(i);
+            // create a list to store if the items are expanded
+            List<Boolean> expanded = new ArrayList<>();
+
+            for (int j = 0; j < tree.getRoot().getChildren().size(); j++) {
+                // loop through the tree to add all the booleans
+                expanded.add(tree.getRoot().getChildren().get(j).isExpanded());
+            }
+
             // refresh the treeview from database
             LocalDate localDate = focusDay.plusDays(i - 1);
             refreshDay(tree, localDate);
@@ -588,6 +604,17 @@ public class Controller implements Initializable {
      */
     public void refreshDay(TreeView<HomeworkTask> tree, LocalDate localDate) {
         progressIndicator.setVisible(true);
+
+        // get the homework task ids and their corresponding expanded
+        // state from the database, as tuples
+        Task<List<Map.Entry<Integer, Boolean>>> expandedTask = new
+         Task<List<Map.Entry<Integer, Boolean>>>() {
+            @Override
+            public List<Map.Entry<Integer, Boolean>> call() throws Exception {
+                return getExpandedFromDatabase();
+            }
+        };
+
         // get tasks from the database
         Task<List<List<HomeworkTask>>> task = new Task<List<List<HomeworkTask>>>() {
             @Override
@@ -597,40 +624,89 @@ public class Controller implements Initializable {
         };
         
         task.setOnSucceeded(e -> {
-            // list with the parent tasks
-            ObservableList<HomeworkTask> list =
-                    convertArrayToObservableList(getParentTasks(task.getValue()));
-            // clear all the items currently showing in the TreeView
-            tree.getRoot().getChildren().clear();
-            
-            // add the items from the database to the TreeView
-            for (int i = 0; i < list.size(); i++) {
-                // add the parent task to the tree
-                TreeItem<HomeworkTask> item = new TreeItem<>(list.get(i));
-                tree.getRoot().getChildren().add(item);
-                
-                // get the size of the current family, or the number of
-                // subtasks + 1
-                int familySize = task.getValue().get(i).size();
-                
-                // add every subtask to the tree as a child of the parent task
-                // we start at j=1 because the first item is the parent task
-                for (int j = 1; j < familySize; j++) {
-                    // get the subtask
-                    TreeItem<HomeworkTask> childTask = new TreeItem<>(
-                            task.getValue().get(i).get(j));
-                    // add the subtask
-                    tree.getRoot().getChildren().get(i).getChildren().add
-                            (childTask);
+            expandedTask.setOnSucceeded(event -> {
+
+                // list with the parent tasks
+                ObservableList<HomeworkTask> list =
+                        convertArrayToObservableList(getParentTasks(task.getValue()));
+                // clear all the items currently showing in the TreeView
+                tree.getRoot().getChildren().clear();
+
+                // add the items from the database to the TreeView
+                for (int i = 0; i < list.size(); i++) {
+                    // add the parent task to the tree
+                    TreeItem<HomeworkTask> item = new TreeItem<>(list.get(i));
+                    tree.getRoot().getChildren().add(item);
+
+                    // set the listener on the tree item (I don't know
+                    // why this had to happen here...)
+                    item.expandedProperty().addListener(
+                            (observable, oldValue, newValue) -> {
+                                Database.INSTANCE.updateExpanded(
+                                        item.getValue().getDatabaseID(),
+                                        newValue);
+                            });
+
+                    // get the size of the current family, or the number of
+                    // subtasks + 1
+                    int familySize = task.getValue().get(i).size();
+
+                    // add every subtask to the tree as a child of the parent task
+                    // we start at j=1 because the first item is the parent task
+                    for (int j = 1; j < familySize; j++) {
+                        // get the subtask
+                        TreeItem<HomeworkTask> childTask = new TreeItem<>(
+                                task.getValue().get(i).get(j));
+                        // add the subtask
+                        tree.getRoot().getChildren().get(i).getChildren().add
+                                (childTask);
+                    }
                 }
-            }
-            
-            cleanUp(tree);
-            progressIndicator.setVisible(false);
+
+                // for every tuple in the list with tuples
+                for (Map.Entry<Integer, Boolean> expandedPair : expandedTask.getValue())
+                {
+                    // get the id of the homework task
+                    int id = expandedPair.getKey();
+                    // get its expanded state (boolean)
+                    boolean expanded = expandedPair.getValue();
+
+                    if(findTreeItemById(tree, id) != null) {
+                        // set the expanded state on the tree item with
+                        // the id of the tuple
+                        findTreeItemById(tree, id).setExpanded(expanded);
+                    }
+
+                }
+
+                cleanUp(tree);
+                progressIndicator.setVisible(false);
+            });
+            exec.execute(expandedTask);
         });
         exec.execute(task);
     }
     
+    /**
+     * Gets a TreeItem from the database, using its id.
+     *
+     * @param tree The tree to search for the tree item.
+     * @param id The id of the tree item.
+     * @return TreeItem<HomeworkTask>
+     */
+    private TreeItem<HomeworkTask> findTreeItemById(
+            TreeView<HomeworkTask> tree, int id) {
+
+        List<TreeItem<HomeworkTask>> parents = tree.getRoot().getChildren();
+
+        for (TreeItem<HomeworkTask> parent : parents) {
+            if (parent.getValue().getDatabaseID() == id) {
+                return parent;
+            }
+        }
+        return null;
+    }
+
     /**
      * Update the parent tasks in the database.
      * Used after dragging a task, we only have to update the parents,
@@ -722,6 +798,44 @@ public class Controller implements Initializable {
     synchronized void updateParentsSynced(final LocalDate day,
                           final List<HomeworkTask> parentTasks) {
         Database.INSTANCE.updateParentsDay(day, parentTasks);
+    }
+
+    /**
+     * See {@link Database#getParentTasksDay(LocalDate)}
+     *
+     * @param day Same.
+     * @return Same.
+     */
+    public List<HomeworkTask> getParentTasksDay(final LocalDate day) {
+        return Database.INSTANCE.getParentTasksDay(day);
+    }
+
+    /**
+     * See {@link Database#getExpanded()}
+     *
+     * @return Same.
+     */
+    public List<Map.Entry<Integer, Boolean>> getExpandedFromDatabase() {
+        return Database.INSTANCE.getExpanded();
+    }
+
+    /**
+     * See {@link Database#deleteExpanded(int)}
+     *
+     * @param id Same.
+     */
+    private void deleteExpanded(int id) {
+        Database.INSTANCE.deleteExpanded(id);
+    }
+
+    /**
+     * See {@link Database#insertTask(LocalDate, HomeworkTask, int)}
+     *
+     * @param id Same.
+     * @param expanded Same.
+     */
+    public void insertExpandedItem(int id, boolean expanded) {
+        Database.INSTANCE.insertExpandedItem(id, expanded);
     }
 
     /**

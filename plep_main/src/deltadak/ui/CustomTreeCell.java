@@ -3,6 +3,8 @@ package deltadak.ui;
 import deltadak.Database;
 import deltadak.HomeworkTask;
 import javafx.beans.InvalidationListener;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -24,6 +26,8 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
+import javax.xml.crypto.Data;
+import java.awt.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -115,7 +119,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         
         setOnLabelChangeListener(tree, localDate);
         setOnDoneChangeListener(tree, localDate);
-        
+    
         setOnDragDetected();
         setOnDragOver();
         setOnDragEntered(tree);
@@ -125,12 +129,17 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         
         tree.setOnEditCommit(event -> {
             TreeItem<HomeworkTask> editingItem = getTreeView().getEditingItem();
+    
             // if we are editing one of the subtasks
             if(!editingItem.getParent().equals(root)) {
                 // if we're not adding an empty task, create another subtask
                 if(!event.getNewValue().getText().equals("")){
                     createSubTask(editingItem.getParent());
                 }
+            } else { // if we are not editing a subtask
+                // insert the task in the expanded table
+                controller.insertExpandedItem(editingItem.getValue()
+                  .getDatabaseID(), false);
             }
             
             // update the database with the current first level items
@@ -163,9 +172,10 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
             checkBox.setSelected(done);
             
             label = new Label(homeworkTask.getText());
-            setStyle("-fx-control-inner-background: "
-                     + controller.convertColorToHex(homeworkTask.getColor()));
             
+            // set the style on the label
+            setDoneStyle(done);
+    
             // if the item is first level, it has to show a course label
             // (ComboBox), and it has to have a context menu
             if(getTreeItem().getParent().equals(root)) {
@@ -236,7 +246,44 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
     void setOnDoneChangeListener(TreeView<HomeworkTask> tree, LocalDate localDate) {
         checkBox.selectedProperty().addListener(
                 (observable, oldValue, newValue) -> {
+                    
                     getTreeItem().getValue().setDone(newValue);
+    
+                    // set the style on the label
+                    if(label != null) {
+                        setDoneStyle(newValue);
+                    }
+                    
+                    /* If the item of which the checkbox is toggled is
+                     * a subtask, then we check if all subtasks are done.
+                     * If so, we mark its parent task as done.
+                     */
+                    if(!getTreeItem().getParent().equals(root)) {
+                        
+                        // the total number of subtasks of its parent
+                        int totalSubtasks = getTreeItem().getParent()
+                                .getChildren().size();
+                        
+                        // the number of those tasks that are marked as done
+                        int doneSubtasks = getDoneSubtasks(getTreeItem().getParent());
+                        
+                        // if all the tasks are done, we mark the parent task
+                        // as done
+                        if(totalSubtasks == doneSubtasks) {
+                            // calling ...getparent().getValue().setDone(true)
+                            // is not enough to trigger the event listener of
+                            // the parent item
+                            HomeworkTask parentOld = getTreeItem().getParent().getValue();
+                            HomeworkTask parent = new
+                                    HomeworkTask(true,
+                                                 parentOld.getText(),
+                                                 parentOld.getLabel(),
+                                                 parentOld.getColor(),
+                                                 parentOld.getDatabaseID());
+                            getTreeItem().getParent().setValue(parent);
+                        }
+                    }
+                    
                     controller.updateDatabase(localDate, controller
                             .convertTreeToArrayList(tree));
                 });
@@ -353,15 +400,51 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
      */
     private void repeatTask(final int repeatNumber, final HomeworkTask homeworkTask, LocalDate day) {
         for (int i = 0; i < repeatNumber; i++) {
-            // TODO
-//            day = day.plusWeeks(1);
-//            List<HomeworkTask> homeworkTasks = controller.getDatabaseSynced
-//                    (day);
-//            homeworkTasks.add(homeworkTask);
-//            controller.updateDatabase(day, homeworkTasks);
+            day = day.plusWeeks(1);
+            List<HomeworkTask> homeworkTasks =
+                    controller.getParentTasksDay(day);
+            homeworkTasks.add(homeworkTask);
+            Database.INSTANCE.updateParentsForRepeat(day, homeworkTasks);
+            
         }
         controller.refreshAllDays();
     }
+    
+    /**
+     * Sets the style of the text of a task, depending on whether the task
+     * is done or not.
+     *
+     * @param done boolean, true if the task is done, false if not done.
+     */
+    private void setDoneStyle(boolean done) {
+        if(done) {
+            label.getStyleClass().remove("label");
+            label.getStyleClass().add("donelabel");
+        } else {
+            label.getStyleClass().remove("donelabel");
+            label.getStyleClass().add("label");
+        }
+    }
+    
+    /**
+     * Counts the number of subtasks of taskTreeItem that are marked as done.
+     *
+     * @param taskTreeItem The TreeItem<HomeworkTask> of which to count the
+     *                     done subtasks.
+     * @return int, the number of subtasks that are marked as done.
+     */
+    private int getDoneSubtasks(TreeItem<HomeworkTask> taskTreeItem) {
+        
+        List<TreeItem<HomeworkTask>> subtasks = taskTreeItem.getChildren();
+        int count = 0;
+        for (TreeItem<HomeworkTask> subtask : subtasks) {
+            if (subtask.getValue().getDone()) {
+                count++;
+            }
+        }
+        return count;
+    }
+    
     
     /**
      * When the dragging is detected, we place the content of the LabelCell
