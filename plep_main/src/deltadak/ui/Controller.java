@@ -608,40 +608,30 @@ public class Controller implements Initializable {
      */
     public void refreshDay(TreeView<HomeworkTask> tree, LocalDate localDate) {
         progressIndicator.setVisible(true);
-    
-        // get the homework task ids and their corresponding expanded
-        // state from the database, as tuples
-        Task<List<Map.Entry<Integer, Boolean>>> expandedTask = new
-         Task<List<Map.Entry<Integer, Boolean>>>() {
+
+        Task task = new Task() {
             @Override
-            public List<Map.Entry<Integer, Boolean>> call() throws Exception {
-                return getExpandedFromDatabase();
-            }
-        };
-        
-        // get tasks from the database
-        Task<List<List<HomeworkTask>>> task = new Task<List<List<HomeworkTask>>>() {
-            @Override
-            public List<List<HomeworkTask>> call() throws Exception {
-                return getDatabaseSynced(localDate);
-            }
-        };
-        
-        task.setOnSucceeded(e -> {
-            expandedTask.setOnSucceeded(event -> {
-                
+            public Boolean call() throws Exception {
+                // below two database accessors take noticable time
+
+                // get tasks from the database
+                List<List<HomeworkTask>> allTasks = getDatabaseSynced(localDate);
+                // get the homework task ids and their corresponding expanded
+                // state from the database, as tuples
+                List<Map.Entry<Integer, Boolean>> allExpandedTasks = getExpandedFromDatabase();
+
                 // list with the parent tasks
                 ObservableList<HomeworkTask> list =
-                        convertArrayToObservableList(getParentTasks(task.getValue()));
+                        convertArrayToObservableList(getParentTasks(allTasks));
                 // clear all the items currently showing in the TreeView
                 tree.getRoot().getChildren().clear();
-    
+
                 // add the items from the database to the TreeView
                 for (int i = 0; i < list.size(); i++) {
                     // add the parent task to the tree
                     TreeItem<HomeworkTask> item = new TreeItem<>(list.get(i));
                     tree.getRoot().getChildren().add(item);
-        
+
                     // set the listener on the tree item (I don't know
                     // why this had to happen here...)
                     item.expandedProperty().addListener(
@@ -650,44 +640,46 @@ public class Controller implements Initializable {
                                         item.getValue().getDatabaseID(),
                                         newValue);
                             });
-        
+
                     // get the size of the current family, or the number of
                     // subtasks + 1
-                    int familySize = task.getValue().get(i).size();
-        
+                    int familySize = allTasks.get(i).size();
+
                     // add every subtask to the tree as a child of the parent task
                     // we start at j=1 because the first item is the parent task
                     for (int j = 1; j < familySize; j++) {
                         // get the subtask
                         TreeItem<HomeworkTask> childTask = new TreeItem<>(
-                                task.getValue().get(i).get(j));
+                                allTasks.get(i).get(j));
                         // add the subtask
                         tree.getRoot().getChildren().get(i).getChildren().add
                                 (childTask);
                     }
                 }
-    
+
                 // for every tuple in the list with tuples
-                for (Map.Entry<Integer, Boolean> expandedPair : expandedTask.getValue())
+                for (Map.Entry<Integer, Boolean> expandedPair : allExpandedTasks)
                 {
                     // get the id of the homework task
                     int id = expandedPair.getKey();
                     // get its expanded state (boolean)
                     boolean expanded = expandedPair.getValue();
-                    
+
                     if(findTreeItemById(tree, id) != null) {
                         // set the expanded state on the tree item with
                         // the id of the tuple
                         findTreeItemById(tree, id).setExpanded(expanded);
                     }
-        
+
                 }
-    
+
                 cleanUp(tree);
                 progressIndicator.setVisible(false);
-            });
-            exec.execute(expandedTask);
-        });
+
+                return true;
+            }
+        };
+
         exec.execute(task);
     }
     
