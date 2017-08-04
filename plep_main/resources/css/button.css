@@ -1,0 +1,14 @@
+.button {
+    -fx-background-color: Transparent;
+    -fx-text-fill: -fx-button;
+    /* increase font size to normal for buttons */
+    -fx-font-size: 13pt;
+}
+
+.button:hover {
+    -fx-background-color: -fx-button-hover;
+}
+
+.button:pressed {
+    -fx-background-color: -fx-button-pressed;
+}

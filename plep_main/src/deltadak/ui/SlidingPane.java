@@ -66,7 +66,8 @@ public class SlidingPane {
         slidingPane.setPrefWidth(PANE_WIDTH);
         // set the left x coordinate of the settings pane at -PANE_WIDTH
         // on initialization, so the entire pane is outside of the window
-        slidingPane.setTranslateX(-PANE_WIDTH);
+        // for some strange reason the extra buffer of 10 is needed, otherwise the pane starts like 10 pixels in view
+        slidingPane.setTranslateX(-PANE_WIDTH-10);
 
         // setup the animation to open the settings pane
         TranslateTransition openNav =

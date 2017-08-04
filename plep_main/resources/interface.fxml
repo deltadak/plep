@@ -8,6 +8,7 @@
 <?import javafx.scene.control.ProgressIndicator?>
 
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1"
             xmlns="http://javafx.com/javafx/2.2"
             fx:controller="deltadak.ui.Controller"
@@ -45,45 +46,34 @@
 
     <!-- help -->
     <AnchorPane fx:id="helpPane"
-                style="-fx-background-color: lightskyblue"
                 AnchorPane.bottomAnchor="0.0">
         <GridPane
                 AnchorPane.topAnchor="10.0"
                 AnchorPane.leftAnchor="10.0"
                 hgap="2"
-                vgap="2">
+                vgap="2"
+                prefWidth="400">
+            <!-- again set prefwidth because otherwise wrapping text doesn't work -->
+
 
             <Text id="helpTextTitle"
                   text="The cool features:"
                   GridPane.columnIndex="0"
                   GridPane.rowIndex="0"/>
 
-            <Text text="Drag and drop!"
+            <Label id="helpText" text="Drag and drop! &#13;
+Double-click to edit, enter to save. &#13;
+Right-click on an item: Choose a colour or repeat weekly. &#13;
+DEL: Delete the selected item. &#13;
+Ctrl+Z: Undo a deletion. "
+                  wrapText="true"
                   GridPane.columnIndex="0"
                   GridPane.rowIndex="1"/>
-
-
-            <Text text="Double-click to edit, enter to save."
-                  GridPane.columnIndex="0"
-                  GridPane.rowIndex="2"/>
-
-            <Text text="Right-click on an item: Choose a colour or repeat weekly."
-                  GridPane.columnIndex="0"
-                  GridPane.rowIndex="3"/>
-
-            <Text text="DEL: Delete the selected item."
-                  GridPane.columnIndex="0"
-                  GridPane.rowIndex="4"/>
-
-            <Text text="Ctrl+Z: Undo a deletion."
-                  GridPane.columnIndex="0"
-                  GridPane.rowIndex="5"/>
         </GridPane>
     </AnchorPane>
 
     <!-- settings -->
     <AnchorPane fx:id="settingsPane"
-                style="-fx-background-color: lightskyblue"
                 AnchorPane.bottomAnchor="0.0">
 
         <GridPane fx:id="editLabelsPane"

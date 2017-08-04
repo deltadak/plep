@@ -1,0 +1,22 @@
+.combo-box {
+    -fx-background-color:  Transparent;
+    -fx-text-fill: yellow;
+}
+
+.combo-box:hover {
+    -fx-background-color: -fx-accent;
+}
+
+.combo-box:pressed {
+    -fx-background-color: derive(-fx-control-inner-background, -35%);
+}
+
+/* an arrow is a button */
+.combo-box .arrow {
+    -fx-background-color: -fx-button;
+}
+
+/* The selector of the little dropped down list */
+.combo-box .list-cell:hover {
+    -fx-background-color: -fx-accent;
+}
