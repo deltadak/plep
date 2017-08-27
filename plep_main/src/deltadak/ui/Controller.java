@@ -494,12 +494,11 @@ public class Controller implements Initializable {
     /**
      * sets the background color of a LabelCell
      *
-     * @param menuItem  MenuItem to retrieve the color from
+     * @param colorWord the color in English, with capital. e.g. Green
      * @param customTreeCell LabelCell of which to change the background color
      */
-    public void setBackgroundColor(final MenuItem menuItem,
-                                    final CustomTreeCell customTreeCell) {
-        String colorWord = menuItem.getText();
+    public void setBackgroundColor(String colorWord,
+                                    CustomTreeCell customTreeCell) {
         String colorString = convertColorToHex(colorWord);
         if (colorString.equals("#ffffffff")) {
             customTreeCell.setStyle("-fx-text-fill: none");
@@ -657,7 +656,7 @@ public class Controller implements Initializable {
                     }
                 }
 
-                // for every tuple in the list with tuples
+                // Expand tasks according to database
                 for (Map.Entry<Integer, Boolean> expandedPair : allExpandedTasks)
                 {
                     // get the id of the homework task
@@ -673,12 +672,14 @@ public class Controller implements Initializable {
 
                 }
 
-                cleanUp(tree);
-                progressIndicator.setVisible(false);
-
                 return true;
             }
         };
+
+        task.setOnSucceeded(e -> {
+            cleanUp(tree);
+            progressIndicator.setVisible(false);
+        });
 
         exec.execute(task);
     }

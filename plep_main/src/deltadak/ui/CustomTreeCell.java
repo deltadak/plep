@@ -3,6 +3,7 @@ package deltadak.ui;
 import deltadak.Database;
 import deltadak.HomeworkTask;
 import javafx.beans.InvalidationListener;
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -21,16 +22,14 @@ import javafx.scene.control.cell.TextFieldTreeCell;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 
 import javax.xml.crypto.Data;
 import java.awt.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.Callable;
 
 import static java.lang.Math.min;
 
@@ -86,7 +85,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
      */
     public void setup(TreeView<HomeworkTask> tree, LocalDate localDate) {
         setConverter(new TaskConverter(this));
-        
+
         comboBox.valueProperty().addListener(
                 (observable, oldValue, newValue) -> this.getTreeItem()
                     .getValue().setLabel(newValue)
@@ -326,8 +325,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         for (int i = 2; i < contextMenu.getItems().size(); i++) {
             MenuItem colorMenuItem = contextMenu.getItems().get(i);
             colorMenuItem.setOnAction(event1 -> {
-                System.out.println(colorMenuItem.getText() + " clicked");
-                controller.setBackgroundColor(colorMenuItem, this);
+                controller.setBackgroundColor(colorMenuItem.getText(), this);
                 controller.updateDatabase(day, controller
                         .convertTreeToArrayList(tree));
                 controller.cleanUp(tree);
