@@ -169,6 +169,10 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
             checkBox.setSelected(done);
             
             label = new Label(homeworkTask.getText());
+
+            // Get style from the database and apply to the item
+            setStyle("-fx-control-inner-background: "
+                    + controller.convertColorToHex(homeworkTask.getColor()));
             
             // set the style on the label
             setDoneStyle(done);
