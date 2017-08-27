@@ -67,6 +67,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         this.root = root;
     
         checkBox = new CheckBox();
+        
         comboList = FXCollections
                 .observableArrayList(Database.INSTANCE.getLabels());
     
