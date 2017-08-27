@@ -84,8 +84,9 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
      *                  belong.
      */
     public void setup(TreeView<HomeworkTask> tree, LocalDate localDate) {
+        // update text on changes
         setConverter(new TaskConverter(this));
-
+        // update label on changes
         comboBox.valueProperty().addListener(
                 (observable, oldValue, newValue) -> this.getTreeItem()
                     .getValue().setLabel(newValue)
@@ -95,15 +96,15 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         tree.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             // We want to clear the selection on all the other listviews, otherwise weird 'half-selected' greyed out cells are left behind.
 
-            // A ListView is inside a HBox inside the GridPane, so node will be a VBox
+            // A TreeView is inside a VBox inside the GridPane, so node will be a VBox
             // Hence we need to circumvent a little to clear selection of all other listviews
             for(Node node : tree.getParent().getParent().getChildrenUnmodifiable()) {
                 if (node instanceof VBox) {
-                    // We assume the title (a Label) is first, Pane is second, listview is third
-                    Node listNode = ((VBox) node).getChildren().get(2);
+                    // We assume the title (a Label) is first, Pane is second, treeview is third
+                    Node treeNode = ((VBox) node).getChildren().get(2);
                     // First deselect all of them...
-                    if ((listNode instanceof TreeView) ) {
-                        ((TreeView) listNode).getSelectionModel().clearSelection();
+                    if ((treeNode instanceof TreeView) ) {
+                        ((TreeView) treeNode).getSelectionModel().clearSelection();
                     }
                 }
 
@@ -119,8 +120,8 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
     
         setOnDragDetected();
         setOnDragOver();
-        setOnDragEntered();
-        setOnDragExited();
+        setOnDragEntered(tree);
+        setOnDragExited(tree);
         setOnDragDropped(tree, localDate);
         setOnDragDone(tree, localDate);
         
@@ -157,7 +158,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
     @Override
     public void updateItem(HomeworkTask homeworkTask, boolean empty) {
         super.updateItem(homeworkTask, empty);
-        
+
         if(isEmpty()) {
             setGraphic(null);
             setText(null);
@@ -173,7 +174,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
             // Get style from the database and apply to the item
             setStyle("-fx-control-inner-background: "
                     + controller.convertColorToHex(homeworkTask.getColor()));
-            
+
             // set the style on the label
             setDoneStyle(done);
     
@@ -479,12 +480,13 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
     
     /**
      * Sets on drag entered.
+     * @param tree TreeView to style as focused.
      */
-    void setOnDragEntered() {
+    void setOnDragEntered(TreeView<HomeworkTask> tree) {
         setOnDragEntered(event -> {
             if ((!Objects.equals(event.getGestureSource(), this)) && event
                     .getDragboard().hasContent(controller.DATA_FORMAT)) {
-                //                System.out.println("TODO: change color of listview"); //todo
+                tree.setStyle("-fx-background-color: -fx-accent;");
             }
             
             event.consume();
@@ -493,11 +495,11 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
     
     /**
      * Sets on drag exited.
+     * @param tree TreeView to style as not focused.
      */
-    void setOnDragExited() {
+    void setOnDragExited(TreeView<HomeworkTask> tree) {
         setOnDragExited(event -> {
-            //            System.out.println("TODO reset color of listview"); //todo
-    
+            tree.setStyle("-fx-background-color: -fx-base;");
             event.consume();
     
         });
@@ -509,8 +511,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
      * @param tree TreeView needed for updating the database
      * @param day LocalDate needed for updating the database
      */
-    void setOnDragDropped(final TreeView<HomeworkTask> tree,
-                          final LocalDate day) {
+    void setOnDragDropped(final TreeView<HomeworkTask> tree, final LocalDate day) {
         setOnDragDropped(event -> {
             Dragboard db = event.getDragboard();
             boolean success = false;
@@ -530,7 +531,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                             .setValue(newHomeworkTask); //replace empty item
                 } else {
                     TreeItem<HomeworkTask> item = new TreeItem<>(newHomeworkTask);
-                    tree.getRoot().getChildren().add(item);
+                    tree.getRoot().getChildren().add(index, item);
                 }
                 success = true;
                 // update tasks in database
@@ -547,7 +548,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
             // clean up immediately for a smooth reaction
             controller.cleanUp(tree);
             
-            // works to le the subtasks show up after the drag, except when dragging a task with subtasks in the same list...
+            // works to let the subtasks show up after the drag, except when dragging a task with subtasks in the same list...
             controller.refreshAllDays();
         });
     }
@@ -575,9 +576,12 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                 // another day
                 
                 // If item was moved to an other day, or down in same list
-                if (tree.getRoot().getChildren().get(getIndex())
-                            .getValue().getText()
-                                .equals(newHomeworkTask.getText())) {
+                TreeItem<HomeworkTask> currentItem = tree.getRoot().getChildren().get(getIndex());
+                String currentText = currentItem.getValue().getText();
+                // if text at current location is equal to
+                String newText = newHomeworkTask.getText();
+
+                if (currentText.equals(newText)) {
                     tree.getRoot().getChildren().get(getIndex())
                             .setValue(emptyHomeworkTask);
                     setGraphic(null);
@@ -589,21 +593,14 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                     tree.getRoot().getChildren().get(index)
                             .setValue(emptyHomeworkTask);
                 }
-                
+
                 // update in database
                 controller.updateParentDatabase(day,
                         controller.getParentTasks(
                             controller.convertTreeToArrayList(tree)
                         )
                 );
-                
-                // prevent an empty list from refusing to receive
-                // items, as it wouldn't contain any treecell
-                if (tree.getRoot().getChildren().size() < 1) {
-                    TreeItem<HomeworkTask> item =
-                            new TreeItem<>(emptyHomeworkTask);
-                    tree.getRoot().getChildren().add(item);
-                }
+
             }
             event.consume();
             // clean up immediately for a smooth reaction

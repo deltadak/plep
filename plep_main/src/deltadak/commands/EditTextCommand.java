@@ -31,7 +31,7 @@ public class EditTextCommand extends Command {
     @Override
     protected void executionHook() {
         List<List<HomeworkTask>> newList = new ArrayList<>(listState);
-//        newList.add(stuff); //todo
+//        newList.add(stuff);
         Database.INSTANCE.updateTasksDay(dayState, newList);
     }
 

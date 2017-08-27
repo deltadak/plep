@@ -24,13 +24,14 @@ public class HomeworkTask implements Serializable {
     }
 
     /**
-     * Default constructor, without databaseID.
+     * Default task.
      */
     public HomeworkTask() {
         this.done = false;
-        this.text = "default text";
-        this.label = "default label";
-        this.color = "white";
+        this.text = "";
+        this.label = "";
+        this.color = "White";
+        this.databaseID = -1;
     }
 
     public boolean getDone() {

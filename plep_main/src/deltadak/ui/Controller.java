@@ -222,7 +222,7 @@ public class Controller implements Initializable {
             
             VBox vbox = setTitle(tree, localDate);
             addVBoxToGridPane(vbox, index);
-            
+
             // Request content on a separate thread, and hope the content
             // will be set eventually.
             refreshDay(tree, localDate);
@@ -311,13 +311,13 @@ public class Controller implements Initializable {
         //add option to delete a task
         tree.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.DELETE) {
-    
+
                 int id = tree.getRoot().getChildren().get(tree.getSelectionModel().getSelectedIndex()).getValue().getDatabaseID();
                 deleteExpanded(id);
-    
+
                 tree.getRoot().getChildren()
                         .remove(tree.getSelectionModel().getSelectedIndex());
-                
+
                 updateDatabase(localDate,
                         convertTreeToArrayList(tree));
                 cleanUp(tree); //cleaning up has to happen in the listener
@@ -344,7 +344,7 @@ public class Controller implements Initializable {
     List<HomeworkTask> convertTreeItemListToArrayList(
             ObservableList<TreeItem<HomeworkTask>> list) {
         
-        ArrayList<HomeworkTask> arrayList = new ArrayList<>();
+        List<HomeworkTask> arrayList = new ArrayList<>();
         
         for (TreeItem<HomeworkTask> aList : list) {
             arrayList.add(aList.getValue());
@@ -358,7 +358,7 @@ public class Controller implements Initializable {
      * each list is the parent task, the items after that are its subtasks.
      *
      * @param tree The TreeView to convert.
-     * @return List<List<HomeworkTask>>
+     * @return List&lt;List&lt;HomeworkTask&gt;&gt;
      */
     List<List<HomeworkTask>> convertTreeToArrayList
             (TreeView<HomeworkTask> tree) {
@@ -407,8 +407,8 @@ public class Controller implements Initializable {
         List<HomeworkTask> parentTasks = new ArrayList<>();
         
         // add the first item of each list to parentTasks
-        for (int i = 0; i < homeworkFamilies.size(); i++) {
-            parentTasks.add(homeworkFamilies.get(i).get(0));
+        for (List<HomeworkTask> homeworkFamily : homeworkFamilies) {
+            parentTasks.add(homeworkFamily.get(0));
         }
         return parentTasks;
     }
@@ -459,7 +459,7 @@ public class Controller implements Initializable {
                 // we try to dig up the treeview in this vbox
                 for (Node subNode : ((Pane) node).getChildren()) {
                     if (subNode instanceof TreeView) {
-                        listViews.add((TreeView) subNode);
+                        listViews.add((TreeView<HomeworkTask>) subNode);
                     }
                 }
             }
@@ -478,16 +478,15 @@ public class Controller implements Initializable {
             TreeView<HomeworkTask> tree = treeViews.get(i);
             // create a list to store if the items are expanded
             List<Boolean> expanded = new ArrayList<>();
-            
+
             for (int j = 0; j < tree.getRoot().getChildren().size(); j++) {
                 // loop through the tree to add all the booleans
                 expanded.add(tree.getRoot().getChildren().get(j).isExpanded());
             }
-            
+
             // refresh the treeview from database
             LocalDate localDate = focusDay.plusDays(i - 1);
             refreshDay(tree, localDate);
-            cleanUp(tree); // TODO wasn't in subtasks branch, do we need it?
         }
     }
 
@@ -528,8 +527,7 @@ public class Controller implements Initializable {
     
         for(i = 0; i < MAX_LIST_LENGTH; i++) {
             if(i >= tree.getRoot().getChildren().size()) {
-                TreeItem<HomeworkTask> item = new TreeItem<>(
-                        new HomeworkTask(false,"", "", "White", -1));
+                TreeItem<HomeworkTask> item = new TreeItem<>(new HomeworkTask());
                 tree.getRoot().getChildren().add(item);
             }
         }
@@ -597,8 +595,6 @@ public class Controller implements Initializable {
         setupGridPane(focusDay);
     }
 
-    //todo should these methods be in Database class?
-
     /**
      * Requests tasks from database, and when done updates the treeview.
      *
@@ -607,6 +603,7 @@ public class Controller implements Initializable {
      */
     public void refreshDay(TreeView<HomeworkTask> tree, LocalDate localDate) {
         progressIndicator.setVisible(true);
+    
 
         Task task = new Task() {
             @Override
@@ -618,7 +615,6 @@ public class Controller implements Initializable {
                 // get the homework task ids and their corresponding expanded
                 // state from the database, as tuples
                 List<Map.Entry<Integer, Boolean>> allExpandedTasks = getExpandedFromDatabase();
-
                 // list with the parent tasks
                 ObservableList<HomeworkTask> list =
                         convertArrayToObservableList(getParentTasks(allTasks));
@@ -643,7 +639,6 @@ public class Controller implements Initializable {
                     // get the size of the current family, or the number of
                     // subtasks + 1
                     int familySize = allTasks.get(i).size();
-
                     // add every subtask to the tree as a child of the parent task
                     // we start at j=1 because the first item is the parent task
                     for (int j = 1; j < familySize; j++) {
@@ -671,14 +666,14 @@ public class Controller implements Initializable {
                     }
 
                 }
-
-                return true;
+    return true;
             }
         };
 
         task.setOnSucceeded(e -> {
-            cleanUp(tree);
-            progressIndicator.setVisible(false);
+                cleanUp(tree);
+                progressIndicator.setVisible(false);
+
         });
 
         exec.execute(task);
@@ -693,9 +688,9 @@ public class Controller implements Initializable {
      */
     private TreeItem<HomeworkTask> findTreeItemById(
             TreeView<HomeworkTask> tree, int id) {
-        
+
         List<TreeItem<HomeworkTask>> parents = tree.getRoot().getChildren();
-        
+
         for (TreeItem<HomeworkTask> parent : parents) {
             if (parent.getValue().getDatabaseID() == id) {
                 return parent;
@@ -703,7 +698,7 @@ public class Controller implements Initializable {
         }
         return null;
     }
-    
+
     /**
      * Update the parent tasks in the database.
      * Used after dragging a task, we only have to update the parents,
@@ -741,9 +736,7 @@ public class Controller implements Initializable {
                 return null;
             }
         };
-        task.setOnSucceeded(e -> {
-            progressIndicator.setVisible(false);
-        });
+        task.setOnSucceeded(e -> progressIndicator.setVisible(false));
         exec.execute(task);
     }
     
@@ -798,7 +791,7 @@ public class Controller implements Initializable {
                           final List<HomeworkTask> parentTasks) {
         Database.INSTANCE.updateParentsDay(day, parentTasks);
     }
-    
+
     /**
      * See {@link Database#getParentTasksDay(LocalDate)}
      *
@@ -808,7 +801,7 @@ public class Controller implements Initializable {
     public List<HomeworkTask> getParentTasksDay(final LocalDate day) {
         return Database.INSTANCE.getParentTasksDay(day);
     }
-    
+
     /**
      * See {@link Database#getExpanded()}
      *
@@ -817,7 +810,7 @@ public class Controller implements Initializable {
     public List<Map.Entry<Integer, Boolean>> getExpandedFromDatabase() {
         return Database.INSTANCE.getExpanded();
     }
-    
+
     /**
      * See {@link Database#deleteExpanded(int)}
      *
@@ -826,7 +819,7 @@ public class Controller implements Initializable {
     private void deleteExpanded(int id) {
         Database.INSTANCE.deleteExpanded(id);
     }
-    
+
     /**
      * See {@link Database#insertTask(LocalDate, HomeworkTask, int)}
      *
