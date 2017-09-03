@@ -1,6 +1,5 @@
 package deltadak.ui;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import deltadak.Database;
 import deltadak.HomeworkTask;
 import deltadak.commands.UndoFacility;
@@ -18,7 +17,6 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.concurrent.Task;
 
-import javax.xml.crypto.Data;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
@@ -67,12 +65,12 @@ public class Controller implements Initializable {
 
     // layout globals, are public for the SettingsPane to access them
     /** number of days shown */
-    public int NUMBER_OF_DAYS;
+    public int numberOfDays;
     /** number of days to skip when using the forward/backward buttons */
-    public int NUMBER_OF_MOVING_DAYS;
+    public int numberOfMovingDays;
 
     /** number of columns to fill with lists with tasks */
-    public int MAX_COLUMNS;
+    public int maxColumns;
     private static final int MAX_LIST_LENGTH = 6;
 
     /** name of setting in the database */
@@ -113,8 +111,8 @@ public class Controller implements Initializable {
         setDefaultDatabasePath();
         createTables(); // if not already exists
 
-        NUMBER_OF_DAYS = Integer.valueOf(getSetting(NUMBER_OF_DAYS_NAME));
-        NUMBER_OF_MOVING_DAYS = Integer.valueOf(getSetting(
+        numberOfDays = Integer.valueOf(getSetting(NUMBER_OF_DAYS_NAME));
+        numberOfMovingDays = Integer.valueOf(getSetting(
                 NUMBER_OF_MOVING_DAYS_NAME));
 
         focusDay = LocalDate.now(); // set focus day to today
@@ -190,16 +188,16 @@ public class Controller implements Initializable {
         boolean isAuto = Boolean.valueOf(
                 getSetting(MAX_COLUMNS_AUTO_NAME));
         if(isAuto) {
-            MAX_COLUMNS = maxColumns(NUMBER_OF_DAYS);
+            maxColumns = maxColumns(numberOfDays);
         } else {
-            MAX_COLUMNS = Integer.valueOf(getSetting(MAX_COLUMNS_NAME));
+            maxColumns = Integer.valueOf(getSetting(MAX_COLUMNS_NAME));
         }
 
         AnchorPane.setTopAnchor(gridPane, toolBar.getPrefHeight());
 
         // first clear the gridpane so we don't get titles overlaying each other
         gridPane.getChildren().clear();
-        for (int index = 0; index < NUMBER_OF_DAYS; index++) {
+        for (int index = 0; index < numberOfDays; index++) {
 
             // add days immediately, otherwise we can't use localDate in a
             // lambda expression (as it is not final)
@@ -286,15 +284,15 @@ public class Controller implements Initializable {
      * @param index at the i'th place (left to right, top to bottom)
      */
     private void addVBoxToGridPane(final VBox vbox, final int index) {
-        int row = index / MAX_COLUMNS;
-        int column = index % MAX_COLUMNS;
+        int row = index / maxColumns;
+        int column = index % maxColumns;
         gridPane.add(vbox, column, row);
     }
     
     /**
-     * Calculates and sets the value of MAX_COLUMNS
+     * Calculates and sets the value of maxColumns
      * @param numberOfDays number of days in total
-     * @return int for MAX_COLUMNS
+     * @return int for maxColumns
      */
     public int maxColumns(int numberOfDays) {
         return (int) Math.ceil(Math.sqrt(numberOfDays));
@@ -433,7 +431,7 @@ public class Controller implements Initializable {
     private int getListViewHeight() {
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
         int totalHeight = (int) primaryScreenBounds.getHeight();
-        return totalHeight / (NUMBER_OF_DAYS / MAX_COLUMNS);
+        return totalHeight / (numberOfDays / maxColumns);
     }
 
     /**
@@ -444,7 +442,7 @@ public class Controller implements Initializable {
     private int getListViewWidth() {
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
         int totalWidth = (int) primaryScreenBounds.getWidth();
-        return totalWidth / MAX_COLUMNS;
+        return totalWidth / maxColumns;
     }
     
 
@@ -474,7 +472,7 @@ public class Controller implements Initializable {
         // find all treeviews from the gridpane
         List<TreeView<HomeworkTask>> treeViews = getAllTreeViews();
 
-        for (int i = 0; i < NUMBER_OF_DAYS; i++) {
+        for (int i = 0; i < numberOfDays; i++) {
             TreeView<HomeworkTask> tree = treeViews.get(i);
             // create a list to store if the items are expanded
             List<Boolean> expanded = new ArrayList<>();
@@ -570,7 +568,7 @@ public class Controller implements Initializable {
      */
     @FXML
     protected void dayBackward() {
-        focusDay = focusDay.plusDays(-NUMBER_OF_MOVING_DAYS);
+        focusDay = focusDay.plusDays(-numberOfMovingDays);
         setupGridPane(focusDay);
     }
 
@@ -591,7 +589,7 @@ public class Controller implements Initializable {
      */
     @FXML
     protected void dayForward() {
-        focusDay = focusDay.plusDays(NUMBER_OF_MOVING_DAYS);
+        focusDay = focusDay.plusDays(numberOfMovingDays);
         setupGridPane(focusDay);
     }
 
