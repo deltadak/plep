@@ -296,7 +296,7 @@ public class Controller implements Initializable {
      * @param numberOfDays number of days in total
      * @return int for MAX_COLUMNS
      */
-    private int maxColumns(int numberOfDays) {
+    public int maxColumns(int numberOfDays) {
         return (int) Math.ceil(Math.sqrt(numberOfDays));
     }
 

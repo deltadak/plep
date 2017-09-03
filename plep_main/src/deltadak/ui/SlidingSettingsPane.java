@@ -45,7 +45,6 @@ public class SlidingSettingsPane extends SlidingPane {
      */
     @Override
     public void setupHook() {
-//        controller.MAX_COLUMNS = maxColumns(controller.NUMBER_OF_DAYS);
         setupSettingsMenu();
         setComponentListeners();
         boolean isAuto = Boolean.valueOf(getSetting(
@@ -240,13 +239,18 @@ public class SlidingSettingsPane extends SlidingPane {
     /**
      * Updates the value of 'max_columns_auto' in the database to the new
      * value of the check box.
-     * @param newValue a boolean with true or false. True if the box is
-     *                 selected, false if it is not selected.
+     * @param newValue a boolean with true or false. True if the box is selected, false if it is not selected.
      */
     @FXML protected void autoColumnsCheckBoxToggled(boolean newValue) {
         updateSetting(Controller.MAX_COLUMNS_AUTO_NAME,
                       String.valueOf(newValue));
         controller.setupGridPane(controller.focusDay);
+
+        // update spinner to reflect auto mode on
+        if (newValue) {
+            int columns = controller.maxColumns(controller.NUMBER_OF_DAYS);
+            maxColumnsSpinner.getValueFactory().setValue(columns);
+        }
     }
 
     /**
