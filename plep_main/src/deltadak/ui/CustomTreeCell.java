@@ -3,9 +3,6 @@ package deltadak.ui;
 import deltadak.Database;
 import deltadak.HomeworkTask;
 import javafx.beans.InvalidationListener;
-import javafx.beans.binding.Bindings;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -24,12 +21,9 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 
-import javax.xml.crypto.Data;
-import java.awt.*;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.Callable;
 
 import static java.lang.Math.min;
 
@@ -95,25 +89,11 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         );
 
         tree.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            // We want to clear the selection on all the other listviews, otherwise weird 'half-selected' greyed out cells are left behind.
-
-            // A TreeView is inside a VBox inside the GridPane, so node will be a VBox
-            // Hence we need to circumvent a little to clear selection of all other listviews
-            for(Node node : tree.getParent().getParent().getChildrenUnmodifiable()) {
-                if (node instanceof VBox) {
-                    // We assume the title (a Label) is first, Pane is second, treeview is third
-                    Node treeNode = ((VBox) node).getChildren().get(2);
-                    // First deselect all of them...
-                    if ((treeNode instanceof TreeView) ) {
-                        ((TreeView) treeNode).getSelectionModel().clearSelection();
-                    }
-                }
-
+            if (newValue != null) {
+                select(
+                        tree, () -> tree.getSelectionModel().select(newValue)
+                );
             }
-
-            // ... then reselect this one
-            tree.getSelectionModel().select(newValue);
-
         });
         
         setOnLabelChangeListener(tree, localDate);
@@ -125,10 +105,22 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         setOnDragExited(tree);
         setOnDragDropped(tree, localDate);
         setOnDragDone(tree, localDate);
+
+        setupSubtasksEditing(tree, localDate);
         
+        // create the context menu
+        contextMenu = createContextMenu(tree, localDate);
+    }
+
+    /**
+     * Initialize what happens after the user edited a subtask.
+     * @param tree The TreeView in which an item was edited.
+     * @param localDate The day of the TreeView.
+     */
+    private void setupSubtasksEditing(TreeView<HomeworkTask> tree, LocalDate localDate) {
         tree.setOnEditCommit(event -> {
             TreeItem<HomeworkTask> editingItem = getTreeView().getEditingItem();
-    
+
             // if we are editing one of the subtasks
             if(!editingItem.getParent().equals(root)) {
                 // if we're not adding an empty task, create another subtask
@@ -138,15 +130,38 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
             } else { // if we are not editing a subtask
                 // insert the task in the expanded table
                 controller.insertExpandedItem(editingItem.getValue()
-                  .getDatabaseID(), false);
+                        .getDatabaseID(), false);
             }
-            
+
             // update the database with the current first level items
             controller.updateDatabase(localDate, controller.convertTreeToArrayList(tree));
         });
-        
-        // create the context menu
-        contextMenu = createContextMenu(tree, localDate);
+    }
+
+    /**
+     * Select a TreeItem in a TreeView, and deselect all other items.
+     * @param tree Any TreeView.
+     * @param selectionFunction The function to select the right item, can select using index or TreeItems. e.g. tree.getSelectionModel().select(index)
+     */
+    private void select(TreeView<HomeworkTask> tree, Runnable selectionFunction) {
+        // We want to clear the selection on all the other listviews, otherwise weird 'half-selected' greyed out cells are left behind.
+
+        // A TreeView is inside a VBox inside the GridPane, so node will be a VBox
+        // Hence we need to circumvent a little to clear selection of all other listviews
+        for(Node node : tree.getParent().getParent().getChildrenUnmodifiable()) {
+            if (node instanceof VBox) {
+                // We assume the title (a Label) is first, Pane is second, treeview is third
+                Node treeNode = ((VBox) node).getChildren().get(2);
+                // First deselect all of them...
+                if ((treeNode instanceof TreeView) ) {
+                    ((TreeView) treeNode).getSelectionModel().clearSelection();
+                }
+            }
+
+        }
+
+        // ... then reselect this one
+        selectionFunction.run();
     }
     
     /**
@@ -540,6 +555,11 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                         controller.getParentTasks(
                             controller.convertTreeToArrayList(tree)
                         )
+                );
+
+                // Clear selection on all other items immediately. This will result in a smooth reaction, whereas otherwise it takes a bit of noticable time before selection of the just-dragged item (on its previous location) is cleared.
+                select(tree,
+                        () -> {}
                 );
             }
             
