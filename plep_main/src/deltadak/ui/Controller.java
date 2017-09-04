@@ -2,6 +2,7 @@ package deltadak.ui;
 
 import deltadak.Database;
 import deltadak.HomeworkTask;
+import deltadak.commands.DeleteCommand;
 import deltadak.commands.UndoFacility;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -32,7 +33,7 @@ import java.util.concurrent.Executors;
 // incorrect warning about LocalDate may be weakened to ChronoLocalDate (not
 // true)
 @SuppressWarnings("TypeMayBeWeakened")
-public class Controller implements Initializable {
+public class Controller implements Initializable, AbstractController {
 
     // main element of the UI is declared in interface.fxml
     @FXML AnchorPane main;
@@ -203,9 +204,8 @@ public class Controller implements Initializable {
             // lambda expression (as it is not final)
             LocalDate localDate = focusDate.plusDays(index - 1);
             
-//            ListView<HomeworkTask> list = new ListView<>();
             TreeItem<HomeworkTask> rootItem = new TreeItem<>(
-                    new HomeworkTask(false, "root", "root", "white", -1));
+                    new HomeworkTask());
             rootItem.setExpanded(true);
             final TreeView<HomeworkTask> tree = new TreeView<>(rootItem);
     
@@ -265,8 +265,7 @@ public class Controller implements Initializable {
      * @param localDate from which to make a title
      * @return VBox with listview and title
      */
-    private VBox setTitle(final TreeView<HomeworkTask> tree,
-                          final LocalDate localDate) {
+    private VBox setTitle(final TreeView<HomeworkTask> tree, final LocalDate localDate) {
         // vbox will contain a title above a list of tasks
         VBox vbox = new VBox();
         Label title = new Label(localDate.getDayOfWeek() + " " + localDate);
@@ -304,17 +303,16 @@ public class Controller implements Initializable {
      * @param tree      ListView to add the Listener to
      * @param localDate so we know for what day to update the database
      */
-    private void addDeleteKeyListener(final TreeView<HomeworkTask> tree,
-                                      final LocalDate localDate) {
+    private void addDeleteKeyListener(final TreeView<HomeworkTask> tree, final LocalDate localDate) {
         //add option to delete a task
         tree.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.DELETE) {
 
+                // Delete the item from the 'expanded' table, which contains information whether the item was expanded or not.
                 int id = tree.getRoot().getChildren().get(tree.getSelectionModel().getSelectedIndex()).getValue().getDatabaseID();
                 deleteExpanded(id);
 
-                tree.getRoot().getChildren()
-                        .remove(tree.getSelectionModel().getSelectedIndex());
+                undoFacility.execute(new DeleteCommand(this, localDate, convertTreeToArrayList(tree), tree.getSelectionModel().getSelectedIndex(), tree));
 
                 updateDatabase(localDate,
                         convertTreeToArrayList(tree));
@@ -514,7 +512,8 @@ public class Controller implements Initializable {
      *
      * @param tree The treeview to be cleaned up.
      */
-    void cleanUp(TreeView<HomeworkTask> tree) {
+    @Override
+    public void cleanUp(TreeView<HomeworkTask> tree) {
         int i;
         TreeItem<HomeworkTask> root = tree.getRoot();
         for(i = 0; i < root.getChildren().size(); i++) {

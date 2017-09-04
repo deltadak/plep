@@ -1,4 +1,4 @@
-/* TreeView and ListView */
+/* TreeView and TreeView */
 
 /* Selected rows */
 .tree-view:focused > .virtual-flow > .clipped-container > .sheet > .text-field-tree-cell:filled:selected,

@@ -3,6 +3,7 @@ package deltadak;
 import deltadak.commands.DeleteCommand;
 import deltadak.ui.AbstractController;
 import javafx.scene.control.ListView;
+import javafx.scene.control.TreeView;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -14,24 +15,26 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Tests {@link DeleteCommand}.
  */
-class DeleteCommandTest {
+public class DeleteCommandTest {
 
-    HomeworkTask taskToDelete;
+    List<HomeworkTask> taskToDelete;
     DeleteCommand command;
 
     private void setup() {
         LocalDate dayState = LocalDate.now();
-        List<HomeworkTask> list = new ArrayList<>();
-        taskToDelete = new HomeworkTask();
+        List<List<HomeworkTask>> list = new ArrayList<>();
+        taskToDelete = new ArrayList<>();
+        taskToDelete.add(new HomeworkTask());
+        taskToDelete.add(new HomeworkTask());
         list.add(taskToDelete);
         AbstractController dummy = new AbstractController() {
             @Override
-            public void updateDatabase(LocalDate day, List<HomeworkTask> homeworkTasks) {
+            public void updateDatabase(LocalDate day, List<List<HomeworkTask>> homeworkTasks) {
                 // do nothing
             }
 
             @Override
-            public void cleanUp(ListView<HomeworkTask> list) {
+            public void cleanUp(TreeView<HomeworkTask> list) {
                 // do nothing
             }
         };

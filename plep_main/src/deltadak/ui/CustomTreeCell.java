@@ -588,8 +588,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                 Dragboard db = event.getDragboard();
                 HomeworkTask newHomeworkTask
                         = (HomeworkTask)db.getContent(controller.DATA_FORMAT);
-                HomeworkTask emptyHomeworkTask = new HomeworkTask(
-                        false, "", "", "White", -1);
+                HomeworkTask emptyHomeworkTask = new HomeworkTask();
                 //remove original item
                 //item can have been moved up (so index becomes one
                 // too much)
