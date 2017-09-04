@@ -1,6 +1,5 @@
 .combo-box {
     -fx-background-color:  Transparent;
-    -fx-text-fill: yellow;
 }
 
 .combo-box:hover {
@@ -19,4 +18,17 @@
 /* The selector of the little dropped down list */
 .combo-box .list-cell:hover {
     -fx-background-color: -fx-accent;
+}
+
+/* Styling for a item of which the checkbox is checked */
+.combo-box-done {
+    -fx-font-style: oblique;
+}
+
+.combo-box-done .text {
+    -fx-strikethrough: true;
+}
+
+.combo-box-done .list-cell {
+    -fx-text-fill: #949494;
 }

@@ -401,7 +401,6 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         for (MenuItem repeatMenuItem : repeatMenuItems) {
             repeatMenuItem.setOnAction(event12 -> {
                 int repeatNumber = Integer.valueOf(repeatMenuItem.getText());
-                System.out.println(repeatNumber + " clicked");
                 HomeworkTask homeworkTaskToRepeat = customTreeCell.getItem();
                 repeatTask(repeatNumber, homeworkTaskToRepeat, day);
             });
@@ -438,9 +437,11 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         if(done) {
             label.getStyleClass().remove("label");
             label.getStyleClass().add("donelabel");
+            comboBox.getStyleClass().add("combo-box-done");
         } else {
             label.getStyleClass().remove("donelabel");
             label.getStyleClass().add("label");
+            comboBox.getStyleClass().remove("combo-box-done");
         }
     }
     

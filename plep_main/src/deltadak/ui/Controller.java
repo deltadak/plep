@@ -308,11 +308,11 @@ public class Controller implements Initializable, AbstractController {
         tree.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.DELETE) {
 
+                undoFacility.execute(new DeleteCommand(this, localDate, convertTreeToArrayList(tree), tree.getSelectionModel().getSelectedIndex(), tree));
+
                 // Delete the item from the 'expanded' table, which contains information whether the item was expanded or not.
                 int id = tree.getRoot().getChildren().get(tree.getSelectionModel().getSelectedIndex()).getValue().getDatabaseID();
                 deleteExpanded(id);
-
-                undoFacility.execute(new DeleteCommand(this, localDate, convertTreeToArrayList(tree), tree.getSelectionModel().getSelectedIndex(), tree));
 
                 updateDatabase(localDate,
                         convertTreeToArrayList(tree));
