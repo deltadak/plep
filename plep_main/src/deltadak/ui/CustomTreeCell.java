@@ -75,8 +75,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
      *  - what has to happen when editing,
      *  - context menu.
      * @param tree The TreeView this TreeCell is a part of.
-     * @param localDate The date to which this TreeView (and thus TreeCell)
-     *                  belong.
+     * @param localDate The date to which this TreeView (and thus TreeCell) belongs.
      */
     public void setup(TreeView<HomeworkTask> tree, LocalDate localDate) {
         // update text on changes
@@ -88,6 +87,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                 
         );
 
+        // If an item is selected, deselect all other items.
         tree.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 select(
@@ -254,12 +254,9 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
     }
     
     /**
-     * Sets a change listener on the CheckBox, to update the database on
-     * changes.
-     * @param tree The TreeView the current TreeCell is in. We need this to
-     *            update the database.
-     * @param localDate The date of the TreeView, and thus all the
-     *                  HomeworkTasks, in which the CheckBox is toggled.
+     * Sets a change listener on the CheckBox, to update the database on changes.
+     * @param tree The TreeView the current TreeCell is in. We need this to update the database.
+     * @param localDate The date of the TreeView, and thus all the HomeworkTasks, in which the CheckBox is toggled.
      */
     void setOnDoneChangeListener(TreeView<HomeworkTask> tree, LocalDate localDate) {
         checkBox.selectedProperty().addListener(
@@ -287,7 +284,11 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                         
                         // if all the tasks are done, we mark the parent task
                         // as done
-                        if(totalSubtasks == doneSubtasks) {
+                        // This is a bit complicated by the idea that we always provide one more empty subtask to be edited.
+                        // Which means that with more than one subtask, the total of done subtasks should be one less than the total.
+                        // Border case: when there is only one subtask, it needs to be checked for the parent to be checked,
+                        // so the amount of done subtasks needs to be at least one.
+                        if((totalSubtasks == (doneSubtasks + 1)) && (doneSubtasks > 0)) {
                             // calling ...getparent().getValue().setDone(true)
                             // is not enough to trigger the event listener of
                             // the parent item
@@ -357,13 +358,13 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
     }
     
     /**
-     * Creates a subtask, or a child, of the parentItem.
+     * Creates an empty subtask, a child, of the parentItem.
      * @param parentItem The item to create a subtask in/under.
      */
     private void createSubTask(TreeItem parentItem) {
         // add a new subtask
         TreeItem<HomeworkTask> emptyItem = new TreeItem<>(
-                new HomeworkTask(false, "", "", "White", -1));
+                new HomeworkTask());
         parentItem.getChildren().add(emptyItem);
         
         // select the new subtask

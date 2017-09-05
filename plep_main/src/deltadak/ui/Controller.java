@@ -215,7 +215,7 @@ public class Controller implements Initializable, AbstractController {
                 treeCell.setup(tree, localDate);
                 return treeCell;
             });
-            
+
             tree.setShowRoot(false);
             
             VBox vbox = setTitle(tree, localDate);
@@ -624,8 +624,7 @@ public class Controller implements Initializable, AbstractController {
                     TreeItem<HomeworkTask> item = new TreeItem<>(list.get(i));
                     tree.getRoot().getChildren().add(item);
 
-                    // set the listener on the tree item (I don't know
-                    // why this had to happen here...)
+                    // When expanded state changes, save to database.
                     item.expandedProperty().addListener(
                             (observable, oldValue, newValue) -> {
                                 Database.INSTANCE.updateExpanded(
@@ -634,7 +633,7 @@ public class Controller implements Initializable, AbstractController {
                             });
 
                     // get the size of the current family, or the number of
-                    // subtasks + 1
+                    // subtasks + 1 (the parent)
                     int familySize = allTasks.get(i).size();
                     // add every subtask to the tree as a child of the parent task
                     // we start at j=1 because the first item is the parent task
@@ -645,6 +644,12 @@ public class Controller implements Initializable, AbstractController {
                         // add the subtask
                         tree.getRoot().getChildren().get(i).getChildren().add
                                 (childTask);
+                    }
+
+                    // Insert an empty subtask at the end to allow the user to easily add more.
+                    if (familySize > 1) {
+                        tree.getRoot().getChildren().get(i).getChildren().add
+                                (new TreeItem<>(new HomeworkTask()));
                     }
                 }
 
