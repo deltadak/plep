@@ -306,13 +306,16 @@ public class Controller implements Initializable, AbstractController {
     private void addDeleteKeyListener(final TreeView<HomeworkTask> tree, final LocalDate localDate) {
         //add option to delete a task
         tree.setOnKeyPressed(event -> {
+            // get the selected item BEFORE deleting the item, otherwise
+            // we're selecting a different item
+            TreeItem<HomeworkTask> selected = tree.getSelectionModel()
+                    .getSelectedItem();
             if (event.getCode() == KeyCode.DELETE) {
 
                 undoFacility.execute(new DeleteCommand(this, localDate, convertTreeToArrayList(tree), tree.getSelectionModel().getSelectedIndex(), tree));
 
                 // Delete the item from the 'expanded' table, which contains information whether the item was expanded or not.
-                int id = tree.getRoot().getChildren().get(tree.getSelectionModel().getSelectedIndex()).getValue().getDatabaseID();
-                deleteExpanded(id);
+                deleteExpanded(selected.getValue().getDatabaseID());
 
                 updateDatabase(localDate,
                         convertTreeToArrayList(tree));

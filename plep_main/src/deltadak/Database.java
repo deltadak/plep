@@ -510,6 +510,7 @@ public enum Database {
         try {
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
+            
             if (resultSet.isBeforeFirst()) {
                 // if the database is not empty, we set the id to be the
                 // highest + 1
@@ -561,13 +562,12 @@ public enum Database {
 
         // delete child tasks so we don't get double ones
         for (Integer parentID : parentIDs) {
-            String query = "DELETE FROM subtasks WHERE parentID = " + parentID;
-            query(query);
+            String querySubTasks = "DELETE FROM subtasks WHERE parentID = " +
+                    parentID;
+            query(querySubTasks);
         }
         
-        // delete the parent tasks
-        String sql = "DELETE FROM tasks WHERE day = '" + day + "'";
-        query(sql);
+        deleteParentTasksDay(day); // delete the parent tasks
         
         
     }
