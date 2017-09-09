@@ -15,12 +15,12 @@ import java.util.List;
 public class DeleteCommand extends Command {
 
     /** remember state */
-    private AbstractController controller; // program to an interface so tests can provide a dummy
-    private LocalDate dayState;
-    private List<List<HomeworkTask>> treeViewItems; // A list of (lists containing a parent and it's children)
-    private TreeView<HomeworkTask> tree;
-    private int indexState;
-    private List<HomeworkTask> deletedTask; // It's a list, includes subtasks
+    protected AbstractController controller; // program to an interface so tests can provide a dummy
+    protected LocalDate dayState;
+    protected List<List<HomeworkTask>> treeViewItems; // A list of (lists containing a parent and it's children)
+    protected TreeView<HomeworkTask> tree;
+    protected int indexState;
+    protected List<HomeworkTask> deletedItemsList; // It's a list, includes subtasks
 
     /**
      * Constructor, gets selected index to find out what to delete.
@@ -41,35 +41,50 @@ public class DeleteCommand extends Command {
     @Override
     protected void executionHook() {
         if (treeViewItems.isEmpty()) {
-            throw new IllegalStateException("cannot delete item from empty list");
+            throw new IllegalStateException("cannot delete item from empty treeview");
         }
-        // save the deleted task so we can undo later
-        deletedTask = treeViewItems.get(indexState);
+        // save the deleted tasks so we can undo later
+        deletedItemsList = treeViewItems.get(indexState);
         treeViewItems.remove(indexState);
+
         // use the treeview to delete an item so the user gets feedback
         if (tree != null) {
+
+            // get the selected item BEFORE deleting the item, otherwise
+            // we're selecting a different item
+            TreeItem<HomeworkTask> selected = tree.getSelectionModel()
+                    .getSelectedItem();
+
+            // Delete the item from the 'expanded' table, which contains information whether the item was expanded or not.
+            controller.deleteExpanded(selected.getValue().getDatabaseID());
+
             tree.getRoot().getChildren().remove(indexState);
         }
+
         // use the items of the listview to update the database
         controller.updateDatabase(dayState, treeViewItems);
+        controller.cleanUp(tree);
     }
 
     @Override
     protected void undoHook() {
-        treeViewItems.add(indexState, deletedTask);
+        treeViewItems.add(indexState, deletedItemsList);
         // if not testing, provide user feedback
         if (tree != null) {
-            // add main task
-            tree.getRoot().getChildren().add(indexState, new TreeItem<>(deletedTask.get(0)));
+            // add parent task
+            TreeItem<HomeworkTask> parent = new TreeItem<>(deletedItemsList.get(0));
+            tree.getRoot().getChildren().add(indexState, parent);
             // add subtasks
             // start at i=1 because first item is the parent task
-            TreeItem<HomeworkTask> parent = tree.getRoot().getChildren().get(indexState);
-            for (int i = 1; i < deletedTask.size(); i++) {
-                parent.getChildren().add(new TreeItem<>(deletedTask.get(i)));
+            for (int i = 1; i < deletedItemsList.size(); i++) {
+                parent.getChildren().add(new TreeItem<>(deletedItemsList.get(i)));
             }
-        }
-        controller.updateDatabase(dayState, treeViewItems);
-        if (tree != null) {
+
+            controller.updateDatabase(dayState, treeViewItems);
+
+            int parentID = parent.getValue().getDatabaseID();
+            controller.insertExpandedItem(parentID, false);
+
             controller.cleanUp(tree);
         }
     }

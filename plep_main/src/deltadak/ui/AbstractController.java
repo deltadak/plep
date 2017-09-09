@@ -1,5 +1,6 @@
 package deltadak.ui;
 
+import deltadak.Database;
 import deltadak.HomeworkTask;
 import deltadak.commands.DeleteCommand;
 import javafx.scene.control.TreeView;
@@ -26,5 +27,20 @@ public interface AbstractController {
      * @param list to clean up
      */
     void cleanUp(TreeView<HomeworkTask> list);
+
+    /**
+     * See {@link Database#deleteExpanded(int)}
+     *
+     * @param id Same.
+     */
+    void deleteExpanded(int id);
+
+    /**
+     * See {@link Database#insertTask(LocalDate, HomeworkTask, int)}
+     *
+     * @param id Same.
+     * @param expanded Same.
+     */
+    void insertExpandedItem(int id, boolean expanded);
 
 }

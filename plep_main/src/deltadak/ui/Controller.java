@@ -3,6 +3,7 @@ package deltadak.ui;
 import deltadak.Database;
 import deltadak.HomeworkTask;
 import deltadak.commands.DeleteCommand;
+import deltadak.commands.DeleteSubtaskCommand;
 import deltadak.commands.UndoFacility;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -306,22 +307,75 @@ public class Controller implements Initializable, AbstractController {
     private void addDeleteKeyListener(final TreeView<HomeworkTask> tree, final LocalDate localDate) {
         //add option to delete a task
         tree.setOnKeyPressed(event -> {
-            // get the selected item BEFORE deleting the item, otherwise
-            // we're selecting a different item
-            TreeItem<HomeworkTask> selected = tree.getSelectionModel()
-                    .getSelectedItem();
+
             if (event.getCode() == KeyCode.DELETE) {
+                // Check whether we want to delete a parent task or subtask.
+                if (tree.getSelectionModel().getSelectedItem().getParent().equals(tree.getRoot())) {
+                    // Delete a parent task.
+                    deleteParentTask(tree, localDate);
+                } else {
+                    // We want to delete a subtask.
+                    deleteSubtask(tree, localDate);
+                }
 
-                undoFacility.execute(new DeleteCommand(this, localDate, convertTreeToArrayList(tree), tree.getSelectionModel().getSelectedIndex(), tree));
 
-                // Delete the item from the 'expanded' table, which contains information whether the item was expanded or not.
-                deleteExpanded(selected.getValue().getDatabaseID());
-
-                updateDatabase(localDate,
-                        convertTreeToArrayList(tree));
-                cleanUp(tree); //cleaning up has to happen in the listener
             }
         });
+    }
+
+    /**
+     * Delete the selected parent task, and save to database.
+     * @param tree TreeView in which the task lives.
+     * @param localDate Date of the TreeView.
+     */
+    private void deleteParentTask(TreeView<HomeworkTask> tree, LocalDate localDate) {
+
+        undoFacility.execute(
+                new DeleteCommand(
+                        this,
+                        localDate,
+                        convertTreeToArrayList(tree),
+                        tree.getSelectionModel().getSelectedIndex(),
+                        tree
+                )
+        );
+
+    }
+
+    /**
+     * Delete the selected subtask.
+     * @param tree TreeView in which the task lives.
+     * @param localDate Date of the TreeView.
+     */
+    private void deleteSubtask(TreeView<HomeworkTask> tree, LocalDate localDate) {
+        TreeItem<HomeworkTask> parentItem = tree.getSelectionModel().getSelectedItem().getParent();
+
+        undoFacility.execute(
+                new DeleteSubtaskCommand(
+                this,
+                    localDate,
+                    convertTreeToArrayList(tree),
+                    tree.getSelectionModel().getSelectedIndex(),
+                    tree
+                )
+        );
+    }
+
+    /**
+     * Get index of parent in the list of TreeItems.
+     * @param tree TreeView which contains the parent
+     * @param parentItem The item to find.
+     * @return the index of the parent in the treeview.
+     */
+    private int getParentIndex(TreeView<HomeworkTask> tree, TreeItem<HomeworkTask> parentItem) {
+        ObservableList<TreeItem<HomeworkTask>> parentList = tree.getRoot().getChildren();
+        int parentIndex = 0;
+        for (int i = 0; i < parentList.size(); i++) {
+            if (parentList.get(i).equals(parentItem)) {
+                parentIndex = i;
+            }
+        }
+        return parentIndex;
     }
 
     /**
@@ -821,7 +875,8 @@ public class Controller implements Initializable, AbstractController {
      *
      * @param id Same.
      */
-    private void deleteExpanded(int id) {
+    @Override
+    public void deleteExpanded(int id) {
         Database.INSTANCE.deleteExpanded(id);
     }
 
@@ -831,6 +886,7 @@ public class Controller implements Initializable, AbstractController {
      * @param id Same.
      * @param expanded Same.
      */
+    @Override
     public void insertExpandedItem(int id, boolean expanded) {
         Database.INSTANCE.insertExpandedItem(id, expanded);
     }

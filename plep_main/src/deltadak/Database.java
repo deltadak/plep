@@ -132,7 +132,7 @@ public enum Database {
      * updates a day in the database
      *
      * @param day date for which to update
-     * @param homeworkTasks List<HomeworkTask> with the new homeworkTasks
+     * @param homeworkTasks the new homeworkTasks
      */
     public void updateTasksDay(final LocalDate day, final List<List<HomeworkTask>> homeworkTasks) {
         
@@ -143,15 +143,15 @@ public enum Database {
         
         // then add the new homeworkTasks
         for (int i = 0; i < homeworkTasks.size(); i++) {
-                // add the parent task to the database
-                insertTask(day, homeworkTasks.get(i).get(0), i);
-                // add the subtasks of the parent tasks to the database
-                for (int j = 1; j < homeworkTasks.get(i).size(); j++) {
-                    
-                    insertSubtask(homeworkTasks.get(i).get(j),
-                                      homeworkTasks.get(i).get(0).getDatabaseID());
-                }
-            
+            // add the parent task to the database
+            HomeworkTask parent = homeworkTasks.get(i).get(0);
+            insertTask(day, parent, i);
+
+            // add the subtasks of the parent tasks to the database
+            int parentID = parent.getDatabaseID();
+            for (int j = 1; j < homeworkTasks.get(i).size(); j++) {
+                insertSubtask(homeworkTasks.get(i).get(j), parentID);
+            }
         }
         
         deleteEmptyRows("tasks", "task");
