@@ -62,11 +62,21 @@
 }
 
 /* text of the tasks marked as done */
-.donelabel {
-    -fx-text-fill: #949494;
+.label-done {
+    -fx-text-fill: -fx-text-gray;
     -fx-font-style: oblique;
 }
 
-.donelabel .text {
+.label-done-light {
+    -fx-text-fill: -fx-text-gray-light;
+    -fx-font-style: oblique;
+}
+
+.label-done-dark {
+    -fx-text-fill: -fx-text-gray-dark;
+    -fx-font-style: oblique;
+}
+
+.label-done .text, .label-done-light .text, .label-done-dark .text {
     -fx-strikethrough: true;
 }

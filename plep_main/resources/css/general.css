@@ -23,6 +23,10 @@
     /* The last two numbers is opacity */
     -fx-button-hover: #D9D9D940;
     -fx-button-pressed: #D9D9D9;
+    /* Grayed out text when an item is selected. */
+    -fx-text-gray: #949494;
+    -fx-text-gray-light: #dfdfdf;
+    -fx-text-gray-dark: #515151;
 
     /* Color of the selector */
     -fx-accent: derive(-fx-control-inner-background, -15%);

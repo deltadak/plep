@@ -188,8 +188,13 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
             label = new Label(homeworkTask.getText());
 
             // Get style from the database and apply to the item
+            String color = homeworkTask.getColor();
+
+            // On dark backgrounds, change text color.
+            setWhiteComboboxText();
+
             setStyle("-fx-control-inner-background: "
-                    + controller.convertColorToHex(homeworkTask.getColor()));
+                        + controller.convertColorToHex(color));
 
             // set the style on the label
             setDoneStyle(done);
@@ -435,17 +440,58 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
      * @param done boolean, true if the task is done, false if not done.
      */
     private void setDoneStyle(boolean done) {
+        String color = getItem().getColor();
+
         if(done) {
             label.getStyleClass().remove("label");
-            label.getStyleClass().add("donelabel");
-            comboBox.getStyleClass().add("combo-box-done");
+
+            // Remove the white text of the combobox, which we set earlier when the background color is dark.
+            comboBox.getStyleClass().remove("combobox-text-white");
+
+            // Dark colors need a light text.
+            switch (color) {
+                case "Red":
+                case "Blue":  // and item is selected
+                    label.getStyleClass().add("label-done-light");
+                    comboBox.getStyleClass().add("combobox-done-light");
+                    break;
+                case "Green":
+                    label.getStyleClass().add("label-done-dark");
+                    comboBox.getStyleClass().add("combobox-done-dark");
+                    break;
+                default:
+                    label.getStyleClass().add("label-done");
+                    comboBox.getStyleClass().add("combobox-done");
+                    break;
+            }
+
         } else {
-            label.getStyleClass().remove("donelabel");
+            // Remove all the classes which styled the 'done' style on the item.
+            label.getStyleClass().removeAll("label-done", "label-done-light", "label-done-dark");
             label.getStyleClass().add("label");
-            comboBox.getStyleClass().remove("combo-box-done");
+
+            comboBox.getStyleClass().removeAll("combobox-done", "combobox-done-light", "combobox-done-dark");
+
+            // Re-add white text for dark backgrounds.
+            setWhiteComboboxText();
+
         }
     }
-    
+
+    /**
+     * Useful for dark background colors.
+     */
+    private void setWhiteComboboxText() {
+        String color = getItem().getColor();
+
+        if (color.equals("Red")) {
+            comboBox.getStyleClass().add("combobox-text-white");
+        } else {
+            comboBox.getStyleClass().remove("combobox-text-white");
+        }
+
+    }
+
     /**
      * Counts the number of subtasks of taskTreeItem that are marked as done.
      *

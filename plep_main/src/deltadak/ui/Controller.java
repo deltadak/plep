@@ -835,8 +835,7 @@ public class Controller implements Initializable, AbstractController {
      * @param day           Same.
      * @param homeworkTasks Same.
      */
-    synchronized void updateDatabaseSynced(final LocalDate day,
-                                           final List<List<HomeworkTask>> homeworkTasks) {
+    synchronized void updateDatabaseSynced(final LocalDate day, final List<List<HomeworkTask>> homeworkTasks) {
         Database.INSTANCE.updateTasksDay(day, homeworkTasks);
     }
     
@@ -846,8 +845,7 @@ public class Controller implements Initializable, AbstractController {
      * @param day         Same.
      * @param parentTasks Same.
      */
-    synchronized void updateParentsSynced(final LocalDate day,
-                          final List<HomeworkTask> parentTasks) {
+    synchronized void updateParentsSynced(final LocalDate day, final List<HomeworkTask> parentTasks) {
         Database.INSTANCE.updateParentsDay(day, parentTasks);
     }
 
