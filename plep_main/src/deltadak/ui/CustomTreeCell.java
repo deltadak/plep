@@ -90,6 +90,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         // If an item is selected, deselect all other items.
         tree.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
+                // We use our custom select method.
                 select(
                         tree, () -> tree.getSelectionModel().select(newValue)
                 );
@@ -273,6 +274,9 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                     if(label != null) {
                         setDoneStyle(newValue);
                     }
+
+                    // Deselect the item, otherwise the selector changes color and overrides the item color.
+                    select(tree, () -> {});
                     
                     /* If the item of which the checkbox is toggled is
                      * a subtask, then we check if all subtasks are done.
