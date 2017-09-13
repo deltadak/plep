@@ -244,6 +244,7 @@ public class SlidingSettingsPane extends SlidingPane {
     @FXML protected void autoColumnsCheckBoxToggled(boolean newValue) {
         updateSetting(Controller.MAX_COLUMNS_AUTO_NAME,
                       String.valueOf(newValue));
+        // The controller will request settings from the database again.
         controller.setupGridPane(controller.focusDay);
 
         // update spinner to reflect auto mode on

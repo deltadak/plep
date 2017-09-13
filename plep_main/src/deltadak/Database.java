@@ -674,7 +674,8 @@ public enum Database {
         insertSetting("number_of_days", "9");
         insertSetting("number_of_moving_days", "7");
         insertSetting("max_columns", "3");
-        
+        insertSetting("max_columns_auto", "true");
+
     }
     
     /**
