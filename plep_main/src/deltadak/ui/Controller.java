@@ -229,8 +229,8 @@ public class Controller implements Initializable, AbstractController {
             // add the delete key listener
             addDeleteKeyListener(tree, localDate);
 
-            tree.setPrefWidth(getListViewWidth());
-            tree.setPrefHeight(getListViewHeight());
+            tree.setPrefWidth(getTreeViewWidth());
+            tree.setPrefHeight(getTreeViewHeight());
         }
 
     }
@@ -481,9 +481,9 @@ public class Controller implements Initializable, AbstractController {
     /**
      * get height by total screen size
      *
-     * @return intended listview height
+     * @return intended treeview height
      */
-    private int getListViewHeight() {
+    private int getTreeViewHeight() {
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
         int totalHeight = (int) primaryScreenBounds.getHeight();
         return totalHeight / (numberOfDays / maxColumns);
@@ -492,9 +492,9 @@ public class Controller implements Initializable, AbstractController {
     /**
      * get width by total screen size
      *
-     * @return intended listview width
+     * @return intended treeview width
      */
-    private int getListViewWidth() {
+    private int getTreeViewWidth() {
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
         int totalWidth = (int) primaryScreenBounds.getWidth();
         return totalWidth / maxColumns;

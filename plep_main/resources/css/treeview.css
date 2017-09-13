@@ -80,3 +80,7 @@
 .label-done .text, .label-done-light .text, .label-done-dark .text {
     -fx-strikethrough: true;
 }
+
+.label {
+    -fx-wrap-text: true;
+}

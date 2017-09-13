@@ -32,6 +32,9 @@ import static java.lang.Math.min;
  * TreeCell.
  */
 public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
+
+    /** Temporary fix for too long labels. Should equal the size of the combobox plus the size of the checkbox. */
+    private int LABEL_MAGIK = 200;
     
     private ObservableList<String> comboList;
     private TreeItem<HomeworkTask> root; // the root item of the TreeView
@@ -187,6 +190,12 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
             checkBox.setSelected(done);
             
             label = new Label(homeworkTask.getText());
+
+            // This won't work for long text without spaces, and more.
+//            label.prefWidthProperty().bind(getTreeView().widthProperty().subtract(comboBox.widthProperty()).subtract(checkBox.widthProperty()));
+            // combobox.getWidth() is equal to 0 here, we can't use that.
+            // Result:
+            label.setPrefWidth(getTreeView().getWidth() - LABEL_MAGIK);
 
             // Get style from the database and apply to the item
             String color = homeworkTask.getColor();
