@@ -21,6 +21,7 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 
+import javax.xml.crypto.Data;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -436,13 +437,12 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
      */
     private void repeatTask(final int repeatNumber, final HomeworkTask homeworkTask, LocalDate day) {
         for (int i = 0; i < repeatNumber; i++) {
-            day = day.plusWeeks(1);
-            List<HomeworkTask> homeworkTasks =
-                    controller.getParentTasksDay(day);
-            homeworkTasks.add(homeworkTask);
-            Database.INSTANCE.updateParentsForRepeat(day, homeworkTasks);
-            
+            // add one week to the day to put the task there
+            LocalDate newDay = day.plusWeeks(1);
+            // copy the task and its subtasks to the new day in the database
+            Database.INSTANCE.copyAndInsertTask(newDay, homeworkTask);
         }
+        // refresh the console to see the newly copied tasks
         controller.refreshAllDays();
     }
     

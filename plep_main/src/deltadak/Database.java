@@ -143,18 +143,12 @@ public enum Database {
      */
     public void updateTasksDay(final LocalDate day, final List<List<HomeworkTask>> homeworkTasks) {
         
-        // TODO remove
-        // first remove all the items for this day that are currently in the
-        // database before we add the new ones,
-        // so we don't get double homeworkTasks
-//        deleteTasksDay(day);
-        
-        
         // update or insert the homework tasks
         for (int i = 0; i < homeworkTasks.size(); i++) {
-            // update or insert the parent task to the database
+            // get the parent task from the list/matrix of tasks
             HomeworkTask parent = homeworkTasks.get(i).get(0);
-            updateTask(day, parent, i);
+            // update or insert the parent task to the database
+            insertOrUpdateTask(day, parent, i);
 
             int parentID = parent.getDatabaseID();
             // first remove all the old subtasks of this task
@@ -176,44 +170,69 @@ public enum Database {
      */
     public void updateParentsDay(final LocalDate day, final List<HomeworkTask> parentTasks) {
         
-        // TODO remove
-        // first remove all the items for this day that are currently in the
-        // database before we add the new ones,
-        // so we don't get double homeworkTasks
-//        deleteParentTasksDay(day);
-        
-        // then add the new homeworkTasks
+        // insert or update the parent tasks in the database
         for (int i = 0; i < parentTasks.size(); i++) {
             // add the parent task to the database
-            updateTask(day, parentTasks.get(i), i);
+            insertOrUpdateTask(day, parentTasks.get(i), i);
             
         }
         deleteEmptyRows("tasks", "task");
     }
     
     /**
-     * Updates the parent tasks in the database. It also copies the subtasks,
-     * using
-     * {@link this#insertTaskForRepeat(LocalDate, HomeworkTask, int)}
-     * instead of {@link this#updateTask(LocalDate, HomeworkTask, int)}.
-     *
-     * @param day The day for which to update the tasks.
-     * @param parentTasks The new tasks to be updated.
+     * Copies a homework task including subtasks to a new day.
+     * @param day The new day to be copied to
+     * @param taskToBeCopied The homeworktask to be copied.
      */
-    public void updateParentsForRepeat(LocalDate day, List<HomeworkTask> parentTasks) {
+    public void copyAndInsertTask(LocalDate day, HomeworkTask taskToBeCopied) {
+        // get the subtasks of the task to be copied
+        List<HomeworkTask> subtasks = getSubtasksByID(
+                taskToBeCopied.getDatabaseID());
         
-        // first remove all the items for this day that are currently in the
-        // database before we add the new ones,
-        // so we don't get double homeworkTasks
-        deleteParentTasksDay(day);
+        // copy the task to a new task
+        HomeworkTask newTask = taskToBeCopied;
+        // give the new task its own id
+        newTask.setDatabaseID(getHighestID());
+        
+        // insert the new task in the database
+        insertOrUpdateTask(day, newTask, getHighestOrder(day));
+        // insert the subtasks in the database, as subtasks of the new task
+        for (HomeworkTask subtask : subtasks) {
+            insertSubtask(subtask, newTask.getDatabaseID());
+        }
+    }
     
-        // then add the new homeworkTasks
-        for (int i = 0; i < parentTasks.size(); i++) {
-            // add the parent task to the database
-            insertTaskForRepeat(day, parentTasks.get(i), i);
+    /**
+     * Collects all the orders in a day and returns an int that is bigger
+     * than the maximum.
+     * @param day The day of which to find the highest order.
+     * @return (The highest order that's currently in a day.) + 1
+     */
+    private int getHighestOrder(LocalDate day) {
+        String dayString = day.toString();
+        
+        String sql = "SELECT orderInDay FROM tasks WHERE day == '"
+                + dayString + "' ORDER BY orderInDay DESC";
+    
+        int order = 0;
+        Connection connection = setConnection();
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+        
+            if (resultSet.isBeforeFirst()) {
+                // if the day is not empty, we set the order to be the
+                // highest + 1
+                order = resultSet.getInt("orderInDay") + 1;
+            }
+            // otherwise we return 0 as the default order in a day
+            statement.close();
+            connection.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     
-        deleteEmptyRows("tasks", "task");
+        return order;
     }
     
     /**
@@ -397,8 +416,9 @@ public enum Database {
      * @param order
      *         - this is the i-th homeworkTask on this day, as an int
      */
-    private void updateTask(final LocalDate day,
-                            final HomeworkTask homeworkTask, final int order) {
+    private void insertOrUpdateTask(final LocalDate day,
+                                    final HomeworkTask homeworkTask,
+                                    final int order) {
     
         // convert the day to a string
         String dayString = day.toString();
@@ -474,53 +494,6 @@ public enum Database {
         } catch (SQLException e) {
             e.printStackTrace();
             return expandedPairs;
-        }
-    }
-    
-    /**
-     * Inserts a parent task, keeps the subtasks with the old IDs (of the to
-     * be repeated task) and creates new subtasks.
-     *
-     * @param day The day on which the to be repeated task is repeated.
-     * @param homeworkTask The task to be repeated.
-     * @param order The i-th parent task on the day.
-     */
-    private void insertTaskForRepeat(final LocalDate day,
-                            final HomeworkTask homeworkTask, final int order) {
-        // TODO update to new method of updating database
-        // don't add empty tasks
-        if(!homeworkTask.getText().equals("")) {
-//            setHighestID(); // sets countID
-            
-            // get all the subtasks for the task to be repeated
-            List<HomeworkTask> subtasks = getSubtasksByID(homeworkTask.getDatabaseID());
-            
-            // update the parent IDs of the subtasks
-            updateSubtasksID(homeworkTask);
-            // update the id in the expanded table
-            updateExpandedID(homeworkTask);
-            
-            // add the subtasks with the old parentID again. We can do this
-            // because the id of the task that is repeated does not change.
-            for (HomeworkTask subtask : subtasks) {
-       
-                insertSubtask(subtask, homeworkTask.getDatabaseID());
-            }
-    
-            homeworkTask.setDatabaseID(countID);
-            
-            String dayString = day.toString();
-            
-            int doneInt = homeworkTask.getDone() ? 1 : 0;
-            
-            String sql =
-                    "INSERT INTO tasks(id, done, day, task, label, color, orderInDay) "
-                            
-                            + "VALUES (" + countID + ", '" + doneInt + "', '" + dayString + "', '"
-                            + homeworkTask.getText() + "','" + homeworkTask.getLabel() + "','"
-                            + homeworkTask.getColor() + "'," + order + ")";
-            countID++;
-            query(sql);
         }
     }
     
