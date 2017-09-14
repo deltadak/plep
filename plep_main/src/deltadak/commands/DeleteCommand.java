@@ -1,10 +1,12 @@
 package deltadak.commands;
 
+import deltadak.Database;
 import deltadak.ui.AbstractController;
 import deltadak.HomeworkTask;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 
+import javax.xml.crypto.Data;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,7 +64,9 @@ public class DeleteCommand extends Command {
         }
 
         // use the items of the listview to update the database
-        controller.updateDatabase(dayState, treeViewItems);
+//        controller.updateDatabase(dayState, treeViewItems);
+//        System.out.println("id: " + deletedItemsList.get(0).getDatabaseID());
+        Database.INSTANCE.deleteByID(deletedItemsList.get(0).getDatabaseID());
         controller.cleanUp(tree);
     }
 

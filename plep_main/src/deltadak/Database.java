@@ -128,6 +128,11 @@ public enum Database {
         return homeworkTasks;
     }
     
+    public void deleteByID(int id) {
+        deleteTask(id);
+        deleteSubtasksByID(id);
+    }
+    
     /**
      * updates a day in the database
      *
@@ -139,7 +144,8 @@ public enum Database {
         // first remove all the items for this day that are currently in the
         // database before we add the new ones,
         // so we don't get double homeworkTasks
-        deleteTasksDay(day);
+//        deleteTasksDay(day);
+        
         
         // then add the new homeworkTasks
         for (int i = 0; i < homeworkTasks.size(); i++) {
@@ -168,7 +174,7 @@ public enum Database {
         // first remove all the items for this day that are currently in the
         // database before we add the new ones,
         // so we don't get double homeworkTasks
-        deleteParentTasksDay(day);
+//        deleteParentTasksDay(day);
         
         // then add the new homeworkTasks
         for (int i = 0; i < parentTasks.size(); i++) {
@@ -376,7 +382,7 @@ public enum Database {
     }
     
     /**
-     * inserts a homeworkTask into the database, given
+     * inserts or updates a homeworkTask into the database, given
      *
      * @param day
      *         - the date as a LocalDate
@@ -387,29 +393,33 @@ public enum Database {
      */
     private void insertTask(final LocalDate day,
                             final HomeworkTask homeworkTask, final int order) {
-        // don't add empty tasks
+    
+        String dayString = day.toString();
+        int doneInt = homeworkTask.getDone() ? 1 : 0;
+        
         if(!homeworkTask.getText().equals("")) {
-            setHighestID(); // sets countID
     
             // update the parentID for all its subtasks
-            updateSubtasksID(homeworkTask);
+//            updateSubtasksID(homeworkTask);
             // update the id in the expanded table
-            updateExpandedID(homeworkTask);
-            
-            homeworkTask.setDatabaseID(countID);
+//            updateExpandedID(homeworkTask);
     
-            String dayString = day.toString();
     
-            int doneInt = homeworkTask.getDone() ? 1 : 0;
+            if(homeworkTask.getDatabaseID() == -1) {
+                homeworkTask.setDatabaseID(getHighestID());
+            }
     
-            String sql =
-                    "INSERT INTO tasks(id, done, day, task, label, color, orderInDay) "
-                            
-                            + "VALUES (" + countID + ", '" + doneInt + "', '" + dayString + "', '"
-                            + homeworkTask.getText() + "','" + homeworkTask.getLabel() + "','"
-                            + homeworkTask.getColor() + "'," + order + ")";
-            countID++;
-            query(sql);
+                String sql =
+                        "REPLACE INTO tasks(id, done, day, task, label, "
+                                + "color, "
+                                + "orderInDay) "
+                    
+                                + "VALUES (" + homeworkTask.getDatabaseID() + ", '" + doneInt + "', '" + dayString + "', '"
+                                + homeworkTask.getText() + "','" + homeworkTask.getLabel() + "','"
+                                + homeworkTask.getColor() + "'," + order + ")";
+                query(sql);
+    
+           
         }
     }
     
@@ -464,9 +474,10 @@ public enum Database {
      */
     private void insertTaskForRepeat(final LocalDate day,
                             final HomeworkTask homeworkTask, final int order) {
+        // TODO update to new method of updating database
         // don't add empty tasks
         if(!homeworkTask.getText().equals("")) {
-            setHighestID(); // sets countID
+//            setHighestID(); // sets countID
             
             // get all the subtasks for the task to be repeated
             List<HomeworkTask> subtasks = getSubtasksByID(homeworkTask.getDatabaseID());
@@ -503,9 +514,10 @@ public enum Database {
      * Sets countID to the highest ID that's currently in the database.
      * To prevent double IDs
      */
-    private void setHighestID() {
+    private int getHighestID() {
         String sql = "SELECT * FROM tasks ORDER BY id DESC";
     
+        int id = 1;
         Connection connection = setConnection();
         try {
             Statement statement = connection.createStatement();
@@ -514,16 +526,15 @@ public enum Database {
             if (resultSet.isBeforeFirst()) {
                 // if the database is not empty, we set the id to be the
                 // highest + 1
-                countID = resultSet.getInt("id") + 1;
-            } else {
-                // if the database is empty we set the id to 1
-                countID = 1;
+                id = resultSet.getInt("id") + 1;
             }
             statement.close();
             connection.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
+        
+        return id;
     }
     
     /**
@@ -606,6 +617,7 @@ public enum Database {
         // check if the task is not empty, because then it shouldn't
         // be in the database
         if(!subtask.getText().equals("") && (parentID != -1)) {
+            deleteSubtask(parentID, subtask.getDone(), subtask.getText());
             int doneInt = subtask.getDone() ? 1 : 0;
             String sql = "INSERT INTO subtasks(parentID, done, task) VALUES (" +
                     parentID + ", " + doneInt + ", '" + subtask.getText() + "')";
@@ -623,6 +635,18 @@ public enum Database {
     private void updateSubtasksID(HomeworkTask parentTask) {
         String sql = "UPDATE subtasks SET parentID = " + countID +
                 " WHERE parentID = " + parentTask.getDatabaseID();
+        query(sql);
+    }
+    
+    private void deleteSubtasksByID(int parentID) {
+        String sql = "DELETE FROM subtasks WHERE parentID = " + parentID;
+        query(sql);
+    }
+    
+    private void deleteSubtask(int parentID, boolean done, String task) {
+        int doneInt = done ? 1 : 0;
+        String sql = "DELETE FROM subtasks WHERE parentID = " + parentID
+                + " AND done = " + doneInt + " AND task = '" + task + "'";
         query(sql);
     }
     
