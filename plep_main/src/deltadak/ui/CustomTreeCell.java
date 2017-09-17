@@ -67,6 +67,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         
         comboList = FXCollections
                 .observableArrayList(Database.INSTANCE.getLabels());
+        comboList.add(0, "<no label>");
     
         comboBox = new ComboBox<>(comboList);
     }
@@ -86,8 +87,17 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         setConverter(new TaskConverter(this));
         // update label on changes
         comboBox.valueProperty().addListener(
-                (observable, oldValue, newValue) -> this.getTreeItem()
-                    .getValue().setLabel(newValue)
+                (observable, oldValue, newValue) -> {
+
+                    HomeworkTask task = this.getTreeItem().getValue();
+
+                    if (newValue.equals("<no label>")) {
+                        task.setLabel("");
+                        comboBox.setValue("");
+                    } else {
+                        task.setLabel(newValue);
+                    }
+                }
                 
         );
 
@@ -218,8 +228,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                 // listener, otherwise it fires and goes unnecessarily updating
                 // the database, which takes a lot of time.
                 labelChangeListener.setBlock(true);
-                comboBox.setValue((homeworkTask.getLabel() != null) ?
-                                  homeworkTask.getLabel() : "<null>");
+                comboBox.setValue((homeworkTask.getLabel() != null) ? homeworkTask.getLabel() : "<null>");
                 labelChangeListener.setBlock(false);
                 
                 // create a region to make sure that the ComboBox is aligned
