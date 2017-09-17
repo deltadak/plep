@@ -540,7 +540,12 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
      */
     void setOnDragDetected() {
         setOnDragDetected(event -> {
-            if (!getTreeItem().getValue().getText().equals("")) {
+
+            boolean isParentTask = getTreeItem().getParent().equals(root);
+
+            boolean isEmpty = getTreeItem().getValue().getText().equals("");
+
+            if (!isEmpty && isParentTask) {
                 Dragboard db = startDragAndDrop(TransferMode.MOVE);
                 ClipboardContent content = new ClipboardContent();
                 content.put(controller.DATA_FORMAT, getTreeItem()
