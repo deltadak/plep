@@ -16,6 +16,7 @@ import javafx.scene.text.TextAlignment;
 
 import javax.xml.crypto.Data;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -142,7 +143,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
             }
 
             // update the database with the current first level items
-            controller.updateDatabase(localDate, controller.convertTreeToArrayList(tree));
+            controller.updateDatabase(localDate, convertTreeToArrayList(tree));
         });
     }
 
@@ -257,8 +258,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                                   LocalDate day) {
         
         InvalidationListener invalidationListener = observable -> {
-            controller.updateDatabase(day, controller
-                    .convertTreeToArrayList(tree));
+            controller.updateDatabase(day, convertTreeToArrayList(tree));
             // We do not need to cleanup here, as no tasks
             // were added or deleted.
         };
@@ -324,8 +324,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                         }
                     }
                     
-                    controller.updateDatabase(localDate, controller
-                            .convertTreeToArrayList(tree));
+                    controller.updateDatabase(localDate, convertTreeToArrayList(tree));
                 });
     }
     
@@ -369,8 +368,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
             MenuItem colorMenuItem = contextMenu.getItems().get(i);
             colorMenuItem.setOnAction(event1 -> {
                 controller.setBackgroundColor(colorMenuItem.getText(), this);
-                controller.updateDatabase(day, controller
-                        .convertTreeToArrayList(tree));
+                controller.updateDatabase(day, convertTreeToArrayList(tree));
                 controller.cleanUp(tree);
     
             });
@@ -620,8 +618,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                 success = true;
                 // update tasks in database
                 controller.updateParentDatabase(day,
-                        controller.getParentTasks(
-                            controller.convertTreeToArrayList(tree)
+                        controller.getParentTasks(convertTreeToArrayList(tree)
                         )
                 );
 
@@ -685,7 +682,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                 // update in database
                 controller.updateParentDatabase(day,
                         controller.getParentTasks(
-                            controller.convertTreeToArrayList(tree)
+                            convertTreeToArrayList(tree)
                         )
                 );
 
@@ -695,5 +692,63 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
             controller.cleanUp(tree);
     
         });
+    }
+
+    /**
+     * Converts a TreeView to a list of lists of tasks. The first item of
+     * each list is the parent task, the items after that are its subtasks.
+     *
+     * @param tree The TreeView to convert.
+     * @return List&lt;List&lt;HomeworkTask&gt;&gt;
+     */
+    public static List<List<HomeworkTask>> convertTreeToArrayList
+    (TreeView<HomeworkTask> tree) {
+
+        // create a list with the tree items of the parent tasks
+        ObservableList<TreeItem<HomeworkTask>> parentItems =
+                tree.getRoot().getChildren();
+        // create a list with homework tasks of the parent tasks
+        List<HomeworkTask> parentTasks =
+                convertTreeItemListToArrayList(parentItems);
+
+        // create the list to eventually return
+        List<List<HomeworkTask>> tasks = new ArrayList<>();
+
+
+        for (int i = 0; i < parentItems.size(); i++) {
+
+            // get the sub tree items of parent task i, and store them in a list
+            ObservableList<TreeItem<HomeworkTask>> childItems = parentItems.get(i).getChildren();
+            // store the subtasks of parent task i in a list
+            List<HomeworkTask> childTasks =
+                    convertTreeItemListToArrayList(childItems);
+
+            // create a list containing one parent and its children
+            List<HomeworkTask> oneFamily = new ArrayList<>();
+
+            oneFamily.add(parentTasks.get(i)); // add the parent to the family
+            oneFamily.addAll(childTasks); // add its children to the family
+
+            tasks.add(oneFamily); // add the family to the nested list of tasks
+        }
+
+        return tasks;
+    }
+
+    /**
+     * Convert TreeItemList to ArrayList.
+     * @param list to convert
+     * @return converted ArrayList
+     */
+    public static List<HomeworkTask> convertTreeItemListToArrayList(
+            ObservableList<TreeItem<HomeworkTask>> list) {
+
+        List<HomeworkTask> arrayList = new ArrayList<>();
+
+        for (TreeItem<HomeworkTask> aList : list) {
+            arrayList.add(aList.getValue());
+        }
+
+        return arrayList;
     }
 }
