@@ -120,7 +120,7 @@ public class SlidingSettingsPane extends SlidingPane {
             labelsList.getItems()
                     .set(event.getIndex(), event.getNewValue());
             updateLabel(event.getIndex(), event.getNewValue());
-            controller.setupGridPane(controller.focusDay);
+            controller.setupGridPane();
         });
 
         editLabelsPane.getChildren().add(labelsList);
@@ -196,7 +196,7 @@ public class SlidingSettingsPane extends SlidingPane {
         // string, so we can edit it again
         labelsList.getItems().set(selectedIndex,"");
         updateLabel(selectedIndex, "");
-        controller.setupGridPane(controller.focusDay);
+        controller.setupGridPane();
     }
 
     /**
@@ -209,7 +209,7 @@ public class SlidingSettingsPane extends SlidingPane {
         updateSetting(Controller.NUMBER_OF_MOVING_DAYS_NAME,
                 String.valueOf(controller.numberOfMovingDays));
 
-        controller.setupGridPane(controller.focusDay);
+        controller.setupGridPane();
     }
 
     /**
@@ -220,7 +220,7 @@ public class SlidingSettingsPane extends SlidingPane {
 
         updateSetting(Controller.NUMBER_OF_DAYS_NAME,
                 String.valueOf(controller.numberOfDays));
-        controller.setupGridPane(controller.focusDay);
+        controller.setupGridPane();
     }
     
     /**
@@ -233,7 +233,7 @@ public class SlidingSettingsPane extends SlidingPane {
         updateSetting(Controller.MAX_COLUMNS_NAME,
                       String.valueOf(controller.maxColumns));
         autoColumnsCheckBox.setSelected(false);
-        controller.setupGridPane(controller.focusDay);
+        controller.setupGridPane();
     }
     
     /**
@@ -245,7 +245,7 @@ public class SlidingSettingsPane extends SlidingPane {
         updateSetting(Controller.MAX_COLUMNS_AUTO_NAME,
                       String.valueOf(newValue));
         // The controller will request settings from the database again.
-        controller.setupGridPane(controller.focusDay);
+        controller.setupGridPane();
 
         // update spinner to reflect auto mode on
         if (newValue) {

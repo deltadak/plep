@@ -5,14 +5,12 @@ import deltadak.HomeworkTask;
 import deltadak.commands.DeleteCommand;
 import deltadak.commands.DeleteSubtaskCommand;
 import deltadak.commands.UndoFacility;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Task;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.control.ToolBar;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.stage.Screen;
@@ -36,6 +34,7 @@ public class MainGridPane {
     // FXML references passed from the controller.
     private GridPane gridPane;
     private ToolBar toolBar;
+    private ProgressIndicator progressIndicator;
 
     /** keep a reference to the undo facility */
     private UndoFacility undoFacility = new UndoFacility();
@@ -45,13 +44,16 @@ public class MainGridPane {
      * @param controller The main controller object.
      * @param gridPane FXML reference to the GridPane.
      * @param toolBar FXML reference to the ToolBar.
+     * @param progressIndicator FXML reference.
      */
     public MainGridPane(Controller controller,
                         GridPane gridPane,
-                        ToolBar toolBar) {
+                        ToolBar toolBar,
+                        ProgressIndicator progressIndicator) {
         this.controller = controller;
         this.gridPane = gridPane;
         this.toolBar = toolBar;
+        this.progressIndicator = progressIndicator;
     }
 
     /**
@@ -106,8 +108,8 @@ public class MainGridPane {
             // add the delete key listener
             addDeleteKeyListener(tree, localDate);
 
-            tree.setPrefWidth(getTreeViewWidth());
-            tree.setPrefHeight(getTreeViewHeight());
+            tree.setPrefWidth(getTreeViewWidth(controller.maxColumns));
+            tree.setPrefHeight(getTreeViewHeight(controller.numberOfDays, controller.maxColumns));
         }
 
     }
@@ -174,9 +176,9 @@ public class MainGridPane {
 
         undoFacility.execute(
                 new DeleteCommand(
-                        this,
+                        controller,
                         localDate,
-                        convertTreeToArrayList(tree),
+                        CustomTreeCell.convertTreeToArrayList(tree),
                         tree.getSelectionModel().getSelectedIndex(),
                         tree
                 )
@@ -216,7 +218,7 @@ public class MainGridPane {
      *
      * @return intended treeview height
      */
-    private int getTreeViewHeight() {
+    private int getTreeViewHeight(int numberOfDays, int maxColumns) {
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
         int totalHeight = (int) primaryScreenBounds.getHeight();
         return totalHeight / (numberOfDays / maxColumns);
@@ -227,7 +229,7 @@ public class MainGridPane {
      *
      * @return intended treeview width
      */
-    private int getTreeViewWidth() {
+    private int getTreeViewWidth(int maxColumns) {
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
         int totalWidth = (int) primaryScreenBounds.getWidth();
         return totalWidth / maxColumns;
@@ -256,7 +258,7 @@ public class MainGridPane {
     /**
      * Refreshes all listviews using data from the database.
      */
-    void refreshAllDays(int numberOfDays) {
+    void refreshAllDays(int numberOfDays, LocalDate focusDay) {
         // find all treeviews from the gridpane
         List<TreeView<HomeworkTask>> treeViews = getAllTreeViews();
 
@@ -294,13 +296,13 @@ public class MainGridPane {
                 // below two database accessors take noticable time
 
                 // get tasks from the database
-                List<List<HomeworkTask>> allTasks = getDatabaseSynced(localDate);
+                List<List<HomeworkTask>> allTasks = Database.INSTANCE.getTasksDay(localDate);
                 // get the homework task ids and their corresponding expanded
                 // state from the database, as tuples
-                List<Map.Entry<Integer, Boolean>> allExpandedTasks = getExpandedFromDatabase();
+                List<Map.Entry<Integer, Boolean>> allExpandedTasks = Database.INSTANCE.getExpanded();
                 // list with the parent tasks
                 ObservableList<HomeworkTask> list =
-                        convertArrayToObservableList(getParentTasks(allTasks));
+                        convertArrayToObservableList(Controller.getParentTasks(allTasks));
                 // clear all the items currently showing in the TreeView
                 tree.getRoot().getChildren().clear();
 
@@ -359,12 +361,45 @@ public class MainGridPane {
         };
 
         task.setOnSucceeded(e -> {
-            cleanUp(tree);
+            controller.cleanUp(tree);
             progressIndicator.setVisible(false);
 
         });
 
-        exec.execute(task);
+        controller.exec.execute(task);
+    }
+
+
+    /**
+     * convert (Array)List to ObservableList
+     *
+     * @param list - List to be converted
+     * @return ObservableList
+     */
+    private ObservableList<HomeworkTask> convertArrayToObservableList(
+            final List<HomeworkTask> list) {
+        return FXCollections.observableList(list);
+    }
+
+
+    /**
+     * Gets a TreeItem from the database, using its id.
+     *
+     * @param tree The tree to search for the tree item.
+     * @param id The id of the tree item.
+     * @return TreeItem<HomeworkTask>
+     */
+    private TreeItem<HomeworkTask> findTreeItemById(
+            TreeView<HomeworkTask> tree, int id) {
+
+        List<TreeItem<HomeworkTask>> parents = tree.getRoot().getChildren();
+
+        for (TreeItem<HomeworkTask> parent : parents) {
+            if (parent.getValue().getDatabaseID() == id) {
+                return parent;
+            }
+        }
+        return null;
     }
 
 }

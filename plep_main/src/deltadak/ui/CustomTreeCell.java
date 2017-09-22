@@ -618,7 +618,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                 success = true;
                 // update tasks in database
                 controller.updateParentDatabase(day,
-                        controller.getParentTasks(convertTreeToArrayList(tree)
+                        Controller.getParentTasks(convertTreeToArrayList(tree)
                         )
                 );
 
@@ -681,7 +681,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
 
                 // update in database
                 controller.updateParentDatabase(day,
-                        controller.getParentTasks(
+                        Controller.getParentTasks(
                             convertTreeToArrayList(tree)
                         )
                 );

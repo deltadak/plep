@@ -89,8 +89,8 @@ public class Controller implements Initializable, AbstractController {
     /** Day on which the gridpane is 'focused': the second day shown will be this day */
     public LocalDate focusDay;
     private LocalDate today;
-    // Multithreading
-    private Executor exec;
+    /** Multithreading */
+    public Executor exec;
 
     /** The GridPane which contains everything. */
     private MainGridPane mainGridPane;
@@ -104,7 +104,7 @@ public class Controller implements Initializable, AbstractController {
     public void initialize(final URL location,
                            final ResourceBundle resourceBundle) {
         
-        mainGridPane = new MainGridPane(this, gridPane, toolBar);
+        mainGridPane = new MainGridPane(this, gridPane, toolBar, progressIndicator);
 
         // Initialize multithreading.
         exec = Executors.newCachedThreadPool(runnable -> {
@@ -121,7 +121,7 @@ public class Controller implements Initializable, AbstractController {
                 NUMBER_OF_MOVING_DAYS_NAME));
 
         focusDay = LocalDate.now(); // set focus day to today
-        setupGridPane(focusDay);
+        setupGridPane(focusDay, numberOfDays);
 
         progressIndicator.setVisible(false);
 
@@ -182,6 +182,20 @@ public class Controller implements Initializable, AbstractController {
         mainGridPane.setup(focusDate, numberOfDays);
     }
 
+    /**
+     * See {@link MainGridPane#setup(LocalDate, int)}
+     */
+    public void setupGridPane() {
+        mainGridPane.setup(focusDay, numberOfDays);
+    }
+
+    /**
+     * Refreshes all listviews using data from the database.
+     */
+    void refreshAllDays() {
+        mainGridPane.refreshAllDays(numberOfDays, focusDay);
+    }
+
         /**
          * Sets a listener which checks if it is a new day,
          * when the window becomes focused.
@@ -200,7 +214,7 @@ public class Controller implements Initializable, AbstractController {
                     today = LocalDate.now();
                     // Also update focusDay, before refreshing.
                     focusDay = today;
-                    setupGridPane(today);
+                    setupGridPane(today, numberOfDays);
                 }
             }
         });
@@ -250,7 +264,7 @@ public class Controller implements Initializable, AbstractController {
      * @param homeworkFamilies The list of lists to get the parent tasks from.
      * @return A list of HomeworkTasks, which are the parent tasks.
      */
-    public List<HomeworkTask> getParentTasks(List<List<HomeworkTask>> homeworkFamilies) {
+    public static List<HomeworkTask> getParentTasks(List<List<HomeworkTask>> homeworkFamilies) {
 
         // create the list with HomeworkTasks to return
         List<HomeworkTask> parentTasks = new ArrayList<>();
@@ -260,18 +274,6 @@ public class Controller implements Initializable, AbstractController {
             parentTasks.add(homeworkFamily.get(0));
         }
         return parentTasks;
-    }
-
-
-    /**
-     * convert (Array)List to ObservableList
-     *
-     * @param list - List to be converted
-     * @return ObservableList
-     */
-    private ObservableList<HomeworkTask> convertArrayToObservableList(
-            final List<HomeworkTask> list) {
-        return FXCollections.observableList(list);
     }
 
     /**
@@ -356,7 +358,7 @@ public class Controller implements Initializable, AbstractController {
     @FXML
     protected void dayBackward() {
         focusDay = focusDay.plusDays(-numberOfMovingDays);
-        setupGridPane(focusDay);
+        setupGridPane(focusDay, numberOfDays);
     }
 
     /**
@@ -367,7 +369,7 @@ public class Controller implements Initializable, AbstractController {
     protected void goToToday() {
 //        refreshAllDays();
         focusDay = LocalDate.now();
-        setupGridPane(focusDay);
+        setupGridPane(focusDay, numberOfDays);
     }
 
     /**
@@ -377,27 +379,7 @@ public class Controller implements Initializable, AbstractController {
     @FXML
     protected void dayForward() {
         focusDay = focusDay.plusDays(numberOfMovingDays);
-        setupGridPane(focusDay);
-    }
-
-    /**
-     * Gets a TreeItem from the database, using its id.
-     *
-     * @param tree The tree to search for the tree item.
-     * @param id The id of the tree item.
-     * @return TreeItem<HomeworkTask>
-     */
-    private TreeItem<HomeworkTask> findTreeItemById(
-            TreeView<HomeworkTask> tree, int id) {
-
-        List<TreeItem<HomeworkTask>> parents = tree.getRoot().getChildren();
-
-        for (TreeItem<HomeworkTask> parent : parents) {
-            if (parent.getValue().getDatabaseID() == id) {
-                return parent;
-            }
-        }
-        return null;
+        setupGridPane(focusDay, numberOfDays);
     }
 
     /**
@@ -461,17 +443,6 @@ public class Controller implements Initializable, AbstractController {
     }
 
     /**
-     * See {@link Database#getTasksDay(LocalDate)}.
-     *
-     * @param localDate Same.
-     * @return Same.
-     */
-    public synchronized List<List<HomeworkTask>> getDatabaseSynced(
-            final LocalDate localDate) {
-        return Database.INSTANCE.getTasksDay(localDate);
-    }
-
-    /**
      * See {@link Database#updateTasksDay(LocalDate, List)}
      *
      * @param day           Same.
@@ -499,15 +470,6 @@ public class Controller implements Initializable, AbstractController {
      */
     public List<HomeworkTask> getParentTasksDay(final LocalDate day) {
         return Database.INSTANCE.getParentTasksDay(day);
-    }
-
-    /**
-     * See {@link Database#getExpanded()}
-     *
-     * @return Same.
-     */
-    public List<Map.Entry<Integer, Boolean>> getExpandedFromDatabase() {
-        return Database.INSTANCE.getExpanded();
     }
 
     /**
