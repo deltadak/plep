@@ -174,7 +174,6 @@ public enum Database {
         for (int i = 0; i < parentTasks.size(); i++) {
             // add the parent task to the database
             insertOrUpdateTask(day, parentTasks.get(i), i);
-            
         }
         deleteEmptyRows("tasks", "task");
     }
