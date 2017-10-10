@@ -624,7 +624,9 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                     tree.getRoot().getChildren().add(index, item);
                 }
                 success = true;
-                // update tasks in database
+                // update tasks in database (old day?)
+                System.out.println("test"); // prints this every time you
+                // drop something
                 controller.updateParentDatabase(day,
                         controller.getParentTasks(
                             controller.convertTreeToArrayList(tree)
@@ -688,12 +690,14 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                             .setValue(emptyHomeworkTask);
                 }
 
-                // update in database
-                controller.updateParentDatabase(day,
-                        controller.getParentTasks(
-                            controller.convertTreeToArrayList(tree)
-                        )
-                );
+                // update in database (new day?)
+                // commenting this doesn't change anything...
+                // it probably does something I'm not testing at the moment.
+//                controller.updateParentDatabase(day,
+//                        controller.getParentTasks(
+//                            controller.convertTreeToArrayList(tree)
+//                        )
+//                );
 
             }
             event.consume();
