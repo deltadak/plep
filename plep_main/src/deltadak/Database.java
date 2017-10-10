@@ -142,6 +142,13 @@ public enum Database {
      * @param homeworkTasks the new homeworkTasks
      */
     public void updateTasksDay(final LocalDate day, final List<List<HomeworkTask>> homeworkTasks) {
+    
+        // but only prints this when dragging above a checked task
+        System.out.println("updateTasksDay"); // suddenly it did do this on
+        // every drop, too
+        // rerun plep, doesn't print this anymore.
+        // only does this after you've dragged a task above a checked one, once?
+        // yes, but then it doesn't after creating a new task (somewhere else)
         
         // update or insert the homework tasks
         for (int i = 0; i < homeworkTasks.size(); i++) {
