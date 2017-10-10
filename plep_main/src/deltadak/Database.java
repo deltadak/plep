@@ -50,7 +50,9 @@ public enum Database {
         // convert the day to a string so we can compare it to the value in
         // the database
         String dayString = day.toString();
-        String sql = "SELECT id, done, task, label, color " + "FROM tasks " +
+        String sql = "SELECT id, done, task, label, expanded, color " + "FROM "
+                + "tasks"
+                + " " +
                 "WHERE day = '"
                 + dayString + "' ORDER BY orderInDay";
         List<HomeworkTask> homeworkTasks = new ArrayList<>();
@@ -67,6 +69,7 @@ public enum Database {
                                 resultSet.getString("task"),
                                 resultSet.getString("label"),
                                 resultSet.getString("color"),
+                                resultSet.getBoolean("expanded"),
                                 resultSet.getInt("id"));
                 homeworkTasks.add(homeworkTask);
 
@@ -113,7 +116,7 @@ public enum Database {
                     // database, and add the subtask to the family
                     HomeworkTask childTask = new HomeworkTask(
                             resultSet.getBoolean("done"),
-                            resultSet.getString("task"), "", "", -1);
+                            resultSet.getString("task"));
                     oneFamily.add(childTask);
                 }
             } catch (Exception e) {
@@ -235,41 +238,41 @@ public enum Database {
         return order;
     }
     
-    /**
-     * Inserts a row in the expanded table.
-     *
-     * @param parentID The id of the homework task this boolean belongs to.
-     * @param expanded The boolean that states if the homework task is expanded or not.
-     */
-    public void insertExpandedItem(int parentID, boolean expanded) {
-        int expandedInt = expanded ? 1 : 0;
-        String sql = "INSERT OR IGNORE INTO expanded(parentID, expanded) "
-                + "VALUES(" + parentID + ", " + expandedInt + ")";
-        query(sql);
-    }
+//    /** TODO delete
+//     * Inserts a row in the expanded table.
+//     *
+//     * @param parentID The id of the homework task this boolean belongs to.
+//     * @param expanded The boolean that states if the homework task is expanded or not.
+//     */
+//    public void insertExpandedItem(int parentID, boolean expanded) {
+//        int expandedInt = expanded ? 1 : 0;
+//        String sql = "INSERT OR IGNORE INTO expanded(parentID, expanded) "
+//                + "VALUES(" + parentID + ", " + expandedInt + ")";
+//        query(sql);
+//    }
     
-    /**
-     * Update a row in the expanded table with the new boolean.
-     *
-     * @param parentID The id from the row to update.
-     * @param expanded The new value of the boolean.
-     */
-    public void updateExpanded(int parentID, boolean expanded) {
-        int expandedInt = expanded ? 1 : 0;
-        String sql = "UPDATE expanded SET expanded = " + expandedInt
-                + " WHERE parentID = " + parentID;
-        query(sql);
-    }
+//    /** TODO delete
+//     * Update a row in the expanded table with the new boolean.
+//     *
+//     * @param parentID The id from the row to update.
+//     * @param expanded The new value of the boolean.
+//     */
+//    public void updateExpanded(int parentID, boolean expanded) {
+//        int expandedInt = expanded ? 1 : 0;
+//        String sql = "UPDATE expanded SET expanded = " + expandedInt
+//                + " WHERE parentID = " + parentID;
+//        query(sql);
+//    }
     
-    /**
-     * Delete a row from the expanded table.
-     *
-     * @param id The id of the row to delete.
-     */
-    public void deleteExpanded(int id) {
-        String sql = "DELETE FROM expanded WHERE parentID = " + id;
-        query(sql);
-    }
+//    /** TODO delete
+//     * Delete a row from the expanded table.
+//     *
+//     * @param id The id of the row to delete.
+//     */
+//    public void deleteExpanded(int id) {
+//        String sql = "DELETE FROM expanded WHERE parentID = " + id;
+//        query(sql);
+//    }
     
     // settings ------------------------------------------------------
     
@@ -350,7 +353,7 @@ public enum Database {
      */
     public void createTables() {
         createHomeworkTable();
-        createExpandedItemstable();
+//        createExpandedItemstable();
         createSubtaskTable();
         createSettingsTable();
         createLabelsTable();
@@ -390,21 +393,21 @@ public enum Database {
     private void createHomeworkTable() {
         String sql = "CREATE TABLE IF NOT EXISTS tasks(" + "id INT PRIMARY KEY, done BOOLEAN, "
                 + "day DATE," + "task CHAR(255)," + "label CHAR(10),"
-                + "color CHAR(50)," + "orderInDay INT)";
+                + "color CHAR(50), expanded BOOLEAN, " + "orderInDay INT)";
         query(sql);
         
     }
     
-    /**
-     * Creates the expanded table. This table holds ids of homework tasks
-     * (the primary key in the tasks table) and their corresponding boolean
-     * of their expanded state.
-     */
-    private void createExpandedItemstable() {
-        String sql = "CREATE TABLE IF NOT EXISTS expanded(parentID INT PRIMARY KEY,"
-                + " expanded BOOLEAN)";
-        query(sql);
-    }
+//    /** TODO delete
+//     * Creates the expanded table. This table holds ids of homework tasks
+//     * (the primary key in the tasks table) and their corresponding boolean
+//     * of their expanded state.
+//     */
+//    private void createExpandedItemstable() {
+//        String sql = "CREATE TABLE IF NOT EXISTS expanded(parentID INT PRIMARY KEY,"
+//                + " expanded BOOLEAN)";
+//        query(sql);
+//    }
     
     /**
      * inserts or updates a homeworkTask into the database, given
@@ -416,7 +419,7 @@ public enum Database {
      * @param order
      *         - this is the i-th homeworkTask on this day, as an int
      */
-    private void insertOrUpdateTask(final LocalDate day,
+    public void insertOrUpdateTask(final LocalDate day,
                                     final HomeworkTask homeworkTask,
                                     final int order) {
     
@@ -424,6 +427,7 @@ public enum Database {
         String dayString = day.toString();
         // convert the done boolean to an int
         int doneInt = homeworkTask.getDone() ? 1 : 0;
+        int expandedInt = homeworkTask.getExpanded() ? 1 : 0;
         
         if(!homeworkTask.getText().equals("")) {
             // only put the task in the database if it isn't empy
@@ -445,57 +449,59 @@ public enum Database {
             // that id, otherwise it inserts it
             String sql =
                     "REPLACE INTO tasks(id, done, day, task, label, "
-                            + "color, "
-                            + "orderInDay) "
+                            + "color, expanded, orderInDay) "
                 
-                            + "VALUES (" + homeworkTask.getDatabaseID() + ", '" + doneInt + "', '" + dayString + "', '"
+                            + "VALUES (" + homeworkTask.getDatabaseID() + ", '"
+                            + doneInt + "', '" + dayString + "', '"
                             + homeworkTask.getText() + "','" + homeworkTask.getLabel() + "','"
-                            + homeworkTask.getColor() + "'," + order + ")";
+                            + homeworkTask.getColor() + "', " + expandedInt + ", " +
+                            order +
+                            ")";
             query(sql);
            
         }
     }
     
-    /**
-     * Updates the id of a row in the expanded table with the new id from
-     * its task.
-     *
-     * @param parentTask The task of which to update the id.
-     */
-    private void updateExpandedID(HomeworkTask parentTask) {
-        String sql = "UPDATE expanded SET parentID = " + countID +
-                " WHERE parentID = " + parentTask.getDatabaseID();
-        query(sql);
-    }
+//    /** TODO delete
+//     * Updates the id of a row in the expanded table with the new id from
+//     * its task.
+//     *
+//     * @param parentTask The task of which to update the id.
+//     */
+//    private void updateExpandedID(HomeworkTask parentTask) {
+//        String sql = "UPDATE expanded SET parentID = " + countID +
+//                " WHERE parentID = " + parentTask.getDatabaseID();
+//        query(sql);
+//    }
     
-    /**
-     * Gets tuples of the form (int id, boolean expanded) from the expanded
-     * table.
-     *
-     * @return List<Map.Entry<Integer, Boolean>>
-     */
-    public List<Map.Entry<Integer, Boolean>> getExpanded() {
-        
-        List<Map.Entry<Integer, Boolean>> expandedPairs = new ArrayList<>();
-        // select all the values from the expanded table
-        String sql = "SELECT * FROM expanded";
-        Connection connection = setConnection();
-        try {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(sql);
-            while (resultSet.next()) {
-                int id = resultSet.getInt("parentID");
-                boolean expanded = resultSet.getBoolean("expanded");
-                // add a new pair with the values to the List
-                expandedPairs.add(new AbstractMap.SimpleEntry<>(
-                        id, expanded));
-            }
-            return expandedPairs;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return expandedPairs;
-        }
-    }
+//    /** TODO delete
+//     * Gets tuples of the form (int id, boolean expanded) from the expanded
+//     * table.
+//     *
+//     * @return List<Map.Entry<Integer, Boolean>>
+//     */
+//    public List<Map.Entry<Integer, Boolean>> getExpanded() {
+//
+//        List<Map.Entry<Integer, Boolean>> expandedPairs = new ArrayList<>();
+//        // select all the values from the expanded table
+//        String sql = "SELECT * FROM expanded";
+//        Connection connection = setConnection();
+//        try {
+//            Statement statement = connection.createStatement();
+//            ResultSet resultSet = statement.executeQuery(sql);
+//            while (resultSet.next()) {
+//                int id = resultSet.getInt("parentID");
+//                boolean expanded = resultSet.getBoolean("expanded");
+//                // add a new pair with the values to the List
+//                expandedPairs.add(new AbstractMap.SimpleEntry<>(
+//                        id, expanded));
+//            }
+//            return expandedPairs;
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//            return expandedPairs;
+//        }
+//    }
     
     /**
      * Gets all the ids from the database, and returns (the highest id) + 1
@@ -671,8 +677,7 @@ public enum Database {
             while(resultSet.next()) {
                 HomeworkTask subtask = new HomeworkTask(
                         resultSet.getBoolean("done"),
-                        resultSet.getString("task"),
-                        "", "", -1);
+                        resultSet.getString("task"));
                 subtasks.add(subtask);
             }
         } catch (SQLException e) {

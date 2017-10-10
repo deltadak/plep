@@ -28,19 +28,19 @@ public interface AbstractController {
      */
     void cleanUp(TreeView<HomeworkTask> list);
 
-    /**
-     * See {@link Database#deleteExpanded(int)}
-     *
-     * @param id Same.
-     */
-    void deleteExpanded(int id);
-
-    /**
-     * See {@link Database#insertTask(LocalDate, HomeworkTask, int)}
-     *
-     * @param id Same.
-     * @param expanded Same.
-     */
-    void insertExpandedItem(int id, boolean expanded);
+//    /** TODO delete
+//     * See {@link Database#deleteExpanded(int)}
+//     *
+//     * @param id Same.
+//     */
+//    void deleteExpanded(int id);
+//
+//    /**
+//     * See {@link Database#insertTask(LocalDate, HomeworkTask, int)}
+//     *
+//     * @param id Same.
+//     * @param expanded Same.
+//     */
+//    void insertExpandedItem(int id, boolean expanded);
 
 }

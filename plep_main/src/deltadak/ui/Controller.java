@@ -668,7 +668,7 @@ public class Controller implements Initializable, AbstractController {
                 List<List<HomeworkTask>> allTasks = getDatabaseSynced(localDate);
                 // get the homework task ids and their corresponding expanded
                 // state from the database, as tuples
-                List<Map.Entry<Integer, Boolean>> allExpandedTasks = getExpandedFromDatabase();
+//                List<Map.Entry<Integer, Boolean>> allExpandedTasks = getExpandedFromDatabase();
                 // list with the parent tasks
                 ObservableList<HomeworkTask> list =
                         convertArrayToObservableList(getParentTasks(allTasks));
@@ -680,13 +680,23 @@ public class Controller implements Initializable, AbstractController {
                     // add the parent task to the tree
                     TreeItem<HomeworkTask> item = new TreeItem<>(list.get(i));
                     tree.getRoot().getChildren().add(item);
+                    item.setExpanded(item.getValue().getExpanded());
 
                     // When expanded state changes, save to database.
                     item.expandedProperty().addListener(
                             (observable, oldValue, newValue) -> {
-                                Database.INSTANCE.updateExpanded(
-                                        item.getValue().getDatabaseID(),
-                                        newValue);
+                                // First set the expanded value of the
+                                // homeworktask to the new value.
+                                item.getValue().setExpanded(newValue);
+                                // Get the index of the edited item.
+                                int orderInDay = item.getParent().getChildren
+                                        ().indexOf(item);
+                                // Update the homeworktask in the database.
+//                                Database.INSTANCE.insertOrUpdateTask
+//                                        (localDate, item.getValue(), orderInDay);
+//                                Database.INSTANCE.updateExpanded(
+//                                        item.getValue().getDatabaseID(),
+//                                        newValue);
                             });
 
                     // get the size of the current family, or the number of
@@ -710,22 +720,22 @@ public class Controller implements Initializable, AbstractController {
                     }
                 }
 
-                // Expand tasks according to database
-                for (Map.Entry<Integer, Boolean> expandedPair : allExpandedTasks)
-                {
-                    // get the id of the homework task
-                    int id = expandedPair.getKey();
-                    // get its expanded state (boolean)
-                    boolean expanded = expandedPair.getValue();
-
-                    if(findTreeItemById(tree, id) != null) {
-                        // set the expanded state on the tree item with
-                        // the id of the tuple
-                        findTreeItemById(tree, id).setExpanded(expanded);
-                    }
-
-                }
-    return true;
+                // Expand tasks according to database TODO delete
+//                for (Map.Entry<Integer, Boolean> expandedPair : allExpandedTasks)
+//                {
+//                    // get the id of the homework task
+//                    int id = expandedPair.getKey();
+//                    // get its expanded state (boolean)
+//                    boolean expanded = expandedPair.getValue();
+//
+//                    if(findTreeItemById(tree, id) != null) {
+//                        // set the expanded state on the tree item with
+//                        // the id of the tuple
+//                        findTreeItemById(tree, id).setExpanded(expanded);
+//                    }
+//
+//                }
+            return true;
             }
         };
 
@@ -859,35 +869,35 @@ public class Controller implements Initializable, AbstractController {
         return Database.INSTANCE.getParentTasksDay(day);
     }
 
-    /**
-     * See {@link Database#getExpanded()}
-     *
-     * @return Same.
-     */
-    public List<Map.Entry<Integer, Boolean>> getExpandedFromDatabase() {
-        return Database.INSTANCE.getExpanded();
-    }
-
-    /**
-     * See {@link Database#deleteExpanded(int)}
-     *
-     * @param id Same.
-     */
-    @Override
-    public void deleteExpanded(int id) {
-        Database.INSTANCE.deleteExpanded(id);
-    }
-
-    /**
-     * See {@link Database#insertTask(LocalDate, HomeworkTask, int)}
-     *
-     * @param id Same.
-     * @param expanded Same.
-     */
-    @Override
-    public void insertExpandedItem(int id, boolean expanded) {
-        Database.INSTANCE.insertExpandedItem(id, expanded);
-    }
+//    /** TODO delete
+//     * See {@link Database#getExpanded()}
+//     *
+//     * @return Same.
+//     */
+//    public List<Map.Entry<Integer, Boolean>> getExpandedFromDatabase() {
+//        return Database.INSTANCE.getExpanded();
+//    }
+//
+//    /**
+//     * See {@link Database#deleteExpanded(int)}
+//     *
+//     * @param id Same.
+//     */
+//    @Override
+//    public void deleteExpanded(int id) {
+//        Database.INSTANCE.deleteExpanded(id);
+//    }
+//
+//    /**
+//     * See {@link Database#insertTask(LocalDate, HomeworkTask, int)}
+//     *
+//     * @param id Same.
+//     * @param expanded Same.
+//     */
+//    @Override
+//    public void insertExpandedItem(int id, boolean expanded) {
+//        Database.INSTANCE.insertExpandedItem(id, expanded);
+//    }
 
     /**
      * See {@link Database#getSetting(String)}

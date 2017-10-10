@@ -144,8 +144,8 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                 }
             } else { // if we are not editing a subtask
                 // insert the task in the expanded table
-                controller.insertExpandedItem(editingItem.getValue()
-                        .getDatabaseID(), false);
+//                controller.insertExpandedItem(editingItem.getValue()
+//                        .getDatabaseID(), false);
             }
 
             // update the database with the current first level items
@@ -326,6 +326,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                                                  parentOld.getText(),
                                                  parentOld.getLabel(),
                                                  parentOld.getColor(),
+                                                 parentOld.getExpanded(),
                                                  parentOld.getDatabaseID());
                             getTreeItem().getParent().setValue(parent);
                         }
