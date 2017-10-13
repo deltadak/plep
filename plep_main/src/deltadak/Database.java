@@ -158,8 +158,6 @@ public enum Database {
             insertOrUpdateTask(day, parent, i);
 
             int parentID = parent.getDatabaseID();
-            // first remove all the old subtasks of this task
-            deleteSubtasksByID(parentID);
             // add the updated subtasks
             for (int j = 1; j < homeworkTasks.get(i).size(); j++) {
                 insertSubtask(homeworkTasks.get(i).get(j), parentID);
@@ -602,7 +600,8 @@ public enum Database {
     
     /**
      * Inserts a subtask into the database, given the subtask
-     * and the id of its parent.
+     * and the id of its parent. If the task already exists, it does
+     * effectively nothing.
      *
      * @param subtask HomeworkTask to insert.
      * @param parentID id of the parent task.
@@ -611,11 +610,10 @@ public enum Database {
         // check if the task is not empty, because then it shouldn't
         // be in the database
         if(!subtask.getText().equals("") && (parentID != -1)) {
-            // first delete the subtasks if it is currently in the database,
-            // to avoid duplicates
-//            deleteSubtask(parentID, subtask.getDone(), subtask.getText());
-            int doneInt = subtask.getDone() ? 1 : 0;
+            // delete the subtask if it exists, to avoid duplicates
+            deleteSubtask(parentID, subtask.getDone(), subtask.getText());
             // add the subtask again
+            int doneInt = subtask.getDone() ? 1 : 0;
             String sql = "INSERT INTO subtasks(parentID, done, task) VALUES (" +
                     parentID + ", " + doneInt + ", '" + subtask.getText() + "')";
             query(sql);

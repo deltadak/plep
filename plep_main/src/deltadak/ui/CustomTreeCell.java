@@ -685,13 +685,11 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                 }
 
                 // update in database (new day?)
-                // commenting this doesn't change anything...
-                // it probably does something I'm not testing at the moment.
-//                controller.updateParentDatabase(day,
-//                        controller.getParentTasks(
-//                            controller.convertTreeToArrayList(tree)
-//                        )
-//                );
+                controller.updateParentDatabase(day,
+                        controller.getParentTasks(
+                            controller.convertTreeToArrayList(tree)
+                        )
+                );
 
             }
             event.consume();
