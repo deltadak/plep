@@ -34,6 +34,14 @@ public class HomeworkTask implements Serializable {
         this.databaseID = -1;
     }
 
+    /**
+     * Checks task for default values.
+     * @return Whether this task is a default task or not.
+     */
+    public boolean isEmpty() {
+        return (!done) && text.isEmpty() && label.isEmpty() && color.equals("White") && (databaseID == -1);
+    }
+
     public boolean getDone() {
         return done;
     }

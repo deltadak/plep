@@ -43,7 +43,7 @@ public class Main extends Application {
         String buttonCSS = this.getClass().getResource("/css/button.css").toExternalForm();
         String spinnerCSS = this.getClass().getResource("/css/spinner.css").toExternalForm();
         String checkboxCSS = this.getClass().getResource("/css/checkbox.css").toExternalForm();
-        String dropdownCSS = this.getClass().getResource("/css/dropdown.css").toExternalForm();
+        String dropdownCSS = this.getClass().getResource("/css/combobox.css").toExternalForm();
 
         primaryStage.getScene().getStylesheets().addAll(treeViewCSS, generalCSS, buttonCSS, spinnerCSS, checkboxCSS, dropdownCSS);
 

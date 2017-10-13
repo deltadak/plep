@@ -12,9 +12,7 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
-import javafx.scene.text.TextAlignment;
 
-import javax.xml.crypto.Data;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -192,8 +190,14 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
             
             boolean done = homeworkTask.getDone();
             checkBox.setSelected(done);
-            
+
             label = new Label(homeworkTask.getText());
+
+            // Items with default tasks are invisible, except one ready to be edited
+            if (homeworkTask.isEmpty()) {
+                // Set invisible style
+               makeInvisible();
+            }
 
             // This won't work for long text without spaces, and more.
 //            label.prefWidthProperty().bind(getTreeView().widthProperty().subtract(comboBox.widthProperty()).subtract(checkBox.widthProperty()));
@@ -446,6 +450,19 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         }
         // refresh the console to see the newly copied tasks
         controller.refreshAllDays();
+    }
+
+    /**
+     * Makes this item invisible.
+     */
+    private void makeInvisible() {
+        // First remove existing styles
+        comboBox.getStyleClass().removeAll("combobox-text-white", "combobox-done", "combobox-done-light", "combobox-done-dark");
+
+        comboBox.getStyleClass().add("combobox-invisible");
+
+        checkBox.getStyleClass().remove("check-box");
+        checkBox.getStyleClass().add("checkbox-invisible");
     }
     
     /**

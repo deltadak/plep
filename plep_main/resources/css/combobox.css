@@ -48,3 +48,7 @@
 .combobox-text-white .list-cell {
     -fx-text-fill: #ffffff;
 }
+
+.combobox-invisible .arrow{
+    -fx-background-color: #ffffff;
+}
