@@ -619,8 +619,6 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                 }
                 success = true;
                 // update tasks in database (old day?)
-                System.out.println("test"); // prints this every time you
-                // drop something
                 controller.updateParentDatabase(day,
                         controller.getParentTasks(
                             controller.convertTreeToArrayList(tree)
