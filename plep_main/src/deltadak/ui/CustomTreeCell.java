@@ -199,8 +199,14 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
 //            label.prefWidthProperty().bind(getTreeView().widthProperty().subtract(comboBox.widthProperty()).subtract(checkBox.widthProperty()));
             // combobox.getWidth() is equal to 0 here, we can't use that.
             // Result:
-            label.setPrefWidth(getTreeView().getWidth() - LABEL_MAGIK);
-
+//            label.setPrefWidth(getTreeView().getWidth() - LABEL_MAGIK);
+    
+            // This works? :
+            label.prefWidthProperty().bind(getTreeView().widthProperty()
+                                                   .subtract(LABEL_MAGIK));
+            label.setWrapText(true);
+            label.setTextAlignment(TextAlignment.JUSTIFY);
+    
             // Get style from the database and apply to the item
             String color = homeworkTask.getColor();
 
