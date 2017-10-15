@@ -5,7 +5,7 @@ Plep works like a real agenda, but with the advantages of your Windows computer.
 
 [Download stable version v1.2.2.](https://github.com/deltadak/plep/blob/master/releases/plep_v1.2.2.jar?raw=true)
 
-[Download beta version v2.0.0](https://github.com/deltadak/plep/blob/master/releases/plep_v2.0.0-beta.jar?raw=true)
+[Download beta version v2.0.0-beta](https://github.com/deltadak/plep/blob/master/releases/plep_v2.0.0-beta.jar?raw=true)
 
 [Download the experimental windows installer for v1.2.1.](https://github.com/deltadak/plep/blob/master/releases/setup/setup_plep_v1.2.1.exe?raw=true)
 
@@ -26,8 +26,8 @@ We try to adhere to [Semantic Versioning](http://semver.org/).
 
 Note: The first time plep is ran, it will create a database file in the folder where plep.jar is stored. You can backup this if you don't want to lose your data.
 
-## Screenshot of v1.3
-![screenshot](v1.3.PNG)
+## Screenshot of v2.0.0
+![screenshot](v2.0.0.PNG)
 
 ## Instructions for building from source in IntelliJ
 This application works with a database, so you need to add the sqlite library by going to project structure -> libaries -> add new one and then selecting the file located at something like C:\Users\username\\.IntelliJIdea2016.2\config\jdbc-drivers\sqlite-jdbc-3.8.11.2.jar
