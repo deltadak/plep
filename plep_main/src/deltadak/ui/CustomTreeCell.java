@@ -3,25 +3,18 @@ package deltadak.ui;
 import deltadak.Database;
 import deltadak.HomeworkTask;
 import javafx.beans.InvalidationListener;
+import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTreeCell;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
+import javafx.scene.text.TextAlignment;
 
-import javax.xml.crypto.Data;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -34,8 +27,8 @@ import static java.lang.Math.min;
  */
 public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
 
-    /** Temporary fix for too long labels. Should equal the size of the combobox plus the size of the checkbox. */
-    private int LABEL_MAGIK = 200;
+    /** Temporary fix for too long labels. Should equal the size of the combobox plus the size of the checkbox plus the size of the little arrow to view subtasks. */
+    private int LABEL_MAGIK = 215;
     
     private ObservableList<String> comboList;
     private TreeItem<HomeworkTask> root; // the root item of the TreeView
@@ -51,7 +44,8 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
      * Each CustomTreeCell keeps a reference to the listener of the
      * ComboBox, in order to choose whether to block it temporarily or not.
      */
-    ListenerWithBlocker labelChangeListener;
+    InvalidationListenerWithBlocker labelChangeListener;
+    ChangeListenerWithBlocker doneChangeListener;
     
     /**
      * Constructor for the CustomTreeCell.
@@ -197,8 +191,12 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
             // create the items that are on every cell
             cellBox = new HBox(10);
             
-            boolean done = homeworkTask.getDone();
-            checkBox.setSelected(done);
+            // block the listener on the checkbox when we manually toggle it
+            // so it corresponds to the value in the database
+            doneChangeListener.setBlock(true);
+                boolean done = homeworkTask.getDone();
+                checkBox.setSelected(done); // manually toggle (if necessary)
+            doneChangeListener.setBlock(false); // unblock the listener
             
             label = new Label(homeworkTask.getText());
 
@@ -206,8 +204,14 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
 //            label.prefWidthProperty().bind(getTreeView().widthProperty().subtract(comboBox.widthProperty()).subtract(checkBox.widthProperty()));
             // combobox.getWidth() is equal to 0 here, we can't use that.
             // Result:
-            label.setPrefWidth(getTreeView().getWidth() - LABEL_MAGIK);
-
+//            label.setPrefWidth(getTreeView().getWidth() - LABEL_MAGIK);
+    
+            // This works? :
+            label.prefWidthProperty().bind(getTreeView().widthProperty()
+                                                   .subtract(LABEL_MAGIK));
+            label.setWrapText(true);
+            label.setTextAlignment(TextAlignment.JUSTIFY);
+    
             // Get style from the database and apply to the item
             String color = homeworkTask.getColor();
 
@@ -271,11 +275,12 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         };
         
         // Pass the invalidationlistener on to the custom listener
-        labelChangeListener = new ListenerWithBlocker(invalidationListener);
+        labelChangeListener = new InvalidationListenerWithBlocker(invalidationListener);
         
         // update label in database when selecting a different one
         comboBox.getSelectionModel().selectedIndexProperty()
                 .addListener(labelChangeListener);
+        
     }
     
     /**
@@ -284,16 +289,16 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
      * @param localDate The date of the TreeView, and thus all the HomeworkTasks, in which the CheckBox is toggled.
      */
     void setOnDoneChangeListener(TreeView<HomeworkTask> tree, LocalDate localDate) {
-        checkBox.selectedProperty().addListener(
+        
+        ChangeListener<Boolean> changeListener =
                 (observable, oldValue, newValue) -> {
-                    
                     getTreeItem().getValue().setDone(newValue);
     
                     // set the style on the label
                     if(label != null) {
                         setDoneStyle(newValue);
                     }
-
+    
                     // Deselect the item, otherwise the selector changes color and overrides the item color.
                     select(tree, () -> {});
                     
@@ -302,14 +307,14 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                      * If so, we mark its parent task as done.
                      */
                     if(!getTreeItem().getParent().equals(root)) {
-                        
+        
                         // the total number of subtasks of its parent
                         int totalSubtasks = getTreeItem().getParent()
                                 .getChildren().size();
-                        
+        
                         // the number of those tasks that are marked as done
                         int doneSubtasks = getDoneSubtasks(getTreeItem().getParent());
-                        
+        
                         // if all the tasks are done, we mark the parent task
                         // as done
                         // This is a bit complicated by the idea that we always provide one more empty subtask to be edited.
@@ -331,10 +336,67 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                             getTreeItem().getParent().setValue(parent);
                         }
                     }
-                    
+    
                     controller.updateDatabase(localDate, controller
                             .convertTreeToArrayList(tree));
-                });
+                            
+                };
+        
+        doneChangeListener = new ChangeListenerWithBlocker<Boolean>(changeListener);
+        
+        checkBox.selectedProperty().addListener(doneChangeListener);
+        
+                
+//        checkBox.selectedProperty().addListener(
+//                (observable, oldValue, newValue) -> {
+                    
+//                    getTreeItem().getValue().setDone(newValue);
+//
+//                    // set the style on the label
+//                    if(label != null) {
+//                        setDoneStyle(newValue);
+//                    }
+//
+//                    // Deselect the item, otherwise the selector changes color and overrides the item color.
+//                    select(tree, () -> {});
+//
+//                    /* If the item of which the checkbox is toggled is
+//                     * a subtask, then we check if all subtasks are done.
+//                     * If so, we mark its parent task as done.
+//                     */
+//                    if(!getTreeItem().getParent().equals(root)) {
+//
+//                        // the total number of subtasks of its parent
+//                        int totalSubtasks = getTreeItem().getParent()
+//                                .getChildren().size();
+//
+//                        // the number of those tasks that are marked as done
+//                        int doneSubtasks = getDoneSubtasks(getTreeItem().getParent());
+//
+//                        // if all the tasks are done, we mark the parent task
+//                        // as done
+//                        // This is a bit complicated by the idea that we always provide one more empty subtask to be edited.
+//                        // Which means that with more than one subtask, the total of done subtasks should be one less than the total.
+//                        // Border case: when there is only one subtask, it needs to be checked for the parent to be checked,
+//                        // so the amount of done subtasks needs to be at least one.
+//                        if((totalSubtasks == (doneSubtasks + 1)) && (doneSubtasks > 0)) {
+//                            // calling ...getparent().getValue().setDone(true)
+//                            // is not enough to trigger the event listener of
+//                            // the parent item
+//                            HomeworkTask parentOld = getTreeItem().getParent().getValue();
+//                            HomeworkTask parent = new
+//                                    HomeworkTask(true,
+//                                                 parentOld.getText(),
+//                                                 parentOld.getLabel(),
+//                                                 parentOld.getColor(),
+//                                                 parentOld.getDatabaseID());
+//                            getTreeItem().getParent().setValue(parent);
+//                        }
+//                    }
+//
+//                    controller.updateDatabase(localDate, controller
+//                            .convertTreeToArrayList(tree));
+//                });
     }
     
     /**
@@ -626,7 +688,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                     tree.getRoot().getChildren().add(index, item);
                 }
                 success = true;
-                // update tasks in database
+                // update tasks in database (old day?)
                 controller.updateParentDatabase(day,
                         controller.getParentTasks(
                             controller.convertTreeToArrayList(tree)
@@ -690,7 +752,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                             .setValue(emptyHomeworkTask);
                 }
 
-                // update in database
+                // update in database (new day?)
                 controller.updateParentDatabase(day,
                         controller.getParentTasks(
                             controller.convertTreeToArrayList(tree)

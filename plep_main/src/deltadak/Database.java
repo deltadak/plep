@@ -1,5 +1,7 @@
 package deltadak;
 
+import deltadak.ui.CustomTreeCell;
+
 import java.io.File;
 import java.security.CodeSource;
 import java.sql.Connection;
@@ -177,7 +179,6 @@ public enum Database {
         for (int i = 0; i < parentTasks.size(); i++) {
             // add the parent task to the database
             insertOrUpdateTask(day, parentTasks.get(i), i);
-            
         }
         deleteEmptyRows("tasks", "task");
     }
@@ -602,7 +603,8 @@ public enum Database {
     
     /**
      * Inserts a subtask into the database, given the subtask
-     * and the id of its parent.
+     * and the id of its parent. If the task already exists, it does
+     * effectively nothing.
      *
      * @param subtask HomeworkTask to insert.
      * @param parentID id of the parent task.
@@ -611,11 +613,10 @@ public enum Database {
         // check if the task is not empty, because then it shouldn't
         // be in the database
         if(!subtask.getText().equals("") && (parentID != -1)) {
-            // first delete the subtasks if it is currently in the database,
-            // to avoid duplicates
+            // delete the subtask if it exists, to avoid duplicates
 //            deleteSubtask(parentID, subtask.getDone(), subtask.getText());
-            int doneInt = subtask.getDone() ? 1 : 0;
             // add the subtask again
+            int doneInt = subtask.getDone() ? 1 : 0;
             String sql = "INSERT INTO subtasks(parentID, done, task) VALUES (" +
                     parentID + ", " + doneInt + ", '" + subtask.getText() + "')";
             query(sql);
