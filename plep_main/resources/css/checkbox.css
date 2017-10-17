@@ -26,7 +26,7 @@
 
 .check-box:hover > .box {
     /* increase size a little bit */
-    -fx-padding: 5px;
+    -fx-padding: 4px;
     -fx-effect: dropshadow(gaussian, -fx-button, 10, 0, 0, 0);
 }
 
