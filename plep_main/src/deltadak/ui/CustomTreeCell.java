@@ -47,7 +47,6 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
      */
     InvalidationListenerWithBlocker labelChangeListener;
     ChangeListenerWithBlocker doneChangeListener;
-    ChangeListenerWithBlocker expandedChangeListener;
     
     /**
      * Constructor for the CustomTreeCell.
@@ -110,7 +109,6 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         
         setOnLabelChangeListener(tree, localDate);
         setOnDoneChangeListener(tree, localDate);
-        setOnExpandedChangeListener(tree, localDate);
     
         setOnDragDetected();
         setOnDragOver();
@@ -351,20 +349,6 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         checkBox.selectedProperty().addListener(doneChangeListener);
     }
     
-    void setOnExpandedChangeListener(TreeView<HomeworkTask> tree, LocalDate
-            day) {
-        
-        ChangeListener<Boolean> changeListener =
-                (observable, oldValue, newValue) -> {
-                    System.out.println(newValue);
-                };
-        
-        expandedChangeListener = new ChangeListenerWithBlocker<Boolean>(changeListener);
-    
-        
-//        getTreeItem().expandedProperty().addListener(expandedChangeListener);
-    }
-    
     /**
      * Creates a context menu to be able to add a subtask, repeat a task, or
      * change the colour of a task.
@@ -418,7 +402,10 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
      * Creates an empty subtask, a child, of the parentItem.
      * @param parentItem The item to create a subtask in/under.
      */
-    private void createSubTask(TreeItem parentItem) {
+    private void createSubTask(TreeItem<HomeworkTask> parentItem) {
+        // manually set expanded to true in the database
+        parentItem.getValue().setExpanded(true);
+        
         // add a new subtask
         TreeItem<HomeworkTask> emptyItem = new TreeItem<>(
                 new HomeworkTask());
@@ -437,7 +424,6 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         TreeItem<HomeworkTask> item = getTreeView().getTreeItem(index);
         // finnaly we can edit!
         getTreeView().edit(item);
-        
     }
     
     /**

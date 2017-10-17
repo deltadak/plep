@@ -5,6 +5,8 @@ import deltadak.HomeworkTask;
 import deltadak.commands.DeleteCommand;
 import deltadak.commands.DeleteSubtaskCommand;
 import deltadak.commands.UndoFacility;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -94,7 +96,7 @@ public class Controller implements Initializable, AbstractController {
 
     /** keep a reference to the undo facility */
     private UndoFacility undoFacility = new UndoFacility();
-
+    
     /**
      * Initialization method for the controller.
      */
@@ -680,23 +682,18 @@ public class Controller implements Initializable, AbstractController {
                     // add the parent task to the tree
                     TreeItem<HomeworkTask> item = new TreeItem<>(list.get(i));
                     tree.getRoot().getChildren().add(item);
+    
                     item.setExpanded(item.getValue().getExpanded());
-
+                    
+                    int orderInDay = i;
                     // When expanded state changes, save to database.
                     item.expandedProperty().addListener(
                             (observable, oldValue, newValue) -> {
-                                // First set the expanded value of the
-                                // homeworktask to the new value.
-                                item.getValue().setExpanded(newValue);
-                                // Get the index of the edited item.
-                                int orderInDay = item.getParent().getChildren
-                                        ().indexOf(item);
-                                // Update the homeworktask in the database.
-//                                Database.INSTANCE.insertOrUpdateTask
-//                                        (localDate, item.getValue(), orderInDay);
-//                                Database.INSTANCE.updateExpanded(
-//                                        item.getValue().getDatabaseID(),
-//                                        newValue);
+                                // update the task in the database, with the
+                                // new value for expanded
+                                HomeworkTask task = item.getValue();
+                                task.setExpanded(newValue);
+                                insertOrUpdateTask(localDate, task, orderInDay);
                             });
 
                     // get the size of the current family, or the number of
@@ -858,6 +855,11 @@ public class Controller implements Initializable, AbstractController {
     synchronized void updateParentsSynced(final LocalDate day, final List<HomeworkTask> parentTasks) {
         Database.INSTANCE.updateParentsDay(day, parentTasks);
     }
+    
+    synchronized void insertOrUpdateTask(final LocalDate day, final
+    HomeworkTask task, final int orderInDay) {
+        Database.INSTANCE.insertOrUpdateTask(day, task, orderInDay);
+    }
 
     /**
      * See {@link Database#getParentTasksDay(LocalDate)}
@@ -898,7 +900,7 @@ public class Controller implements Initializable, AbstractController {
 //    public void insertExpandedItem(int id, boolean expanded) {
 //        Database.INSTANCE.insertExpandedItem(id, expanded);
 //    }
-
+    
     /**
      * See {@link Database#getSetting(String)}
      *
