@@ -4,6 +4,7 @@ import deltadak.Database;
 import deltadak.HomeworkTask;
 import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -46,6 +47,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
      */
     InvalidationListenerWithBlocker labelChangeListener;
     ChangeListenerWithBlocker doneChangeListener;
+    ChangeListenerWithBlocker expandedChangeListener;
     
     /**
      * Constructor for the CustomTreeCell.
@@ -105,8 +107,10 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
             }
         });
         
+        
         setOnLabelChangeListener(tree, localDate);
         setOnDoneChangeListener(tree, localDate);
+        setOnExpandedChangeListener(tree, localDate);
     
         setOnDragDetected();
         setOnDragOver();
@@ -345,58 +349,20 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         doneChangeListener = new ChangeListenerWithBlocker<Boolean>(changeListener);
         
         checkBox.selectedProperty().addListener(doneChangeListener);
+    }
+    
+    void setOnExpandedChangeListener(TreeView<HomeworkTask> tree, LocalDate
+            day) {
         
-                
-//        checkBox.selectedProperty().addListener(
-//                (observable, oldValue, newValue) -> {
-                    
-//                    getTreeItem().getValue().setDone(newValue);
-//
-//                    // set the style on the label
-//                    if(label != null) {
-//                        setDoneStyle(newValue);
-//                    }
-//
-//                    // Deselect the item, otherwise the selector changes color and overrides the item color.
-//                    select(tree, () -> {});
-//
-//                    /* If the item of which the checkbox is toggled is
-//                     * a subtask, then we check if all subtasks are done.
-//                     * If so, we mark its parent task as done.
-//                     */
-//                    if(!getTreeItem().getParent().equals(root)) {
-//
-//                        // the total number of subtasks of its parent
-//                        int totalSubtasks = getTreeItem().getParent()
-//                                .getChildren().size();
-//
-//                        // the number of those tasks that are marked as done
-//                        int doneSubtasks = getDoneSubtasks(getTreeItem().getParent());
-//
-//                        // if all the tasks are done, we mark the parent task
-//                        // as done
-//                        // This is a bit complicated by the idea that we always provide one more empty subtask to be edited.
-//                        // Which means that with more than one subtask, the total of done subtasks should be one less than the total.
-//                        // Border case: when there is only one subtask, it needs to be checked for the parent to be checked,
-//                        // so the amount of done subtasks needs to be at least one.
-//                        if((totalSubtasks == (doneSubtasks + 1)) && (doneSubtasks > 0)) {
-//                            // calling ...getparent().getValue().setDone(true)
-//                            // is not enough to trigger the event listener of
-//                            // the parent item
-//                            HomeworkTask parentOld = getTreeItem().getParent().getValue();
-//                            HomeworkTask parent = new
-//                                    HomeworkTask(true,
-//                                                 parentOld.getText(),
-//                                                 parentOld.getLabel(),
-//                                                 parentOld.getColor(),
-//                                                 parentOld.getDatabaseID());
-//                            getTreeItem().getParent().setValue(parent);
-//                        }
-//                    }
-//
-//                    controller.updateDatabase(localDate, controller
-//                            .convertTreeToArrayList(tree));
-//                });
+        ChangeListener<Boolean> changeListener =
+                (observable, oldValue, newValue) -> {
+                    System.out.println(newValue);
+                };
+        
+        expandedChangeListener = new ChangeListenerWithBlocker<Boolean>(changeListener);
+    
+        
+//        getTreeItem().expandedProperty().addListener(expandedChangeListener);
     }
     
     /**
