@@ -51,14 +51,6 @@ object DeleteSubtaskCommandTest: Spek({
 })
 
 class DummyController : AbstractController {
-    override fun insertExpandedItem(id: Int, expanded: Boolean) {
-        // .,.
-    }
-
-    override fun deleteExpanded(id: Int) {
-        // ...
-    }
-
     override fun updateDatabase(day: LocalDate, homeworkTasks: MutableList<MutableList<HomeworkTask>>) {
         // Do nothing, duh.
     }
