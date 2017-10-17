@@ -717,21 +717,6 @@ public class Controller implements Initializable, AbstractController {
                     }
                 }
 
-                // Expand tasks according to database TODO delete
-//                for (Map.Entry<Integer, Boolean> expandedPair : allExpandedTasks)
-//                {
-//                    // get the id of the homework task
-//                    int id = expandedPair.getKey();
-//                    // get its expanded state (boolean)
-//                    boolean expanded = expandedPair.getValue();
-//
-//                    if(findTreeItemById(tree, id) != null) {
-//                        // set the expanded state on the tree item with
-//                        // the id of the tuple
-//                        findTreeItemById(tree, id).setExpanded(expanded);
-//                    }
-//
-//                }
             return true;
             }
         };
@@ -856,6 +841,13 @@ public class Controller implements Initializable, AbstractController {
         Database.INSTANCE.updateParentsDay(day, parentTasks);
     }
     
+    /**
+     * See {@link Database#insertOrUpdateTask(LocalDate, HomeworkTask, int)}
+     *
+     * @param day Same.
+     * @param task Same.
+     * @param orderInDay Same.
+     */
     synchronized void insertOrUpdateTask(final LocalDate day, final
     HomeworkTask task, final int orderInDay) {
         Database.INSTANCE.insertOrUpdateTask(day, task, orderInDay);
@@ -871,36 +863,6 @@ public class Controller implements Initializable, AbstractController {
         return Database.INSTANCE.getParentTasksDay(day);
     }
 
-//    /** TODO delete
-//     * See {@link Database#getExpanded()}
-//     *
-//     * @return Same.
-//     */
-//    public List<Map.Entry<Integer, Boolean>> getExpandedFromDatabase() {
-//        return Database.INSTANCE.getExpanded();
-//    }
-//
-//    /**
-//     * See {@link Database#deleteExpanded(int)}
-//     *
-//     * @param id Same.
-//     */
-//    @Override
-//    public void deleteExpanded(int id) {
-//        Database.INSTANCE.deleteExpanded(id);
-//    }
-//
-//    /**
-//     * See {@link Database#insertTask(LocalDate, HomeworkTask, int)}
-//     *
-//     * @param id Same.
-//     * @param expanded Same.
-//     */
-//    @Override
-//    public void insertExpandedItem(int id, boolean expanded) {
-//        Database.INSTANCE.insertExpandedItem(id, expanded);
-//    }
-    
     /**
      * See {@link Database#getSetting(String)}
      *
