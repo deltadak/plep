@@ -2,8 +2,10 @@ package deltadak.ui;
 
 import deltadak.Database;
 import deltadak.HomeworkTask;
+import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
@@ -15,6 +17,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.scene.text.TextAlignment;
 
+import java.lang.management.PlatformLoggingMXBean;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -105,6 +108,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
             }
         });
         
+        
         setOnLabelChangeListener(tree, localDate);
         setOnDoneChangeListener(tree, localDate);
     
@@ -138,8 +142,8 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                 }
             } else { // if we are not editing a subtask
                 // insert the task in the expanded table
-                controller.insertExpandedItem(editingItem.getValue()
-                        .getDatabaseID(), false);
+//                controller.insertExpandedItem(editingItem.getValue()
+//                        .getDatabaseID(), false);
             }
 
             // update the database with the current first level items
@@ -331,6 +335,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                                                  parentOld.getText(),
                                                  parentOld.getLabel(),
                                                  parentOld.getColor(),
+                                                 parentOld.getExpanded(),
                                                  parentOld.getDatabaseID());
                             getTreeItem().getParent().setValue(parent);
                         }
@@ -344,58 +349,6 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         doneChangeListener = new ChangeListenerWithBlocker<Boolean>(changeListener);
         
         checkBox.selectedProperty().addListener(doneChangeListener);
-        
-                
-//        checkBox.selectedProperty().addListener(
-//                (observable, oldValue, newValue) -> {
-                    
-//                    getTreeItem().getValue().setDone(newValue);
-//
-//                    // set the style on the label
-//                    if(label != null) {
-//                        setDoneStyle(newValue);
-//                    }
-//
-//                    // Deselect the item, otherwise the selector changes color and overrides the item color.
-//                    select(tree, () -> {});
-//
-//                    /* If the item of which the checkbox is toggled is
-//                     * a subtask, then we check if all subtasks are done.
-//                     * If so, we mark its parent task as done.
-//                     */
-//                    if(!getTreeItem().getParent().equals(root)) {
-//
-//                        // the total number of subtasks of its parent
-//                        int totalSubtasks = getTreeItem().getParent()
-//                                .getChildren().size();
-//
-//                        // the number of those tasks that are marked as done
-//                        int doneSubtasks = getDoneSubtasks(getTreeItem().getParent());
-//
-//                        // if all the tasks are done, we mark the parent task
-//                        // as done
-//                        // This is a bit complicated by the idea that we always provide one more empty subtask to be edited.
-//                        // Which means that with more than one subtask, the total of done subtasks should be one less than the total.
-//                        // Border case: when there is only one subtask, it needs to be checked for the parent to be checked,
-//                        // so the amount of done subtasks needs to be at least one.
-//                        if((totalSubtasks == (doneSubtasks + 1)) && (doneSubtasks > 0)) {
-//                            // calling ...getparent().getValue().setDone(true)
-//                            // is not enough to trigger the event listener of
-//                            // the parent item
-//                            HomeworkTask parentOld = getTreeItem().getParent().getValue();
-//                            HomeworkTask parent = new
-//                                    HomeworkTask(true,
-//                                                 parentOld.getText(),
-//                                                 parentOld.getLabel(),
-//                                                 parentOld.getColor(),
-//                                                 parentOld.getDatabaseID());
-//                            getTreeItem().getParent().setValue(parent);
-//                        }
-//                    }
-//
-//                    controller.updateDatabase(localDate, controller
-//                            .convertTreeToArrayList(tree));
-//                });
     }
     
     /**
@@ -451,7 +404,10 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
      * Creates an empty subtask, a child, of the parentItem.
      * @param parentItem The item to create a subtask in/under.
      */
-    private void createSubTask(TreeItem parentItem) {
+    private void createSubTask(TreeItem<HomeworkTask> parentItem) {
+        // manually set expanded to true in the database
+        parentItem.getValue().setExpanded(true);
+        
         // add a new subtask
         TreeItem<HomeworkTask> emptyItem = new TreeItem<>(
                 new HomeworkTask());
@@ -470,7 +426,6 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         TreeItem<HomeworkTask> item = getTreeView().getTreeItem(index);
         // finnaly we can edit!
         getTreeView().edit(item);
-        
     }
     
     /**

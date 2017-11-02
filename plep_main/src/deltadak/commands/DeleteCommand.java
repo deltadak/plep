@@ -58,7 +58,7 @@ public class DeleteCommand extends Command {
                     .getSelectedItem();
 
             // Delete the item from the 'expanded' table, which contains information whether the item was expanded or not.
-            controller.deleteExpanded(selected.getValue().getDatabaseID());
+//            controller.deleteExpanded(selected.getValue().getDatabaseID());
 
             tree.getRoot().getChildren().remove(indexState);
         }
@@ -86,8 +86,8 @@ public class DeleteCommand extends Command {
 
             controller.updateDatabase(dayState, treeViewItems);
 
-            int parentID = parent.getValue().getDatabaseID();
-            controller.insertExpandedItem(parentID, false);
+//            int parentID = parent.getValue().getDatabaseID();
+//            controller.insertExpandedItem(parentID, false);
 
             controller.cleanUp(tree);
         }

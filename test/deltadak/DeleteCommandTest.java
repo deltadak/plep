@@ -37,16 +37,6 @@ public class DeleteCommandTest {
             public void cleanUp(TreeView<HomeworkTask> list) {
                 // do nothing
             }
-
-            @Override
-            public void deleteExpanded(int id) {
-
-            }
-
-            @Override
-            public void insertExpandedItem(int id, boolean expanded) {
-
-            }
         };
         command = new DeleteCommand(dummy, dayState, list, 0, null);
     }
