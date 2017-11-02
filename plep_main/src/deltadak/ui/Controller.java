@@ -5,6 +5,7 @@ import deltadak.HomeworkTask;
 import deltadak.commands.DeleteCommand;
 import deltadak.commands.DeleteSubtaskCommand;
 import deltadak.commands.UndoFacility;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -523,26 +524,35 @@ public class Controller implements Initializable, AbstractController {
     }
 
     /**
-     * Refreshes all listviews using data from the database.
+     * Refreshes all treeviews using data from the database.
      */
     void refreshAllDays() {
-        // find all treeviews from the gridpane
-        List<TreeView<HomeworkTask>> treeViews = getAllTreeViews();
-
-        for (int i = 0; i < numberOfDays; i++) {
-            TreeView<HomeworkTask> tree = treeViews.get(i);
-            // create a list to store if the items are expanded
-            List<Boolean> expanded = new ArrayList<>();
-
-            for (int j = 0; j < tree.getRoot().getChildren().size(); j++) {
-                // loop through the tree to add all the booleans
-                expanded.add(tree.getRoot().getChildren().get(j).isExpanded());
+        // Use this so updating the UI works like it should, and the JavaFX
+        // Application thread doesn't hang.
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                // find all treeviews from the gridpane
+                List<TreeView<HomeworkTask>> treeViews = getAllTreeViews();
+    
+                for (int i = 0; i < numberOfDays; i++) {
+                    TreeView<HomeworkTask> tree = treeViews.get(i);
+                    // create a list to store if the items are expanded
+                    List<Boolean> expanded = new ArrayList<>();
+        
+                    for (int j = 0; j < tree.getRoot().getChildren().size(); j++) {
+                        // loop through the tree to add all the booleans
+                        expanded.add(tree.getRoot().getChildren().get(j).isExpanded());
+                    }
+        
+                    // refresh the treeview from database
+                    LocalDate localDate = focusDay.plusDays(i - 1);
+                    refreshDay(tree, localDate);
+                }
+        
             }
-
-            // refresh the treeview from database
-            LocalDate localDate = focusDay.plusDays(i - 1);
-            refreshDay(tree, localDate);
-        }
+        });
+        
     }
 
     /**

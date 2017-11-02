@@ -2,6 +2,7 @@ package deltadak.ui;
 
 import deltadak.Database;
 import deltadak.HomeworkTask;
+import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -16,6 +17,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.scene.text.TextAlignment;
 
+import java.lang.management.PlatformLoggingMXBean;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
