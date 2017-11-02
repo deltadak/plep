@@ -333,12 +333,19 @@ public class Controller implements Initializable, AbstractController {
      */
     private void deleteParentTask(TreeView<HomeworkTask> tree, LocalDate localDate) {
 
+        // Get the selected item.
+        TreeItem<HomeworkTask> selectedItem = tree.getSelectionModel().getSelectedItem();
+        // Get the index of the selected item.
+        // Note: using selectionModel().getSelectedIndex() returns the index
+        // when also counting subtasks, so this does not work.
+        int parentIndex = tree.getRoot().getChildren().indexOf(selectedItem);
+        
         undoFacility.execute(
                 new DeleteCommand(
                         this,
                         localDate,
                         convertTreeToArrayList(tree),
-                        tree.getSelectionModel().getSelectedIndex(),
+                        parentIndex,
                         tree
                 )
         );
@@ -351,7 +358,6 @@ public class Controller implements Initializable, AbstractController {
      * @param localDate Date of the TreeView.
      */
     private void deleteSubtask(TreeView<HomeworkTask> tree, LocalDate localDate) {
-        TreeItem<HomeworkTask> parentItem = tree.getSelectionModel().getSelectedItem().getParent();
 
         undoFacility.execute(
                 new DeleteSubtaskCommand(
