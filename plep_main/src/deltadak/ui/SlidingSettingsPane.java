@@ -1,5 +1,6 @@
 package deltadak.ui;
 
+import deltadak.Database;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -7,8 +8,13 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.shape.Rectangle;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * A pane which provides settings.
@@ -24,11 +30,18 @@ public class SlidingSettingsPane extends SlidingPane {
     public Button applyNumberOfShowDays;
     public CheckBox autoColumnsCheckBox;
     public Button applyMaxColumns;
+    public GridPane colorsPane;
+    public ColorPicker colorOne;
+    public ColorPicker colorTwo;
+    public ColorPicker colorThree;
+    public ColorPicker colorFour;
+    public ColorPicker colorFive;
 
     private ListView<String> labelsList;
     private Spinner<Integer> numberOfMovingDaysSpinner;
     private Spinner<Integer> numberOfShowDaysSpinner;
     private Spinner<Integer> maxColumnsSpinner;
+    private List<ColorPicker> colorPickers = new ArrayList<>();
 
     private final int MAX_NUMBER_LABELS = 5;
 
@@ -65,6 +78,12 @@ public class SlidingSettingsPane extends SlidingPane {
         autoColumnsCheckBox.selectedProperty().addListener(
                 (observable, oldValue, newValue) ->
                         autoColumnsCheckBoxToggled(newValue));
+//        colorOne.setOnMouseClicked(event -> editColor(colorOne));
+//        colorTwo.setOnMouseClicked(event -> editColor(colorTwo));
+        for (int i = 0; i < colorPickers.size(); i++) {
+            ColorPicker colorPicker = colorPickers.get(i);
+            colorPicker.setOnAction(event -> editColor(colorPicker));
+        }
     }
 
     /**
@@ -74,6 +93,7 @@ public class SlidingSettingsPane extends SlidingPane {
 
         addEditLabelsPane();
         addChangeNumberOfDaysSettings();
+        addColorsPane();
 
     }
 
@@ -124,6 +144,30 @@ public class SlidingSettingsPane extends SlidingPane {
         });
 
         editLabelsPane.getChildren().add(labelsList);
+    }
+    
+    private void addColorsPane() {
+        colorPickers.add(colorOne);
+        colorPickers.add(colorTwo);
+        colorPickers.add(colorThree);
+        colorPickers.add(colorFour);
+        colorPickers.add(colorFive);
+        
+        // Get the colors from the database.
+        String[] colors = Database.INSTANCE.getColorsFromDatabase();
+        for (int i = 0; i < colorPickers.size(); i++) {
+            colorPickers.get(i).getStyleClass().add("button");
+            // Set the color in the database on the color picker.
+            colorPickers.get(i).setValue(Color.web(colors[i]));
+        }
+    }
+    
+    private void editColor(ColorPicker colorPicker) {
+        System.out.println("color picker");
+        int id = colorPickers.indexOf(colorPicker);
+        Database.INSTANCE.updateColor(id, colorPicker.getValue()
+                                                            .toString());
+        
     }
 
     /**
@@ -184,6 +228,7 @@ public class SlidingSettingsPane extends SlidingPane {
         toggleVisibilityFXMLObject("removeLabelButton");
 
         toggleYsettingsObject("editDaysPane");
+        toggleYsettingsObject("colorsPane");
     }
 
     /**

@@ -18,6 +18,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.concurrent.Task;
@@ -64,6 +65,13 @@ public class Controller implements Initializable, AbstractController {
     @FXML Button applyNumberOfShowDays;
     @FXML CheckBox autoColumnCheckBox;
     @FXML Button applyMaxColumns;
+    
+    @FXML GridPane colorsPane;
+    @FXML ColorPicker colorOne;
+    @FXML ColorPicker colorTwo;
+    @FXML ColorPicker colorThree;
+    @FXML ColorPicker colorFour;
+    @FXML ColorPicker colorFive;
 
     /** used to transfer tasks with drag and drop */
     public static final DataFormat DATA_FORMAT = new DataFormat("com.deltadak.HomeworkTask");
@@ -88,6 +96,13 @@ public class Controller implements Initializable, AbstractController {
     /** name of setting in the database */
     public static final String MAX_COLUMNS_AUTO_NAME = "max_columns_auto";
     
+    public static final String[] DEFAULT_COLORS = new String[] {
+            "0xff1a00ff",
+            "0x00cbefff",
+            "0x7df202ff",
+            "0xf444a7ff",
+            "0xffffffff"
+    };
 
     /** Day on which the gridpane is 'focused': the second day shown will be this day */
     public LocalDate focusDay;
@@ -160,6 +175,12 @@ public class Controller implements Initializable, AbstractController {
         settingsPane.applyNumberOfShowDays = this.applyNumberOfShowDays;
         settingsPane.autoColumnsCheckBox = this.autoColumnCheckBox;
         settingsPane.applyMaxColumns = this.applyMaxColumns;
+        settingsPane.colorsPane = this.colorsPane;
+        settingsPane.colorOne = this.colorOne;
+        settingsPane.colorTwo = this.colorTwo;
+        settingsPane.colorThree = this.colorThree;
+        settingsPane.colorFour = this.colorFour;
+        settingsPane.colorFive = this.colorFive;
 
     }
 

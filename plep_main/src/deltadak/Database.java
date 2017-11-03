@@ -1,5 +1,6 @@
 package deltadak;
 
+import deltadak.ui.Controller;
 import deltadak.ui.CustomTreeCell;
 
 import java.io.File;
@@ -322,6 +323,7 @@ public enum Database {
         createSubtaskTable();
         createSettingsTable();
         createLabelsTable();
+        createColorsTable();
     }
     
     /**
@@ -664,6 +666,51 @@ public enum Database {
     private void removeLabel(int id) {
         String sql = "DELETE FROM labels WHERE id = " + id;
         query(sql);
+    }
+    
+    private void createColorsTable() {
+        String sql = "CREATE TABLE IF NOT EXISTS colors(id INT PRIMARY KEY, "
+                + "hex CHAR(10))";
+        query(sql);
+        
+        String[] colors = Controller.DEFAULT_COLORS;
+        String sql2 = "INSERT OR IGNORE INTO colors(id, hex) VALUES (1, "
+                + "'" + colors[0] + "'), (2, '" + colors[1] + "'), (3, '" +
+                colors[2] + "'), (4, '" + colors[3] + "'), (5, '" +
+                colors[4] + "')";
+        query(sql2);
+    }
+    
+    public void updateColor(int id, String hex) {
+        System.out.println(id + ", " + hex);
+        id++;
+        String sql = "UPDATE colors "
+                + "SET id=" + id + ", hex='" + hex + "' "
+                + "WHERE id=" + id;
+        System.out.println(sql);
+        query(sql);
+    }
+    
+    public String[] getColorsFromDatabase() {
+        
+        ArrayList<String> temp = new ArrayList<String>();
+        String sql = "SELECT hex FROM colors";
+        
+        Connection connection = setConnection();
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+            
+            while(resultSet.next()) {
+                String hex = resultSet.getString("hex");
+                temp.add(hex);
+            }
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        return temp.toArray(new String[temp.size()]);
     }
     
     // misc -------------------------------------------------------------
