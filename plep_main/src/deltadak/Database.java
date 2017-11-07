@@ -1,7 +1,6 @@
 package deltadak;
 
 import deltadak.ui.Controller;
-import deltadak.ui.CustomTreeCell;
 
 import java.io.File;
 import java.security.CodeSource;
@@ -11,10 +10,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
-import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Class to communicate with database, it is an enum by the singleton design pattern.
@@ -71,7 +68,7 @@ public enum Database {
                                 resultSet.getBoolean("done"),
                                 resultSet.getString("task"),
                                 resultSet.getString("label"),
-                                resultSet.getString("color"),
+                                resultSet.getInt("color"),
                                 resultSet.getBoolean("expanded"),
                                 resultSet.getInt("id"));
                 homeworkTasks.add(homeworkTask);
@@ -360,7 +357,7 @@ public enum Database {
     private void createHomeworkTable() {
         String sql = "CREATE TABLE IF NOT EXISTS tasks(" + "id INT PRIMARY KEY, done BOOLEAN, "
                 + "day DATE," + "task CHAR(255)," + "label CHAR(10),"
-                + "color CHAR(50), expanded BOOLEAN, " + "orderInDay INT)";
+                + "color INT, expanded BOOLEAN, " + "orderInDay INT)";
         query(sql);
         
     }
@@ -409,8 +406,8 @@ public enum Database {
                 
                             + "VALUES (" + homeworkTask.getDatabaseID() + ", '"
                             + doneInt + "', '" + dayString + "', '"
-                            + homeworkTask.getText() + "','" + homeworkTask.getLabel() + "','"
-                            + homeworkTask.getColor() + "', " + expandedInt + ", " +
+                            + homeworkTask.getText() + "','" + homeworkTask.getLabel() + "', "
+                            + homeworkTask.getColorID() + ", " + expandedInt + ", " +
                             order +
                             ")";
             query(sql);
@@ -682,12 +679,10 @@ public enum Database {
     }
     
     public void updateColor(int id, String hex) {
-        System.out.println(id + ", " + hex);
         id++;
         String sql = "UPDATE colors "
                 + "SET id=" + id + ", hex='" + hex + "' "
                 + "WHERE id=" + id;
-        System.out.println(sql);
         query(sql);
     }
     
@@ -711,6 +706,28 @@ public enum Database {
         }
         
         return temp.toArray(new String[temp.size()]);
+    }
+    
+    public String getColorFromDatabase(int colorID) {
+        int id = colorID + 1;
+        
+        String hex = "ffffff"; // Default color is white.
+        
+        String sql = "SELECT hex FROM colors WHERE id =" + id;
+        Connection connection = setConnection();
+    
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+            
+            while(resultSet.next()) {
+                hex = resultSet.getString("hex");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    
+        return hex;
     }
     
     // misc -------------------------------------------------------------

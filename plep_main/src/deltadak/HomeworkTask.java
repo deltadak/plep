@@ -10,18 +10,18 @@ public class HomeworkTask implements Serializable {
     private boolean done;
     private String text;
     private String label;
-    private String color;
+    private int colorID;
     private boolean expanded;
     private int databaseID; // The id (primary key) in the database, used for
     // the subtasks to link to their parent. For the subtasks, this id is -1.
     
     public HomeworkTask(final boolean done, final String text, final String
-            label, final String color, final boolean expanded, final int
+            label, final int colorID, final boolean expanded, final int
             databaseID) {
         this.done = done;
         this.text = text;
         this.label = label;
-        this.color = color;
+        this.colorID = colorID;
         this.expanded = expanded;
         this.databaseID = databaseID;
     }
@@ -35,7 +35,7 @@ public class HomeworkTask implements Serializable {
         this.done = done;
         this.text = text;
         this.label = "";
-        this.color = "White";
+        this.colorID = 4;
         this.expanded = false;
         this.databaseID = -1;
     }
@@ -47,7 +47,7 @@ public class HomeworkTask implements Serializable {
         this.done = false;
         this.text = "";
         this.label = "";
-        this.color = "White";
+        this.colorID = 4;
         this.expanded = false;
         this.databaseID = -1;
     }
@@ -76,12 +76,12 @@ public class HomeworkTask implements Serializable {
         this.label = label;
     }
     
-    public String getColor() {
-        return color;
+    public int getColorID() {
+        return colorID;
     }
     
-    public void setColor(final String color) {
-        this.color = color;
+    public void setColorID(final int colorID) {
+        this.colorID = colorID;
     }
     
     public boolean getExpanded() {

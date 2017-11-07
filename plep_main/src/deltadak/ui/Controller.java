@@ -6,8 +6,6 @@ import deltadak.commands.DeleteCommand;
 import deltadak.commands.DeleteSubtaskCommand;
 import deltadak.commands.UndoFacility;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -18,7 +16,6 @@ import javafx.scene.control.*;
 import javafx.scene.control.Label;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.concurrent.Task;
@@ -26,7 +23,6 @@ import javafx.concurrent.Task;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.ArrayList;
 import java.util.concurrent.Executor;
@@ -97,11 +93,11 @@ public class Controller implements Initializable, AbstractController {
     public static final String MAX_COLUMNS_AUTO_NAME = "max_columns_auto";
     
     public static final String[] DEFAULT_COLORS = new String[] {
-            "0xff1a00ff",
-            "0x00cbefff",
-            "0x7df202ff",
-            "0xf444a7ff",
-            "0xffffffff"
+            "ff1a00",
+            "00cbef",
+            "7df202",
+            "f444a7",
+            "ffffff"
     };
 
     /** Day on which the gridpane is 'focused': the second day shown will be this day */
@@ -588,17 +584,25 @@ public class Controller implements Initializable, AbstractController {
      * @param colorWord the color in English, with capital. e.g. Green
      * @param customTreeCell LabelCell of which to change the background color
      */
-    public void setBackgroundColor(String colorWord,
+    public void setBackgroundColor(int colorID,
                                     CustomTreeCell customTreeCell) {
-        String colorString = convertColorToHex(colorWord);
-        if (colorString.equals("#ffffffff")) {
-            customTreeCell.setStyle("-fx-text-fill: none");
-        } else {
-            customTreeCell.setStyle(
-                    "-fx-control-inner-background: "
-                            + colorString);
-        }
-        customTreeCell.getItem().setColor(colorWord);
+    
+        Platform.runLater(() -> {
+    
+            String colorString = getColorFromDatabase(colorID);
+    
+            if (colorID == 4) {
+                customTreeCell.setStyle("-fx-text-fill: none");
+            } else {
+                customTreeCell.setStyle(
+                        "-fx-control-inner-background: #"
+                                + colorString);
+            }
+    
+            customTreeCell.getItem().setColorID(colorID);
+    
+        });
+        
 
     }
     
@@ -908,5 +912,9 @@ public class Controller implements Initializable, AbstractController {
      */
     private String getSetting(String name) {
         return Database.INSTANCE.getSetting(name);
+    }
+    
+    public String getColorFromDatabase(int colorID) {
+        return Database.INSTANCE.getColorFromDatabase(colorID);
     }
 }

@@ -11,6 +11,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.TextArea?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1"
             xmlns="http://javafx.com/javafx/2.2"
             fx:controller="deltadak.ui.Controller"
@@ -140,7 +141,7 @@ Ctrl+Z: Undo a deletion. "
                   AnchorPane.topAnchor="180.0"
                   AnchorPane.leftAnchor="10.0">
 
-            <Text text="Background colors"
+            <Text text="Background colours"
                     GridPane.columnIndex="0"
                     GridPane.rowIndex="0"
                     GridPane.columnSpan="5"/>
@@ -161,6 +162,9 @@ Ctrl+Z: Undo a deletion. "
                          GridPane.columnIndex="3"
                          GridPane.rowIndex="1"/>
 
+            <Label text="Default &#x0a; colour:"
+                  GridPane.columnIndex="4"
+                  GridPane.rowIndex="0"/>
             <ColorPicker fx:id="colorFive"
                          GridPane.columnIndex="4"
                          GridPane.rowIndex="1"/>

@@ -163,11 +163,17 @@ public class SlidingSettingsPane extends SlidingPane {
     }
     
     private void editColor(ColorPicker colorPicker) {
-        System.out.println("color picker");
-        int id = colorPickers.indexOf(colorPicker);
-        Database.INSTANCE.updateColor(id, colorPicker.getValue()
-                                                            .toString());
         
+        int id = colorPickers.indexOf(colorPicker);
+        Database.INSTANCE.updateColor(id, convertColorToWeb(colorPicker.getValue()));
+        
+        controller.setupGridPane(controller.focusDay);
+    
+    }
+    
+    private String convertColorToWeb(Color color) {
+        
+        return color.toString().substring(2, 8);
     }
 
     /**

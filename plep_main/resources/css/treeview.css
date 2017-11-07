@@ -53,8 +53,9 @@
     /*-fx-font-style: oblique;*/
 }
 
-.list-cell {
+.tree-cell {
     -fx-background: -fx-control-inner-background;
+    /*-fx-background: brown;*/
 }
 
 .list-cell:odd {
