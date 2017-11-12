@@ -26,7 +26,7 @@
     /* Grayed out text when an item is selected. */
     -fx-text-gray: #949494;
     -fx-text-gray-light: #dfdfdf;
-    -fx-text-gray-dark: #515151;
+    -fx-text-gray-dark: #767676;
 
     /* Color of the selector */
     -fx-accent: derive(-fx-control-inner-background, -15%);
