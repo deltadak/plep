@@ -27,7 +27,7 @@ We try to adhere to [Semantic Versioning](http://semver.org/).
 Note: The first time plep is ran, it will create a database file in the folder where plep.jar is stored. You can backup this if you don't want to lose your data.
 
 ## Screenshot of v2.0.0
-![screenshot](v2.0.0.-beta.5.PNG)
+![screenshot](v2.0.0-beta.5.PNG)
 # Settings of v2.0.0
 ![screenshot-settings](v2.0.0-beta.5.settings.PNG)
 
