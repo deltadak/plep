@@ -6,6 +6,7 @@ import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTreeCell;
@@ -196,6 +197,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         } else {
             // create the items that are on every cell
             cellBox = new HBox(10);
+            cellBox.setAlignment(Pos.CENTER_LEFT);
             
             // block the listener on the checkbox when we manually toggle it
             // so it corresponds to the value in the database
@@ -220,22 +222,17 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
     
             // Get style from the database and apply to the item
             int colorID = homeworkTask.getColorID();
-            if (colorID != 4) {
-                System.out.println(colorID);
-            }
             String color = controller.getColorFromDatabase(colorID);
 
-            // On dark backgrounds, change text color.
-            setWhiteComboboxText();
-
             setStyle("-fx-control-inner-background: #" + color);
-
+    
             // set the style on the label
             setDoneStyle(done);
     
             // if the item is first level, it has to show a course label
             // (ComboBox), and it has to have a context menu
-            if(getTreeItem().getParent().equals(root)) {
+            // Note: replacing equals() with a 'safe' equals() resolved NPE.
+            if(Objects.equals(getTreeItem().getParent(), root)) {
     
                 // Before setting value, we need to temporarily disable the
                 // listener, otherwise it fires and goes unnecessarily updating
@@ -499,57 +496,23 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
      * @param done boolean, true if the task is done, false if not done.
      */
     private void setDoneStyle(boolean done) {
-//        String color = getItem().getColorID();
 
         if(done) {
             label.getStyleClass().remove("label");
-
-            // Remove the white text of the combobox, which we set earlier when the background color is dark.
-            comboBox.getStyleClass().remove("combobox-text-white");
-
-            // Dark colors need a light text. TODO: if this is necessary
-//            switch (color) {
-//                case "Red":
-//                case "Blue":  // and item is selected
-//                    label.getStyleClass().add("label-done-light");
-//                    comboBox.getStyleClass().add("combobox-done-light");
-//                    break;
-//                case "Green":
-//                    label.getStyleClass().add("label-done-dark");
-//                    comboBox.getStyleClass().add("combobox-done-dark");
-//                    break;
-//                default:
-//                    label.getStyleClass().add("label-done");
-//                    comboBox.getStyleClass().add("combobox-done");
-//                    break;
-//            }
+            label.getStyleClass().add("label-done");
+            
+            comboBox.getStyleClass().remove("combo-box");
+            comboBox.getStyleClass().add("combobox-done");
 
         } else {
             // Remove all the classes which styled the 'done' style on the item.
-            label.getStyleClass().removeAll("label-done", "label-done-light", "label-done-dark");
+            label.getStyleClass().removeAll("label-done");
             label.getStyleClass().add("label");
 
-            comboBox.getStyleClass().removeAll("combobox-done", "combobox-done-light", "combobox-done-dark");
-
-            // Re-add white text for dark backgrounds.
-            setWhiteComboboxText();
+            comboBox.getStyleClass().removeAll("combobox-done");
+            comboBox.getStyleClass().add("combo-box");
 
         }
-    }
-
-    /**
-     * Useful for dark background colors.
-     */
-    private void setWhiteComboboxText() {
-        int colorID = getItem().getColorID();
-//        String color = getItem().getColorID();
-
-//        if (color.equals("Red")) {
-//            comboBox.getStyleClass().add("combobox-text-white");
-//        } else {
-//            comboBox.getStyleClass().remove("combobox-text-white");
-//        }
-
     }
 
     /**
@@ -721,10 +684,10 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                     
                     // deleting blank row from database which updating creates
                 } else { // item was moved up in same tree
-                    // we never get here...
+                    // we get here when dragging a task from below an
+                    // expanded task
                     int index = getIndex() + 1;
-                    tree.getRoot().getChildren().get(index)
-                            .setValue(emptyHomeworkTask);
+                    tree.getTreeItem(index).setValue(emptyHomeworkTask);
                 }
 
                 // update in database (new day?)
