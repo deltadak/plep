@@ -45,7 +45,6 @@ public class SlidingSettingsPane extends SlidingPane {
      */
     @Override
     public void setupHook() {
-//        controller.MAX_COLUMNS = maxColumns(controller.NUMBER_OF_DAYS);
         setupSettingsMenu();
         setComponentListeners();
         boolean isAuto = Boolean.valueOf(getSetting(
@@ -135,7 +134,7 @@ public class SlidingSettingsPane extends SlidingPane {
         // Adding the spinner to change the number of days to move.
         numberOfMovingDaysSpinner = new Spinner<>();
         SpinnerValueFactory<Integer> valueFactory = new SpinnerValueFactory
-                .IntegerSpinnerValueFactory(1, 14, controller.NUMBER_OF_MOVING_DAYS);
+                .IntegerSpinnerValueFactory(1, 14, controller.numberOfMovingDays);
 
         numberOfMovingDaysSpinner.setValueFactory(valueFactory);
         numberOfMovingDaysSpinner.setId("numberOfMovingDaysSpinner");
@@ -148,7 +147,7 @@ public class SlidingSettingsPane extends SlidingPane {
         numberOfShowDaysSpinner = new Spinner<>();
         // magik value 31 is the length of the longest month, just to be sure
         SpinnerValueFactory<Integer> valueShowFactory = new SpinnerValueFactory
-                .IntegerSpinnerValueFactory(1, 31, controller.NUMBER_OF_DAYS);
+                .IntegerSpinnerValueFactory(1, 31, controller.numberOfDays);
 
         numberOfShowDaysSpinner.setValueFactory(valueShowFactory);
         numberOfShowDaysSpinner.setId("numberOfShowDaysSpinner");
@@ -205,10 +204,10 @@ public class SlidingSettingsPane extends SlidingPane {
      * GridPane.
      */
     @FXML protected void applyNumberOfMovingDaysChange() {
-        controller.NUMBER_OF_MOVING_DAYS = numberOfMovingDaysSpinner.getValue();
+        controller.numberOfMovingDays = numberOfMovingDaysSpinner.getValue();
         // update the value in the database
         updateSetting(Controller.NUMBER_OF_MOVING_DAYS_NAME,
-                String.valueOf(controller.NUMBER_OF_MOVING_DAYS));
+                String.valueOf(controller.numberOfMovingDays));
 
         controller.setupGridPane(controller.focusDay);
     }
@@ -217,10 +216,10 @@ public class SlidingSettingsPane extends SlidingPane {
      * Applies the value of the numberOfShowDaysSpinner to the main GridPane.
      */
     @FXML protected void applyNumberOfShowDaysChange() {
-        controller.NUMBER_OF_DAYS = numberOfShowDaysSpinner.getValue();
+        controller.numberOfDays = numberOfShowDaysSpinner.getValue();
 
         updateSetting(Controller.NUMBER_OF_DAYS_NAME,
-                String.valueOf(controller.NUMBER_OF_DAYS));
+                String.valueOf(controller.numberOfDays));
         controller.setupGridPane(controller.focusDay);
     }
     
@@ -230,9 +229,9 @@ public class SlidingSettingsPane extends SlidingPane {
      * automatically calculated, but manually set.
      */
     @FXML protected void applyMaxColumnsChange() {
-        controller.MAX_COLUMNS = maxColumnsSpinner.getValue();
+        controller.maxColumns = maxColumnsSpinner.getValue();
         updateSetting(Controller.MAX_COLUMNS_NAME,
-                      String.valueOf(controller.MAX_COLUMNS));
+                      String.valueOf(controller.maxColumns));
         autoColumnsCheckBox.setSelected(false);
         controller.setupGridPane(controller.focusDay);
     }
@@ -240,13 +239,23 @@ public class SlidingSettingsPane extends SlidingPane {
     /**
      * Updates the value of 'max_columns_auto' in the database to the new
      * value of the check box.
-     * @param newValue a boolean with true or false. True if the box is
-     *                 selected, false if it is not selected.
+     * @param newValue a boolean with true or false. True if the box is selected, false if it is not selected.
      */
     @FXML protected void autoColumnsCheckBoxToggled(boolean newValue) {
         updateSetting(Controller.MAX_COLUMNS_AUTO_NAME,
                       String.valueOf(newValue));
+        // The controller will request settings from the database again.
         controller.setupGridPane(controller.focusDay);
+
+        // update spinner to reflect auto mode on
+        if (newValue) {
+            int columns = controller.maxColumns(controller.numberOfDays);
+            maxColumnsSpinner.getValueFactory().setValue(columns);
+        } else {
+            // use the value which was saved to the database
+            int columns = Integer.valueOf(getSetting(Controller.MAX_COLUMNS_NAME));
+            maxColumnsSpinner.getValueFactory().setValue(columns);
+        }
     }
 
     /**

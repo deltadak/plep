@@ -7,20 +7,57 @@ which I think means that a new object is created and you lose the
 reference to the old one which I think should be fine here, as only content matters */
 public class HomeworkTask implements Serializable {
     
+    private boolean done;
     private String text;
     private String label;
     private String color;
-
-    public HomeworkTask() {
-        this.text = "default text";
-        this.label = "default label";
-        this.color = "white";
-    }
+    private boolean expanded;
+    private int databaseID; // The id (primary key) in the database, used for
+    // the subtasks to link to their parent. For the subtasks, this id is -1.
     
-    public HomeworkTask(final String text, final String label, final String color) {
+    public HomeworkTask(final boolean done, final String text, final String
+            label, final String color, final boolean expanded, final int
+            databaseID) {
+        this.done = done;
         this.text = text;
         this.label = label;
         this.color = color;
+        this.expanded = expanded;
+        this.databaseID = databaseID;
+    }
+    
+    /**
+     * Subtasks constructor.
+     * @param done
+     * @param text
+     */
+    public HomeworkTask(final boolean done, final String text) {
+        this.done = done;
+        this.text = text;
+        this.label = "";
+        this.color = "White";
+        this.expanded = false;
+        this.databaseID = -1;
+    }
+
+    /**
+     * Default task.
+     */
+    public HomeworkTask() {
+        this.done = false;
+        this.text = "";
+        this.label = "";
+        this.color = "White";
+        this.expanded = false;
+        this.databaseID = -1;
+    }
+
+    public boolean getDone() {
+        return done;
+    }
+
+    public void setDone(final boolean done) {
+        this.done = done;
     }
     
     public String getText() {
@@ -45,5 +82,21 @@ public class HomeworkTask implements Serializable {
     
     public void setColor(final String color) {
         this.color = color;
+    }
+    
+    public boolean getExpanded() {
+        return expanded;
+    }
+    
+    public void setExpanded(final boolean expanded) {
+        this.expanded = expanded;
+    }
+
+    public int getDatabaseID() {
+        return databaseID;
+    }
+
+    public void setDatabaseID(int databaseID) {
+        this.databaseID = databaseID;
     }
 }

@@ -1,0 +1,50 @@
+.combo-box {
+    -fx-background-color:  Transparent;
+}
+
+.combo-box:hover {
+    -fx-background-color: -fx-accent;
+}
+
+.combo-box:pressed {
+    -fx-background-color: derive(-fx-control-inner-background, -35%);
+}
+
+/* an arrow is a button */
+.combo-box .arrow {
+    -fx-background-color: -fx-button;
+}
+
+/* The selector of the little dropped down list */
+.combo-box .list-cell:hover {
+    -fx-background-color: -fx-accent;
+}
+
+/* Styling for a item of which the checkbox is checked */
+.combobox-done,
+.combobox-done-light,
+.combobox-done-dark {
+    -fx-font-style: oblique;
+}
+
+.combobox-done .text,
+.combobox-done-light .text,
+.combobox-done-dark .text {
+    -fx-strikethrough: true;
+}
+
+.combobox-done .list-cell {
+    -fx-text-fill: -fx-text-gray;
+}
+
+.combobox-done-light .list-cell {
+    -fx-text-fill: -fx-text-gray-light;
+}
+
+.combobox-done-dark .list-cell {
+    -fx-text-fill: -fx-text-gray-dark;
+}
+
+.combobox-text-white .list-cell {
+    -fx-text-fill: #ffffff;
+}

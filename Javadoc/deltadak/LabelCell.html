@@ -40,7 +40,7 @@ var activeTableTab = "activeTableTab";
 <li><a href="../deltadak/package-summary.html">Package</a></li>
 <li class="navBarCell1Rev">Class</li>
 <li><a href="package-tree.html">Tree</a></li>
-<li><a href="../deprecated-listViewItems.html">Deprecated</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
 <li><a href="../index-files/index-1.html">Index</a></li>
 <li><a href="../help-doc.html">Help</a></li>
 </ul>
@@ -329,14 +329,14 @@ extends javafx.scene.control.cell.TextFieldListCell&lt;<a href="../deltadak/Task
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>(package private) void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../deltadak/LabelCell.html#setOnDragDone-javafx.scene.control.ListView-java.time.LocalDate-">setOnDragDone</a></span>(javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;listViewItems,
+<td class="colLast"><code><span class="memberNameLink"><a href="../deltadak/LabelCell.html#setOnDragDone-javafx.scene.control.ListView-java.time.LocalDate-">setOnDragDone</a></span>(javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;list,
              java.time.LocalDate&nbsp;day)</code>
 <div class="block">removing the original copy</div>
 </td>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>(package private) void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../deltadak/LabelCell.html#setOnDragDropped-javafx.scene.control.ListView-java.time.LocalDate-">setOnDragDropped</a></span>(javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;listViewItems,
+<td class="colLast"><code><span class="memberNameLink"><a href="../deltadak/LabelCell.html#setOnDragDropped-javafx.scene.control.ListView-java.time.LocalDate-">setOnDragDropped</a></span>(javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;list,
                 java.time.LocalDate&nbsp;day)</code>
 <div class="block">updates the ListView and database when a LabelCell is being dropped</div>
 </td>
@@ -361,7 +361,7 @@ extends javafx.scene.control.cell.TextFieldListCell&lt;<a href="../deltadak/Task
 </tr>
 <tr id="i6" class="altColor">
 <td class="colFirst"><code>(package private) void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../deltadak/LabelCell.html#setOnLabelChangeListener-javafx.scene.control.ListView-java.time.LocalDate-">setOnLabelChangeListener</a></span>(javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;listViewItems,
+<td class="colLast"><code><span class="memberNameLink"><a href="../deltadak/LabelCell.html#setOnLabelChangeListener-javafx.scene.control.ListView-java.time.LocalDate-">setOnLabelChangeListener</a></span>(javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;list,
                         java.time.LocalDate&nbsp;day)</code>
 <div class="block">set listener on the ComboBox to update the database when the
  selected index changes</div>
@@ -369,7 +369,7 @@ extends javafx.scene.control.cell.TextFieldListCell&lt;<a href="../deltadak/Task
 </tr>
 <tr id="i7" class="rowColor">
 <td class="colFirst"><code>(package private) void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../deltadak/LabelCell.html#setRightMouseClickListener-javafx.scene.control.ListView-java.time.LocalDate-">setRightMouseClickListener</a></span>(javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;listViewItems,
+<td class="colLast"><code><span class="memberNameLink"><a href="../deltadak/LabelCell.html#setRightMouseClickListener-javafx.scene.control.ListView-java.time.LocalDate-">setRightMouseClickListener</a></span>(javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;list,
                           java.time.LocalDate&nbsp;day)</code>
 <div class="block">set ClickListener on a LabelCell, to be able to display the
  ContextMenu on a RightClick</div>
@@ -377,7 +377,7 @@ extends javafx.scene.control.cell.TextFieldListCell&lt;<a href="../deltadak/Task
 </tr>
 <tr id="i8" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../deltadak/LabelCell.html#setup-javafx.scene.control.ListView-java.time.LocalDate-">setup</a></span>(javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;listViewItems,
+<td class="colLast"><code><span class="memberNameLink"><a href="../deltadak/LabelCell.html#setup-javafx.scene.control.ListView-java.time.LocalDate-">setup</a></span>(javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;list,
      java.time.LocalDate&nbsp;day)</code>
 <div class="block">sets up a labelcell, e.g.</div>
 </td>
@@ -565,12 +565,12 @@ extends javafx.scene.control.cell.TextFieldListCell&lt;<a href="../deltadak/Task
 <ul class="blockList">
 <li class="blockList">
 <h4>setup</h4>
-<pre>public&nbsp;void&nbsp;setup(javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;listViewItems,
+<pre>public&nbsp;void&nbsp;setup(javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;list,
                   java.time.LocalDate&nbsp;day)</pre>
 <div class="block">sets up a labelcell, e.g. adding drag and drop listeners</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>listViewItems</code> - listview in which the labelcell resides</dd>
+<dd><code>list</code> - listview in which the labelcell resides</dd>
 <dd><code>day</code> - localdate which belongs to the listview</dd>
 </dl>
 </li>
@@ -600,13 +600,13 @@ extends javafx.scene.control.cell.TextFieldListCell&lt;<a href="../deltadak/Task
 <ul class="blockList">
 <li class="blockList">
 <h4>setOnLabelChangeListener</h4>
-<pre>void&nbsp;setOnLabelChangeListener(javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;listViewItems,
+<pre>void&nbsp;setOnLabelChangeListener(javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;list,
                               java.time.LocalDate&nbsp;day)</pre>
 <div class="block">set listener on the ComboBox to update the database when the
  selected index changes</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>listViewItems</code> - ListView which the LabelCell is in, needed for updating
+<dd><code>list</code> - ListView which the LabelCell is in, needed for updating
              the database</dd>
 <dd><code>day</code> - LocalDate which we need for updating the database</dd>
 </dl>
@@ -618,13 +618,13 @@ extends javafx.scene.control.cell.TextFieldListCell&lt;<a href="../deltadak/Task
 <ul class="blockList">
 <li class="blockList">
 <h4>setRightMouseClickListener</h4>
-<pre>void&nbsp;setRightMouseClickListener(javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;listViewItems,
+<pre>void&nbsp;setRightMouseClickListener(javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;list,
                                 java.time.LocalDate&nbsp;day)</pre>
 <div class="block">set ClickListener on a LabelCell, to be able to display the
  ContextMenu on a RightClick</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>listViewItems</code> - ListView is needed for updating</dd>
+<dd><code>list</code> - ListView is needed for updating</dd>
 <dd><code>day</code> - LocalDate is needed for updating</dd>
 </dl>
 </li>
@@ -676,12 +676,12 @@ extends javafx.scene.control.cell.TextFieldListCell&lt;<a href="../deltadak/Task
 <ul class="blockList">
 <li class="blockList">
 <h4>setOnDragDropped</h4>
-<pre>void&nbsp;setOnDragDropped(javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;listViewItems,
+<pre>void&nbsp;setOnDragDropped(javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;list,
                       java.time.LocalDate&nbsp;day)</pre>
 <div class="block">updates the ListView and database when a LabelCell is being dropped</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>listViewItems</code> - ListView needed for updating the database</dd>
+<dd><code>list</code> - ListView needed for updating the database</dd>
 <dd><code>day</code> - LocalDate needed for updating the database</dd>
 </dl>
 </li>
@@ -692,12 +692,12 @@ extends javafx.scene.control.cell.TextFieldListCell&lt;<a href="../deltadak/Task
 <ul class="blockListLast">
 <li class="blockList">
 <h4>setOnDragDone</h4>
-<pre>void&nbsp;setOnDragDone(javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;listViewItems,
+<pre>void&nbsp;setOnDragDone(javafx.scene.control.ListView&lt;<a href="../deltadak/Task.html" title="class in deltadak">Task</a>&gt;&nbsp;list,
                    java.time.LocalDate&nbsp;day)</pre>
 <div class="block">removing the original copy</div>
 <dl>
 <dt><span class="paramLabel">Parameters:</span></dt>
-<dd><code>listViewItems</code> - ListView needed for updating the database</dd>
+<dd><code>list</code> - ListView needed for updating the database</dd>
 <dd><code>day</code> - LocalDate needed for updating the database</dd>
 </dl>
 </li>
@@ -721,7 +721,7 @@ extends javafx.scene.control.cell.TextFieldListCell&lt;<a href="../deltadak/Task
 <li><a href="../deltadak/package-summary.html">Package</a></li>
 <li class="navBarCell1Rev">Class</li>
 <li><a href="package-tree.html">Tree</a></li>
-<li><a href="../deprecated-listViewItems.html">Deprecated</a></li>
+<li><a href="../deprecated-list.html">Deprecated</a></li>
 <li><a href="../index-files/index-1.html">Index</a></li>
 <li><a href="../help-doc.html">Help</a></li>
 </ul>
