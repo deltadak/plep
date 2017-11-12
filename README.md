@@ -28,7 +28,7 @@ Note: The first time plep is ran, it will create a database file in the folder w
 
 ## Screenshot of v2.0.0
 ![screenshot](v2.0.0-beta.5.PNG)
-# Settings of v2.0.0
+### Settings of v2.0.0
 ![screenshot-settings](v2.0.0-beta.5.settings.PNG)
 
 ## Instructions for building from source in IntelliJ
