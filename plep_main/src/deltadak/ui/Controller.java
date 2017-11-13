@@ -3,7 +3,9 @@ package deltadak.ui;
 import deltadak.Database;
 import deltadak.HomeworkTask;
 import deltadak.commands.DeleteCommand;
+import deltadak.commands.DeleteSubtaskCommand;
 import deltadak.commands.UndoFacility;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -16,7 +18,6 @@ import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import javafx.concurrent.Task;
 
 import java.net.URL;
@@ -34,23 +35,24 @@ import java.util.concurrent.Executors;
 // true)
 @SuppressWarnings("TypeMayBeWeakened")
 public class Controller implements Initializable, AbstractController {
+    
     // main element of the UI is declared in interface.fxml
     @FXML AnchorPane main;
     @FXML GridPane gridPane;
     @FXML ToolBar toolBar;
     @FXML ProgressIndicator progressIndicator;
-
+    
     // All these references have to be declared in controller because of fxml,
     // and then be passed on to the SlidingPane. Ah well.
-
+    
     // help pane
     @FXML AnchorPane helpPane;
     @FXML Button helpButton;
-
+    
     // settings pane
     @FXML AnchorPane settingsPane;
     @FXML Button settingsButton;
-
+    
     @FXML GridPane editLabelsPane;
     @FXML Button editLabelsButton;
     @FXML GridPane editDaysPane;
@@ -59,39 +61,76 @@ public class Controller implements Initializable, AbstractController {
     @FXML Button applyNumberOfShowDays;
     @FXML CheckBox autoColumnCheckBox;
     @FXML Button applyMaxColumns;
-
-    /** used to transfer tasks with drag and drop */
-    public static final DataFormat DATA_FORMAT = new DataFormat("com.deltadak.HomeworkTask");
-
+    
+    @FXML GridPane colorsPane;
+    @FXML ColorPicker colorOne;
+    @FXML ColorPicker colorTwo;
+    @FXML ColorPicker colorThree;
+    @FXML ColorPicker colorFour;
+    @FXML ColorPicker colorFive;
+    
+    /**
+     * used to transfer tasks with drag and drop
+     */
+    public static final DataFormat DATA_FORMAT = new DataFormat(
+            "com.deltadak.HomeworkTask");
+    
     // layout globals, are public for the SettingsPane to access them
-    /** number of days shown */
-    public int NUMBER_OF_DAYS;
-    /** number of days to skip when using the forward/backward buttons */
-    public int NUMBER_OF_MOVING_DAYS;
-
-    /** number of columns to fill with lists with tasks */
-    public int MAX_COLUMNS;
-    private static final int MAX_LIST_LENGTH = 7;
-
-    /** name of setting in the database */
+    /**
+     * number of days shown
+     */
+    public int numberOfDays;
+    /**
+     * number of days to skip when using the forward/backward buttons
+     */
+    public int numberOfMovingDays;
+    
+    /**
+     * number of columns to fill with lists with tasks
+     */
+    public int maxColumns;
+    private static final int MAX_LIST_LENGTH = 6;
+    
+    /**
+     * name of setting in the database
+     */
     public static final String NUMBER_OF_DAYS_NAME = "number_of_days";
-    /** name of setting in the database */
+    /**
+     * name of setting in the database
+     */
     public static final String NUMBER_OF_MOVING_DAYS_NAME
             = "number_of_moving_days";
-    /** name of setting in the database */
+    /**
+     * name of setting in the database
+     */
     public static final String MAX_COLUMNS_NAME = "max_columns";
-    /** name of setting in the database */
+    /**
+     * name of setting in the database
+     */
     public static final String MAX_COLUMNS_AUTO_NAME = "max_columns_auto";
-
-    /** Day on which the gridpane is 'focused': the second day shown will be this day */
+    
+    public static final String[] DEFAULT_COLORS = new String[] {
+            "ff1a00",
+            "00cbef",
+            "7df202",
+            "f444a7",
+            "ffffff"
+    };
+    
+    /**
+     * Day on which the gridpane is 'focused': the second day shown will be this
+     * day
+     */
     public LocalDate focusDay;
     private LocalDate today;
     // Multithreading
     private Executor exec;
-
-    /** keep a reference to the undo facility */
+    
+    /**
+     * keep a reference to the undo facility
+     */
     private UndoFacility undoFacility = new UndoFacility();
-
+    
     /**
      * Initialization method for the controller.
      */
@@ -99,48 +138,48 @@ public class Controller implements Initializable, AbstractController {
     @FXML
     public void initialize(final URL location,
                            final ResourceBundle resourceBundle) {
-
+        
         // Initialize multithreading.
         exec = Executors.newCachedThreadPool(runnable -> {
             Thread t = new Thread(runnable);
             t.setDaemon(true);
             return t;
         });
-
+        
         setDefaultDatabasePath();
         createTables(); // if not already exists
-
-        // get the current settings from the database
-        NUMBER_OF_DAYS = Integer.valueOf(getSetting(NUMBER_OF_DAYS_NAME));
-        NUMBER_OF_MOVING_DAYS = Integer.valueOf(getSetting(
-                NUMBER_OF_MOVING_DAYS_NAME));
-        MAX_COLUMNS = Integer.valueOf(getSetting(MAX_COLUMNS_NAME));
-
+        
+        numberOfDays = Integer.valueOf(getSetting(NUMBER_OF_DAYS_NAME));
+        numberOfMovingDays = Integer
+                .valueOf(getSetting(NUMBER_OF_MOVING_DAYS_NAME));
+        
         focusDay = LocalDate.now(); // set focus day to today
         setupGridPane(focusDay);
-
+        
         progressIndicator.setVisible(false);
-
+        
         // setup the settings page
         SlidingSettingsPane settingsPane = new SlidingSettingsPane(this);
         copySettingsPaneComponents(settingsPane);
         settingsPane.setup();
-
+        
         // setup help page
         SlidingPane helpPane = new SlidingPane(this);
         copyHelpPageComponents(helpPane);
         helpPane.setup();
-
+        
         // Notice that the listener which listens for day changes is called from
         // Main, because it needs the primary Stage.
-
+        
         addUndoKeyListener();
-
+        
     }
-
+    
     /**
-     * Copy references from fxml components needed to the SlidingSettingsPane
-     * @param settingsPane which needs the references
+     * Copy references from fxml components needed to the SettingsPane
+     *
+     * @param settingsPane
+     *         which needs the references
      */
     private void copySettingsPaneComponents(SlidingSettingsPane settingsPane) {
         settingsPane.main = this.main;
@@ -156,12 +195,20 @@ public class Controller implements Initializable, AbstractController {
         settingsPane.applyNumberOfShowDays = this.applyNumberOfShowDays;
         settingsPane.autoColumnsCheckBox = this.autoColumnCheckBox;
         settingsPane.applyMaxColumns = this.applyMaxColumns;
-
+        settingsPane.colorsPane = this.colorsPane;
+        settingsPane.colorOne = this.colorOne;
+        settingsPane.colorTwo = this.colorTwo;
+        settingsPane.colorThree = this.colorThree;
+        settingsPane.colorFour = this.colorFour;
+        settingsPane.colorFive = this.colorFive;
+        
     }
-
+    
     /**
      * Copy references from fxml components needed to the SlidingPane
-     * @param helpPane which needs the references
+     *
+     * @param helpPane
+     *         which needs the references
      */
     private void copyHelpPageComponents(SlidingPane helpPane) {
         helpPane.main = this.main;
@@ -170,7 +217,7 @@ public class Controller implements Initializable, AbstractController {
         helpPane.slidingPane = this.helpPane;
         helpPane.openCloseButton = this.helpButton;
     }
-
+    
     private void addUndoKeyListener() {
         gridPane.setOnKeyPressed(event -> {
             if (event.isControlDown() && (event.getCode() == KeyCode.Z)) {
@@ -178,367 +225,484 @@ public class Controller implements Initializable, AbstractController {
             }
         });
     }
-
+    
     /**
      * sets up listviews for each day, initializes drag and drop, editing items
      *
-     * @param focusDate date that is the top middle one (is today on default)
+     * @param focusDate
+     *         date that is the top middle one (is today on default)
      */
     public void setupGridPane(LocalDate focusDate) {
-        // check if the number of columns should be calculated, or retrieved
-        // from the database
-        boolean isAuto = Boolean.valueOf(
-                getSetting(MAX_COLUMNS_AUTO_NAME));
-        if(isAuto) {
-            MAX_COLUMNS = maxColumns(NUMBER_OF_DAYS);
+        
+        boolean isAuto = Boolean.valueOf(getSetting(MAX_COLUMNS_AUTO_NAME));
+        if (isAuto) {
+            maxColumns = maxColumns(numberOfDays);
         } else {
-            MAX_COLUMNS = Integer.valueOf(getSetting(MAX_COLUMNS_NAME));
+            maxColumns = Integer.valueOf(getSetting(MAX_COLUMNS_NAME));
         }
-
+        
         AnchorPane.setTopAnchor(gridPane, toolBar.getPrefHeight());
-
+        
         // first clear the gridpane so we don't get titles overlaying each other
         gridPane.getChildren().clear();
-        for (int index = 0; index < NUMBER_OF_DAYS; index++) {
-
+        for (int index = 0; index < numberOfDays; index++) {
+            
             // add days immediately, otherwise we can't use localDate in a
             // lambda expression (as it is not final)
             LocalDate localDate = focusDate.plusDays(index - 1);
-
-            ListView<HomeworkTask> list = new ListView<>();
-            VBox vbox = setTitle(list, localDate);
+            
+            TreeItem<HomeworkTask> rootItem = new TreeItem<>(
+                    new HomeworkTask());
+            rootItem.setExpanded(true);
+            final TreeView<HomeworkTask> tree = new TreeView<>(rootItem);
+            
+            tree.setEditable(true);
+            tree.setCellFactory(param -> {
+                CustomTreeCell treeCell = new CustomTreeCell(this,
+                                                             tree.getRoot());
+                treeCell.setup(tree, localDate);
+                return treeCell;
+            });
+            
+            tree.setShowRoot(false);
+            
+            VBox vbox = setTitle(tree, localDate);
             addVBoxToGridPane(vbox, index);
-
+            
             // Request content on a separate thread, and hope the content
             // will be set eventually.
-            refreshDay(list, localDate);
-
-            list.setEditable(true);
-            list.setPrefWidth(getListViewWidth());
-            list.setPrefHeight(getListViewHeight());
-            setupLabelCells(list, localDate);
-            //update database when editing is finished
-            list.setOnEditCommit(event -> updateDatabase(
-                    localDate, convertObservableListToArrayList(list.getItems())));
-            addDeleteKeyListener(list, localDate);
+            refreshDay(tree, localDate);
+            
+            // add the delete key listener
+            addDeleteKeyListener(tree, localDate);
+            
+            tree.setPrefWidth(getTreeViewWidth());
+            tree.setPrefHeight(getTreeViewHeight());
         }
-
+        
     }
-
+    
     /**
-     * Sets a listener which checks if it is a new day,
-     * when the window becomes focused.
+     * Sets a listener which checks if it is a new day, when the window becomes
+     * focused.
      *
-     * @param primaryStage Stage to set listener on.
+     * @param primaryStage
+     *         Stage to set listener on.
      */
     public void setDayChangeListener(Stage primaryStage) {
         // debug line, also comment out the line to reset 'today'
-//        today = LocalDate.now().plusDays(-1);
-//        focusDay.plusDays(-1);
+        //        today = LocalDate.now().plusDays(-1);
+        //        focusDay.plusDays(-1);
         today = LocalDate.now();
-        primaryStage.focusedProperty().addListener((observable, wasFocused, isFocused) -> {
-            if (isFocused) { // if becomes focused
-                if (!today.equals(LocalDate.now())) {
-                    // then reset view
-                    today = LocalDate.now();
-                    // Also update focusDay, before refreshing.
-                    focusDay = today;
-                    setupGridPane(today);
-                }
-            }
-        });
+        primaryStage.focusedProperty()
+                .addListener((observable, wasFocused, isFocused) -> {
+                    if (isFocused) { // if becomes focused
+                        if (!today.equals(LocalDate.now())) {
+                            // then reset view
+                            today = LocalDate.now();
+                            // Also update focusDay, before refreshing.
+                            focusDay = today;
+                            setupGridPane(today);
+                        }
+                    }
+                });
     }
-
+    
     /**
      * add title to listview
      *
-     * @param list      to use
-     * @param localDate from which to make a title
+     * @param tree
+     *         to use
+     * @param localDate
+     *         from which to make a title
+     *
      * @return VBox with listview and title
      */
-    private VBox setTitle(final ListView<HomeworkTask> list,
+    private VBox setTitle(final TreeView<HomeworkTask> tree,
                           final LocalDate localDate) {
         // vbox will contain a title above a list of tasks
         VBox vbox = new VBox();
         Label title = new Label(localDate.getDayOfWeek() + " " + localDate);
         // the pane is used to align both properly (I think)
         Pane pane = new Pane();
-        vbox.getChildren().addAll(title, pane, list);
+        vbox.getChildren().addAll(title, pane, tree);
         VBox.setVgrow(pane, Priority.ALWAYS);
         return vbox;
     }
-
+    
     /**
      * add a box containing listview and title
      *
-     * @param vbox  to be added
-     * @param index at the i'th place (left to right, top to bottom)
+     * @param vbox
+     *         to be added
+     * @param index
+     *         at the i'th place (left to right, top to bottom)
      */
     private void addVBoxToGridPane(final VBox vbox, final int index) {
-        int row = index / MAX_COLUMNS;
-        int column = index % MAX_COLUMNS;
+        int row = index / maxColumns;
+        int column = index % maxColumns;
         gridPane.add(vbox, column, row);
     }
-
+    
     /**
-     * Calculates and sets the value of MAX_COLUMNS
-     * @param numberOfDays number of days in total
-     * @return int for MAX_COLUMNS
+     * Calculates and sets the value of maxColumns
+     *
+     * @param numberOfDays
+     *         number of days in total
+     *
+     * @return int for maxColumns
      */
-    private int maxColumns(int numberOfDays) {
-        return (int) Math.ceil(Math.sqrt(numberOfDays));
+    public int maxColumns(int numberOfDays) {
+        return (int)Math.ceil(Math.sqrt(numberOfDays));
     }
-
+    
     /**
      * add a Listener to a list for the delete key
      *
-     * @param list      ListView to add the Listener to
-     * @param localDate so we know for what day to update the database
+     * @param tree
+     *         ListView to add the Listener to
+     * @param localDate
+     *         so we know for what day to update the database
      */
-    private void addDeleteKeyListener(final ListView<HomeworkTask> list,
+    private void addDeleteKeyListener(final TreeView<HomeworkTask> tree,
                                       final LocalDate localDate) {
         //add option to delete a task
-        list.setOnKeyPressed(event -> {
+        tree.setOnKeyPressed(event -> {
+            
             if (event.getCode() == KeyCode.DELETE) {
-                DeleteCommand command = new DeleteCommand(this, localDate,
-                        convertObservableListToArrayList(list.getItems()), list.getSelectionModel().getSelectedIndex(), list);
-                undoFacility.execute(command);
-
-                cleanUp(list); //cleaning up has to happen in the listener
+                // Check whether we want to delete a parent task or subtask.
+                if (tree.getSelectionModel().getSelectedItem().getParent()
+                        .equals(tree.getRoot())) {
+                    // Delete a parent task.
+                    deleteParentTask(tree, localDate);
+                } else {
+                    // We want to delete a subtask.
+                    deleteSubtask(tree, localDate);
+                }
+                
             }
         });
     }
-
+    
+    /**
+     * Delete the selected parent task, and save to database.
+     *
+     * @param tree
+     *         TreeView in which the task lives.
+     * @param localDate
+     *         Date of the TreeView.
+     */
+    private void deleteParentTask(TreeView<HomeworkTask> tree,
+                                  LocalDate localDate) {
+        
+        // Get the selected item.
+        TreeItem<HomeworkTask> selectedItem = tree.getSelectionModel()
+                .getSelectedItem();
+        // Get the index of the selected item.
+        // Note: using selectionModel().getSelectedIndex() returns the index
+        // when also counting subtasks, so this does not work.
+        int parentIndex = tree.getRoot().getChildren().indexOf(selectedItem);
+        
+        undoFacility.execute(
+                new DeleteCommand(this, localDate, convertTreeToArrayList(tree),
+                                  parentIndex, tree));
+        
+    }
+    
+    /**
+     * Delete the selected subtask.
+     *
+     * @param tree
+     *         TreeView in which the task lives.
+     * @param localDate
+     *         Date of the TreeView.
+     */
+    private void deleteSubtask(TreeView<HomeworkTask> tree,
+                               LocalDate localDate) {
+        
+        undoFacility.execute(new DeleteSubtaskCommand(this, localDate,
+                                                      convertTreeToArrayList(
+                                                              tree),
+                                                      tree.getSelectionModel()
+                                                              .getSelectedIndex(),
+                                                      tree));
+    }
+    
+    /**
+     * Get index of parent in the list of TreeItems.
+     *
+     * @param tree
+     *         TreeView which contains the parent
+     * @param parentItem
+     *         The item to find.
+     *
+     * @return the index of the parent in the treeview.
+     */
+    private int getParentIndex(TreeView<HomeworkTask> tree,
+                               TreeItem<HomeworkTask> parentItem) {
+        ObservableList<TreeItem<HomeworkTask>> parentList = tree.getRoot()
+                .getChildren();
+        int parentIndex = 0;
+        for (int i = 0; i < parentList.size(); i++) {
+            if (parentList.get(i).equals(parentItem)) {
+                parentIndex = i;
+            }
+        }
+        return parentIndex;
+    }
+    
     /**
      * convert ObservableList to ArrayList
      *
-     * @param list to convert
+     * @param list
+     *         to convert
+     *
      * @return converted ObservableList
      */
     public List<HomeworkTask> convertObservableListToArrayList(
             final ObservableList<HomeworkTask> list) {
         return new ArrayList<>(list);
     }
-
+    
+    /**
+     * Convert TreeItemList to ArrayList.
+     *
+     * @param list
+     *         to convert
+     *
+     * @return converted ArrayList
+     */
+    List<HomeworkTask> convertTreeItemListToArrayList(
+            ObservableList<TreeItem<HomeworkTask>> list) {
+        
+        List<HomeworkTask> arrayList = new ArrayList<>();
+        
+        for (TreeItem<HomeworkTask> aList : list) {
+            arrayList.add(aList.getValue());
+        }
+        
+        return arrayList;
+    }
+    
+    /**
+     * Converts a TreeView to a list of lists of tasks. The first item of each
+     * list is the parent task, the items after that are its subtasks.
+     *
+     * @param tree
+     *         The TreeView to convert.
+     *
+     * @return List&lt;List&lt;HomeworkTask&gt;&gt;
+     */
+    List<List<HomeworkTask>> convertTreeToArrayList(
+            TreeView<HomeworkTask> tree) {
+        
+        // create a list with the tree items of the parent tasks
+        ObservableList<TreeItem<HomeworkTask>> parentItems = tree.getRoot()
+                .getChildren();
+        // create a list with homework tasks of the parent tasks
+        List<HomeworkTask> parentTasks = convertTreeItemListToArrayList(
+                parentItems);
+        
+        // create the list to eventually return
+        List<List<HomeworkTask>> tasks = new ArrayList<>();
+        
+        for (int i = 0; i < parentItems.size(); i++) {
+            
+            // get the sub tree items of parent task i, and store them in a list
+            ObservableList<TreeItem<HomeworkTask>> childItems = parentItems
+                    .get(i).getChildren();
+            // store the subtasks of parent task i in a list
+            List<HomeworkTask> childTasks = convertTreeItemListToArrayList(
+                    childItems);
+            
+            // create a list containing one parent and its children
+            List<HomeworkTask> oneFamily = new ArrayList<>();
+            
+            oneFamily.add(parentTasks.get(i)); // add the parent to the family
+            oneFamily.addAll(childTasks); // add its children to the family
+            
+            tasks.add(oneFamily); // add the family to the nested list of tasks
+        }
+        
+        return tasks;
+    }
+    
+    /**
+     * Get all the parents (or head tasks) when given a list of lists of
+     * HomeworkTasks.
+     *
+     * @param homeworkFamilies
+     *         The list of lists to get the parent tasks from.
+     *
+     * @return A list of HomeworkTasks, which are the parent tasks.
+     */
+    public List<HomeworkTask> getParentTasks(
+            List<List<HomeworkTask>> homeworkFamilies) {
+        
+        // create the list with HomeworkTasks to return
+        List<HomeworkTask> parentTasks = new ArrayList<>();
+        
+        // add the first item of each list to parentTasks
+        for (List<HomeworkTask> homeworkFamily : homeworkFamilies) {
+            parentTasks.add(homeworkFamily.get(0));
+        }
+        return parentTasks;
+    }
+    
     /**
      * convert (Array)List to ObservableList
      *
-     * @param list - List to be converted
+     * @param list
+     *         - List to be converted
+     *
      * @return ObservableList
      */
-    private ObservableList<HomeworkTask> convertListToObservableList(
+    private ObservableList<HomeworkTask> convertArrayToObservableList(
             final List<HomeworkTask> list) {
         return FXCollections.observableList(list);
     }
-
+    
     /**
      * get height by total screen size
      *
-     * @return intended listview height
+     * @return intended treeview height
      */
-    private int getListViewHeight() {
+    private int getTreeViewHeight() {
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-        int totalHeight = (int) primaryScreenBounds.getHeight();
-        return totalHeight / (NUMBER_OF_DAYS / MAX_COLUMNS);
+        int totalHeight = (int)primaryScreenBounds.getHeight();
+        return totalHeight / (numberOfDays / maxColumns);
     }
-
+    
     /**
      * get width by total screen size
      *
-     * @return intended listview width
+     * @return intended treeview width
      */
-    private int getListViewWidth() {
+    private int getTreeViewWidth() {
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-        int totalWidth = (int) primaryScreenBounds.getWidth();
-        return totalWidth / MAX_COLUMNS;
+        int totalWidth = (int)primaryScreenBounds.getWidth();
+        return totalWidth / maxColumns;
     }
-
+    
     /**
-     * sets up labelCells for
-     *
-     * @param list a ListView
-     * @param day  and a specific date
+     * @return all TreeViews in the gridPane
      */
-    private void setupLabelCells(final ListView<HomeworkTask> list, final LocalDate day) {
-        //no idea why the callback needs a ListCell and not a TextFieldListCell
-        //anyway, editing is enabled by using TextFieldListCell instead of
-        // ListCell
-        list.setCellFactory(new Callback<ListView<HomeworkTask>, ListCell<HomeworkTask>>() {
-            @Override
-            public LabelCell call(final ListView<HomeworkTask> param) {
-                LabelCell labelCell = new LabelCell(Controller.this);
-                labelCell.setup(list, day);
-                return labelCell;
-            }
-        });
-        cleanUp(list);
-    }
-
-    /**
-     * @return all ListViews in the gridPane
-     */
-    private List<ListView<HomeworkTask>> getAllListViews() {
-        List<ListView<HomeworkTask>> listViews = new ArrayList<>();
+    private List<TreeView<HomeworkTask>> getAllTreeViews() {
+        List<TreeView<HomeworkTask>> listViews = new ArrayList<>();
         for (Node node : gridPane.getChildren()) {
-            //gridpane contains vbox contains label, pane and listview
+            //gridpane contains vbox contains label, pane and treeview
             if (node instanceof VBox) {
-                // we try to dig up the listviews in this vbox
-                for (Node subNode : ((Pane) node).getChildren()) {
-                    if (subNode instanceof ListView) {
-                        listViews.add((ListView) subNode);
+                // we try to dig up the treeview in this vbox
+                for (Node subNode : ((Pane)node).getChildren()) {
+                    if (subNode instanceof TreeView) {
+                        listViews.add((TreeView<HomeworkTask>)subNode);
                     }
                 }
             }
         }
         return listViews;
     }
-
+    
     /**
-     * Refreshes all listviews using data from the database.
+     * Refreshes all treeviews using data from the database.
      */
     void refreshAllDays() {
-        // find all listviews
-        List<ListView<HomeworkTask>> listViews = getAllListViews();
-
-        for (int i = 0; i < NUMBER_OF_DAYS; i++) {
-            ListView<HomeworkTask> list = listViews.get(i);
-            // refresh the listview from database
-            LocalDate localDate = focusDay.plusDays(i - 1);
-            refreshDay(list, localDate);
-            cleanUp(list);
-        }
+        // Use this so updating the UI works like it should, and the JavaFX
+        // Application thread doesn't hang.
+        Platform.runLater(() -> {
+            // find all treeviews from the gridpane
+            List<TreeView<HomeworkTask>> treeViews = getAllTreeViews();
+            
+            for (int i = 0; i < numberOfDays; i++) {
+                TreeView<HomeworkTask> tree = treeViews.get(i);
+                // create a list to store if the items are expanded
+                List<Boolean> expanded = new ArrayList<>();
+                
+                for (int j = 0; j < tree.getRoot().getChildren().size(); j++) {
+                    // loop through the tree to add all the booleans
+                    expanded.add(
+                            tree.getRoot().getChildren().get(j).isExpanded());
+                }
+                
+                // refresh the treeview from database
+                LocalDate localDate = focusDay.plusDays(i - 1);
+                refreshDay(tree, localDate);
+            }
+            
+        });
+        
     }
-
+    
     /**
-     * Makes the menu with options to repeat for 1-8 weeks.
+     * Sets the background color of a LabelCell.
      *
-     * @param labelCell task to repeat
-     * @param day       the day to repeat
-     * @return the menu with those options
+     * @param colorID
+     *         ID of the color to set as background color.
+     * @param customTreeCell
+     *         LabelCell of which to change the background color.
      */
-    private Menu makeRepeatMenu(LabelCell labelCell, LocalDate day) {
-        Menu repeatTasksMenu = new Menu("Repeat for x weeks");
-        for (int i = 1; i < 9; i++) {
-            MenuItem menuItem = new MenuItem(String.valueOf(i));
-            repeatTasksMenu.getItems().add(menuItem);
-        }
-
-        List<MenuItem> repeatMenuItems = repeatTasksMenu.getItems();
-        for (MenuItem repeatMenuItem : repeatMenuItems) {
-            repeatMenuItem.setOnAction(event12 -> {
-                int repeatNumber = Integer.valueOf(repeatMenuItem.getText());
-                System.out.println(repeatNumber + " clicked");
-                HomeworkTask homeworkTaskToRepeat = labelCell.getItem();
-                repeatTask(repeatNumber, homeworkTaskToRepeat, day);
-            });
-        }
-        return repeatTasksMenu;
+    public void setBackgroundColor(int colorID, CustomTreeCell customTreeCell) {
+        
+        Platform.runLater(() -> {
+            
+            String colorString = getColorFromDatabase(colorID);
+            
+            if (colorID == 4) {
+                customTreeCell.setStyle("-fx-text-fill: none");
+            } else {
+                customTreeCell.setStyle(
+                        "-fx-control-inner-background: #" + colorString);
+            }
+            
+            customTreeCell.getItem().setColorID(colorID);
+            
+        });
+        
     }
-
+    
     /**
-     * create a context menu
+     * Removes empty items in the tree view, and then fills it up with empty
+     * items. To avoid gaps.
      *
-     * @param event     show context menu at place of mouse event
-     * @param labelCell to know which labelCell to color or repeat or ...
-     * @param list      to update and cleanup after changing labelCell
-     * @param day       needed for updating the database
+     * @param tree
+     *         The treeview to be cleaned up.
      */
-    void createContextMenu(final MouseEvent event,
-                           final LabelCell labelCell,
-                           final ListView<HomeworkTask> list,
-                           final LocalDate day) {
-
-        ContextMenu contextMenu = new ContextMenu();
-        Menu repeatTasksMenu = makeRepeatMenu(labelCell, day);
-        SeparatorMenuItem separatorMenuItem = new SeparatorMenuItem();
-
-        MenuItem firstColor = new MenuItem("Green");
-        MenuItem secondColor = new MenuItem("Blue");
-        MenuItem thirdColor = new MenuItem("Red");
-        MenuItem defaultColor = new MenuItem("White");
-
-        contextMenu.getItems().addAll(repeatTasksMenu, separatorMenuItem,
-                firstColor, secondColor,
-                thirdColor, defaultColor);
-
-        for (int i = 1; i < contextMenu.getItems().size(); i++) {
-            MenuItem colorMenuItem = contextMenu.getItems().get(i);
-            colorMenuItem.setOnAction(event1 -> {
-                setBackgroundColor(colorMenuItem, labelCell);
-                updateDatabase(day, convertObservableListToArrayList(list.getItems()));
-                cleanUp(list);
-
-            });
-        }
-        contextMenu.show(labelCell, event.getScreenX(), event.getScreenY());
-    }
-
-    /**
-     * sets the background color of a LabelCell
-     *
-     * @param menuItem  MenuItem to retrieve the color from
-     * @param labelCell LabelCell of which to change the background color
-     */
-    private void setBackgroundColor(final MenuItem menuItem,
-                                    final LabelCell labelCell) {
-        String colorWord = menuItem.getText();
-        String colorString = convertColorToHex(colorWord);
-        if (colorString.equals("#ffffffff")) {
-            labelCell.setStyle("-fx-text-fill: none");
-        } else {
-            labelCell.setStyle(
-                    "-fx-control-inner-background: "
-                            + colorString);
-        }
-        labelCell.getItem().setColor(colorWord);
-
-    }
-
-    /**
-     * repeats a homeworkTask for a number of weeks
-     *
-     * @param repeatNumber how many times to repeat a homeworkTask
-     * @param homeworkTask the homeworkTask to repeat
-     * @param day          the current day is needed to update the days on which the
-     *                     homeworkTask will be repeated
-     */
-    private void repeatTask(final int repeatNumber, final HomeworkTask homeworkTask, LocalDate day) {
-        for (int i = 0; i < repeatNumber; i++) {
-            day = day.plusWeeks(1);
-            List<HomeworkTask> homeworkTasks = getDatabaseSynced(day);
-            homeworkTasks.add(homeworkTask);
-            updateDatabase(day, homeworkTasks);
-        }
-        refreshAllDays();
-    }
-
-    /**
-     * removes empty rows, and then fills up with empty rows
-     *
-     * @param list to clean up
-     */
-    public void cleanUp(ListView<HomeworkTask> list) {
+    @Override
+    public void cleanUp(TreeView<HomeworkTask> tree) {
         int i;
-        //first remove empty items
-        for (i = 0; i < list.getItems().size(); i++) {
-            if (list.getItems().get(i).getText().equals("")) {
-                list.getItems().remove(i);
+        TreeItem<HomeworkTask> root = tree.getRoot();
+        for (i = 0; i < root.getChildren().size(); i++) {
+            if (tree.getTreeItem(i).getValue().getText().equals("")) {
+                removeItemFromTreeView(tree.getTreeItem(i));
             }
         }
-        //fill up if necessary
+        
         for (i = 0; i < MAX_LIST_LENGTH; i++) {
-            if (i >= list.getItems().size()) {
-                list.getItems().add(i, new HomeworkTask("", "", "White"));
+            if (i >= tree.getRoot().getChildren().size()) {
+                TreeItem<HomeworkTask> item = new TreeItem<>(
+                        new HomeworkTask());
+                tree.getRoot().getChildren().add(item);
             }
         }
-
     }
-
+    
+    /**
+     * Removes the TreeItem from the TreeView it's in.
+     *
+     * @param item
+     *         The TreeItem to be removed.
+     */
+    void removeItemFromTreeView(TreeItem<HomeworkTask> item) {
+        item.getParent().getChildren().remove(item);
+    }
+    
     /**
      * converts a String containing a color (e.g. Green) to a String with the
      * hex code of that color, so the styling can use it
      *
-     * @param colorName String containing the color
+     * @param colorName
+     *         String containing the color
+     *
      * @return String with the hex code of
      */
     public String convertColorToHex(final String colorName) {
@@ -555,69 +719,177 @@ public class Controller implements Initializable, AbstractController {
                 return "#ffffffff";
         }
     }
-
+    
     /**
-     * called by the backward button
-     * moves the planner a (few) day(s) back
+     * called by the backward button moves the planner a (few) day(s) back
      */
     @FXML
     protected void dayBackward() {
-        focusDay = focusDay.plusDays(-NUMBER_OF_MOVING_DAYS);
+        focusDay = focusDay.plusDays(-numberOfMovingDays);
         setupGridPane(focusDay);
     }
-
+    
     /**
-     * called by the today button
-     * focuses the planner on today
+     * called by the today button focuses the planner on today
      */
     @FXML
     protected void goToToday() {
+        //        refreshAllDays();
         focusDay = LocalDate.now();
         setupGridPane(focusDay);
     }
-
+    
     /**
-     * called by the forward button
-     * moves the planner a (few) day(s) forward
+     * called by the forward button moves the planner a (few) day(s) forward
      */
     @FXML
     protected void dayForward() {
-        focusDay = focusDay.plusDays(NUMBER_OF_MOVING_DAYS);
+        focusDay = focusDay.plusDays(numberOfMovingDays);
         setupGridPane(focusDay);
     }
-
-    //todo should these methods be in Database class?
-
+    
     /**
-     * Requests tasks from database, and when done updates the listview.
+     * Requests tasks from database, and when done updates the treeview.
      *
-     * @param list      ListView to be updated.
-     * @param localDate The day for which to request tasks.
+     * @param tree
+     *         TreeView to be updated.
+     * @param localDate
+     *         The day for which to request tasks.
      */
-    public void refreshDay(ListView<HomeworkTask> list, LocalDate localDate) {
+    public void refreshDay(TreeView<HomeworkTask> tree, LocalDate localDate) {
         progressIndicator.setVisible(true);
-        Task<List<HomeworkTask>> task = new Task<List<HomeworkTask>>() {
+        
+        Task task = new Task() {
             @Override
-            public List<HomeworkTask> call() throws Exception {
-                return getDatabaseSynced(localDate);
+            public Boolean call() throws Exception {
+                // below two database accessors take noticable time
+                
+                // get tasks from the database
+                List<List<HomeworkTask>> allTasks = getDatabaseSynced(
+                        localDate);
+                // get the homework task ids and their corresponding expanded
+                // state from the database, as tuples
+                //                List<Map.Entry<Integer, Boolean>>
+                // allExpandedTasks = getExpandedFromDatabase();
+                // list with the parent tasks
+                ObservableList<HomeworkTask> list
+                        = convertArrayToObservableList(
+                        getParentTasks(allTasks));
+                // clear all the items currently showing in the TreeView
+                tree.getRoot().getChildren().clear();
+                
+                // add the items from the database to the TreeView
+                for (int i = 0; i < list.size(); i++) {
+                    // add the parent task to the tree
+                    TreeItem<HomeworkTask> item = new TreeItem<>(list.get(i));
+                    tree.getRoot().getChildren().add(item);
+                    
+                    item.setExpanded(item.getValue().getExpanded());
+                    
+                    int orderInDay = i;
+                    // When expanded state changes, save to database.
+                    item.expandedProperty()
+                            .addListener((observable, oldValue, newValue) -> {
+                                // update the task in the database, with the
+                                // new value for expanded
+                                HomeworkTask task = item.getValue();
+                                task.setExpanded(newValue);
+                                insertOrUpdateTask(localDate, task, orderInDay);
+                            });
+                    
+                    // get the size of the current family, or the number of
+                    // subtasks + 1 (the parent)
+                    int familySize = allTasks.get(i).size();
+                    // add every subtask to the tree as a child of the parent
+                    // task
+                    // we start at j=1 because the first item is the parent task
+                    for (int j = 1; j < familySize; j++) {
+                        // get the subtask
+                        TreeItem<HomeworkTask> childTask = new TreeItem<>(
+                                allTasks.get(i).get(j));
+                        // add the subtask
+                        tree.getRoot().getChildren().get(i).getChildren()
+                                .add(childTask);
+                    }
+                    
+                    // Insert an empty subtask at the end to allow the user
+                    // to easily add more.
+                    if (familySize > 1) {
+                        tree.getRoot().getChildren().get(i).getChildren()
+                                .add(new TreeItem<>(new HomeworkTask()));
+                    }
+                }
+                
+                return true;
             }
         };
+        
         task.setOnSucceeded(e -> {
-            // Update the listview with the result from the database.
-            list.setItems(convertListToObservableList(task.getValue()));
-            cleanUp(list);
+            cleanUp(tree);
             progressIndicator.setVisible(false);
+            
         });
+        
         exec.execute(task);
     }
-
+    
+    /**
+     * Gets a TreeItem from the database, using its id.
+     *
+     * @param tree
+     *         The tree to search for the tree item.
+     * @param id
+     *         The id of the tree item.
+     *
+     * @return TreeItem<HomeworkTask>
+     */
+    private TreeItem<HomeworkTask> findTreeItemById(TreeView<HomeworkTask> tree,
+                                                    int id) {
+        
+        List<TreeItem<HomeworkTask>> parents = tree.getRoot().getChildren();
+        
+        for (TreeItem<HomeworkTask> parent : parents) {
+            if (parent.getValue().getDatabaseID() == id) {
+                return parent;
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Update the parent tasks in the database. Used after dragging a task, we
+     * only have to update the parents, because the subtasks only depend on
+     * their parents, and are independent of the day and the order in the day.
+     *
+     * @param day
+     *         The day of which to update the tasks.
+     * @param parentTasks
+     *         The list with parents to update.
+     */
+    public void updateParentDatabase(LocalDate day,
+                                     List<HomeworkTask> parentTasks) {
+        progressIndicator.setVisible(true);
+        Task<HomeworkTask> task = new Task<HomeworkTask>() {
+            @Override
+            public HomeworkTask call() throws Exception {
+                updateParentsSynced(day, parentTasks);
+                return null;
+            }
+        };
+        task.setOnSucceeded(e -> progressIndicator.setVisible(false));
+        exec.execute(task);
+    }
+    
     /**
      * Updates database using the given homework tasks for a day.
      *
-     * @param day           Date from which the tasks are.
-     * @param homeworkTasks Tasks to be put in the database.
+     * @param day
+     *         Date from which the tasks are.
+     * @param homeworkTasks
+     *         Tasks to be put in the database.
      */
-    public void updateDatabase(LocalDate day, List<HomeworkTask> homeworkTasks) {
+    public void updateDatabase(LocalDate day,
+                               List<List<HomeworkTask>> homeworkTasks) {
         progressIndicator.setVisible(true);
         Task<List<HomeworkTask>> task = new Task<List<HomeworkTask>>() {
             @Override
@@ -626,9 +898,7 @@ public class Controller implements Initializable, AbstractController {
                 return null;
             }
         };
-        task.setOnSucceeded(e -> {
-            progressIndicator.setVisible(false);
-        });
+        task.setOnSucceeded(e -> progressIndicator.setVisible(false));
         exec.execute(task);
     }
     
@@ -636,49 +906,102 @@ public class Controller implements Initializable, AbstractController {
      * Database methods, Database is a singleton using the enum structure.
      * For corresponding javadoc see Database.
      */
-
+    
     /**
      * See {@link Database#setDefaultDatabasePath()}.
      */
     private void setDefaultDatabasePath() {
         Database.INSTANCE.setDefaultDatabasePath();
     }
-
+    
     /**
      * See {@link Database#createTables()}.
      */
     private void createTables() {
         Database.INSTANCE.createTables();
     }
-
+    
     /**
      * See {@link Database#getTasksDay(LocalDate)}.
      *
-     * @param localDate Same.
+     * @param localDate
+     *         Same.
+     *
      * @return Same.
      */
-    private synchronized List<HomeworkTask> getDatabaseSynced(final LocalDate localDate) {
+    public synchronized List<List<HomeworkTask>> getDatabaseSynced(
+            final LocalDate localDate) {
         return Database.INSTANCE.getTasksDay(localDate);
     }
-
+    
     /**
      * See {@link Database#updateTasksDay(LocalDate, List)}
      *
-     * @param day           Same.
-     * @param homeworkTasks Same.
+     * @param day
+     *         Same.
+     * @param homeworkTasks
+     *         Same.
      */
     synchronized void updateDatabaseSynced(final LocalDate day,
-                                           final List<HomeworkTask> homeworkTasks) {
+                                           final List<List<HomeworkTask>>
+                                                   homeworkTasks) {
         Database.INSTANCE.updateTasksDay(day, homeworkTasks);
     }
-
+    
+    /**
+     * See {@link Database#updateParentsDay(LocalDate, List)}
+     *
+     * @param day
+     *         Same.
+     * @param parentTasks
+     *         Same.
+     */
+    synchronized void updateParentsSynced(final LocalDate day,
+                                          final List<HomeworkTask> parentTasks) {
+        Database.INSTANCE.updateParentsDay(day, parentTasks);
+    }
+    
+    /**
+     * See {@link Database#insertOrUpdateTask(LocalDate, HomeworkTask, int)}
+     *
+     * @param day
+     *         Same.
+     * @param task
+     *         Same.
+     * @param orderInDay
+     *         Same.
+     */
+    synchronized void insertOrUpdateTask(final LocalDate day,
+                                         final HomeworkTask task,
+                                         final int orderInDay) {
+        Database.INSTANCE.insertOrUpdateTask(day, task, orderInDay);
+    }
+    
+    /**
+     * See {@link Database#getParentTasksDay(LocalDate)}
+     *
+     * @param day
+     *         Same.
+     *
+     * @return Same.
+     */
+    public List<HomeworkTask> getParentTasksDay(final LocalDate day) {
+        return Database.INSTANCE.getParentTasksDay(day);
+    }
+    
     /**
      * See {@link Database#getSetting(String)}
      *
-     * @param name Same.
+     * @param name
+     *         Same.
+     *
      * @return Same.
      */
     private String getSetting(String name) {
         return Database.INSTANCE.getSetting(name);
+    }
+    
+    public String getColorFromDatabase(int colorID) {
+        return Database.INSTANCE.getColorFromDatabase(colorID);
     }
 }

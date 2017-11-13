@@ -24,8 +24,8 @@ public class ControllerJavaTest {
     public void convertObservableToArrayList() {
         Controller controller = new Controller();
         Collection<HomeworkTask> listToConvert = new ArrayList<>();
-        HomeworkTask task1 = new HomeworkTask("asdf", "fda", "colooor");
-        HomeworkTask task2 = new HomeworkTask("bladf", "fda", "colooor");
+        HomeworkTask task1 = new HomeworkTask();
+        HomeworkTask task2 = new HomeworkTask();
         listToConvert.add(task1);
         listToConvert.add(task2);
         ObservableList<HomeworkTask> observableList = FXCollections.observableArrayList(listToConvert);

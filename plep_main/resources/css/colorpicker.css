@@ -1,0 +1,7 @@
+.color-picker {
+    -fx-color-label-visible: false;
+    -fx-color-rect-width: 50px;
+    -fx-color-rect-height: 50px;
+    -fx-min-width: 65px;
+    -fx-min-height: 65px;
+}
