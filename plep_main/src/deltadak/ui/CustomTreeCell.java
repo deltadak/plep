@@ -2,12 +2,11 @@ package deltadak.ui;
 
 import deltadak.Database;
 import deltadak.HomeworkTask;
-import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTreeCell;
@@ -17,7 +16,6 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.scene.text.TextAlignment;
 
-import java.lang.management.PlatformLoggingMXBean;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -42,6 +40,11 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
     private Label label;
     private ComboBox<String> comboBox;
     private ContextMenu contextMenu;
+    
+    // Use a number of spaces so when we color the label of a context menu
+    // item, we get a decent looking colored area.
+    private static final String LABEL_COLOR_CONTEXT_MENU_ITEMS =
+            "                                ";
     
     /**
      * Each CustomTreeCell keeps a reference to the listener of the
@@ -194,6 +197,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         } else {
             // create the items that are on every cell
             cellBox = new HBox(10);
+            cellBox.setAlignment(Pos.CENTER_LEFT);
             
             // block the listener on the checkbox when we manually toggle it
             // so it corresponds to the value in the database
@@ -217,20 +221,18 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
             label.setTextAlignment(TextAlignment.JUSTIFY);
     
             // Get style from the database and apply to the item
-            String color = homeworkTask.getColor();
+            int colorID = homeworkTask.getColorID();
+            String color = controller.getColorFromDatabase(colorID);
 
-            // On dark backgrounds, change text color.
-            setWhiteComboboxText();
-
-            setStyle("-fx-control-inner-background: "
-                        + controller.convertColorToHex(color));
-
+            setStyle("-fx-control-inner-background: #" + color);
+    
             // set the style on the label
             setDoneStyle(done);
     
             // if the item is first level, it has to show a course label
             // (ComboBox), and it has to have a context menu
-            if(getTreeItem().getParent().equals(root)) {
+            // Note: replacing equals() with a 'safe' equals() resolved NPE.
+            if(Objects.equals(getTreeItem().getParent(), root)) {
     
                 // Before setting value, we need to temporarily disable the
                 // listener, otherwise it fires and goes unnecessarily updating
@@ -334,7 +336,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                                     HomeworkTask(true,
                                                  parentOld.getText(),
                                                  parentOld.getLabel(),
-                                                 parentOld.getColor(),
+                                                 parentOld.getColorID(),
                                                  parentOld.getExpanded(),
                                                  parentOld.getDatabaseID());
                             getTreeItem().getParent().setValue(parent);
@@ -374,23 +376,38 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         SeparatorMenuItem separatorMenuItem = new SeparatorMenuItem();
     
         // the different colours to be added
-        MenuItem firstColor = new MenuItem("Green");
-        MenuItem secondColor = new MenuItem("Blue");
-        MenuItem thirdColor = new MenuItem("Red");
-        MenuItem defaultColor = new MenuItem("White");
+        MenuItem firstColor = new MenuItem(LABEL_COLOR_CONTEXT_MENU_ITEMS);
+        MenuItem secondColor = new MenuItem(LABEL_COLOR_CONTEXT_MENU_ITEMS);
+        MenuItem thirdColor = new MenuItem(LABEL_COLOR_CONTEXT_MENU_ITEMS);
+        MenuItem fourthColor = new MenuItem(LABEL_COLOR_CONTEXT_MENU_ITEMS);
+        MenuItem defaultColor = new MenuItem(LABEL_COLOR_CONTEXT_MENU_ITEMS);
+    
+        String[] colorsFromDatabase = Database.INSTANCE.getColorsFromDatabase();
+        firstColor.setStyle("-fx-background-color: #" + colorsFromDatabase[0]);
+        secondColor.setStyle("-fx-background-color: #" + colorsFromDatabase[1]);
+        thirdColor.setStyle("-fx-background-color: #" + colorsFromDatabase[2]);
+        fourthColor.setStyle("-fx-background-color: #" + colorsFromDatabase[3]);
+        defaultColor.setStyle("-fx-background-color: #" + colorsFromDatabase[4]);
+    
     
         // add all the items to the context menu
         contextMenu.getItems()
                 .addAll(addSubTaskMenuItem, repeatTasksMenu, separatorMenuItem,
-                        firstColor, secondColor, thirdColor, defaultColor);
+                        firstColor, secondColor, thirdColor, fourthColor, defaultColor);
         
         addSubTaskMenuItem.setOnAction(event -> createSubTask(getTreeItem()));
         
         // sets an action on all the colour items
-        for (int i = 2; i < contextMenu.getItems().size(); i++) {
+        for (int i = 3; i < contextMenu.getItems().size(); i++) {
             MenuItem colorMenuItem = contextMenu.getItems().get(i);
+            int colorID = i-3;
+            String colorString = colorsFromDatabase[colorID];
+            
             colorMenuItem.setOnAction(event1 -> {
-                controller.setBackgroundColor(colorMenuItem.getText(), this);
+//                setStyle("-fx-background: #98ab7c");
+                System.out.println("item " + colorString + " clicked");
+                controller.setBackgroundColor(colorID, this);
+                getTreeItem().getValue().setColorID(colorID);
                 controller.updateDatabase(day, controller
                         .convertTreeToArrayList(tree));
                 controller.cleanUp(tree);
@@ -479,56 +496,23 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
      * @param done boolean, true if the task is done, false if not done.
      */
     private void setDoneStyle(boolean done) {
-        String color = getItem().getColor();
 
         if(done) {
             label.getStyleClass().remove("label");
-
-            // Remove the white text of the combobox, which we set earlier when the background color is dark.
-            comboBox.getStyleClass().remove("combobox-text-white");
-
-            // Dark colors need a light text.
-            switch (color) {
-                case "Red":
-                case "Blue":  // and item is selected
-                    label.getStyleClass().add("label-done-light");
-                    comboBox.getStyleClass().add("combobox-done-light");
-                    break;
-                case "Green":
-                    label.getStyleClass().add("label-done-dark");
-                    comboBox.getStyleClass().add("combobox-done-dark");
-                    break;
-                default:
-                    label.getStyleClass().add("label-done");
-                    comboBox.getStyleClass().add("combobox-done");
-                    break;
-            }
+            label.getStyleClass().add("label-done");
+            
+            comboBox.getStyleClass().remove("combo-box");
+            comboBox.getStyleClass().add("combobox-done");
 
         } else {
             // Remove all the classes which styled the 'done' style on the item.
-            label.getStyleClass().removeAll("label-done", "label-done-light", "label-done-dark");
+            label.getStyleClass().removeAll("label-done");
             label.getStyleClass().add("label");
 
-            comboBox.getStyleClass().removeAll("combobox-done", "combobox-done-light", "combobox-done-dark");
-
-            // Re-add white text for dark backgrounds.
-            setWhiteComboboxText();
+            comboBox.getStyleClass().removeAll("combobox-done");
+            comboBox.getStyleClass().add("combo-box");
 
         }
-    }
-
-    /**
-     * Useful for dark background colors.
-     */
-    private void setWhiteComboboxText() {
-        String color = getItem().getColor();
-
-        if (color.equals("Red")) {
-            comboBox.getStyleClass().add("combobox-text-white");
-        } else {
-            comboBox.getStyleClass().remove("combobox-text-white");
-        }
-
     }
 
     /**
@@ -700,10 +684,10 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
                     
                     // deleting blank row from database which updating creates
                 } else { // item was moved up in same tree
-                    // we never get here...
+                    // we get here when dragging a task from below an
+                    // expanded task
                     int index = getIndex() + 1;
-                    tree.getRoot().getChildren().get(index)
-                            .setValue(emptyHomeworkTask);
+                    tree.getTreeItem(index).setValue(emptyHomeworkTask);
                 }
 
                 // update in database (new day?)

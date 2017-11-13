@@ -53,7 +53,7 @@
     /*-fx-font-style: oblique;*/
 }
 
-.list-cell {
+.tree-cell {
     -fx-background: -fx-control-inner-background;
 }
 
@@ -63,22 +63,13 @@
 
 /* text of the tasks marked as done */
 .label-done {
-    -fx-text-fill: -fx-text-gray;
+    -fx-text-fill: ladder(-fx-control-inner-background, -fx-text-gray-light 0%, -fx-text-gray-light 59%, -fx-text-gray-dark 60%, -fx-text-gray-dark 100%);
     -fx-font-style: oblique;
 }
 
-.label-done-light {
-    -fx-text-fill: -fx-text-gray-light;
-    -fx-font-style: oblique;
-}
-
-.label-done-dark {
-    -fx-text-fill: -fx-text-gray-dark;
-    -fx-font-style: oblique;
-}
-
-.label-done .text, .label-done-light .text, .label-done-dark .text {
+.label-done .text {
     -fx-strikethrough: true;
+    -fx-wrap-text: true;
 }
 
 .label {

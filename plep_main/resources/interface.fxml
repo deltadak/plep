@@ -9,6 +9,9 @@
 
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.TextArea?>
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1"
             xmlns="http://javafx.com/javafx/2.2"
             fx:controller="deltadak.ui.Controller"
@@ -65,7 +68,8 @@
 Double-click to edit, enter to save. &#13;
 Right-click on an item: Add a subtask, choose a colour or repeat weekly. &#13;
 DEL: Delete the selected item. &#13;
-Ctrl+Z: Undo a deletion. "
+Ctrl+Z: Undo a deletion. &#13;
+On the settings pane, click on a colour to edit it."
                   wrapText="true"
                   GridPane.columnIndex="0"
                   GridPane.rowIndex="1"/>
@@ -131,6 +135,43 @@ Ctrl+Z: Undo a deletion. "
                     text="Apply"/>
 
         </GridPane>
+
+        <GridPane fx:id="colorsPane"
+                  hgap="10"
+                  vgap="10"
+                  AnchorPane.topAnchor="180.0"
+                  AnchorPane.leftAnchor="10.0">
+
+            <Text text="Background colours"
+                    GridPane.columnIndex="0"
+                    GridPane.rowIndex="0"
+                    GridPane.columnSpan="5"/>
+
+            <ColorPicker fx:id="colorOne"
+                        GridPane.columnIndex="0"
+                        GridPane.rowIndex="1"/>
+
+            <ColorPicker fx:id="colorTwo"
+                       GridPane.columnIndex="1"
+                       GridPane.rowIndex="1"/>
+
+            <ColorPicker fx:id="colorThree"
+                         GridPane.columnIndex="2"
+                         GridPane.rowIndex="1"/>
+
+            <ColorPicker fx:id="colorFour"
+                         GridPane.columnIndex="3"
+                         GridPane.rowIndex="1"/>
+
+            <Label text="Default:"
+                  GridPane.columnIndex="4"
+                  GridPane.rowIndex="0"/>
+            <ColorPicker fx:id="colorFive"
+                         GridPane.columnIndex="4"
+                         GridPane.rowIndex="1"/>
+
+        </GridPane>
+
 
     </AnchorPane>
 </AnchorPane>

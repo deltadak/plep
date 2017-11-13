@@ -17,7 +17,7 @@ We try to adhere to [Semantic Versioning](http://semver.org/).
 + Drag and drop
 + Custom labels
 + Subtasks
-+ Colors
++ Custom colours
 + Repeat for x weeks
 + Customize number of days and columns
 + Turn pages by a custom amount of days
@@ -27,7 +27,9 @@ We try to adhere to [Semantic Versioning](http://semver.org/).
 Note: The first time plep is ran, it will create a database file in the folder where plep.jar is stored. You can backup this if you don't want to lose your data.
 
 ## Screenshot of v2.0.0
-![screenshot](v2.0.0.PNG)
+![screenshot](v2.0.0-beta.5.PNG)
+### Settings of v2.0.0
+![screenshot-settings](v2.0.0-beta.5.settings.PNG)
 
 ## Instructions for building from source in IntelliJ
 This application works with a database, so you need to add the sqlite library by going to project structure -> libaries -> add new one and then selecting the file located at something like C:\Users\username\\.IntelliJIdea2016.2\config\jdbc-drivers\sqlite-jdbc-3.8.11.2.jar

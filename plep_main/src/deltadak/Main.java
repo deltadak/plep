@@ -44,8 +44,9 @@ public class Main extends Application {
         String spinnerCSS = this.getClass().getResource("/css/spinner.css").toExternalForm();
         String checkboxCSS = this.getClass().getResource("/css/checkbox.css").toExternalForm();
         String dropdownCSS = this.getClass().getResource("/css/dropdown.css").toExternalForm();
+        String colorPickerCSS = this.getClass().getResource("/css/colorpicker.css").toExternalForm();
 
-        primaryStage.getScene().getStylesheets().addAll(treeViewCSS, generalCSS, buttonCSS, spinnerCSS, checkboxCSS, dropdownCSS);
+        primaryStage.getScene().getStylesheets().addAll(treeViewCSS, generalCSS, buttonCSS, spinnerCSS, checkboxCSS, dropdownCSS, colorPickerCSS);
 
         // check if running in debug mode
         // to display the default java icon so we can distinguish between
