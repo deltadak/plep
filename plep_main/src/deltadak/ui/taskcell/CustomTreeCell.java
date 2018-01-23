@@ -1,7 +1,9 @@
-package deltadak.ui;
+package deltadak.ui.taskcell;
 
 import deltadak.Database;
 import deltadak.HomeworkTask;
+import deltadak.ui.Controller;
+import deltadak.ui.taskcell.InvalidationListenerWithBlocker;
 import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -59,7 +61,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
      *                   methods.
      * @param root The root of the TreeView this CustomTreeCell is a part of.
      */
-    CustomTreeCell(Controller controller, TreeItem<HomeworkTask> root) {
+    public CustomTreeCell(Controller controller, TreeItem<HomeworkTask> root) {
         this.controller = controller;
         this.root = root;
     

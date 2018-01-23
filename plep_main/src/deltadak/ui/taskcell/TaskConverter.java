@@ -1,4 +1,4 @@
-package deltadak.ui;
+package deltadak.ui.taskcell;
 
 import deltadak.HomeworkTask;
 import javafx.scene.control.ListCell;

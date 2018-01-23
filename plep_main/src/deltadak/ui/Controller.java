@@ -5,6 +5,7 @@ import deltadak.HomeworkTask;
 import deltadak.commands.DeleteCommand;
 import deltadak.commands.DeleteSubtaskCommand;
 import deltadak.commands.UndoFacility;
+import deltadak.ui.taskcell.CustomTreeCell;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -493,7 +494,7 @@ public class Controller implements Initializable, AbstractController {
      *
      * @return List&lt;List&lt;HomeworkTask&gt;&gt;
      */
-    List<List<HomeworkTask>> convertTreeToArrayList(
+    public List<List<HomeworkTask>> convertTreeToArrayList(
             TreeView<HomeworkTask> tree) {
         
         // create a list with the tree items of the parent tasks
@@ -606,7 +607,7 @@ public class Controller implements Initializable, AbstractController {
     /**
      * Refreshes all treeviews using data from the database.
      */
-    void refreshAllDays() {
+    public void refreshAllDays() {
         // Use this so updating the UI works like it should, and the JavaFX
         // Application thread doesn't hang.
         Platform.runLater(() -> {
