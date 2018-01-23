@@ -3,6 +3,7 @@ package deltadak.ui.taskcell;
 import deltadak.Database;
 import deltadak.HomeworkTask;
 import deltadak.ui.Controller;
+import deltadak.ui.taskcell.courselabel.OnChangeUpdater;
 import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -29,7 +30,7 @@ import static java.lang.Math.min;
  */
 public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
 
-    /** Temporary fix for too long labels. Should equal the size of the combobox plus the size of the checkbox plus the size of the little arrow to view subtasks. */
+    /** Temporary fix for too long labels. Should equal the size of the courselabel plus the size of the checkbox plus the size of the little arrow to view subtasks. */
     private int LABEL_MAGIK = 215;
     
     private ObservableList<String> comboList;
@@ -86,21 +87,9 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
     public void setup(TreeView<HomeworkTask> tree, LocalDate localDate) {
         // update text on changes
         setConverter(new TaskConverter(this));
-        // update label on changes
-        comboBox.valueProperty().addListener(
-                (observable, oldValue, newValue) -> {
 
-                    HomeworkTask task = this.getTreeItem().getValue();
-
-                    if (newValue.equals("<no label>")) {
-                        task.setLabel("");
-                        comboBox.setValue("");
-                    } else {
-                        task.setLabel(newValue);
-                    }
-                }
-                
-        );
+        // update course label (a combobox) on changes
+        new OnChangeUpdater(comboBox, this).setupListener();
 
         // If an item is selected, deselect all other items.
         tree.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
@@ -211,7 +200,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
 
             // This won't work for long text without spaces, and more.
 //            label.prefWidthProperty().bind(getTreeView().widthProperty().subtract(comboBox.widthProperty()).subtract(checkBox.widthProperty()));
-            // combobox.getWidth() is equal to 0 here, we can't use that.
+            // courselabel.getWidth() is equal to 0 here, we can't use that.
             // Result:
 //            label.setPrefWidth(getTreeView().getWidth() - LABEL_MAGIK);
     
@@ -503,14 +492,14 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
             label.getStyleClass().add("label-done");
             
             comboBox.getStyleClass().remove("combo-box");
-            comboBox.getStyleClass().add("combobox-done");
+            comboBox.getStyleClass().add("courselabel-done");
 
         } else {
             // Remove all the classes which styled the 'done' style on the item.
             label.getStyleClass().removeAll("label-done");
             label.getStyleClass().add("label");
 
-            comboBox.getStyleClass().removeAll("combobox-done");
+            comboBox.getStyleClass().removeAll("courselabel-done");
             comboBox.getStyleClass().add("combo-box");
 
         }

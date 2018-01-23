@@ -2,7 +2,7 @@
     -fx-background-color:  Transparent;
 }
 
-/* Color of the text of the combobox based on the background color. */
+/* Color of the text of the courselabel based on the background color. */
 .combo-box .list-cell {
     -fx-text-fill: ladder(-fx-control-inner-background, white 0%, white 59%, black 60%, black 100%);
 }

@@ -255,7 +255,7 @@ public class SlidingSettingsPane extends SlidingPane {
     }
     
     /**
-     * Removes the selected label from all the items in the combobox, also
+     * Removes the selected label from all the items in the courselabel, also
      * removes it from the database
      */
     @FXML
