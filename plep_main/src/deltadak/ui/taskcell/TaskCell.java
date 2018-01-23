@@ -3,7 +3,6 @@ package deltadak.ui.taskcell;
 import deltadak.Database;
 import deltadak.HomeworkTask;
 import deltadak.ui.Controller;
-import deltadak.ui.taskcell.InvalidationListenerWithBlocker;
 import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -28,7 +27,7 @@ import static java.lang.Math.min;
  * Custom TextFieldTreeCell, because we can't set the converter on a regular
  * TreeCell.
  */
-public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
+public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
 
     /** Temporary fix for too long labels. Should equal the size of the combobox plus the size of the checkbox plus the size of the little arrow to view subtasks. */
     private int LABEL_MAGIK = 215;
@@ -49,19 +48,19 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
             "                                ";
     
     /**
-     * Each CustomTreeCell keeps a reference to the listener of the
+     * Each TaskCell keeps a reference to the listener of the
      * ComboBox, in order to choose whether to block it temporarily or not.
      */
     InvalidationListenerWithBlocker labelChangeListener;
     ChangeListenerWithBlocker doneChangeListener;
     
     /**
-     * Constructor for the CustomTreeCell.
+     * Constructor for the TaskCell.
      * @param controller To keep a reference to the Controller to access
      *                   methods.
-     * @param root The root of the TreeView this CustomTreeCell is a part of.
+     * @param root The root of the TreeView this TaskCell is a part of.
      */
-    public CustomTreeCell(Controller controller, TreeItem<HomeworkTask> root) {
+    public TaskCell(Controller controller, TreeItem<HomeworkTask> root) {
         this.controller = controller;
         this.root = root;
     
@@ -450,12 +449,12 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
     /**
      * Creates the Menu to be able to choose for how long to repeat a task.
      * See {@link #createContextMenu}.
-     * @param customTreeCell The TreeCell to show the context menu on.
+     * @param taskCell The TreeCell to show the context menu on.
      * @param day The day the TreeCell is in, to be able to calculate on what
      *           other days the task will have to be placed.
      * @return A drop down Menu.
      */
-    private Menu makeRepeatMenu(CustomTreeCell customTreeCell, LocalDate day) {
+    private Menu makeRepeatMenu(TaskCell taskCell, LocalDate day) {
         Menu repeatTasksMenu = new Menu("Repeat for x weeks");
         for (int i = 1; i < 9; i++) {
             MenuItem menuItem = new MenuItem(String.valueOf(i));
@@ -466,7 +465,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
         for (MenuItem repeatMenuItem : repeatMenuItems) {
             repeatMenuItem.setOnAction(event12 -> {
                 int repeatNumber = Integer.valueOf(repeatMenuItem.getText());
-                HomeworkTask homeworkTaskToRepeat = customTreeCell.getItem();
+                HomeworkTask homeworkTaskToRepeat = taskCell.getItem();
                 repeatTask(repeatNumber, homeworkTaskToRepeat, day);
             });
         }
@@ -600,7 +599,7 @@ public class CustomTreeCell extends TextFieldTreeCell<HomeworkTask> {
     }
     
     /**
-     * updates the ListView and database when a CustomTreeCell is being dropped
+     * updates the ListView and database when a TaskCell is being dropped
      *
      * @param tree TreeView needed for updating the database
      * @param day LocalDate needed for updating the database

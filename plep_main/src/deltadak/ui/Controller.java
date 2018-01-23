@@ -5,7 +5,7 @@ import deltadak.HomeworkTask;
 import deltadak.commands.DeleteCommand;
 import deltadak.commands.DeleteSubtaskCommand;
 import deltadak.commands.UndoFacility;
-import deltadak.ui.taskcell.CustomTreeCell;
+import deltadak.ui.taskcell.TaskCell;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -259,7 +259,7 @@ public class Controller implements Initializable, AbstractController {
             
             tree.setEditable(true);
             tree.setCellFactory(param -> {
-                CustomTreeCell treeCell = new CustomTreeCell(this,
+                TaskCell treeCell = new TaskCell(this,
                                                              tree.getRoot());
                 treeCell.setup(tree, localDate);
                 return treeCell;
@@ -639,23 +639,23 @@ public class Controller implements Initializable, AbstractController {
      *
      * @param colorID
      *         ID of the color to set as background color.
-     * @param customTreeCell
+     * @param taskCell
      *         LabelCell of which to change the background color.
      */
-    public void setBackgroundColor(int colorID, CustomTreeCell customTreeCell) {
+    public void setBackgroundColor(int colorID, TaskCell taskCell) {
         
         Platform.runLater(() -> {
             
             String colorString = getColorFromDatabase(colorID);
             
             if (colorID == 4) {
-                customTreeCell.setStyle("-fx-text-fill: none");
+                taskCell.setStyle("-fx-text-fill: none");
             } else {
-                customTreeCell.setStyle(
+                taskCell.setStyle(
                         "-fx-control-inner-background: #" + colorString);
             }
             
-            customTreeCell.getItem().setColorID(colorID);
+            taskCell.getItem().setColorID(colorID);
             
         });
         
