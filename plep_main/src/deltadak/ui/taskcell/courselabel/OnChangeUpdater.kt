@@ -10,15 +10,22 @@ import javafx.scene.control.cell.TextFieldTreeCell
  * Update the text shown on the combo box where there are changes, with some customizations.
  */
 @Suppress("UNUSED_ANONYMOUS_PARAMETER")
-class OnChangeUpdater(comboBox: ComboBox<String>, treeCell: TextFieldTreeCell<HomeworkTask>) {
+class OnChangeUpdater(
+        /** The ComboBox on which to listen for changes. */
+        val comboBox: ComboBox<String>,
+        /** The TreeCell in which the ComboBox resides. */
+        val treeCell: TextFieldTreeCell<HomeworkTask>) {
 
-    init {
+    /**
+     * Add a listener to the ComboBox which listens for changes and applies them normally with one exception: when <no label> is selected then the empty string will be shown.
+     */
+    fun addChangeListener() {
 
         comboBox.valueProperty().addListener( { observable: ObservableValue<out String>?, oldValue: String?, newValue: String? ->
 
             val task = treeCell.treeItem.value
 
-            if (newValue == "<no label>") {
+            if (newValue != null && newValue == "<no label>") {
                 task.label = ""
                 // Delay removing the combobox text because we cannot change the contents of an ObservableList while a change is in progress.
                 // In practice the delay is unnoticable.

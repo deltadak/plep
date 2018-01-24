@@ -4,6 +4,7 @@ import deltadak.Database;
 import deltadak.HomeworkTask;
 import deltadak.ui.Controller;
 import deltadak.ui.taskcell.courselabel.OnChangeUpdater;
+import deltadak.ui.taskcell.selection.SelectionCleaner;
 import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -89,18 +90,10 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
         setConverter(new TaskConverter(this));
 
         // update course label (a combobox) on changes
-        new OnChangeUpdater(comboBox, this);
+        new OnChangeUpdater(comboBox, this).addChangeListener();
 
         // If an item is selected, deselect all other items.
-        tree.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) {
-                // We use our custom select method.
-                select(
-                        tree, () -> tree.getSelectionModel().select(newValue)
-                );
-            }
-        });
-        
+        new SelectionCleaner(tree).addSelectionListener();
         
         setOnLabelChangeListener(tree, localDate);
         setOnDoneChangeListener(tree, localDate);
