@@ -89,7 +89,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
         setConverter(new TaskConverter(this));
 
         // update course label (a combobox) on changes
-        new OnChangeUpdater(comboBox, this).setupListener();
+        new OnChangeUpdater(comboBox, this);
 
         // If an item is selected, deselect all other items.
         tree.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
