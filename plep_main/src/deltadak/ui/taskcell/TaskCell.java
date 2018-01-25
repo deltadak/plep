@@ -5,6 +5,7 @@ import deltadak.HomeworkTask;
 import deltadak.ui.Controller;
 import deltadak.ui.taskcell.courselabel.OnChangeUpdater;
 import deltadak.ui.taskcell.selection.SelectionCleaner;
+import deltadak.ui.taskcell.selection.Selector;
 import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -18,6 +19,7 @@ import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
 import javafx.scene.text.TextAlignment;
+import kotlin.Unit;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -135,32 +137,6 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
             // update the database with the current first level items
             controller.updateDatabase(localDate, controller.convertTreeToArrayList(tree));
         });
-    }
-
-    /**
-     * Select a TreeItem in a TreeView, and deselect all other items.
-     * @param tree Any TreeView.
-     * @param selectionFunction The function to select the right item, can select using index or TreeItems. e.g. tree.getSelectionModel().select(index)
-     */
-    private void select(TreeView<HomeworkTask> tree, Runnable selectionFunction) {
-        // We want to clear the selection on all the other listviews, otherwise weird 'half-selected' greyed out cells are left behind.
-
-        // A TreeView is inside a VBox inside the GridPane, so node will be a VBox
-        // Hence we need to circumvent a little to clear selection of all other listviews
-        for(Node node : tree.getParent().getParent().getChildrenUnmodifiable()) {
-            if (node instanceof VBox) {
-                // We assume the title (a Label) is first, Pane is second, treeview is third
-                Node treeNode = ((VBox) node).getChildren().get(2);
-                // First deselect all of them...
-                if ((treeNode instanceof TreeView) ) {
-                    ((TreeView) treeNode).getSelectionModel().clearSelection();
-                }
-            }
-
-        }
-
-        // ... then reselect this one
-        selectionFunction.run();
     }
     
     /**
@@ -289,7 +265,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
                     }
     
                     // Deselect the item, otherwise the selector changes color and overrides the item color.
-                    select(tree, () -> {});
+                    new Selector(tree).select(() -> Unit.INSTANCE);
                     
                     /* If the item of which the checkbox is toggled is
                      * a subtask, then we check if all subtasks are done.
@@ -617,9 +593,8 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
                 );
 
                 // Clear selection on all other items immediately. This will result in a smooth reaction, whereas otherwise it takes a bit of noticable time before selection of the just-dragged item (on its previous location) is cleared.
-                select(tree,
-                        () -> {}
-                );
+                new Selector(tree).select(() -> Unit.INSTANCE);
+
             }
             
             

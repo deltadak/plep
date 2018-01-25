@@ -12,7 +12,7 @@ jdk:
 # Use the Trusty Beta, because the JDK version of the default is too low.
 dist: trusty
 
-notification:
+notifications:
     email: false
 
 # make gradlew accessible to travis
