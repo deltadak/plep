@@ -2,6 +2,8 @@ package deltadak.ui.util
 
 import deltadak.HomeworkTask
 import deltadak.ui.Controller
+import javafx.collections.ObservableList
+import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeView
 
 /**
@@ -13,8 +15,7 @@ class TreeToListConverter {
      * Converts a TreeView to a list of lists of tasks. The first item of each
      * list is the parent task, the items after that are its subtasks.
      *
-     * @param tree
-     *         The TreeView to convert.
+     * @param tree The TreeView to convert.
      *
      * @return List&lt;List&lt;HomeworkTask&gt;&gt;
      */
@@ -24,7 +25,7 @@ class TreeToListConverter {
         val parentItems = tree.root.children
 
         // Create a list with homework tasks of the parent tasks.
-        val parentTasks = Controller.convertTreeItemListToArrayList(parentItems)
+        val parentTasks = convertTreeItemsToList(parentItems)
 
         // Create the list to eventually return.
         val tasks = mutableListOf<List<HomeworkTask>>()
@@ -34,7 +35,7 @@ class TreeToListConverter {
             val childItems = parentItems[i].children
 
             // Store the subtasks of parent task i in a list.
-            val childTasks = Controller.convertTreeItemListToArrayList(childItems)
+            val childTasks = convertTreeItemsToList(childItems)
 
             // Create a list containing one parent and its children.
             val oneFamily = mutableListOf<HomeworkTask>()
@@ -54,5 +55,13 @@ class TreeToListConverter {
 
     }
 
+    /**
+     * Converts List of TreeItems of Homeworktasks to List of Homeworktasks.
+     *
+     * @param list List to convert.
+     *
+     * @return List of Homeworktasks.
+     */
+    fun convertTreeItemsToList(list: ObservableList<TreeItem<HomeworkTask>>) = list.map{ it.value }
 
 }

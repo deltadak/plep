@@ -469,29 +469,6 @@ public class Controller implements Initializable, AbstractController {
     }
     
     /**
-     * Convert TreeItemList to ArrayList.
-     *
-     * @param list
-     *         to convert
-     *
-     * @return converted ArrayList
-     */
-    @Deprecated
-    public static List<HomeworkTask> convertTreeItemListToArrayList(
-            ObservableList<TreeItem<HomeworkTask>> list) {
-        
-        List<HomeworkTask> arrayList = new ArrayList<>();
-        
-        for (TreeItem<HomeworkTask> aList : list) {
-            arrayList.add(aList.getValue());
-        }
-        
-        return arrayList;
-    }
-    
-
-    
-    /**
      * Get all the parents (or head tasks) when given a list of lists of
      * HomeworkTasks.
      *
