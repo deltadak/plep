@@ -6,6 +6,7 @@ import deltadak.commands.DeleteCommand;
 import deltadak.commands.DeleteSubtaskCommand;
 import deltadak.commands.UndoFacility;
 import deltadak.ui.taskcell.TaskCell;
+import deltadak.ui.util.TreeToListConverter;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -109,7 +110,8 @@ public class Controller implements Initializable, AbstractController {
      * name of setting in the database
      */
     public static final String MAX_COLUMNS_AUTO_NAME = "max_columns_auto";
-    
+
+    /** Default (initial) colors */
     public static final String[] DEFAULT_COLORS = new String[] {
             "ff1a00",
             "00cbef",
@@ -405,7 +407,7 @@ public class Controller implements Initializable, AbstractController {
         int parentIndex = tree.getRoot().getChildren().indexOf(selectedItem);
         
         undoFacility.execute(
-                new DeleteCommand(this, localDate, convertTreeToArrayList(tree),
+                new DeleteCommand(this, localDate, new TreeToListConverter().convertTreeToList(tree),
                                   parentIndex, tree));
         
     }
@@ -421,12 +423,13 @@ public class Controller implements Initializable, AbstractController {
     private void deleteSubtask(TreeView<HomeworkTask> tree,
                                LocalDate localDate) {
         
-        undoFacility.execute(new DeleteSubtaskCommand(this, localDate,
-                                                      convertTreeToArrayList(
-                                                              tree),
-                                                      tree.getSelectionModel()
-                                                              .getSelectedIndex(),
-                                                      tree));
+        undoFacility.execute(
+                new DeleteSubtaskCommand(
+                        this,
+                        localDate,
+                        new TreeToListConverter().convertTreeToList(tree),
+                        tree.getSelectionModel() .getSelectedIndex(),
+                        tree));
     }
     
     /**
@@ -473,7 +476,8 @@ public class Controller implements Initializable, AbstractController {
      *
      * @return converted ArrayList
      */
-    List<HomeworkTask> convertTreeItemListToArrayList(
+    @Deprecated
+    public static List<HomeworkTask> convertTreeItemListToArrayList(
             ObservableList<TreeItem<HomeworkTask>> list) {
         
         List<HomeworkTask> arrayList = new ArrayList<>();
@@ -485,48 +489,7 @@ public class Controller implements Initializable, AbstractController {
         return arrayList;
     }
     
-    /**
-     * Converts a TreeView to a list of lists of tasks. The first item of each
-     * list is the parent task, the items after that are its subtasks.
-     *
-     * @param tree
-     *         The TreeView to convert.
-     *
-     * @return List&lt;List&lt;HomeworkTask&gt;&gt;
-     */
-    public List<List<HomeworkTask>> convertTreeToArrayList(
-            TreeView<HomeworkTask> tree) {
-        
-        // create a list with the tree items of the parent tasks
-        ObservableList<TreeItem<HomeworkTask>> parentItems = tree.getRoot()
-                .getChildren();
-        // create a list with homework tasks of the parent tasks
-        List<HomeworkTask> parentTasks = convertTreeItemListToArrayList(
-                parentItems);
-        
-        // create the list to eventually return
-        List<List<HomeworkTask>> tasks = new ArrayList<>();
-        
-        for (int i = 0; i < parentItems.size(); i++) {
-            
-            // get the sub tree items of parent task i, and store them in a list
-            ObservableList<TreeItem<HomeworkTask>> childItems = parentItems
-                    .get(i).getChildren();
-            // store the subtasks of parent task i in a list
-            List<HomeworkTask> childTasks = convertTreeItemListToArrayList(
-                    childItems);
-            
-            // create a list containing one parent and its children
-            List<HomeworkTask> oneFamily = new ArrayList<>();
-            
-            oneFamily.add(parentTasks.get(i)); // add the parent to the family
-            oneFamily.addAll(childTasks); // add its children to the family
-            
-            tasks.add(oneFamily); // add the family to the nested list of tasks
-        }
-        
-        return tasks;
-    }
+
     
     /**
      * Get all the parents (or head tasks) when given a list of lists of
@@ -993,15 +956,18 @@ public class Controller implements Initializable, AbstractController {
     /**
      * See {@link Database#getSetting(String)}
      *
-     * @param name
-     *         Same.
-     *
+     * @param name Same.
      * @return Same.
      */
     private String getSetting(String name) {
         return Database.INSTANCE.getSetting(name);
     }
-    
+
+    /**
+     * See {@link Database#getColorFromDatabase(int)}
+     * @param colorID same
+     * @return same
+     */
     public String getColorFromDatabase(int colorID) {
         return Database.INSTANCE.getColorFromDatabase(colorID);
     }
