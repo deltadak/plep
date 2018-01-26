@@ -8,6 +8,7 @@ import deltadak.ui.taskcell.courselabel.OnChangeUpdater;
 import deltadak.ui.taskcell.selection.SelectionCleaner;
 import deltadak.ui.taskcell.selection.Selector;
 import deltadak.ui.taskcell.subtasks.SubtasksCreator;
+import deltadak.ui.taskcell.subtasks.SubtasksEditor;
 import deltadak.ui.util.TreeToListConverter;
 import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
@@ -109,36 +110,10 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
         setOnDragDropped(tree, localDate);
         setOnDragDone(tree, localDate);
 
-        setupSubtasksEditing(tree, localDate);
+        new SubtasksEditor(controller, tree, localDate).setup();
         
         // create the context menu
         contextMenu = createContextMenu(tree, localDate);
-    }
-
-    /**
-     * Initialize what happens after the user edited a subtask.
-     * @param tree The TreeView in which an item was edited.
-     * @param localDate The day of the TreeView.
-     */
-    private void setupSubtasksEditing(TreeView<HomeworkTask> tree, LocalDate localDate) {
-        tree.setOnEditCommit(event -> {
-            TreeItem<HomeworkTask> editingItem = getTreeView().getEditingItem();
-
-            // if we are editing one of the subtasks
-            if(!editingItem.getParent().equals(root)) {
-                // if we're not adding an empty task, create another subtask
-                if(!event.getNewValue().getText().equals("")){
-                    new SubtasksCreator(tree).create(editingItem.getParent());
-                }
-            } else { // if we are not editing a subtask
-                // insert the task in the expanded table
-//                controller.insertExpandedItem(editingItem.getValue()
-//                        .getDatabaseID(), false);
-            }
-
-            // update the database with the current first level items
-            new DatabaseFacade(controller).updateDatabase(localDate, new TreeToListConverter().convertTreeToList(tree));
-        });
     }
     
     /**

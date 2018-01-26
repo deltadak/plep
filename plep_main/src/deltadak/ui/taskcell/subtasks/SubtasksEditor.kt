@@ -4,7 +4,6 @@ import deltadak.HomeworkTask
 import deltadak.database.DatabaseFacade
 import deltadak.ui.AbstractController
 import deltadak.ui.util.TreeToListConverter
-import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeView
 import java.time.LocalDate
 
@@ -28,7 +27,7 @@ class SubtasksEditor(
             if(tree.editingItem.parent != tree.root) {
                 // If we're not adding an empty task, create another subtask.
                 if(event.newValue.text != "") {
-                    // createSubTask(editingItem.getParent());
+                    SubtasksCreator(tree).create(tree.editingItem.parent)
                 }
             }
 
