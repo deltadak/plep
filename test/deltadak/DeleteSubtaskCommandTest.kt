@@ -2,6 +2,7 @@ package deltadak
 
 import deltadak.commands.DeleteSubtaskCommand
 import deltadak.ui.AbstractController
+import javafx.scene.control.ProgressIndicator
 import javafx.scene.control.TreeView
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
@@ -51,8 +52,8 @@ object DeleteSubtaskCommandTest: Spek({
 })
 
 class DummyController : AbstractController {
-    override fun updateDatabase(day: LocalDate, homeworkTasks: MutableList<MutableList<HomeworkTask>>) {
-        // Do nothing, duh.
+    override fun getProgressIndicator(): ProgressIndicator {
+        return ProgressIndicator() // Do nothing, duh.
     }
 
     override fun cleanUp(list: TreeView<HomeworkTask>) {

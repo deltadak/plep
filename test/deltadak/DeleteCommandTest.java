@@ -2,7 +2,7 @@ package deltadak;
 
 import deltadak.commands.DeleteCommand;
 import deltadak.ui.AbstractController;
-import javafx.scene.control.ListView;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TreeView;
 import org.junit.jupiter.api.Test;
 
@@ -10,7 +10,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests {@link DeleteCommand}.
@@ -29,8 +30,8 @@ public class DeleteCommandTest {
         list.add(taskToDelete);
         AbstractController dummy = new AbstractController() {
             @Override
-            public void updateDatabase(LocalDate day, List<List<HomeworkTask>> homeworkTasks) {
-                // do nothing
+            public ProgressIndicator getProgressIndicator() {
+                return new ProgressIndicator();
             }
 
             @Override
