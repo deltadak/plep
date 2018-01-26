@@ -1,6 +1,7 @@
 package deltadak.commands;
 
 import deltadak.HomeworkTask;
+import deltadak.database.DatabaseFacade;
 import deltadak.ui.AbstractController;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
@@ -60,7 +61,7 @@ public class DeleteSubtaskCommand extends DeleteCommand {
             TreeItem<HomeworkTask> parent = tree.getRoot().getChildren().get(parentIndex);
             parent.getChildren().remove(indexWithinParent);
 
-            controller.updateDatabase(dayState, treeViewItems);
+            new DatabaseFacade(controller).updateDatabase(dayState, treeViewItems);
             controller.cleanUp(tree);
         }
     }
@@ -75,7 +76,7 @@ public class DeleteSubtaskCommand extends DeleteCommand {
             TreeItem<HomeworkTask> parent = tree.getRoot().getChildren().get(parentIndex);
             parent.getChildren().add(indexWithinParent, new TreeItem<>(deletedTask));
 
-            controller.updateDatabase(dayState, treeViewItems);
+            new DatabaseFacade(controller).updateDatabase(dayState, treeViewItems);
             controller.cleanUp(tree);
         }
     }

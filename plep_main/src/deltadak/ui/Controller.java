@@ -44,8 +44,7 @@ public class Controller implements Initializable, AbstractController {
     @FXML ToolBar toolBar;
     @FXML ProgressIndicator progressIndicator;
     
-    // All these references have to be declared in controller because of fxml,
-    // and then be passed on to the SlidingPane. Ah well.
+    // All these references have to be declared in controller because of fxml.
     
     // help pane
     @FXML AnchorPane helpPane;
@@ -821,28 +820,6 @@ public class Controller implements Initializable, AbstractController {
         exec.execute(task);
     }
     
-    /**
-     * Updates database using the given homework tasks for a day.
-     *
-     * @param day
-     *         Date from which the tasks are.
-     * @param homeworkTasks
-     *         Tasks to be put in the database.
-     */
-    public void updateDatabase(LocalDate day,
-                               List<List<HomeworkTask>> homeworkTasks) {
-        progressIndicator.setVisible(true);
-        Task<List<HomeworkTask>> task = new Task<List<HomeworkTask>>() {
-            @Override
-            public List<HomeworkTask> call() throws Exception {
-                updateDatabaseSynced(day, homeworkTasks);
-                return null;
-            }
-        };
-        task.setOnSucceeded(e -> progressIndicator.setVisible(false));
-        exec.execute(task);
-    }
-    
     /*
      * Database methods, Database is a singleton using the enum structure.
      * For corresponding javadoc see Database.
@@ -873,20 +850,6 @@ public class Controller implements Initializable, AbstractController {
     public synchronized List<List<HomeworkTask>> getDatabaseSynced(
             final LocalDate localDate) {
         return Database.INSTANCE.getTasksDay(localDate);
-    }
-    
-    /**
-     * See {@link Database#updateTasksDay(LocalDate, List)}
-     *
-     * @param day
-     *         Same.
-     * @param homeworkTasks
-     *         Same.
-     */
-    synchronized void updateDatabaseSynced(final LocalDate day,
-                                           final List<List<HomeworkTask>>
-                                                   homeworkTasks) {
-        Database.INSTANCE.updateTasksDay(day, homeworkTasks);
     }
     
     /**
@@ -947,5 +910,12 @@ public class Controller implements Initializable, AbstractController {
      */
     public String getColorFromDatabase(int colorID) {
         return Database.INSTANCE.getColorFromDatabase(colorID);
+    }
+
+    /**
+     * Getters for the fxml references.
+     */
+    public ProgressIndicator getProgressIndicator() {
+        return this.progressIndicator;
     }
 }

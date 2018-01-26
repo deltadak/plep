@@ -140,14 +140,14 @@ public enum Database {
     }
     
     /**
-     * Updates a day in the database.
+     * Updates a day in the database. Is synchronized because multiple threads can want to call this.
      *
      * @param day
      *         date for which to update
      * @param homeworkTasks
      *         the new homeworkTasks
      */
-    public void updateTasksDay(final LocalDate day,
+    public synchronized void updateTasksDay(final LocalDate day,
                                final List<List<HomeworkTask>> homeworkTasks) {
         
         // update or insert the homework tasks

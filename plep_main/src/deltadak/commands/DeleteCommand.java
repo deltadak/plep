@@ -1,6 +1,7 @@
 package deltadak.commands;
 
 import deltadak.Database;
+import deltadak.database.DatabaseFacade;
 import deltadak.ui.AbstractController;
 import deltadak.HomeworkTask;
 import javafx.scene.control.TreeItem;
@@ -84,7 +85,7 @@ public class DeleteCommand extends Command {
                 parent.getChildren().add(new TreeItem<>(deletedItemsList.get(i)));
             }
 
-            controller.updateDatabase(dayState, treeViewItems);
+            new DatabaseFacade(controller).updateDatabase(dayState, treeViewItems);
 
 //            int parentID = parent.getValue().getDatabaseID();
 //            controller.insertExpandedItem(parentID, false);

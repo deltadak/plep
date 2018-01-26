@@ -2,6 +2,7 @@ package deltadak.ui.taskcell;
 
 import deltadak.Database;
 import deltadak.HomeworkTask;
+import deltadak.database.DatabaseFacade;
 import deltadak.ui.Controller;
 import deltadak.ui.taskcell.courselabel.OnChangeUpdater;
 import deltadak.ui.taskcell.selection.SelectionCleaner;
@@ -12,7 +13,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTreeCell;
 import javafx.scene.input.ClipboardContent;
@@ -136,7 +136,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
             }
 
             // update the database with the current first level items
-            controller.updateDatabase(localDate, new TreeToListConverter().convertTreeToList(tree));
+            new DatabaseFacade(controller).updateDatabase(localDate, new TreeToListConverter().convertTreeToList(tree));
         });
     }
     
@@ -234,7 +234,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
                                   LocalDate day) {
         
         InvalidationListener invalidationListener = observable -> {
-            controller.updateDatabase(day, new TreeToListConverter().convertTreeToList(tree));
+            new DatabaseFacade(controller).updateDatabase(day, new TreeToListConverter().convertTreeToList(tree));
             // We do not need to cleanup here, as no tasks
             // were added or deleted.
         };
@@ -302,7 +302,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
                         }
                     }
     
-                    controller.updateDatabase(localDate, new TreeToListConverter().convertTreeToList(tree));
+                    new DatabaseFacade(controller).updateDatabase(localDate, new TreeToListConverter().convertTreeToList(tree));
                             
                 };
         
@@ -366,7 +366,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
                 System.out.println("item " + colorString + " clicked");
                 controller.setBackgroundColor(colorID, this);
                 getTreeItem().getValue().setColorID(colorID);
-                controller.updateDatabase(day, new TreeToListConverter().convertTreeToList(tree));
+                new DatabaseFacade(controller).updateDatabase(day, new TreeToListConverter().convertTreeToList(tree));
                 controller.cleanUp(tree);
     
             });
