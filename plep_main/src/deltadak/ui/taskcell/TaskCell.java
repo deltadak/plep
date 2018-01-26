@@ -7,6 +7,7 @@ import deltadak.ui.Controller;
 import deltadak.ui.taskcell.courselabel.OnChangeUpdater;
 import deltadak.ui.taskcell.selection.SelectionCleaner;
 import deltadak.ui.taskcell.selection.Selector;
+import deltadak.ui.taskcell.subtasks.SubtasksCreator;
 import deltadak.ui.util.TreeToListConverter;
 import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
@@ -127,7 +128,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
             if(!editingItem.getParent().equals(root)) {
                 // if we're not adding an empty task, create another subtask
                 if(!event.getNewValue().getText().equals("")){
-                    createSubTask(editingItem.getParent());
+                    new SubtasksCreator(tree).create(editingItem.getParent());
                 }
             } else { // if we are not editing a subtask
                 // insert the task in the expanded table
@@ -353,7 +354,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
                 .addAll(addSubTaskMenuItem, repeatTasksMenu, separatorMenuItem,
                         firstColor, secondColor, thirdColor, fourthColor, defaultColor);
         
-        addSubTaskMenuItem.setOnAction(event -> createSubTask(getTreeItem()));
+        addSubTaskMenuItem.setOnAction(event -> new SubtasksCreator(tree).create(getTreeItem()));
         
         // sets an action on all the colour items
         for (int i = 3; i < contextMenu.getItems().size(); i++) {
@@ -372,34 +373,6 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
             });
         }
         return contextMenu;
-    }
-    
-    /**
-     * Creates an empty subtask, a child, of the parentItem.
-     * @param parentItem The item to create a subtask in/under.
-     */
-    private void createSubTask(TreeItem<HomeworkTask> parentItem) {
-        // manually set expanded to true in the database
-        parentItem.getValue().setExpanded(true);
-        
-        // add a new subtask
-        TreeItem<HomeworkTask> emptyItem = new TreeItem<>(
-                new HomeworkTask());
-        parentItem.getChildren().add(emptyItem);
-        
-        // select the new subtask
-        getTreeView().getSelectionModel().select(emptyItem);
-        // get the index of the new subtask
-        int index = getTreeView().getSelectionModel().getSelectedIndex();
-        // layout the TreeView again (otherwise we can't directly
-        // edit an item)
-        getTreeView().layout();
-        // create a new TreeItem from the selected index, we need this
-        // to do this to be able to edit it (pointer to emptyItem
-        // is lost?)
-        TreeItem<HomeworkTask> item = getTreeView().getTreeItem(index);
-        // finnaly we can edit!
-        getTreeView().edit(item);
     }
     
     /**
