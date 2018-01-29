@@ -13,7 +13,7 @@ class Selector(
 
     /**
      * Select a TreeItem in a TreeView, and deselect all other items.
-     * @param selectionFunction The function to select the right item, can select using index or TreeItems. e.g. tree.selectionModel.select(index) or to deselect pass an empty lambda
+     * @param selectionFunction The function to select the right item, can select using index or TreeItems. e.g. tree.selectionModel.select(index)
      */
     fun select(selectionFunction: () -> Unit) {
         // We want to clear the selection on all the other listviews, otherwise weird 'half-selected' greyed out cells are left behind.
@@ -33,4 +33,12 @@ class Selector(
         // ... then reselect this one
         selectionFunction()
     }
+
+    /**
+     * Deselect all TreeItems.
+     */
+    fun deselectAll() {
+        select {  }
+    }
+
 }

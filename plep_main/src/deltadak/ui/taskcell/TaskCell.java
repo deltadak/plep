@@ -226,7 +226,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
                     }
     
                     // Deselect the item, otherwise the selector changes color and overrides the item color.
-                    new Selector(tree).select(() -> Unit.INSTANCE);
+                    new Selector(tree).deselectAll();
                     
                     /* If the item of which the checkbox is toggled is
                      * a subtask, then we check if all subtasks are done.
@@ -392,14 +392,14 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
             label.getStyleClass().add("label-done");
             
             comboBox.getStyleClass().remove("combo-box");
-            comboBox.getStyleClass().add("courselabel-done");
+            comboBox.getStyleClass().add("combobox-done");
 
         } else {
             // Remove all the classes which styled the 'done' style on the item.
             label.getStyleClass().removeAll("label-done");
             label.getStyleClass().add("label");
 
-            comboBox.getStyleClass().removeAll("courselabel-done");
+            comboBox.getStyleClass().removeAll("combobox-done");
             comboBox.getStyleClass().add("combo-box");
 
         }
@@ -524,7 +524,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
                 );
 
                 // Clear selection on all other items immediately. This will result in a smooth reaction, whereas otherwise it takes a bit of noticable time before selection of the just-dragged item (on its previous location) is cleared.
-                new Selector(tree).select(() -> Unit.INSTANCE);
+                new Selector(tree).deselectAll();
 
             }
             
