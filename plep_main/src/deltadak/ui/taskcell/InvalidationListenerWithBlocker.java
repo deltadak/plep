@@ -11,7 +11,7 @@ import javafx.beans.Observable;
  * Using an {@code InvalidationListener} instead of a {@code ChangeListener} has some slight
  * performance improvement or so.
  */
-class InvalidationListenerWithBlocker implements InvalidationListener {
+public class InvalidationListenerWithBlocker implements InvalidationListener {
     InvalidationListener decoratedListener;
     boolean block;
     

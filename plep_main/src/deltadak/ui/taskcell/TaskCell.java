@@ -14,12 +14,22 @@ import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
-import javafx.scene.control.*;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 import javafx.scene.control.cell.TextFieldTreeCell;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.text.TextAlignment;
 import kotlin.Unit;
 
@@ -95,12 +105,13 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
         setConverter(new TaskConverter(this));
 
         // update course label (a combobox) on changes
-        new OnChangeUpdater(comboBox, this).addChangeListener();
+        OnChangeUpdater onChangeUpdater = new OnChangeUpdater(controller, comboBox);
+        onChangeUpdater.addValueChangeListener(this);
+        labelChangeListener = onChangeUpdater.addDatabaseUpdaterChangeListener(tree, localDate);
 
         // If an item is selected, deselect all other items.
         new SelectionCleaner(tree).addSelectionListener();
         
-        setOnLabelChangeListener(tree, localDate);
         setOnDoneChangeListener(tree, localDate);
     
         setOnDragDetected();
@@ -196,32 +207,6 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
             }
             
         }
-    }
-    
-    /**
-     * set listener on the ComboBox to update the database when the
-     * selected index changes
-     *
-     * @param tree TreeView which the LabelCell is in, needed for updating
-     *             the database
-     * @param day LocalDate which we need for updating the database
-     */
-    private void setOnLabelChangeListener(TreeView<HomeworkTask> tree,
-                                  LocalDate day) {
-        
-        InvalidationListener invalidationListener = observable -> {
-            new DatabaseFacade(controller).updateDatabase(day, convertTreeToList(tree));
-            // We do not need to cleanup here, as no tasks
-            // were added or deleted.
-        };
-        
-        // Pass the invalidationlistener on to the custom listener
-        labelChangeListener = new InvalidationListenerWithBlocker(invalidationListener);
-        
-        // update label in database when selecting a different one
-        comboBox.getSelectionModel().selectedIndexProperty()
-                .addListener(labelChangeListener);
-        
     }
     
     /**

@@ -3,6 +3,7 @@ package deltadak.database
 import deltadak.Database
 import deltadak.HomeworkTask
 import deltadak.ui.AbstractController
+import deltadak.ui.util.STATIC.userFeedbackDelay
 import javafx.concurrent.Task
 import java.time.LocalDate
 import java.util.concurrent.Executors
@@ -13,9 +14,6 @@ import java.util.concurrent.Executors
 class DatabaseFacade(
         /** The main controller is needed to access fxml references. */
         val controller: AbstractController) {
-
-    /** Time in milliseconds to display the progress indicator */
-    val userFeedbackDelay: Long = 200
 
     /**
      * Updates database using the given homework tasks for a day. Uses the progress indicator for user feedback.
