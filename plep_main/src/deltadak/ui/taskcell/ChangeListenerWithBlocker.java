@@ -22,7 +22,7 @@ public class ChangeListenerWithBlocker<B> implements ChangeListener<Boolean> {
      * Constructor.
      * @param decoratedListener listener to set
      */
-    ChangeListenerWithBlocker(ChangeListener<Boolean> decoratedListener) {
+    public ChangeListenerWithBlocker(ChangeListener<Boolean> decoratedListener) {
         this.decoratedListener = decoratedListener;
     }
     

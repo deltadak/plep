@@ -4,12 +4,13 @@ import deltadak.Database;
 import deltadak.HomeworkTask;
 import deltadak.database.DatabaseFacade;
 import deltadak.ui.Controller;
-import deltadak.ui.taskcell.courselabel.OnChangeUpdater;
+import deltadak.ui.taskcell.checkbox.CheckBoxUpdater;
+import deltadak.ui.taskcell.courselabel.OnCourseLabelChangeUpdater;
 import deltadak.ui.taskcell.selection.SelectionCleaner;
 import deltadak.ui.taskcell.selection.Selector;
 import deltadak.ui.taskcell.subtasks.SubtasksCreator;
 import deltadak.ui.taskcell.subtasks.SubtasksEditor;
-import javafx.beans.InvalidationListener;
+import deltadak.ui.taskcell.textlabel.TextLabelStyle;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -31,7 +32,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
 import javafx.scene.text.TextAlignment;
-import kotlin.Unit;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -54,10 +54,14 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
     private Controller controller;
     
     private HBox cellBox;
-    private CheckBox checkBox;
-    private Label label;
-    private ComboBox<String> comboBox;
     private ContextMenu contextMenu;
+    
+    /** The CheckBox of this TaskCell. */
+    public CheckBox checkBox;
+    /** The Label of this TaskCell. */
+    public Label label;
+    /** The ComboBox of this TaskCell. */
+    public ComboBox<String> comboBox;
     
     // Use a number of spaces so when we color the label of a context menu
     // item, we get a decent looking colored area.
@@ -105,14 +109,16 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
         setConverter(new TaskConverter(this));
 
         // update course label (a combobox) on changes
-        OnChangeUpdater onChangeUpdater = new OnChangeUpdater(controller, comboBox);
-        onChangeUpdater.addValueChangeListener(this);
-        labelChangeListener = onChangeUpdater.addDatabaseUpdaterChangeListener(tree, localDate);
+        OnCourseLabelChangeUpdater onCourseLabelChangeUpdater
+                = new OnCourseLabelChangeUpdater(controller, comboBox);
+        onCourseLabelChangeUpdater.addValueChangeListener(this);
+        labelChangeListener = onCourseLabelChangeUpdater
+                .addDatabaseUpdaterChangeListener(tree, localDate);
 
         // If an item is selected, deselect all other items.
         new SelectionCleaner(tree).addSelectionListener();
         
-        setOnDoneChangeListener(tree, localDate);
+        doneChangeListener = new CheckBoxUpdater(controller, checkBox).setChangeListener(tree, this, localDate);
     
         setOnDragDetected();
         setOnDragOver();
@@ -174,7 +180,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
             setStyle("-fx-control-inner-background: #" + color);
     
             // set the style on the label
-            setDoneStyle(done);
+            new TextLabelStyle().setDoneStyle(done, label, comboBox);
     
             // if the item is first level, it has to show a course label
             // (ComboBox), and it has to have a context menu
@@ -214,6 +220,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
      * @param tree The TreeView the current TreeCell is in. We need this to update the database.
      * @param localDate The date of the TreeView, and thus all the HomeworkTasks, in which the CheckBox is toggled.
      */
+    @Deprecated
     void setOnDoneChangeListener(TreeView<HomeworkTask> tree, LocalDate localDate) {
         
         ChangeListener<Boolean> changeListener =
@@ -385,6 +392,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
      *
      * @param done boolean, true if the task is done, false if not done.
      */
+    @Deprecated
     private void setDoneStyle(boolean done) {
 
         if(done) {
@@ -412,6 +420,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
      *                     done subtasks.
      * @return int, the number of subtasks that are marked as done.
      */
+    @Deprecated
     private int getDoneSubtasks(TreeItem<HomeworkTask> taskTreeItem) {
         
         List<TreeItem<HomeworkTask>> subtasks = taskTreeItem.getChildren();

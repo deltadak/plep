@@ -17,7 +17,7 @@ import java.time.LocalDate
  * Defines what happens when a combobox (the 'courselabel') selection is updated.
  */
 @Suppress("UNUSED_ANONYMOUS_PARAMETER")
-class OnChangeUpdater(
+class OnCourseLabelChangeUpdater(
         /** The main Controller. */
         val controller: AbstractController,
         /** The ComboBox on which to listen for changes. */
