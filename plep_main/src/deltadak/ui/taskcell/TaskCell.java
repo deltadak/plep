@@ -7,7 +7,6 @@ import deltadak.ui.Controller;
 import deltadak.ui.taskcell.courselabel.OnChangeUpdater;
 import deltadak.ui.taskcell.selection.SelectionCleaner;
 import deltadak.ui.taskcell.selection.Selector;
-import deltadak.ui.util.TreeToListConverter;
 import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
@@ -26,6 +25,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
+import static deltadak.ui.util.STATIC.ConvertersKt.convertTreeToList;
 import static java.lang.Math.min;
 
 /**
@@ -136,7 +136,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
             }
 
             // update the database with the current first level items
-            new DatabaseFacade(controller).updateDatabase(localDate, new TreeToListConverter().convertTreeToList(tree));
+            new DatabaseFacade(controller).updateDatabase(localDate, convertTreeToList(tree));
         });
     }
     
@@ -234,7 +234,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
                                   LocalDate day) {
         
         InvalidationListener invalidationListener = observable -> {
-            new DatabaseFacade(controller).updateDatabase(day, new TreeToListConverter().convertTreeToList(tree));
+            new DatabaseFacade(controller).updateDatabase(day, convertTreeToList(tree));
             // We do not need to cleanup here, as no tasks
             // were added or deleted.
         };
@@ -302,7 +302,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
                         }
                     }
     
-                    new DatabaseFacade(controller).updateDatabase(localDate, new TreeToListConverter().convertTreeToList(tree));
+                    new DatabaseFacade(controller).updateDatabase(localDate, convertTreeToList(tree));
                             
                 };
         
@@ -366,7 +366,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
                 System.out.println("item " + colorString + " clicked");
                 controller.setBackgroundColor(colorID, this);
                 getTreeItem().getValue().setColorID(colorID);
-                new DatabaseFacade(controller).updateDatabase(day, new TreeToListConverter().convertTreeToList(tree));
+                new DatabaseFacade(controller).updateDatabase(day, convertTreeToList(tree));
                 controller.cleanUp(tree);
     
             });
@@ -586,7 +586,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
                 // update tasks in database (old day?)
                 controller.updateParentDatabase(day,
                         controller.getParentTasks(
-                                new TreeToListConverter().convertTreeToList(tree)
+                                convertTreeToList(tree)
                         )
                 );
 
@@ -649,7 +649,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
                 // update in database (new day?)
                 controller.updateParentDatabase(day,
                         controller.getParentTasks(
-                                new TreeToListConverter().convertTreeToList(tree)
+                                convertTreeToList(tree)
                         )
                 );
 
