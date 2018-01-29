@@ -9,7 +9,6 @@ import deltadak.ui.taskcell.selection.SelectionCleaner;
 import deltadak.ui.taskcell.selection.Selector;
 import deltadak.ui.taskcell.subtasks.SubtasksCreator;
 import deltadak.ui.taskcell.subtasks.SubtasksEditor;
-import deltadak.ui.util.TreeToListConverter;
 import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
