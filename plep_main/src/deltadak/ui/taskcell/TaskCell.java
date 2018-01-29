@@ -28,6 +28,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 
+import static deltadak.ui.util.STATIC.ConvertersKt.convertTreeToList;
 import static java.lang.Math.min;
 
 /**
@@ -210,7 +211,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
                                   LocalDate day) {
         
         InvalidationListener invalidationListener = observable -> {
-            new DatabaseFacade(controller).updateDatabase(day, new TreeToListConverter().convertTreeToList(tree));
+            new DatabaseFacade(controller).updateDatabase(day, convertTreeToList(tree));
             // We do not need to cleanup here, as no tasks
             // were added or deleted.
         };
@@ -278,7 +279,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
                         }
                     }
     
-                    new DatabaseFacade(controller).updateDatabase(localDate, new TreeToListConverter().convertTreeToList(tree));
+                    new DatabaseFacade(controller).updateDatabase(localDate, convertTreeToList(tree));
                             
                 };
         
@@ -342,14 +343,14 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
                 System.out.println("item " + colorString + " clicked");
                 controller.setBackgroundColor(colorID, this);
                 getTreeItem().getValue().setColorID(colorID);
-                new DatabaseFacade(controller).updateDatabase(day, new TreeToListConverter().convertTreeToList(tree));
+                new DatabaseFacade(controller).updateDatabase(day, convertTreeToList(tree));
                 controller.cleanUp(tree);
     
             });
         }
         return contextMenu;
     }
-    
+
     /**
      * Creates the Menu to be able to choose for how long to repeat a task.
      * See {@link #createContextMenu}.
@@ -534,7 +535,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
                 // update tasks in database (old day?)
                 controller.updateParentDatabase(day,
                         controller.getParentTasks(
-                                new TreeToListConverter().convertTreeToList(tree)
+                                convertTreeToList(tree)
                         )
                 );
 
@@ -597,7 +598,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
                 // update in database (new day?)
                 controller.updateParentDatabase(day,
                         controller.getParentTasks(
-                                new TreeToListConverter().convertTreeToList(tree)
+                                convertTreeToList(tree)
                         )
                 );
 

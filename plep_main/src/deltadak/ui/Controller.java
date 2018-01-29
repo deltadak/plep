@@ -6,7 +6,6 @@ import deltadak.commands.DeleteCommand;
 import deltadak.commands.DeleteSubtaskCommand;
 import deltadak.commands.UndoFacility;
 import deltadak.ui.taskcell.TaskCell;
-import deltadak.ui.util.TreeToListConverter;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -29,6 +28,8 @@ import java.util.ResourceBundle;
 import java.util.ArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+
+import static deltadak.ui.util.STATIC.ConvertersKt.convertTreeToList;
 
 /**
  * Class to control the UI
@@ -406,7 +407,7 @@ public class Controller implements Initializable, AbstractController {
         int parentIndex = tree.getRoot().getChildren().indexOf(selectedItem);
         
         undoFacility.execute(
-                new DeleteCommand(this, localDate, new TreeToListConverter().convertTreeToList(tree),
+                new DeleteCommand(this, localDate, convertTreeToList(tree),
                                   parentIndex, tree));
         
     }
@@ -426,7 +427,7 @@ public class Controller implements Initializable, AbstractController {
                 new DeleteSubtaskCommand(
                         this,
                         localDate,
-                        new TreeToListConverter().convertTreeToList(tree),
+                        convertTreeToList(tree),
                         tree.getSelectionModel() .getSelectedIndex(),
                         tree));
     }
