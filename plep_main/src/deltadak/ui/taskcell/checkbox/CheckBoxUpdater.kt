@@ -85,7 +85,8 @@ class CheckBoxUpdater(
                 // Note that only calling ...getparent().getValue().setDone(true) is not enough to trigger the event listener of the parent item.
                 val parent = taskCell.treeItem.parent.value
                 parent.done = true
-                // todo make sure listener is fired so checkbox is updated, change object not only content?
+                // First we set the value null and then set the HomeworkTask again, because otherwise the cell will not notice something has changed and the checkbox won't be updated.
+                taskCell.treeItem.parent.value = null
                 taskCell.treeItem.parent.value = parent
             }
 
