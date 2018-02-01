@@ -615,7 +615,11 @@ public class Controller implements Initializable, AbstractController {
         for (i = 0; i < root.getChildren().size(); i++) {
             if (tree.getTreeItem(i).getValue().getText().equals("")) {
                 removeItemFromTreeView(tree.getTreeItem(i));
+            } else {
+                // If there are subtasks, make sure there is one empty one.
+
             }
+
         }
         
         for (i = 0; i < MAX_LIST_LENGTH; i++) {
