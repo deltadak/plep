@@ -1,6 +1,8 @@
 package deltadak.ui.taskcell.subtasks
 
 import deltadak.HomeworkTask
+import deltadak.ui.util.STATIC.NumberOfTasksInList
+import javafx.application.Platform
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeView
 
@@ -20,23 +22,25 @@ class SubtasksCreator(
         parentItem.value.expanded = true
 
         // Add a new subtask.
-        val emptyItem = TreeItem<HomeworkTask>(HomeworkTask())
-        parentItem.children.add(emptyItem)
+        var emptyItem = TreeItem<HomeworkTask>(HomeworkTask())
+
+        // If there already is an empty item at the end ready to be edited, use that one.
+        if (parentItem.children.size > 0 && parentItem.children.last().value.text == "") {
+            emptyItem = parentItem.children.last()
+        } else {
+            parentItem.children.add(emptyItem)
+        }
 
         // Select the new subtask.
         treeView.selectionModel.select(emptyItem)
 
-        // Get the index of the new subtask
-        val index = treeView.selectionModel.selectedIndex
+        // In theory to edit an item:
+//        treeView.edit(emptyItem)
+        // May help:
+//        treeView.layout()
 
-        // Layout the TreeView again, otherwise we can't directly edit an item.
-        treeView.layout()
-
-        // Get the new TreeItem from the selected index, pointing to emptyItem may not work.
-        val newItem = treeView.getTreeItem(index)
-
-        // Edit.
-        treeView.edit(newItem)
+        // Scroll the last added item into view, so that the adding of new subtasks by using enter does not break.
+        treeView.scrollTo(Integer.max(0, emptyItem.parent.children.size - (NumberOfTasksInList - 1)))
     }
 
 }

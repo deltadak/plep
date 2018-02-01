@@ -30,8 +30,6 @@ class SubtasksEditor(
                 // If we're not adding an empty task, create another subtask.
                 if(event.newValue.text != "") {
                     SubtasksCreator(tree).create(tree.editingItem.parent)
-                    // Scroll the last added item into view, so that the adding of new subtasks by using enter does not break.
-                    tree.scrollTo(max(0,tree.editingItem.parent.children.size - (NumberOfTasksInList - 1) ))
                 }
             }
 
