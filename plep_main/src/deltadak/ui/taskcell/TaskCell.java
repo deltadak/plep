@@ -59,10 +59,6 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
     /** The ComboBox of this TaskCell. */
     public ComboBox<String> comboBox;
     
-    /** Use a number of spaces so when we color the label of a context menu item, we get a decent looking colored area. */
-    public static final String LABEL_COLOR_CONTEXT_MENU_ITEMS =
-            "                                ";
-    
     /**
      * Each TaskCell keeps a reference to the listener of the
      * ComboBox, in order to choose whether to block it temporarily or not.

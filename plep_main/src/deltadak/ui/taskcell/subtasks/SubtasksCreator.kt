@@ -1,8 +1,7 @@
 package deltadak.ui.taskcell.subtasks
 
 import deltadak.HomeworkTask
-import deltadak.ui.util.STATIC.NumberOfTasksInList
-import javafx.application.Platform
+import deltadak.ui.util.STATIC.NUMBER_OF_TASKS_IN_LIST
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeView
 
@@ -40,7 +39,7 @@ class SubtasksCreator(
 //        treeView.layout()
 
         // Scroll the last added item into view, so that the adding of new subtasks by using enter does not break.
-        treeView.scrollTo(Integer.max(0, emptyItem.parent.children.size - (NumberOfTasksInList - 1)))
+        treeView.scrollTo(Integer.max(0, emptyItem.parent.children.size - (NUMBER_OF_TASKS_IN_LIST - 1)))
     }
 
 }

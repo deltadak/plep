@@ -3,7 +3,7 @@ package deltadak.database
 import deltadak.Database
 import deltadak.HomeworkTask
 import deltadak.ui.AbstractController
-import deltadak.ui.util.STATIC.userFeedbackDelay
+import deltadak.ui.util.STATIC.USER_FEEDBACK_DELAY
 import javafx.concurrent.Task
 import java.time.LocalDate
 import java.util.concurrent.Executors
@@ -33,7 +33,7 @@ class DatabaseFacade(
             public override fun call(): List<HomeworkTask>? {
                 Database.INSTANCE.updateTasksDay(day, homeworkTasks)
                 // User feedback!
-                Thread.sleep(userFeedbackDelay)
+                Thread.sleep(USER_FEEDBACK_DELAY)
                 return null
             }
         }

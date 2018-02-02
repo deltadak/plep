@@ -5,6 +5,7 @@ import deltadak.database.DatabaseFacade
 import deltadak.ui.Controller
 import deltadak.ui.taskcell.TaskCell
 import deltadak.ui.taskcell.subtasks.SubtasksCreator
+import deltadak.ui.util.STATIC.LABEL_COLOR_CONTEXT_MENU_ITEMS
 import deltadak.ui.util.STATIC.convertTreeToList
 import deltadak.ui.util.STATIC.repeatTask
 import javafx.scene.control.ContextMenu
@@ -59,7 +60,7 @@ class ContextMenuCreator(
 
         for (colorID in 0..4) {
             // Initialize the color menu items with a certain number of spaces.
-            val colorItem = MenuItem(TaskCell.LABEL_COLOR_CONTEXT_MENU_ITEMS)
+            val colorItem = MenuItem(LABEL_COLOR_CONTEXT_MENU_ITEMS)
             colorItem.style = "-fx-background-color: #" + colors[colorID]
 
             // Add the on-click action.

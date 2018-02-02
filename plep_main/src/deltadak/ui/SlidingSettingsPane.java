@@ -1,6 +1,7 @@
 package deltadak.ui;
 
 import deltadak.Database;
+import deltadak.database.DatabaseSettings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -9,11 +10,8 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Paint;
-import javafx.scene.shape.Rectangle;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -63,7 +61,7 @@ public class SlidingSettingsPane extends SlidingPane {
         setupSettingsMenu();
         setComponentListeners();
         boolean isAuto = Boolean
-                .valueOf(getSetting(Controller.MAX_COLUMNS_AUTO_NAME));
+                .valueOf(getSetting(DatabaseSettings.MAX_COLUMNS_AUTO.getSettingsName()));
         autoColumnsCheckBox.setSelected(isAuto);
     }
     
@@ -229,7 +227,7 @@ public class SlidingSettingsPane extends SlidingPane {
         maxColumnsSpinner = new Spinner<>();
         // Get the previous value from the database.
         int defaultValue = Integer
-                .valueOf(getSetting(Controller.MAX_COLUMNS_NAME));
+                .valueOf(getSetting(DatabaseSettings.MAX_COLUMNS.getSettingsName()));
         SpinnerValueFactory<Integer> valueColumnFactory
                 = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 14,
                                                                      defaultValue);
@@ -275,7 +273,7 @@ public class SlidingSettingsPane extends SlidingPane {
     protected void applyNumberOfMovingDaysChange() {
         controller.numberOfMovingDays = numberOfMovingDaysSpinner.getValue();
         // update the value in the database
-        updateSetting(Controller.NUMBER_OF_MOVING_DAYS_NAME,
+        updateSetting(DatabaseSettings.NUMBER_OF_MOVING_DAYS.getSettingsName(),
                       String.valueOf(controller.numberOfMovingDays));
         
         controller.setupGridPane(controller.focusDay);
@@ -288,7 +286,7 @@ public class SlidingSettingsPane extends SlidingPane {
     protected void applyNumberOfShowDaysChange() {
         controller.numberOfDays = numberOfShowDaysSpinner.getValue();
         
-        updateSetting(Controller.NUMBER_OF_DAYS_NAME,
+        updateSetting(DatabaseSettings.NUMBER_OF_DAYS.getSettingsName(),
                       String.valueOf(controller.numberOfDays));
         controller.setupGridPane(controller.focusDay);
     }
@@ -300,9 +298,9 @@ public class SlidingSettingsPane extends SlidingPane {
      */
     @FXML
     protected void applyMaxColumnsChange() {
-        controller.maxColumns = maxColumnsSpinner.getValue();
-        updateSetting(Controller.MAX_COLUMNS_NAME,
-                      String.valueOf(controller.maxColumns));
+        int maxColumns = maxColumnsSpinner.getValue();
+        updateSetting(DatabaseSettings.MAX_COLUMNS.getSettingsName(),
+                      String.valueOf(maxColumns));
         autoColumnsCheckBox.setSelected(false);
         controller.setupGridPane(controller.focusDay);
     }
@@ -317,7 +315,7 @@ public class SlidingSettingsPane extends SlidingPane {
      */
     @FXML
     protected void autoColumnsCheckBoxToggled(boolean newValue) {
-        updateSetting(Controller.MAX_COLUMNS_AUTO_NAME,
+        updateSetting(DatabaseSettings.MAX_COLUMNS_AUTO.getSettingsName(),
                       String.valueOf(newValue));
         // The controller will request settings from the database again.
         controller.setupGridPane(controller.focusDay);
@@ -329,7 +327,7 @@ public class SlidingSettingsPane extends SlidingPane {
         } else {
             // use the value which was saved to the database
             int columns = Integer
-                    .valueOf(getSetting(Controller.MAX_COLUMNS_NAME));
+                    .valueOf(getSetting(DatabaseSettings.MAX_COLUMNS.getSettingsName()));
             maxColumnsSpinner.getValueFactory().setValue(columns);
         }
     }

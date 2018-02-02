@@ -5,6 +5,8 @@ import deltadak.HomeworkTask;
 import deltadak.commands.DeleteCommand;
 import deltadak.commands.DeleteSubtaskCommand;
 import deltadak.commands.UndoFacility;
+import deltadak.database.DatabaseSettings;
+import deltadak.ui.gridpane.TreeContainer;
 import deltadak.ui.taskcell.TaskCell;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -41,8 +43,10 @@ public class Controller implements Initializable, AbstractController {
     
     // main element of the UI is declared in interface.fxml
     @FXML AnchorPane main;
-    @FXML GridPane gridPane;
-    @FXML ToolBar toolBar;
+    /** The main GridPane which contains everything. */
+    @FXML public GridPane gridPane;
+    /** Top toolbar with buttons. */
+    @FXML public ToolBar toolBar;
     @FXML ProgressIndicator progressIndicator;
     
     // All these references have to be declared in controller because of fxml.
@@ -86,30 +90,8 @@ public class Controller implements Initializable, AbstractController {
      * number of days to skip when using the forward/backward buttons
      */
     public int numberOfMovingDays;
-    
-    /**
-     * number of columns to fill with lists with tasks
-     */
-    public int maxColumns;
+
     private static final int MAX_LIST_LENGTH = 6;
-    
-    /**
-     * name of setting in the database
-     */
-    public static final String NUMBER_OF_DAYS_NAME = "number_of_days";
-    /**
-     * name of setting in the database
-     */
-    public static final String NUMBER_OF_MOVING_DAYS_NAME
-            = "number_of_moving_days";
-    /**
-     * name of setting in the database
-     */
-    public static final String MAX_COLUMNS_NAME = "max_columns";
-    /**
-     * name of setting in the database
-     */
-    public static final String MAX_COLUMNS_AUTO_NAME = "max_columns_auto";
 
     /** Default (initial) colors */
     public static final String[] DEFAULT_COLORS = new String[] {
@@ -152,9 +134,9 @@ public class Controller implements Initializable, AbstractController {
         setDefaultDatabasePath();
         createTables(); // if not already exists
         
-        numberOfDays = Integer.valueOf(getSetting(NUMBER_OF_DAYS_NAME));
+        numberOfDays = Integer.valueOf(getSetting(DatabaseSettings.NUMBER_OF_DAYS.getSettingsName()));
         numberOfMovingDays = Integer
-                .valueOf(getSetting(NUMBER_OF_MOVING_DAYS_NAME));
+                .valueOf(getSetting(DatabaseSettings.NUMBER_OF_MOVING_DAYS.getSettingsName()));
         
         focusDay = LocalDate.now(); // set focus day to today
         setupGridPane(focusDay);
@@ -235,13 +217,15 @@ public class Controller implements Initializable, AbstractController {
      * @param focusDate
      *         date that is the top middle one (is today on default)
      */
+    @Deprecated
     public void setupGridPane(LocalDate focusDate) {
         
-        boolean isAuto = Boolean.valueOf(getSetting(MAX_COLUMNS_AUTO_NAME));
+        boolean isAuto = Boolean.valueOf(getSetting(DatabaseSettings.MAX_COLUMNS_AUTO.getSettingsName()));
+        int maxColumns;
         if (isAuto) {
             maxColumns = maxColumns(numberOfDays);
         } else {
-            maxColumns = Integer.valueOf(getSetting(MAX_COLUMNS_NAME));
+            maxColumns = Integer.valueOf(getSetting(DatabaseSettings.MAX_COLUMNS.getSettingsName()));
         }
         
         AnchorPane.setTopAnchor(gridPane, toolBar.getPrefHeight());
@@ -269,8 +253,7 @@ public class Controller implements Initializable, AbstractController {
             
             tree.setShowRoot(false);
             
-            VBox vbox = setTitle(tree, localDate);
-            addVBoxToGridPane(vbox, index);
+            new TreeContainer(tree, localDate).addTreeToGridPane(gridPane, index, maxColumns);
             
             // Request content on a separate thread, and hope the content
             // will be set eventually.
@@ -279,8 +262,8 @@ public class Controller implements Initializable, AbstractController {
             // add the delete key listener
             addDeleteKeyListener(tree, localDate);
             
-            tree.setPrefWidth(getTreeViewWidth());
-            tree.setPrefHeight(getTreeViewHeight());
+            tree.setPrefWidth(getTreeViewWidth(maxColumns));
+            tree.setPrefHeight(getTreeViewHeight(maxColumns, numberOfDays));
         }
         
     }
@@ -309,42 +292,6 @@ public class Controller implements Initializable, AbstractController {
                         }
                     }
                 });
-    }
-    
-    /**
-     * add title to listview
-     *
-     * @param tree
-     *         to use
-     * @param localDate
-     *         from which to make a title
-     *
-     * @return VBox with listview and title
-     */
-    private VBox setTitle(final TreeView<HomeworkTask> tree,
-                          final LocalDate localDate) {
-        // vbox will contain a title above a list of tasks
-        VBox vbox = new VBox();
-        Label title = new Label(localDate.getDayOfWeek() + " " + localDate);
-        // the pane is used to align both properly (I think)
-        Pane pane = new Pane();
-        vbox.getChildren().addAll(title, pane, tree);
-        VBox.setVgrow(pane, Priority.ALWAYS);
-        return vbox;
-    }
-    
-    /**
-     * add a box containing listview and title
-     *
-     * @param vbox
-     *         to be added
-     * @param index
-     *         at the i'th place (left to right, top to bottom)
-     */
-    private void addVBoxToGridPane(final VBox vbox, final int index) {
-        int row = index / maxColumns;
-        int column = index % maxColumns;
-        gridPane.add(vbox, column, row);
     }
     
     /**
@@ -508,7 +455,7 @@ public class Controller implements Initializable, AbstractController {
      *
      * @return intended treeview height
      */
-    private int getTreeViewHeight() {
+    private int getTreeViewHeight(int maxColumns, int numberOfDays) {
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
         int totalHeight = (int)primaryScreenBounds.getHeight();
         return totalHeight / (numberOfDays / maxColumns);
@@ -519,7 +466,7 @@ public class Controller implements Initializable, AbstractController {
      *
      * @return intended treeview width
      */
-    private int getTreeViewWidth() {
+    private int getTreeViewWidth(int maxColumns) {
         Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
         int totalWidth = (int)primaryScreenBounds.getWidth();
         return totalWidth / maxColumns;

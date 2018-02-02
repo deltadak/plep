@@ -3,10 +3,8 @@ package deltadak.ui.taskcell.subtasks
 import deltadak.HomeworkTask
 import deltadak.database.DatabaseFacade
 import deltadak.ui.AbstractController
-import deltadak.ui.util.STATIC.NumberOfTasksInList
 import deltadak.ui.util.STATIC.convertTreeToList
 import javafx.scene.control.TreeView
-import java.lang.Integer.max
 import java.time.LocalDate
 
 /**

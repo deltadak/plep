@@ -1,7 +1,10 @@
 package deltadak.ui.util.STATIC
 
 /** The number of tasks shown in one listview. */
-const val NumberOfTasksInList = 6
+const val NUMBER_OF_TASKS_IN_LIST = 6
 
 /** Time in milliseconds to display the progress indicator */
-const val userFeedbackDelay: Long = 200
+const val USER_FEEDBACK_DELAY: Long = 200
+
+/** Use a number of spaces so when we color the label of a context menu item, we get a decent looking colored area. */
+const val LABEL_COLOR_CONTEXT_MENU_ITEMS = "                                "
