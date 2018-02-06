@@ -147,7 +147,7 @@ public class Controller implements Initializable, AbstractController {
         progressIndicator.setVisible(false);
         
         // setup the settings page
-        SlidingSettingsPane settingsPane = new SlidingSettingsPane(this, undoFacility, numberOfDays, focusDay);
+        SlidingSettingsPane settingsPane = new SlidingSettingsPane(this);
         copySettingsPaneComponents(settingsPane);
         settingsPane.setup();
         
