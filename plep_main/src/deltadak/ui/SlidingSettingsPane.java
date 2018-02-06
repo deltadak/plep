@@ -174,7 +174,7 @@ public class SlidingSettingsPane extends SlidingPane {
         int id = colorPickers.indexOf(colorPicker);
         Database.INSTANCE
                 .updateColor(id, convertColorToWeb(colorPicker.getValue()));
-        
+
         controller.setupGridPane(controller.focusDay);
         
     }

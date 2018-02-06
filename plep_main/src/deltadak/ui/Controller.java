@@ -7,6 +7,7 @@ import deltadak.commands.DeleteSubtaskCommand;
 import deltadak.commands.UndoFacility;
 import deltadak.database.DatabaseSettings;
 import deltadak.deletion.TaskDeletionInitialiser;
+import deltadak.ui.gridpane.GridPaneInitializer;
 import deltadak.ui.gridpane.TreeContainer;
 import deltadak.ui.taskcell.TaskCell;
 import javafx.application.Platform;
@@ -32,6 +33,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import static deltadak.ui.util.STATIC.ConvertersKt.convertTreeToList;
+import static deltadak.ui.util.STATIC.TreeViewUtilKt.getTreeViewHeight;
+import static deltadak.ui.util.STATIC.TreeViewUtilKt.getTreeViewWidth;
 
 /**
  * Class to control the UI
@@ -114,7 +117,7 @@ public class Controller implements Initializable, AbstractController {
     /**
      * keep a reference to the undo facility
      */
-    private UndoFacility undoFacility = new UndoFacility();
+    public UndoFacility undoFacility = new UndoFacility();
     
     /**
      * Initialization method for the controller.
@@ -139,12 +142,12 @@ public class Controller implements Initializable, AbstractController {
                 .valueOf(getSetting(DatabaseSettings.NUMBER_OF_MOVING_DAYS.getSettingsName()));
         
         focusDay = LocalDate.now(); // set focus day to today
-        setupGridPane(focusDay);
+        new GridPaneInitializer(this, undoFacility).setup(numberOfDays, focusDay);
         
         progressIndicator.setVisible(false);
         
         // setup the settings page
-        SlidingSettingsPane settingsPane = new SlidingSettingsPane(this);
+        SlidingSettingsPane settingsPane = new SlidingSettingsPane(this, undoFacility, numberOfDays, focusDay);
         copySettingsPaneComponents(settingsPane);
         settingsPane.setup();
         
@@ -288,7 +291,7 @@ public class Controller implements Initializable, AbstractController {
                             today = LocalDate.now();
                             // Also update focusDay, before refreshing.
                             focusDay = today;
-                            setupGridPane(today);
+                            new GridPaneInitializer(this, undoFacility).setup(numberOfDays, focusDay);
                         }
                     }
                 });
@@ -305,83 +308,7 @@ public class Controller implements Initializable, AbstractController {
     public int maxColumns(int numberOfDays) {
         return (int)Math.ceil(Math.sqrt(numberOfDays));
     }
-    
-    /**
-     * add a Listener to a list for the delete key
-     *
-     * @param tree
-     *         ListView to add the Listener to
-     * @param localDate
-     *         so we know for what day to update the database
-     */
-    @Deprecated
-    private void addDeleteKeyListener(final TreeView<HomeworkTask> tree,
-                                      final LocalDate localDate) {
-        //add option to delete a task
-        tree.setOnKeyPressed(event -> {
-            
-            if (event.getCode() == KeyCode.DELETE) {
-                // Check whether we want to delete a parent task or subtask.
-                if (tree.getSelectionModel().getSelectedItem().getParent()
-                        .equals(tree.getRoot())) {
-                    // Delete a parent task.
-                    deleteParentTask(tree, localDate);
-                } else {
-                    // We want to delete a subtask.
-                    deleteSubtask(tree, localDate);
-                }
-                
-            }
-        });
-    }
-    
-    /**
-     * Delete the selected parent task, and save to database.
-     *
-     * @param tree
-     *         TreeView in which the task lives.
-     * @param localDate
-     *         Date of the TreeView.
-     */
-    @Deprecated
-    private void deleteParentTask(TreeView<HomeworkTask> tree,
-                                  LocalDate localDate) {
-        
-        // Get the selected item.
-        TreeItem<HomeworkTask> selectedItem = tree.getSelectionModel()
-                .getSelectedItem();
-        // Get the index of the selected item.
-        // Note: using selectionModel().getSelectedIndex() returns the index
-        // when also counting subtasks, so this does not work.
-        int parentIndex = tree.getRoot().getChildren().indexOf(selectedItem);
-        
-        undoFacility.execute(
-                new DeleteCommand(this, localDate, convertTreeToList(tree),
-                                  parentIndex, tree));
-        
-    }
-    
-    /**
-     * Delete the selected subtask.
-     *
-     * @param tree
-     *         TreeView in which the task lives.
-     * @param localDate
-     *         Date of the TreeView.
-     */
-    @Deprecated
-    private void deleteSubtask(TreeView<HomeworkTask> tree,
-                               LocalDate localDate) {
-        
-        undoFacility.execute(
-                new DeleteSubtaskCommand(
-                        this,
-                        localDate,
-                        convertTreeToList(tree),
-                        tree.getSelectionModel() .getSelectedIndex(),
-                        tree));
-    }
-    
+
     /**
      * Get index of parent in the list of TreeItems.
      *
@@ -451,28 +378,6 @@ public class Controller implements Initializable, AbstractController {
     private ObservableList<HomeworkTask> convertArrayToObservableList(
             final List<HomeworkTask> list) {
         return FXCollections.observableList(list);
-    }
-    
-    /**
-     * get height by total screen size
-     *
-     * @return intended treeview height
-     */
-    private int getTreeViewHeight(int maxColumns, int numberOfDays) {
-        Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-        int totalHeight = (int)primaryScreenBounds.getHeight();
-        return totalHeight / (numberOfDays / maxColumns);
-    }
-    
-    /**
-     * get width by total screen size
-     *
-     * @return intended treeview width
-     */
-    private int getTreeViewWidth(int maxColumns) {
-        Rectangle2D primaryScreenBounds = Screen.getPrimary().getVisualBounds();
-        int totalWidth = (int)primaryScreenBounds.getWidth();
-        return totalWidth / maxColumns;
     }
     
     /**
@@ -621,7 +526,7 @@ public class Controller implements Initializable, AbstractController {
     @FXML
     protected void dayBackward() {
         focusDay = focusDay.plusDays(-numberOfMovingDays);
-        setupGridPane(focusDay);
+        new GridPaneInitializer(this, undoFacility).setup(numberOfDays, focusDay);
     }
     
     /**
@@ -631,7 +536,7 @@ public class Controller implements Initializable, AbstractController {
     protected void goToToday() {
         //        refreshAllDays();
         focusDay = LocalDate.now();
-        setupGridPane(focusDay);
+        new GridPaneInitializer(this, undoFacility).setup(numberOfDays, focusDay);
     }
     
     /**
@@ -640,7 +545,7 @@ public class Controller implements Initializable, AbstractController {
     @FXML
     protected void dayForward() {
         focusDay = focusDay.plusDays(numberOfMovingDays);
-        setupGridPane(focusDay);
+        new GridPaneInitializer(this, undoFacility).setup(numberOfDays, focusDay);
     }
     
     /**
