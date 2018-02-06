@@ -6,6 +6,7 @@ import deltadak.commands.DeleteCommand;
 import deltadak.commands.DeleteSubtaskCommand;
 import deltadak.commands.UndoFacility;
 import deltadak.database.DatabaseSettings;
+import deltadak.deletion.TaskDeletionInitialiser;
 import deltadak.ui.gridpane.TreeContainer;
 import deltadak.ui.taskcell.TaskCell;
 import javafx.application.Platform;
@@ -16,7 +17,6 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.control.Label;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
 import javafx.stage.Screen;
@@ -260,7 +260,7 @@ public class Controller implements Initializable, AbstractController {
             refreshDay(tree, localDate);
             
             // add the delete key listener
-            addDeleteKeyListener(tree, localDate);
+            new TaskDeletionInitialiser(this, undoFacility).addDeleteKeyListener(tree, localDate);
             
             tree.setPrefWidth(getTreeViewWidth(maxColumns));
             tree.setPrefHeight(getTreeViewHeight(maxColumns, numberOfDays));
@@ -314,6 +314,7 @@ public class Controller implements Initializable, AbstractController {
      * @param localDate
      *         so we know for what day to update the database
      */
+    @Deprecated
     private void addDeleteKeyListener(final TreeView<HomeworkTask> tree,
                                       final LocalDate localDate) {
         //add option to delete a task
@@ -342,6 +343,7 @@ public class Controller implements Initializable, AbstractController {
      * @param localDate
      *         Date of the TreeView.
      */
+    @Deprecated
     private void deleteParentTask(TreeView<HomeworkTask> tree,
                                   LocalDate localDate) {
         
@@ -367,6 +369,7 @@ public class Controller implements Initializable, AbstractController {
      * @param localDate
      *         Date of the TreeView.
      */
+    @Deprecated
     private void deleteSubtask(TreeView<HomeworkTask> tree,
                                LocalDate localDate) {
         

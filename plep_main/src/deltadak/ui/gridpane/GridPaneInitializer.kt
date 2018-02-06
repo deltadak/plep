@@ -33,7 +33,7 @@ class GridPaneInitializer(
 
         // Find out whether the number of columns should be calculated automatically or is user overridden.
         val isAutoColumns: Boolean = Database.INSTANCE.getSetting(DatabaseSettings.MAX_COLUMNS_AUTO.settingsName).toBoolean()
-        val maxColumns = if (isAutoColumns) {
+        val nrColumns = if (isAutoColumns) {
             Math.ceil(Math.sqrt(numberOfDays.toDouble())).toInt()
         } else {
             Database.INSTANCE.getSetting(DatabaseSettings.MAX_COLUMNS.settingsName).toInt()
@@ -58,7 +58,12 @@ class GridPaneInitializer(
             }
             tree.isShowRoot = false
 
-            // Add a title to the list, which shows the day.
+            // Add the tree with title to the GridPane.
+            TreeContainer(tree, date).addTreeToGridPane(controller.gridPane, index, nrColumns)
+
+            // Request the content to be set.
+            controller.refreshDay(tree, date)
+
 
 
         }
