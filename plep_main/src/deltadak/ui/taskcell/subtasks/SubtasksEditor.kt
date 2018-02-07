@@ -4,6 +4,7 @@ import deltadak.HomeworkTask
 import deltadak.database.DatabaseFacade
 import deltadak.ui.AbstractController
 import deltadak.ui.util.STATIC.convertTreeToList
+import javafx.scene.control.ProgressIndicator
 import javafx.scene.control.TreeView
 import java.time.LocalDate
 
@@ -11,8 +12,8 @@ import java.time.LocalDate
  * This class customizes what happens when users edit a subtask.
  */
 class SubtasksEditor(
-        /** The main controller */
-        val controller: AbstractController,
+        /** For user feedback. */
+        val progressIndicator: ProgressIndicator,
         /** The TreeView in which the subtasks resides. */
         val tree: TreeView<HomeworkTask>,
         /** The day corresponding to the TreeView. */
@@ -32,7 +33,7 @@ class SubtasksEditor(
             }
 
             // Update the database.
-            DatabaseFacade(controller).updateDatabase(localDate, convertTreeToList(tree))
+            DatabaseFacade(progressIndicator).updateDatabase(localDate, convertTreeToList(tree))
 
         }
     }

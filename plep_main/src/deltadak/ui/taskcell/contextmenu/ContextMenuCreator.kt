@@ -8,10 +8,7 @@ import deltadak.ui.taskcell.subtasks.SubtasksCreator
 import deltadak.ui.util.STATIC.LABEL_COLOR_CONTEXT_MENU_ITEMS
 import deltadak.ui.util.STATIC.convertTreeToList
 import deltadak.ui.util.STATIC.repeatTask
-import javafx.scene.control.ContextMenu
-import javafx.scene.control.Menu
-import javafx.scene.control.MenuItem
-import javafx.scene.control.SeparatorMenuItem
+import javafx.scene.control.*
 import java.time.LocalDate
 
 /**
@@ -20,6 +17,8 @@ import java.time.LocalDate
 class ContextMenuCreator(
         /** The main Controller */
         val controller: Controller,
+        /** For user feedback. */
+        val progressIndicator: ProgressIndicator,
         /** The TaskCell to set a context menu on. */
         private val taskCell: TaskCell,
         /** The day to which this TreeView (and thus TreeCell) belongs. */
@@ -67,7 +66,7 @@ class ContextMenuCreator(
             colorItem.setOnAction {
                 controller.setBackgroundColor(colorID, taskCell)
                 taskCell.treeItem.value.colorID = colorID
-                DatabaseFacade(controller).updateDatabase(day, convertTreeToList(tree))
+                DatabaseFacade(progressIndicator).updateDatabase(day, convertTreeToList(tree))
             }
 
             contextMenu.items.add(colorItem)

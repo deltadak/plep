@@ -402,6 +402,7 @@ public class Controller implements Initializable, AbstractController {
     /**
      * Refreshes all treeviews using data from the database.
      */
+    @Deprecated
     public void refreshAllDays() {
         // Use this so updating the UI works like it should, and the JavaFX
         // Application thread doesn't hang.

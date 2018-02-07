@@ -9,6 +9,7 @@ import javafx.application.Platform
 import javafx.beans.Observable
 import javafx.beans.value.ObservableValue
 import javafx.scene.control.ComboBox
+import javafx.scene.control.ProgressIndicator
 import javafx.scene.control.TreeView
 import javafx.scene.control.cell.TextFieldTreeCell
 import java.time.LocalDate
@@ -18,8 +19,8 @@ import java.time.LocalDate
  */
 @Suppress("UNUSED_ANONYMOUS_PARAMETER")
 class OnCourseLabelChangeUpdater(
-        /** The main Controller. */
-        val controller: AbstractController,
+        /** For user feedback. */
+        val progressIndicator: ProgressIndicator,
         /** The ComboBox on which to listen for changes. */
         val comboBox: ComboBox<String>) {
 
@@ -59,7 +60,7 @@ class OnCourseLabelChangeUpdater(
     fun addDatabaseUpdaterChangeListener(tree: TreeView<HomeworkTask>, day: LocalDate) : InvalidationListenerWithBlocker {
         // Define a standard listener.
         val invalidationListener = { observable: Observable ->
-            DatabaseFacade(controller).updateDatabase(day, convertTreeToList(tree))
+            DatabaseFacade(progressIndicator).updateDatabase(day, convertTreeToList(tree))
             // We do not need to cleanup here, as no tasks were added or deleted.
         }
 

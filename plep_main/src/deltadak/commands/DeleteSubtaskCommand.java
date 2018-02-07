@@ -61,7 +61,7 @@ public class DeleteSubtaskCommand extends DeleteCommand {
             TreeItem<HomeworkTask> parent = tree.getRoot().getChildren().get(parentIndex);
             parent.getChildren().remove(indexWithinParent);
 
-            new DatabaseFacade(controller).updateDatabase(dayState, treeViewItems);
+            new DatabaseFacade(controller.getProgressIndicator()).updateDatabase(dayState, treeViewItems);
             controller.cleanUp(tree);
         }
     }
@@ -76,7 +76,7 @@ public class DeleteSubtaskCommand extends DeleteCommand {
             TreeItem<HomeworkTask> parent = tree.getRoot().getChildren().get(parentIndex);
             parent.getChildren().add(indexWithinParent, new TreeItem<>(deletedTask));
 
-            new DatabaseFacade(controller).updateDatabase(dayState, treeViewItems);
+            new DatabaseFacade(controller.getProgressIndicator()).updateDatabase(dayState, treeViewItems);
             controller.cleanUp(tree);
         }
     }

@@ -85,7 +85,7 @@ public class DeleteCommand extends Command {
                 parent.getChildren().add(new TreeItem<>(deletedItemsList.get(i)));
             }
 
-            new DatabaseFacade(controller).updateDatabase(dayState, treeViewItems);
+            new DatabaseFacade(controller.getProgressIndicator()).updateDatabase(dayState, treeViewItems);
 
 //            int parentID = parent.getValue().getDatabaseID();
 //            controller.insertExpandedItem(parentID, false);

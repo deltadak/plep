@@ -103,7 +103,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
 
         // update course label (a combobox) on changes
         OnCourseLabelChangeUpdater onCourseLabelChangeUpdater
-                = new OnCourseLabelChangeUpdater(controller, comboBox);
+                = new OnCourseLabelChangeUpdater(controller.getProgressIndicator(), comboBox);
         onCourseLabelChangeUpdater.addValueChangeListener(this);
         labelChangeListener = onCourseLabelChangeUpdater
                 .addDatabaseUpdaterChangeListener(tree, localDate);
@@ -111,7 +111,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
         // If an item is selected, deselect all other items.
         new SelectionCleaner(tree).addSelectionListener();
         
-        doneChangeListener = new CheckBoxUpdater(controller, checkBox).setChangeListener(tree, this, localDate);
+        doneChangeListener = new CheckBoxUpdater(controller.getProgressIndicator(), checkBox).setChangeListener(tree, this, localDate);
     
         setOnDragDetected();
         setOnDragOver();
@@ -120,10 +120,10 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
         setOnDragDropped(tree, localDate);
         setOnDragDone(tree, localDate);
 
-        new SubtasksEditor(controller, tree, localDate).setup();
+        new SubtasksEditor(controller.getProgressIndicator(), tree, localDate).setup();
         
         // create the context menu
-        contextMenu = new ContextMenuCreator(controller, this, localDate).create();
+        contextMenu = new ContextMenuCreator(controller, controller.getProgressIndicator(), this, localDate).create();
     }
     
     /**

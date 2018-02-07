@@ -12,6 +12,7 @@ import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
 import javafx.scene.control.TreeView
 import javafx.scene.control.CheckBox
+import javafx.scene.control.ProgressIndicator
 import java.time.LocalDate
 
 @Suppress("UNUSED_ANONYMOUS_PARAMETER")
@@ -19,8 +20,8 @@ import java.time.LocalDate
  * Handles clicks on the checkbox.
  */
 class CheckBoxUpdater(
-        /** The main Controller. */
-        val controller: AbstractController,
+        /** For user feedback. */
+        val progressIndicator: ProgressIndicator,
         /** The Checkbox to watch. */
         val checkbox: CheckBox) {
 
@@ -47,7 +48,7 @@ class CheckBoxUpdater(
 
             checkIfAllSubtasksAreDone(taskCell, tree)
 
-            DatabaseFacade(controller).updateDatabase(localDate, convertTreeToList(tree))
+            DatabaseFacade(progressIndicator).updateDatabase(localDate, convertTreeToList(tree))
 
         }
 
