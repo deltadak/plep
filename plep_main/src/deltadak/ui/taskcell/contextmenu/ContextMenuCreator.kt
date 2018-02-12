@@ -66,7 +66,7 @@ class ContextMenuCreator(
             colorItem.setOnAction {
                 controller.setBackgroundColor(colorID, taskCell)
                 taskCell.treeItem.value.colorID = colorID
-                DatabaseFacade(progressIndicator).updateDatabase(day, convertTreeToList(tree))
+                DatabaseFacade(progressIndicator).pushData(day, convertTreeToList(tree))
             }
 
             contextMenu.items.add(colorItem)

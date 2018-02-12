@@ -2,7 +2,6 @@ package deltadak.ui.taskcell.subtasks
 
 import deltadak.HomeworkTask
 import deltadak.database.DatabaseFacade
-import deltadak.ui.AbstractController
 import deltadak.ui.util.STATIC.convertTreeToList
 import javafx.scene.control.ProgressIndicator
 import javafx.scene.control.TreeView
@@ -33,7 +32,7 @@ class SubtasksEditor(
             }
 
             // Update the database.
-            DatabaseFacade(progressIndicator).updateDatabase(localDate, convertTreeToList(tree))
+            DatabaseFacade(progressIndicator).pushData(localDate, convertTreeToList(tree))
 
         }
     }

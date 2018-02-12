@@ -22,7 +22,7 @@ class DatabaseFacade(
      * @param day Date from which the tasks are.
      * @param homeworkTasks Tasks to be put in the database.
      */
-    fun updateDatabase(day: LocalDate, homeworkTasks: List<List<HomeworkTask>> ) {
+    fun pushData(day: LocalDate, homeworkTasks: List<List<HomeworkTask>> ) {
 
         // Switch on progress indicator.
         val progressIndicator = progressIndicator

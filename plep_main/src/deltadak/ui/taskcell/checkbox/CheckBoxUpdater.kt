@@ -2,7 +2,6 @@ package deltadak.ui.taskcell.checkbox
 
 import deltadak.HomeworkTask
 import deltadak.database.DatabaseFacade
-import deltadak.ui.AbstractController
 import deltadak.ui.taskcell.ChangeListenerWithBlocker
 import deltadak.ui.taskcell.TaskCell
 import deltadak.ui.taskcell.selection.Selector
@@ -48,7 +47,7 @@ class CheckBoxUpdater(
 
             checkIfAllSubtasksAreDone(taskCell, tree)
 
-            DatabaseFacade(progressIndicator).updateDatabase(localDate, convertTreeToList(tree))
+            DatabaseFacade(progressIndicator).pushData(localDate, convertTreeToList(tree))
 
         }
 

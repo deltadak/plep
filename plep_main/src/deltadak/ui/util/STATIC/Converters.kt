@@ -1,6 +1,7 @@
 package deltadak.ui.util.STATIC
 
 import deltadak.HomeworkTask
+import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeView
@@ -61,3 +62,25 @@ fun convertTreeToList(tree: TreeView<HomeworkTask>) : List<List<HomeworkTask>> {
  * @return List of Homeworktasks.
  */
 fun convertTreeItemsToList(list: ObservableList<TreeItem<HomeworkTask>>) = list.map{ it.value }
+
+/**
+ * Convert a List to an ObservableList.
+ *
+ * @param list List to be converted.
+ *
+ * @return Converted list.
+ */
+@Deprecated("use extension method")
+fun convertArrayToObservableList(list: List<HomeworkTask>): ObservableList<HomeworkTask> = FXCollections.observableList(list)
+
+/**
+ * Convert a List to an ObservableList.
+ *
+ * @param list List to be converted.
+ *
+ * @return Converted list.
+ */
+fun List<HomeworkTask>.toObservableList(): ObservableList<HomeworkTask> = FXCollections.observableList(this)
+
+
+// todo make stuff in this file extension and generic

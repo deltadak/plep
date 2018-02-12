@@ -2,7 +2,6 @@ package deltadak.ui.taskcell.courselabel
 
 import deltadak.HomeworkTask
 import deltadak.database.DatabaseFacade
-import deltadak.ui.AbstractController
 import deltadak.ui.taskcell.InvalidationListenerWithBlocker
 import deltadak.ui.util.STATIC.convertTreeToList
 import javafx.application.Platform
@@ -60,7 +59,7 @@ class OnCourseLabelChangeUpdater(
     fun addDatabaseUpdaterChangeListener(tree: TreeView<HomeworkTask>, day: LocalDate) : InvalidationListenerWithBlocker {
         // Define a standard listener.
         val invalidationListener = { observable: Observable ->
-            DatabaseFacade(progressIndicator).updateDatabase(day, convertTreeToList(tree))
+            DatabaseFacade(progressIndicator).pushData(day, convertTreeToList(tree))
             // We do not need to cleanup here, as no tasks were added or deleted.
         }
 

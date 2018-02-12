@@ -7,8 +7,8 @@ import deltadak.database.DatabaseSettings
 import deltadak.deletion.TaskDeletionInitialiser
 import deltadak.ui.Controller
 import deltadak.ui.taskcell.TaskCell
-import deltadak.ui.util.STATIC.getTreeViewHeight
-import deltadak.ui.util.STATIC.getTreeViewWidth
+import deltadak.ui.treeview.getTreeViewHeight
+import deltadak.ui.treeview.getTreeViewWidth
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeView
 import javafx.scene.layout.AnchorPane

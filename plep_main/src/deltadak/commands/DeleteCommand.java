@@ -4,10 +4,10 @@ import deltadak.Database;
 import deltadak.database.DatabaseFacade;
 import deltadak.ui.AbstractController;
 import deltadak.HomeworkTask;
+import deltadak.ui.treeview.TreeViewCleaner;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 
-import javax.xml.crypto.Data;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -65,10 +65,10 @@ public class DeleteCommand extends Command {
         }
 
         // use the items of the listview to update the database
-//        controller.updateDatabase(dayState, treeViewItems);
+//        controller.pushData(dayState, treeViewItems);
 //        System.out.println("id: " + deletedItemsList.get(0).getDatabaseID());
         Database.INSTANCE.deleteByID(deletedItemsList.get(0).getDatabaseID());
-        controller.cleanUp(tree);
+        new TreeViewCleaner().cleanSingleTreeView(tree);
     }
 
     @Override
@@ -85,12 +85,13 @@ public class DeleteCommand extends Command {
                 parent.getChildren().add(new TreeItem<>(deletedItemsList.get(i)));
             }
 
-            new DatabaseFacade(controller.getProgressIndicator()).updateDatabase(dayState, treeViewItems);
+            new DatabaseFacade(controller.getProgressIndicator()).pushData(dayState, treeViewItems);
 
 //            int parentID = parent.getValue().getDatabaseID();
 //            controller.insertExpandedItem(parentID, false);
 
-            controller.cleanUp(tree);
+            new TreeViewCleaner().cleanSingleTreeView(tree);
+
         }
     }
 

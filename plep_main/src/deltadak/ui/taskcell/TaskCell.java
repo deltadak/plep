@@ -12,6 +12,7 @@ import deltadak.ui.taskcell.selection.Selector;
 import deltadak.ui.taskcell.subtasks.SubtasksCreator;
 import deltadak.ui.taskcell.subtasks.SubtasksEditor;
 import deltadak.ui.taskcell.textlabel.TextLabelStyle;
+import deltadak.ui.treeview.TreeViewCleaner;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
@@ -315,8 +316,8 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
             event.setDropCompleted(success);
             event.consume();
             // clean up immediately for a smooth reaction
-            controller.cleanUp(tree);
-            
+            new TreeViewCleaner().cleanSingleTreeView(tree);
+
             // works to let the subtasks show up after the drag, except when dragging a task with subtasks in the same list...
             controller.refreshAllDays();
         });
@@ -372,8 +373,8 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
             }
             event.consume();
             // clean up immediately for a smooth reaction
-            controller.cleanUp(tree);
-    
+            new TreeViewCleaner().cleanSingleTreeView(tree);
+
         });
     }
 }

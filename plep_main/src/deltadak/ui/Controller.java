@@ -2,25 +2,22 @@ package deltadak.ui;
 
 import deltadak.Database;
 import deltadak.HomeworkTask;
-import deltadak.commands.DeleteCommand;
-import deltadak.commands.DeleteSubtaskCommand;
 import deltadak.commands.UndoFacility;
+import deltadak.database.ContentProvider;
 import deltadak.database.DatabaseSettings;
 import deltadak.deletion.TaskDeletionInitialiser;
 import deltadak.ui.gridpane.GridPaneInitializer;
 import deltadak.ui.gridpane.TreeContainer;
 import deltadak.ui.taskcell.TaskCell;
+import deltadak.ui.treeview.TreeViewCleaner;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.*;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.concurrent.Task;
 
@@ -32,9 +29,9 @@ import java.util.ArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import static deltadak.ui.util.STATIC.ConvertersKt.convertTreeToList;
-import static deltadak.ui.util.STATIC.TreeViewUtilKt.getTreeViewHeight;
-import static deltadak.ui.util.STATIC.TreeViewUtilKt.getTreeViewWidth;
+import static deltadak.ui.util.STATIC.ConvertersKt.convertArrayToObservableList;
+import static deltadak.ui.treeview.UtilKt.getTreeViewHeight;
+import static deltadak.ui.treeview.UtilKt.getTreeViewWidth;
 
 /**
  * Class to control the UI
@@ -260,7 +257,8 @@ public class Controller implements Initializable, AbstractController {
             
             // Request content on a separate thread, and hope the content
             // will be set eventually.
-            refreshDay(tree, localDate);
+//            refreshDay(tree, localDate);
+            new ContentProvider().setForOneDay(tree, localDate, progressIndicator, this);
             
             // add the delete key listener
             new TaskDeletionInitialiser(this, undoFacility).addDeleteKeyListener(tree, localDate);
@@ -354,6 +352,7 @@ public class Controller implements Initializable, AbstractController {
      *
      * @return A list of HomeworkTasks, which are the parent tasks.
      */
+    @Deprecated
     public List<HomeworkTask> getParentTasks(
             List<List<HomeworkTask>> homeworkFamilies) {
         
@@ -365,19 +364,6 @@ public class Controller implements Initializable, AbstractController {
             parentTasks.add(homeworkFamily.get(0));
         }
         return parentTasks;
-    }
-    
-    /**
-     * convert (Array)List to ObservableList
-     *
-     * @param list
-     *         - List to be converted
-     *
-     * @return ObservableList
-     */
-    private ObservableList<HomeworkTask> convertArrayToObservableList(
-            final List<HomeworkTask> list) {
-        return FXCollections.observableList(list);
     }
     
     /**
@@ -458,36 +444,6 @@ public class Controller implements Initializable, AbstractController {
     }
     
     /**
-     * Removes empty items in the tree view, and then fills it up with empty
-     * items. To avoid gaps.
-     *
-     * @param tree
-     *         The treeview to be cleaned up.
-     */
-    @Override
-    public void cleanUp(TreeView<HomeworkTask> tree) {
-        int i;
-        TreeItem<HomeworkTask> root = tree.getRoot();
-        for (i = 0; i < root.getChildren().size(); i++) {
-            if (tree.getTreeItem(i).getValue().getText().equals("")) {
-                removeItemFromTreeView(tree.getTreeItem(i));
-            } else {
-                // If there are subtasks, make sure there is one empty one.
-
-            }
-
-        }
-        
-        for (i = 0; i < MAX_LIST_LENGTH; i++) {
-            if (i >= tree.getRoot().getChildren().size()) {
-                TreeItem<HomeworkTask> item = new TreeItem<>(
-                        new HomeworkTask());
-                tree.getRoot().getChildren().add(item);
-            }
-        }
-    }
-    
-    /**
      * Removes the TreeItem from the TreeView it's in.
      *
      * @param item
@@ -557,6 +513,7 @@ public class Controller implements Initializable, AbstractController {
      * @param localDate
      *         The day for which to request tasks.
      */
+    @Deprecated
     public void refreshDay(TreeView<HomeworkTask> tree, LocalDate localDate) {
         progressIndicator.setVisible(true);
         
@@ -574,8 +531,7 @@ public class Controller implements Initializable, AbstractController {
                 // allExpandedTasks = getExpandedFromDatabase();
                 // list with the parent tasks
                 ObservableList<HomeworkTask> list
-                        = convertArrayToObservableList(
-                        getParentTasks(allTasks));
+                        = convertArrayToObservableList(getParentTasks(allTasks));
                 // clear all the items currently showing in the TreeView
                 tree.getRoot().getChildren().clear();
                 
@@ -626,7 +582,7 @@ public class Controller implements Initializable, AbstractController {
         };
         
         task.setOnSucceeded(e -> {
-            cleanUp(tree);
+            new TreeViewCleaner().cleanSingleTreeView(tree);
             progressIndicator.setVisible(false);
             
         });
