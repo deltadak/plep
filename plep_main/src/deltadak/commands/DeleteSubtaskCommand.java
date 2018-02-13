@@ -2,8 +2,8 @@ package deltadak.commands;
 
 import deltadak.HomeworkTask;
 import deltadak.database.DatabaseFacade;
-import deltadak.ui.AbstractController;
 import deltadak.ui.treeview.TreeViewCleaner;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 
@@ -23,15 +23,15 @@ public class DeleteSubtaskCommand extends DeleteCommand {
 
     /**
      * Delete a subtask, in contrast to a parent task.
-     * @param controller See {@link DeleteCommand}
+     * @param progressIndicator See {@link DeleteCommand}
      * @param day See {@link DeleteCommand}
      * @param treeViewItems See {@link DeleteCommand}
      * @param index Index of the subtask, the list of lists is assumed flattened.
      * @param tree See {@link DeleteCommand}
      */
-    public DeleteSubtaskCommand(AbstractController controller, LocalDate day, List<List<HomeworkTask>> treeViewItems,
+    public DeleteSubtaskCommand(ProgressIndicator progressIndicator, LocalDate day, List<List<HomeworkTask>> treeViewItems,
                                 int index, TreeView<HomeworkTask> tree) {
-        super(controller, day, treeViewItems, index, tree);
+        super(progressIndicator, day, treeViewItems, index, tree);
     }
 
     @Override
@@ -62,7 +62,7 @@ public class DeleteSubtaskCommand extends DeleteCommand {
             TreeItem<HomeworkTask> parent = tree.getRoot().getChildren().get(parentIndex);
             parent.getChildren().remove(indexWithinParent);
 
-            new DatabaseFacade(controller.getProgressIndicator()).pushData(dayState, treeViewItems);
+            new DatabaseFacade(progressIndicator).pushData(dayState, treeViewItems);
             new TreeViewCleaner().cleanSingleTreeView(tree);
 
         }
@@ -78,7 +78,7 @@ public class DeleteSubtaskCommand extends DeleteCommand {
             TreeItem<HomeworkTask> parent = tree.getRoot().getChildren().get(parentIndex);
             parent.getChildren().add(indexWithinParent, new TreeItem<>(deletedTask));
 
-            new DatabaseFacade(controller.getProgressIndicator()).pushData(dayState, treeViewItems);
+            new DatabaseFacade(progressIndicator).pushData(dayState, treeViewItems);
             new TreeViewCleaner().cleanSingleTreeView(tree);
         }
     }

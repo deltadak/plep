@@ -28,13 +28,7 @@ public class DeleteCommandTest {
         taskToDelete.add(new HomeworkTask());
         taskToDelete.add(new HomeworkTask());
         list.add(taskToDelete);
-        AbstractController dummy = new AbstractController() {
-            @Override
-            public ProgressIndicator getProgressIndicator() {
-                return new ProgressIndicator();
-            }
-        };
-        command = new DeleteCommand(dummy, dayState, list, 0, null);
+        command = new DeleteCommand(new ProgressIndicator(), dayState, list, 0, null);
     }
 
     @Test

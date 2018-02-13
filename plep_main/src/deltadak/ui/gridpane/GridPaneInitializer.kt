@@ -3,12 +3,14 @@ package deltadak.ui.gridpane
 import deltadak.Database
 import deltadak.HomeworkTask
 import deltadak.commands.UndoFacility
+import deltadak.database.ContentProvider
 import deltadak.database.DatabaseSettings
 import deltadak.deletion.TaskDeletionInitialiser
 import deltadak.ui.Controller
 import deltadak.ui.taskcell.TaskCell
 import deltadak.ui.treeview.getTreeViewHeight
 import deltadak.ui.treeview.getTreeViewWidth
+import javafx.scene.control.ProgressIndicator
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeView
 import javafx.scene.layout.AnchorPane
@@ -21,7 +23,9 @@ class GridPaneInitializer(
         /** The main Controller. */
         val controller: Controller,
         /** Facility which provides deletion. */
-        val undoFacility: UndoFacility) {
+        val undoFacility: UndoFacility,
+        /** User feedback. */
+        val progressIndicator: ProgressIndicator) {
 
     /**
      * Sets up TreeViews for each day, including the editing of items and more.
@@ -68,10 +72,10 @@ class GridPaneInitializer(
             TreeContainer(tree, date).addTreeToGridPane(controller.gridPane, index, nrColumns)
 
             // Request the content to be set.
-            controller.refreshDay(tree, date)
+            ContentProvider().setForOneDay(tree, date, progressIndicator)
 
             // Setup deletion of tasks.
-            TaskDeletionInitialiser(controller, undoFacility).addDeleteKeyListener(tree, localDate = date)
+            TaskDeletionInitialiser(progressIndicator, undoFacility).addDeleteKeyListener(tree, localDate = date)
 
             tree.prefWidth = getTreeViewWidth(nrColumns).toDouble()
             tree.prefHeight = getTreeViewHeight(nrColumns, numberOfDays).toDouble()

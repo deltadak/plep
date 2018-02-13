@@ -139,7 +139,7 @@ public class Controller implements Initializable, AbstractController {
                 .valueOf(getSetting(DatabaseSettings.NUMBER_OF_MOVING_DAYS.getSettingsName()));
         
         focusDay = LocalDate.now(); // set focus day to today
-        new GridPaneInitializer(this, undoFacility).setup(numberOfDays, focusDay);
+        new GridPaneInitializer(this, undoFacility, progressIndicator).setup(numberOfDays, focusDay);
         
         progressIndicator.setVisible(false);
         
@@ -258,10 +258,10 @@ public class Controller implements Initializable, AbstractController {
             // Request content on a separate thread, and hope the content
             // will be set eventually.
 //            refreshDay(tree, localDate);
-            new ContentProvider().setForOneDay(tree, localDate, progressIndicator, this);
+            new ContentProvider().setForOneDay(tree, localDate, progressIndicator);
             
             // add the delete key listener
-            new TaskDeletionInitialiser(this, undoFacility).addDeleteKeyListener(tree, localDate);
+            new TaskDeletionInitialiser(progressIndicator, undoFacility).addDeleteKeyListener(tree, localDate);
             
             tree.setPrefWidth(getTreeViewWidth(maxColumns));
             tree.setPrefHeight(getTreeViewHeight(maxColumns, numberOfDays));
@@ -289,7 +289,7 @@ public class Controller implements Initializable, AbstractController {
                             today = LocalDate.now();
                             // Also update focusDay, before refreshing.
                             focusDay = today;
-                            new GridPaneInitializer(this, undoFacility).setup(numberOfDays, focusDay);
+                            new GridPaneInitializer(this, undoFacility, progressIndicator).setup(numberOfDays, focusDay);
                         }
                     }
                 });
@@ -409,7 +409,7 @@ public class Controller implements Initializable, AbstractController {
                 
                 // refresh the treeview from database
                 LocalDate localDate = focusDay.plusDays(i - 1);
-                refreshDay(tree, localDate);
+                new ContentProvider().setForOneDay(tree, localDate, progressIndicator);
             }
             
         });
@@ -483,7 +483,7 @@ public class Controller implements Initializable, AbstractController {
     @FXML
     protected void dayBackward() {
         focusDay = focusDay.plusDays(-numberOfMovingDays);
-        new GridPaneInitializer(this, undoFacility).setup(numberOfDays, focusDay);
+        new GridPaneInitializer(this, undoFacility, progressIndicator).setup(numberOfDays, focusDay);
     }
     
     /**
@@ -493,7 +493,7 @@ public class Controller implements Initializable, AbstractController {
     protected void goToToday() {
         //        refreshAllDays();
         focusDay = LocalDate.now();
-        new GridPaneInitializer(this, undoFacility).setup(numberOfDays, focusDay);
+        new GridPaneInitializer(this, undoFacility, progressIndicator).setup(numberOfDays, focusDay);
     }
     
     /**
@@ -502,7 +502,7 @@ public class Controller implements Initializable, AbstractController {
     @FXML
     protected void dayForward() {
         focusDay = focusDay.plusDays(numberOfMovingDays);
-        new GridPaneInitializer(this, undoFacility).setup(numberOfDays, focusDay);
+        new GridPaneInitializer(this, undoFacility, progressIndicator).setup(numberOfDays, focusDay);
     }
     
     /**

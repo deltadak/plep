@@ -5,6 +5,7 @@ import deltadak.database.DatabaseFacade;
 import deltadak.ui.AbstractController;
 import deltadak.HomeworkTask;
 import deltadak.ui.treeview.TreeViewCleaner;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 
@@ -18,7 +19,7 @@ import java.util.List;
 public class DeleteCommand extends Command {
 
     /** remember state */
-    protected AbstractController controller; // program to an interface so tests can provide a dummy
+    protected ProgressIndicator progressIndicator;
     protected LocalDate dayState;
     protected List<List<HomeworkTask>> treeViewItems; // A list of (lists containing a parent and it's children)
     protected TreeView<HomeworkTask> tree;
@@ -27,14 +28,14 @@ public class DeleteCommand extends Command {
 
     /**
      * Constructor, gets selected index to find out what to delete.
-     * @param controller the controller which needs to be updated after deletion
+     * @param progressIndicator User feedback.
      * @param day from which to delete the task
      * @param treeViewItems corresponding to the day, items of listview, needed as parameter for testing (which can't use a listview)
      * @param index index of task in treeViewItems to delete, needed as parameter for testing (which can't use a listview)
      * @param tree to provide immediate user feedback
      */
-    public DeleteCommand(AbstractController controller, LocalDate day, List<List<HomeworkTask>> treeViewItems, int index, TreeView<HomeworkTask> tree) {
-        this.controller = controller;
+    public DeleteCommand(ProgressIndicator progressIndicator, LocalDate day, List<List<HomeworkTask>> treeViewItems, int index, TreeView<HomeworkTask> tree) {
+        this.progressIndicator = progressIndicator;
         this.dayState = day;
         this.treeViewItems = new ArrayList<>(treeViewItems);
         this.indexState = index;
@@ -85,7 +86,7 @@ public class DeleteCommand extends Command {
                 parent.getChildren().add(new TreeItem<>(deletedItemsList.get(i)));
             }
 
-            new DatabaseFacade(controller.getProgressIndicator()).pushData(dayState, treeViewItems);
+            new DatabaseFacade(progressIndicator).pushData(dayState, treeViewItems);
 
 //            int parentID = parent.getValue().getDatabaseID();
 //            controller.insertExpandedItem(parentID, false);

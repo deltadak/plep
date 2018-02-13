@@ -6,6 +6,7 @@ import deltadak.commands.DeleteSubtaskCommand
 import deltadak.commands.UndoFacility
 import deltadak.ui.Controller
 import deltadak.ui.util.STATIC.toHomeworkTaskList
+import javafx.scene.control.ProgressIndicator
 import javafx.scene.control.TreeView
 import javafx.scene.input.KeyCode
 import java.time.LocalDate
@@ -14,8 +15,8 @@ import java.time.LocalDate
  * This class provides initialisation of deletion of tasks.
  */
 class TaskDeletionInitialiser(
-        /** The main Controller. */
-        val controller: Controller,
+        /** User feedback. */
+        val progressIndicator: ProgressIndicator,
         /** The facility which provides deletion including the undoing of deletion. */
         val undoFacility: UndoFacility) {
 
@@ -42,7 +43,7 @@ class TaskDeletionInitialiser(
             val parentIndex = tree.root.children.indexOf(selectedItem)
 
             undoFacility.execute(DeleteCommand(
-                    controller,
+                    progressIndicator,
                     localDate,
                     tree.toHomeworkTaskList(),
                     parentIndex,
@@ -55,7 +56,7 @@ class TaskDeletionInitialiser(
          */
         fun deleteSubtask() {
             undoFacility.execute(DeleteSubtaskCommand(
-                    controller,
+                    progressIndicator,
                     localDate,
                     tree.toHomeworkTaskList(),
                     tree.selectionModel.selectedIndex,

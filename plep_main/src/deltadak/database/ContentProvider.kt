@@ -33,7 +33,7 @@ class ContentProvider {
      * @param localDate Day of that TreeView.
      * @param progressIndicator To show user feedback.
      */
-    fun setForOneDay(tree: TreeView<HomeworkTask>, localDate: LocalDate, progressIndicator: ProgressIndicator, controller: Controller) {
+    fun setForOneDay(tree: TreeView<HomeworkTask>, localDate: LocalDate, progressIndicator: ProgressIndicator) {
 
         /**
          * Contains database calls which take time.
