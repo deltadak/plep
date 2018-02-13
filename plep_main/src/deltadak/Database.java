@@ -812,13 +812,14 @@ public enum Database {
      */
     private Connection setConnection() {
         try {
-            Class.forName("org.sqlite.JDBC");
-            Connection connection = DriverManager.getConnection(databasePath);
-            return connection;
+            if (databasePath != null) {
+                Class.forName("org.sqlite.JDBC");
+                return DriverManager.getConnection(databasePath);
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
         }
+        return null;
     }
     
     /**
@@ -859,10 +860,12 @@ public enum Database {
     private void query(final String sql) {
         Connection connection = setConnection();
         try {
-            Statement statement = connection.createStatement();
-            statement.executeUpdate(sql);
-            statement.close();
-            connection.close();
+            if (connection != null) {
+                Statement statement = connection.createStatement();
+                statement.executeUpdate(sql);
+                statement.close();
+                connection.close();
+            }
             
         } catch (Exception e) {
             e.printStackTrace();

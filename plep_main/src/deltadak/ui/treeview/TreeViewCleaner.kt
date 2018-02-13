@@ -18,28 +18,31 @@ class TreeViewCleaner {
      *
      * @param tree The TreeView to clean up.
      */
-    fun cleanSingleTreeView(tree: TreeView<HomeworkTask>) {
+    fun cleanSingleTreeView(tree: TreeView<HomeworkTask>?) {
 
-        // Remove empty items.
-        tree.root.children.removeIf {it.value.text == ""}
+        if (tree != null) {
 
-        // Remove empty subitems.
-        tree.root.children.forEach { parent ->
-            if (parent.children != null) {
-                parent.children.removeIf {it.value.text == ""}
+            // Remove empty items.
+            tree.root.children.removeIf { it.value.text == "" }
+
+            // Remove empty subitems.
+            tree.root.children.forEach { parent ->
+                if (parent.children != null) {
+                    parent.children.removeIf { it.value.text == "" }
+                }
             }
-        }
 
-        // Add empty items.
-        for (i in 0 until NUMBER_OF_TASKS_IN_LIST) {
-            val parents = tree.root.children
-            if (i >= parents.size)  {
-                val newItem = TreeItem<HomeworkTask>(HomeworkTask())
-                parents.add(newItem)
-            } else { // If there are still tasks, we haven't got to the end of the task list.
-                // Add empty subtask if needed.
-                if (parents[i].children != null && parents[i].children.size > 0) {
-                    parents[i].children.add(TreeItem<HomeworkTask>(HomeworkTask()))
+            // Add empty items.
+            for (i in 0 until NUMBER_OF_TASKS_IN_LIST) {
+                val parents = tree.root.children
+                if (i >= parents.size) {
+                    val newItem = TreeItem<HomeworkTask>(HomeworkTask())
+                    parents.add(newItem)
+                } else { // If there are still tasks, we haven't got to the end of the task list.
+                    // Add empty subtask if needed.
+                    if (parents[i].children != null && parents[i].children.size > 0) {
+                        parents[i].children.add(TreeItem<HomeworkTask>(HomeworkTask()))
+                    }
                 }
             }
         }
