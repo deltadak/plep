@@ -6,8 +6,8 @@ import deltadak.ui.Controller
 import deltadak.ui.taskcell.TaskCell
 import deltadak.ui.taskcell.subtasks.SubtasksCreator
 import deltadak.ui.util.STATIC.LABEL_COLOR_CONTEXT_MENU_ITEMS
-import deltadak.ui.util.STATIC.convertTreeToList
 import deltadak.ui.util.STATIC.repeatTask
+import deltadak.ui.util.STATIC.toHomeworkTaskList
 import javafx.scene.control.*
 import java.time.LocalDate
 
@@ -66,7 +66,7 @@ class ContextMenuCreator(
             colorItem.setOnAction {
                 controller.setBackgroundColor(colorID, taskCell)
                 taskCell.treeItem.value.colorID = colorID
-                DatabaseFacade(progressIndicator).pushData(day, convertTreeToList(tree))
+                DatabaseFacade(progressIndicator).pushData(day, tree.toHomeworkTaskList())
             }
 
             contextMenu.items.add(colorItem)

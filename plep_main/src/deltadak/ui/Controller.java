@@ -10,6 +10,7 @@ import deltadak.ui.gridpane.GridPaneInitializer;
 import deltadak.ui.gridpane.TreeContainer;
 import deltadak.ui.taskcell.TaskCell;
 import deltadak.ui.treeview.TreeViewCleaner;
+import deltadak.ui.util.STATIC.ConvertersKt;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -29,7 +30,6 @@ import java.util.ArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import static deltadak.ui.util.STATIC.ConvertersKt.convertArrayToObservableList;
 import static deltadak.ui.treeview.UtilKt.getTreeViewHeight;
 import static deltadak.ui.treeview.UtilKt.getTreeViewWidth;
 
@@ -531,7 +531,7 @@ public class Controller implements Initializable, AbstractController {
                 // allExpandedTasks = getExpandedFromDatabase();
                 // list with the parent tasks
                 ObservableList<HomeworkTask> list
-                        = convertArrayToObservableList(getParentTasks(allTasks));
+                        = ConvertersKt.toObservableList(getParentTasks(allTasks));
                 // clear all the items currently showing in the TreeView
                 tree.getRoot().getChildren().clear();
                 

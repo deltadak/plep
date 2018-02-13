@@ -68,7 +68,7 @@ class ContentProvider {
 
         task.setOnSucceeded {
             // Make sure that there are empty tasks added to fill up.
-            TreeViewCleaner().cleanSingleTreeView(tree) // todo needed?
+            TreeViewCleaner().cleanSingleTreeView(tree)
             progressIndicator.isVisible = false
         }
 

@@ -14,17 +14,15 @@ import javafx.scene.control.TreeView
  * Converts a TreeView to a list of lists of tasks. The first item of each
  * list is the parent task, the items after that are its subtasks.
  *
- * @param tree The TreeView to convert.
- *
  * @return List&lt;List&lt;HomeworkTask&gt;&gt;
  */
-fun convertTreeToList(tree: TreeView<HomeworkTask>) : List<List<HomeworkTask>> {
+fun TreeView<HomeworkTask>.toHomeworkTaskList(): List<List<HomeworkTask>> {
 
     // Create a list with the tree items of the parent tasks.
-    val parentItems = tree.root.children
+    val parentItems = this.root.children
 
     // Create a list with homework tasks of the parent tasks.
-    val parentTasks = convertTreeItemsToList(parentItems)
+    val parentTasks = parentItems.toFlatList()
 
     // Create the list to eventually return.
     val tasks = mutableListOf<List<HomeworkTask>>()
@@ -34,7 +32,7 @@ fun convertTreeToList(tree: TreeView<HomeworkTask>) : List<List<HomeworkTask>> {
         val childItems = parentItems[i].children
 
         // Store the subtasks of parent task i in a list.
-        val childTasks = convertTreeItemsToList(childItems)
+        val childTasks = childItems.toFlatList()
 
         // Create a list containing one parent and its children.
         val oneFamily = mutableListOf<HomeworkTask>()
@@ -61,26 +59,11 @@ fun convertTreeToList(tree: TreeView<HomeworkTask>) : List<List<HomeworkTask>> {
  *
  * @return List of Homeworktasks.
  */
-fun convertTreeItemsToList(list: ObservableList<TreeItem<HomeworkTask>>) = list.map{ it.value }
+fun <H> ObservableList<TreeItem<H>>.toFlatList() = this.map {it.value}
 
 /**
  * Convert a List to an ObservableList.
  *
- * @param list List to be converted.
- *
  * @return Converted list.
  */
-@Deprecated("use extension method")
-fun convertArrayToObservableList(list: List<HomeworkTask>): ObservableList<HomeworkTask> = FXCollections.observableList(list)
-
-/**
- * Convert a List to an ObservableList.
- *
- * @param list List to be converted.
- *
- * @return Converted list.
- */
-fun List<HomeworkTask>.toObservableList(): ObservableList<HomeworkTask> = FXCollections.observableList(this)
-
-
-// todo make stuff in this file extension and generic
+fun <H> List<H>.toObservableList(): ObservableList<H> = FXCollections.observableList(this)

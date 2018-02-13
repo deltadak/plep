@@ -2,17 +2,16 @@ package deltadak.ui.taskcell;
 
 import deltadak.Database;
 import deltadak.HomeworkTask;
-import deltadak.database.DatabaseFacade;
 import deltadak.ui.Controller;
 import deltadak.ui.taskcell.checkbox.CheckBoxUpdater;
 import deltadak.ui.taskcell.contextmenu.ContextMenuCreator;
 import deltadak.ui.taskcell.courselabel.OnCourseLabelChangeUpdater;
 import deltadak.ui.taskcell.selection.SelectionCleaner;
 import deltadak.ui.taskcell.selection.Selector;
-import deltadak.ui.taskcell.subtasks.SubtasksCreator;
 import deltadak.ui.taskcell.subtasks.SubtasksEditor;
 import deltadak.ui.taskcell.textlabel.TextLabelStyle;
 import deltadak.ui.treeview.TreeViewCleaner;
+import deltadak.ui.util.STATIC.ConvertersKt;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
@@ -27,11 +26,8 @@ import javafx.scene.layout.Region;
 import javafx.scene.text.TextAlignment;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Objects;
 
-import static deltadak.ui.util.STATIC.ConvertersKt.convertTreeToList;
-import static deltadak.ui.util.STATIC.TaskRepeaterKt.repeatTask;
 import static java.lang.Math.min;
 
 /**
@@ -303,7 +299,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
                 // update tasks in database (old day?)
                 controller.updateParentDatabase(day,
                         controller.getParentTasks(
-                                convertTreeToList(tree)
+                                ConvertersKt.toHomeworkTaskList(tree)
                         )
                 );
 
@@ -366,7 +362,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
                 // update in database (new day?)
                 controller.updateParentDatabase(day,
                         controller.getParentTasks(
-                                convertTreeToList(tree)
+                                ConvertersKt.toHomeworkTaskList(tree)
                         )
                 );
 

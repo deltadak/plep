@@ -33,11 +33,6 @@ public class DeleteCommandTest {
             public ProgressIndicator getProgressIndicator() {
                 return new ProgressIndicator();
             }
-
-            @Override
-            public void cleanUp(TreeView<HomeworkTask> list) {
-                // do nothing
-            }
         };
         command = new DeleteCommand(dummy, dayState, list, 0, null);
     }

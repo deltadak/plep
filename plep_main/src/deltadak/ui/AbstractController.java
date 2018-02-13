@@ -18,13 +18,6 @@ import java.util.List;
 public interface AbstractController {
 
     /**
-     * removes empty rows, and then fills up with empty rows
-     *
-     * @param list to clean up
-     */
-    void cleanUp(TreeView<HomeworkTask> list);
-
-    /**
      * Getters for the fxml references.
      */
     ProgressIndicator getProgressIndicator();

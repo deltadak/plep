@@ -6,12 +6,12 @@ import deltadak.ui.taskcell.ChangeListenerWithBlocker
 import deltadak.ui.taskcell.TaskCell
 import deltadak.ui.taskcell.selection.Selector
 import deltadak.ui.taskcell.textlabel.TextLabelStyle
-import deltadak.ui.util.STATIC.convertTreeToList
+import deltadak.ui.util.STATIC.toHomeworkTaskList
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
-import javafx.scene.control.TreeView
 import javafx.scene.control.CheckBox
 import javafx.scene.control.ProgressIndicator
+import javafx.scene.control.TreeView
 import java.time.LocalDate
 
 @Suppress("UNUSED_ANONYMOUS_PARAMETER")
@@ -47,7 +47,7 @@ class CheckBoxUpdater(
 
             checkIfAllSubtasksAreDone(taskCell, tree)
 
-            DatabaseFacade(progressIndicator).pushData(localDate, convertTreeToList(tree))
+            DatabaseFacade(progressIndicator).pushData(localDate, tree.toHomeworkTaskList())
 
         }
 

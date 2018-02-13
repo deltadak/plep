@@ -55,8 +55,4 @@ class DummyController : AbstractController {
     override fun getProgressIndicator(): ProgressIndicator {
         return ProgressIndicator() // Do nothing, duh.
     }
-
-    override fun cleanUp(list: TreeView<HomeworkTask>) {
-        // lol?
-    }
 }

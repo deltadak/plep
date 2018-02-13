@@ -5,7 +5,7 @@ import deltadak.commands.DeleteCommand
 import deltadak.commands.DeleteSubtaskCommand
 import deltadak.commands.UndoFacility
 import deltadak.ui.Controller
-import deltadak.ui.util.STATIC.convertTreeToList
+import deltadak.ui.util.STATIC.toHomeworkTaskList
 import javafx.scene.control.TreeView
 import javafx.scene.input.KeyCode
 import java.time.LocalDate
@@ -44,7 +44,7 @@ class TaskDeletionInitialiser(
             undoFacility.execute(DeleteCommand(
                     controller,
                     localDate,
-                    convertTreeToList(tree),
+                    tree.toHomeworkTaskList(),
                     parentIndex,
                     tree
             ))
@@ -57,7 +57,7 @@ class TaskDeletionInitialiser(
             undoFacility.execute(DeleteSubtaskCommand(
                     controller,
                     localDate,
-                    convertTreeToList(tree),
+                    tree.toHomeworkTaskList(),
                     tree.selectionModel.selectedIndex,
                     tree
             ))
