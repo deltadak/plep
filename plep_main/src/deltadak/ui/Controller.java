@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import static deltadak.ui.treeview.UtilKt.getAllTreeViews;
 import static deltadak.ui.treeview.UtilKt.getTreeViewHeight;
 import static deltadak.ui.treeview.UtilKt.getTreeViewWidth;
 
@@ -367,34 +368,15 @@ public class Controller implements Initializable, AbstractController {
     }
     
     /**
-     * @return all TreeViews in the gridPane
-     */
-    private List<TreeView<HomeworkTask>> getAllTreeViews() {
-        List<TreeView<HomeworkTask>> listViews = new ArrayList<>();
-        for (Node node : gridPane.getChildren()) {
-            //gridpane contains vbox contains label, pane and treeview
-            if (node instanceof VBox) {
-                // we try to dig up the treeview in this vbox
-                for (Node subNode : ((Pane)node).getChildren()) {
-                    if (subNode instanceof TreeView) {
-                        listViews.add((TreeView<HomeworkTask>)subNode);
-                    }
-                }
-            }
-        }
-        return listViews;
-    }
-    
-    /**
      * Refreshes all treeviews using data from the database.
      */
-    @Deprecated
+    @Deprecated // ContentProvider#setForAllDays
     public void refreshAllDays() {
         // Use this so updating the UI works like it should, and the JavaFX
         // Application thread doesn't hang.
         Platform.runLater(() -> {
             // find all treeviews from the gridpane
-            List<TreeView<HomeworkTask>> treeViews = getAllTreeViews();
+            List<TreeView<HomeworkTask>> treeViews = getAllTreeViews(gridPane);
             
             for (int i = 0; i < numberOfDays; i++) {
                 TreeView<HomeworkTask> tree = treeViews.get(i);

@@ -6,6 +6,7 @@ import deltadak.ui.Controller
 import deltadak.ui.treeview.TreeViewCleaner
 import deltadak.ui.treeview.getParentTasks
 import deltadak.ui.util.STATIC.toObservableList
+import javafx.application.Platform
 import javafx.beans.value.ObservableValue
 import javafx.collections.ObservableList
 import javafx.concurrent.Task
@@ -20,9 +21,17 @@ import java.time.LocalDate
 class ContentProvider {
 
     /**
-     *
+     * Refreshes all treeviews using data from the database.
      */
     fun setForAllDays() {
+
+        // todo this on separate thread
+        // todo progressindicator here or even higher?
+        // todo pI check that all usages on lower levels check if its already on
+
+        Platform.runLater {
+
+        }
 
     }
 
