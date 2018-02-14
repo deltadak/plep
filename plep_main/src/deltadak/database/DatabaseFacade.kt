@@ -21,12 +21,43 @@ class DatabaseFacade(
      */
     fun pushData(day: LocalDate, homeworkTasks: List<List<HomeworkTask>> ) {
 
-        val task: Task<List<HomeworkTask>> = object : Task<List<HomeworkTask>>() {
+        val task: Task<Any> = object : Task<Any>() {
             @Throws(Exception::class)
             /** Specifies task. */
-            public override fun call(): List<HomeworkTask>? {
+            public override fun call() {
                 Database.INSTANCE.updateTasksDay(day, homeworkTasks)
-                return null
+            }
+        }
+
+        // Only switch it on and off if it's not yet on.
+        if (!progressIndicator.isVisible) {
+
+            // Switch on progress indicator.
+            progressIndicator.isVisible = true
+
+            // Switch off progress indicator.
+            task.setOnSucceeded { progressIndicator.isVisible = false }
+
+        }
+
+        // Database calls will be executed on a different thread.
+        executeMultithreading(task)
+
+    }
+
+    /**
+     * Update only the parent tasks in the database.
+     *
+     * @param day The day which contains the tasks.
+     * @param parentTasks The list with parents to update.
+     */
+    fun pushParentData(day: LocalDate, parentTasks: List<HomeworkTask>) {
+
+        val task: Task<Any> = object : Task<Any>() {
+            @Throws(Exception::class)
+            /** Specifies task. */
+            public override fun call() {
+                Database.INSTANCE.updateParentsDay(day, parentTasks)
             }
         }
 

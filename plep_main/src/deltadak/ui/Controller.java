@@ -354,30 +354,6 @@ public class Controller implements Initializable, AbstractController {
         focusDay = focusDay.plusDays(numberOfMovingDays);
         new GridPaneInitializer(this, undoFacility, progressIndicator).setup(gridPane, numberOfDays, focusDay, toolBar.getPrefHeight());
     }
-    
-    /**
-     * Update the parent tasks in the database. Used after dragging a task, we
-     * only have to update the parents, because the subtasks only depend on
-     * their parents, and are independent of the day and the order in the day.
-     *
-     * @param day
-     *         The day of which to update the tasks.
-     * @param parentTasks
-     *         The list with parents to update.
-     */
-    public void updateParentDatabase(LocalDate day,
-                                     List<HomeworkTask> parentTasks) {
-        progressIndicator.setVisible(true);
-        Task<HomeworkTask> task = new Task<HomeworkTask>() {
-            @Override
-            public HomeworkTask call() throws Exception {
-                Database.INSTANCE.updateParentsDay(day, parentTasks);
-                return null;
-            }
-        };
-        task.setOnSucceeded(e -> progressIndicator.setVisible(false));
-        exec.execute(task);
-    }
 
     /**
      * Getters for the fxml references.

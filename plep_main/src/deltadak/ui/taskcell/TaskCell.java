@@ -3,6 +3,7 @@ package deltadak.ui.taskcell;
 import deltadak.Database;
 import deltadak.HomeworkTask;
 import deltadak.database.ContentProvider;
+import deltadak.database.DatabaseFacade;
 import deltadak.ui.Controller;
 import deltadak.ui.taskcell.checkbox.CheckBoxUpdater;
 import deltadak.ui.taskcell.contextmenu.ContextMenuCreator;
@@ -120,7 +121,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
         setOnDragEntered(tree);
         setOnDragExited(tree);
         setOnDragDropped(tree, localDate, progressIndicator, gridPane, focusDay);
-        setOnDragDone(tree, localDate);
+        setOnDragDone(tree, localDate, progressIndicator);
 
         new SubtasksEditor(controller.getProgressIndicator(), tree, localDate).setup();
         
@@ -303,7 +304,8 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
                 }
                 success = true;
                 // update tasks in database (old day?)
-                controller.updateParentDatabase(day,
+                // we only have to update the parents, because the subtasks only depend on their parents, and are independent of the day and the order in the day.
+                new DatabaseFacade(progressIndicator).pushParentData(day,
                         getParentTasks(
                                 ConvertersKt.toHomeworkTaskList(tree)
                         )
@@ -331,7 +333,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
      * @param tree TreeView needed for updating the database
      * @param day LocalDate needed for updating the database
      */
-    void setOnDragDone(final TreeView<HomeworkTask> tree, final LocalDate day) {
+    void setOnDragDone(final TreeView<HomeworkTask> tree, final LocalDate day, ProgressIndicator progressIndicator) {
         setOnDragDone(event -> {
             //ensures the original element is only removed on a
             // valid copy transfer (no dropping outside listviews)
@@ -366,7 +368,8 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
                 }
 
                 // update in database (new day?)
-                controller.updateParentDatabase(day,
+                // we only have to update the parents, because the subtasks only depend on their parents, and are independent of the day and the order in the day.
+                new DatabaseFacade(progressIndicator).pushParentData(day,
                         getParentTasks(
                                 ConvertersKt.toHomeworkTaskList(tree)
                         )
