@@ -14,6 +14,7 @@ import javafx.scene.control.ProgressIndicator
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeView
 import javafx.scene.layout.AnchorPane
+import javafx.scene.layout.GridPane
 import java.time.LocalDate
 
 /**
@@ -30,16 +31,17 @@ class GridPaneInitializer(
     /**
      * Sets up TreeViews for each day, including the editing of items and more.
      *
+     * @param gridPane The GridPane to setup.
      * @param numberOfDays The total number of days to setup the gridpane with.
      * @param focusDate This date is the central date in the sense it is shown as the second day, which is by default today.
      */
-    fun setup(numberOfDays: Int, focusDate: LocalDate) {
+    fun setup(gridPane: GridPane, numberOfDays: Int, focusDate: LocalDate) {
 
         // Anchor the main GridPane to the bottom of the Toolbar.
-        AnchorPane.setTopAnchor(controller.gridPane, controller.toolBar.prefHeight)
+        AnchorPane.setTopAnchor(gridPane, controller.toolBar.prefHeight)
 
         // First clear the GridPane, especially of the day text.
-        controller.gridPane.children.clear()
+        gridPane.children.clear()
 
         // Find out whether the number of columns should be calculated automatically or is user overridden.
         val isAutoColumns: Boolean = Database.INSTANCE.getSetting(DatabaseSettings.MAX_COLUMNS_AUTO.settingsName).toBoolean()
@@ -63,13 +65,13 @@ class GridPaneInitializer(
             tree.isEditable = true
             tree.setCellFactory {
                 val treeCell = TaskCell(controller, tree.root)
-                treeCell.setup(tree, date)
+                treeCell.setup(tree, date, progressIndicator, gridPane, focusDate)
                 treeCell
             }
             tree.isShowRoot = false
 
             // Add the tree with title to the GridPane.
-            TreeContainer(tree, date).addTreeToGridPane(controller.gridPane, index, nrColumns)
+            TreeContainer(tree, date).addTreeToGridPane(gridPane, index, nrColumns)
 
             // Request the content to be set.
             ContentProvider().setForOneDay(tree, date, progressIndicator)

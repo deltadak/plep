@@ -2,6 +2,7 @@ package deltadak.ui.taskcell;
 
 import deltadak.Database;
 import deltadak.HomeworkTask;
+import deltadak.database.ContentProvider;
 import deltadak.ui.Controller;
 import deltadak.ui.taskcell.checkbox.CheckBoxUpdater;
 import deltadak.ui.taskcell.contextmenu.ContextMenuCreator;
@@ -20,6 +21,7 @@ import javafx.scene.control.cell.TextFieldTreeCell;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -91,8 +93,10 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
      *  - context menu.
      * @param tree The TreeView this TreeCell is a part of.
      * @param localDate The date to which this TreeView (and thus TreeCell) belongs.
+     * @param progressIndicator User feedback.
+     * @param gridPane Main UI element.
      */
-    public void setup(TreeView<HomeworkTask> tree, LocalDate localDate) {
+    public void setup(TreeView<HomeworkTask> tree, LocalDate localDate, ProgressIndicator progressIndicator, GridPane gridPane, LocalDate focusDay) {
         this.tree = tree;
 
         // update text on changes
@@ -114,13 +118,13 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
         setOnDragOver();
         setOnDragEntered(tree);
         setOnDragExited(tree);
-        setOnDragDropped(tree, localDate);
+        setOnDragDropped(tree, localDate, progressIndicator, gridPane, focusDay);
         setOnDragDone(tree, localDate);
 
         new SubtasksEditor(controller.getProgressIndicator(), tree, localDate).setup();
         
         // create the context menu
-        contextMenu = new ContextMenuCreator(controller, controller.getProgressIndicator(), this, localDate).create();
+        contextMenu = new ContextMenuCreator(controller, gridPane, focusDay, controller.getProgressIndicator(), this, localDate).create();
     }
     
     /**
@@ -272,8 +276,9 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
      *
      * @param tree TreeView needed for updating the database
      * @param day LocalDate needed for updating the database
+     * @param progressIndicator User feedback.
      */
-    void setOnDragDropped(final TreeView<HomeworkTask> tree, final LocalDate day) {
+    void setOnDragDropped(final TreeView<HomeworkTask> tree, final LocalDate day, ProgressIndicator progressIndicator, GridPane gridPane, LocalDate focusDay) {
         setOnDragDropped(event -> {
             Dragboard db = event.getDragboard();
             boolean success = false;
@@ -315,7 +320,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
             new TreeViewCleaner().cleanSingleTreeView(tree);
 
             // works to let the subtasks show up after the drag, except when dragging a task with subtasks in the same list...
-            controller.refreshAllDays();
+            new ContentProvider().setForAllDays(gridPane, focusDay, progressIndicator); // todo this is overkill refresh
         });
     }
     

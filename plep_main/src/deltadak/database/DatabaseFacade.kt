@@ -34,7 +34,6 @@ class DatabaseFacade(
         if (!progressIndicator.isVisible) {
 
             // Switch on progress indicator.
-            val progressIndicator = progressIndicator
             progressIndicator.isVisible = true
 
             // Switch off progress indicator.

@@ -92,8 +92,6 @@ public class Controller implements Initializable, AbstractController {
      */
     public int numberOfMovingDays;
 
-    private static final int MAX_LIST_LENGTH = 6;
-
     /** Default (initial) colors */
     public static final String[] DEFAULT_COLORS = new String[] {
             "ff1a00",
@@ -140,7 +138,7 @@ public class Controller implements Initializable, AbstractController {
                 .valueOf(getSetting(DatabaseSettings.NUMBER_OF_MOVING_DAYS.getSettingsName()));
         
         focusDay = LocalDate.now(); // set focus day to today
-        new GridPaneInitializer(this, undoFacility, progressIndicator).setup(numberOfDays, focusDay);
+        new GridPaneInitializer(this, undoFacility, progressIndicator).setup(gridPane, numberOfDays, focusDay);
         
         progressIndicator.setVisible(false);
         
@@ -248,7 +246,7 @@ public class Controller implements Initializable, AbstractController {
             tree.setCellFactory(param -> {
                 TaskCell treeCell = new TaskCell(this,
                                                              tree.getRoot());
-                treeCell.setup(tree, localDate);
+                treeCell.setup(tree, localDate, progressIndicator, gridPane, focusDay);
                 return treeCell;
             });
             
@@ -290,7 +288,7 @@ public class Controller implements Initializable, AbstractController {
                             today = LocalDate.now();
                             // Also update focusDay, before refreshing.
                             focusDay = today;
-                            new GridPaneInitializer(this, undoFacility, progressIndicator).setup(numberOfDays, focusDay);
+                            new GridPaneInitializer(this, undoFacility, progressIndicator).setup(gridPane, numberOfDays, focusDay);
                         }
                     }
                 });
@@ -378,7 +376,7 @@ public class Controller implements Initializable, AbstractController {
             // find all treeviews from the gridpane
             List<TreeView<HomeworkTask>> treeViews = getAllTreeViews(gridPane);
             
-            for (int i = 0; i < numberOfDays; i++) {
+            for (int i = 0; i < treeViews.size(); i++) {
                 TreeView<HomeworkTask> tree = treeViews.get(i);
                 // create a list to store if the items are expanded
                 List<Boolean> expanded = new ArrayList<>();
@@ -465,7 +463,7 @@ public class Controller implements Initializable, AbstractController {
     @FXML
     protected void dayBackward() {
         focusDay = focusDay.plusDays(-numberOfMovingDays);
-        new GridPaneInitializer(this, undoFacility, progressIndicator).setup(numberOfDays, focusDay);
+        new GridPaneInitializer(this, undoFacility, progressIndicator).setup(gridPane, numberOfDays, focusDay);
     }
     
     /**
@@ -475,7 +473,7 @@ public class Controller implements Initializable, AbstractController {
     protected void goToToday() {
         //        refreshAllDays();
         focusDay = LocalDate.now();
-        new GridPaneInitializer(this, undoFacility, progressIndicator).setup(numberOfDays, focusDay);
+        new GridPaneInitializer(this, undoFacility, progressIndicator).setup(gridPane, numberOfDays, focusDay);
     }
     
     /**
@@ -484,7 +482,7 @@ public class Controller implements Initializable, AbstractController {
     @FXML
     protected void dayForward() {
         focusDay = focusDay.plusDays(numberOfMovingDays);
-        new GridPaneInitializer(this, undoFacility, progressIndicator).setup(numberOfDays, focusDay);
+        new GridPaneInitializer(this, undoFacility, progressIndicator).setup(gridPane, numberOfDays, focusDay);
     }
     
     /**

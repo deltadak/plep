@@ -4,6 +4,7 @@ import deltadak.Database
 import deltadak.HomeworkTask
 import deltadak.ui.Controller
 import deltadak.ui.treeview.TreeViewCleaner
+import deltadak.ui.treeview.getAllTreeViews
 import deltadak.ui.treeview.getParentTasks
 import deltadak.ui.util.STATIC.toObservableList
 import javafx.application.Platform
@@ -13,6 +14,7 @@ import javafx.concurrent.Task
 import javafx.scene.control.ProgressIndicator
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeView
+import javafx.scene.layout.GridPane
 import java.time.LocalDate
 
 /**
@@ -22,16 +24,29 @@ class ContentProvider {
 
     /**
      * Refreshes all treeviews using data from the database.
+     *
+     * @param gridPane The GridPane to fill with content.
+     * @param focusDay The day which the second TreeView should belong to.
+     * @param progressIndicator To show user feedback.
      */
-    fun setForAllDays() {
+    fun setForAllDays(gridPane: GridPane, focusDay: LocalDate, progressIndicator: ProgressIndicator) {
 
-        // todo this on separate thread
-        // todo progressindicator here or even higher?
-        // todo pI check that all usages on lower levels check if its already on
+        val task: Task<Any> = object : Task<Any>() {
+            @Throws(Exception::class)
+            /** Specifies task. */
+            public override fun call(): Any? {
 
-        Platform.runLater {
+                val treeViews = getAllTreeViews(gridPane)
+                for (i in 0 until treeViews.size) {
+                    val date = focusDay.plusDays(i .toLong() - 1)
+                    setForOneDay(treeViews[i], date, progressIndicator)
+                }
 
+                return null
+            }
         }
+
+        executeMultithreading(task)
 
     }
 

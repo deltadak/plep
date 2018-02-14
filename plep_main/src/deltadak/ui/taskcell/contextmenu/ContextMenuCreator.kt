@@ -9,6 +9,7 @@ import deltadak.ui.util.STATIC.LABEL_COLOR_CONTEXT_MENU_ITEMS
 import deltadak.ui.util.STATIC.repeatTask
 import deltadak.ui.util.STATIC.toHomeworkTaskList
 import javafx.scene.control.*
+import javafx.scene.layout.GridPane
 import java.time.LocalDate
 
 /**
@@ -17,6 +18,10 @@ import java.time.LocalDate
 class ContextMenuCreator(
         /** The main Controller */
         val controller: Controller,
+        /** The main UI element. */
+        val gridPane: GridPane,
+        /** The current focused day. */
+        val focusDay: LocalDate,
         /** For user feedback. */
         val progressIndicator: ProgressIndicator,
         /** The TaskCell to set a context menu on. */
@@ -48,7 +53,7 @@ class ContextMenuCreator(
         contextMenu.items.add(addSubTaskMenuItem)
 
         // Add a menu item for repetition of tasks.
-        val repeatTasksMenu: Menu = createRepeatMenu()
+        val repeatTasksMenu: Menu = createRepeatMenu(gridPane, focusDay)
         contextMenu.items.add(repeatTasksMenu)
 
         // Add a horizontal line as separator.
@@ -79,15 +84,18 @@ class ContextMenuCreator(
     /**
      * Creates the Menu which provides an option to repeat a task weekly, for the next x weeks.
      *
+     * @param gridPane Needed for repeatTask to refresh the UI.
+     * @param focusDay Needed for repeatTask to refresh the UI.
+     *
      * @return A drop down Menu.
      */
-    private fun createRepeatMenu(): Menu {
+    private fun createRepeatMenu(gridPane: GridPane, focusDay: LocalDate): Menu {
         // Initialize the numbers as menu items.
         val repeatTasksMenu = Menu("Repeat for x weeks")
         for (i in 1..numberOfWeeksToRepeat) {
             val menuItem = MenuItem("$i")
             menuItem.setOnAction {
-                repeatTask(controller, repeatNumber = i, task = taskCell.item, day = day)
+                repeatTask(gridPane, repeatNumber = i, task = taskCell.item, day = day, focusDay = focusDay, progressIndicator = progressIndicator)
             }
             repeatTasksMenu.items.add(menuItem)
         }
