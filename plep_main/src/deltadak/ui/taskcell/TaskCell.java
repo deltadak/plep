@@ -170,7 +170,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
     
             // Get style from the database and apply to the item
             int colorID = homeworkTask.getColorID();
-            String color = controller.getColorFromDatabase(colorID);
+            String color = Database.INSTANCE.getColorFromDatabase(colorID);
 
             setStyle("-fx-control-inner-background: #" + color);
     

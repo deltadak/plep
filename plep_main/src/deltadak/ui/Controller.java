@@ -3,37 +3,28 @@ package deltadak.ui;
 import deltadak.Database;
 import deltadak.HomeworkTask;
 import deltadak.commands.UndoFacility;
-import deltadak.database.ContentProvider;
 import deltadak.database.DatabaseSettings;
-import deltadak.deletion.TaskDeletionInitialiser;
 import deltadak.ui.gridpane.GridPaneInitializer;
-import deltadak.ui.gridpane.TreeContainer;
 import deltadak.ui.taskcell.TaskCell;
-import deltadak.ui.treeview.TreeViewCleaner;
-import deltadak.ui.util.STATIC.ConvertersKt;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.input.*;
-import javafx.scene.layout.*;
+import javafx.scene.input.DataFormat;
+import javafx.scene.input.KeyCode;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import javafx.concurrent.Task;
 
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.ArrayList;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-
-import static deltadak.ui.treeview.UtilKt.getAllTreeViews;
-import static deltadak.ui.treeview.UtilKt.getTreeViewHeight;
-import static deltadak.ui.treeview.UtilKt.getTreeViewWidth;
-import static deltadak.ui.util.STATIC.ConvertersKt.getParentTasks;
 
 /**
  * Class to control the UI
@@ -130,13 +121,13 @@ public class Controller implements Initializable, AbstractController {
             t.setDaemon(true);
             return t;
         });
+
+        Database.INSTANCE.setDefaultDatabasePath();
+        Database.INSTANCE.createTables(); // if not already exists
         
-        setDefaultDatabasePath();
-        createTables(); // if not already exists
-        
-        numberOfDays = Integer.valueOf(getSetting(DatabaseSettings.NUMBER_OF_DAYS.getSettingsName()));
+        numberOfDays = Integer.valueOf(Database.INSTANCE.getSetting(DatabaseSettings.NUMBER_OF_DAYS.getSettingsName()));
         numberOfMovingDays = Integer
-                .valueOf(getSetting(DatabaseSettings.NUMBER_OF_MOVING_DAYS.getSettingsName()));
+                .valueOf(Database.INSTANCE.getSetting(DatabaseSettings.NUMBER_OF_MOVING_DAYS.getSettingsName()));
         
         focusDay = LocalDate.now(); // set focus day to today
         new GridPaneInitializer(this, undoFacility, progressIndicator).setup(gridPane, numberOfDays, focusDay, toolBar.getPrefHeight());
@@ -297,7 +288,7 @@ public class Controller implements Initializable, AbstractController {
         
         Platform.runLater(() -> {
             
-            String colorString = getColorFromDatabase(colorID);
+            String colorString = Database.INSTANCE.getColorFromDatabase(colorID);
             
             if (colorID == 4) {
                 taskCell.setStyle("-fx-text-fill: none");
@@ -310,16 +301,6 @@ public class Controller implements Initializable, AbstractController {
             
         });
         
-    }
-    
-    /**
-     * Removes the TreeItem from the TreeView it's in.
-     *
-     * @param item
-     *         The TreeItem to be removed.
-     */
-    void removeItemFromTreeView(TreeItem<HomeworkTask> item) {
-        item.getParent().getChildren().remove(item);
     }
     
     /**
@@ -375,29 +356,6 @@ public class Controller implements Initializable, AbstractController {
     }
     
     /**
-     * Gets a TreeItem from the database, using its id.
-     *
-     * @param tree
-     *         The tree to search for the tree item.
-     * @param id
-     *         The id of the tree item.
-     *
-     * @return TreeItem<HomeworkTask>
-     */
-    private TreeItem<HomeworkTask> findTreeItemById(TreeView<HomeworkTask> tree,
-                                                    int id) {
-        
-        List<TreeItem<HomeworkTask>> parents = tree.getRoot().getChildren();
-        
-        for (TreeItem<HomeworkTask> parent : parents) {
-            if (parent.getValue().getDatabaseID() == id) {
-                return parent;
-            }
-        }
-        return null;
-    }
-    
-    /**
      * Update the parent tasks in the database. Used after dragging a task, we
      * only have to update the parents, because the subtasks only depend on
      * their parents, and are independent of the day and the order in the day.
@@ -413,104 +371,12 @@ public class Controller implements Initializable, AbstractController {
         Task<HomeworkTask> task = new Task<HomeworkTask>() {
             @Override
             public HomeworkTask call() throws Exception {
-                updateParentsSynced(day, parentTasks);
+                Database.INSTANCE.updateParentsDay(day, parentTasks);
                 return null;
             }
         };
         task.setOnSucceeded(e -> progressIndicator.setVisible(false));
         exec.execute(task);
-    }
-    
-    /*
-     * Database methods, Database is a singleton using the enum structure.
-     * For corresponding javadoc see Database.
-     */
-    
-    /**
-     * See {@link Database#setDefaultDatabasePath()}.
-     */
-    private void setDefaultDatabasePath() {
-        Database.INSTANCE.setDefaultDatabasePath();
-    }
-    
-    /**
-     * See {@link Database#createTables()}.
-     */
-    private void createTables() {
-        Database.INSTANCE.createTables();
-    }
-    
-    /**
-     * See {@link Database#getTasksDay(LocalDate)}.
-     *
-     * @param localDate
-     *         Same.
-     *
-     * @return Same.
-     */
-    public synchronized List<List<HomeworkTask>> getDatabaseSynced(
-            final LocalDate localDate) {
-        return Database.INSTANCE.getTasksDay(localDate);
-    }
-    
-    /**
-     * See {@link Database#updateParentsDay(LocalDate, List)}
-     *
-     * @param day
-     *         Same.
-     * @param parentTasks
-     *         Same.
-     */
-    synchronized void updateParentsSynced(final LocalDate day,
-                                          final List<HomeworkTask> parentTasks) {
-        Database.INSTANCE.updateParentsDay(day, parentTasks);
-    }
-    
-    /**
-     * See {@link Database#insertOrUpdateTask(LocalDate, HomeworkTask, int)}
-     *
-     * @param day
-     *         Same.
-     * @param task
-     *         Same.
-     * @param orderInDay
-     *         Same.
-     */
-    synchronized void insertOrUpdateTask(final LocalDate day,
-                                         final HomeworkTask task,
-                                         final int orderInDay) {
-        Database.INSTANCE.insertOrUpdateTask(day, task, orderInDay);
-    }
-    
-    /**
-     * See {@link Database#getParentTasksDay(LocalDate)}
-     *
-     * @param day
-     *         Same.
-     *
-     * @return Same.
-     */
-    public List<HomeworkTask> getParentTasksDay(final LocalDate day) {
-        return Database.INSTANCE.getParentTasksDay(day);
-    }
-    
-    /**
-     * See {@link Database#getSetting(String)}
-     *
-     * @param name Same.
-     * @return Same.
-     */
-    private String getSetting(String name) {
-        return Database.INSTANCE.getSetting(name);
-    }
-
-    /**
-     * See {@link Database#getColorFromDatabase(int)}
-     * @param colorID same
-     * @return same
-     */
-    public String getColorFromDatabase(int colorID) {
-        return Database.INSTANCE.getColorFromDatabase(colorID);
     }
 
     /**

@@ -87,7 +87,7 @@ public enum Database {
      *
      * @return List<List<HomeworkTask>>
      */
-    public List<List<HomeworkTask>> getTasksDay(final LocalDate day) {
+    public synchronized List<List<HomeworkTask>> getTasksDay(final LocalDate day) {
         
         // create the list to eventually return
         List<List<HomeworkTask>> homeworkTasks = new ArrayList<>();
@@ -177,7 +177,7 @@ public enum Database {
      * @param parentTasks
      *         The List<HomeworkTask> with 'new' parents.
      */
-    public void updateParentsDay(final LocalDate day,
+    public synchronized void updateParentsDay(final LocalDate day,
                                  final List<HomeworkTask> parentTasks) {
         
         // insert or update the parent tasks in the database
