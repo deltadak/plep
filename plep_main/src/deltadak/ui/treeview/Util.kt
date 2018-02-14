@@ -31,15 +31,6 @@ fun getTreeViewWidth(columns: Int): Int {
 }
 
 /**
- * Get all the parent tasks when given a list of lists of HomeworkTasks, assuming that the first item of a sublist is the parent task.
- *
- * @param homeworkFamilies The list of lists to get the parent tasks from.
- *
- * @return A list of HomeworkTasks, which are the parent tasks.
- */
-fun List<List<HomeworkTask>>.getParentTasks(): List<HomeworkTask> = this.map { it[0] }
-
-/**
  * Find all TreeViews in the GridPane.
  *
  * @param gridPane To search in for TreeViews.

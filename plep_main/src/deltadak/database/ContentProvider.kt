@@ -2,12 +2,10 @@ package deltadak.database
 
 import deltadak.Database
 import deltadak.HomeworkTask
-import deltadak.ui.Controller
 import deltadak.ui.treeview.TreeViewCleaner
 import deltadak.ui.treeview.getAllTreeViews
-import deltadak.ui.treeview.getParentTasks
+import deltadak.ui.util.STATIC.getParentTasks
 import deltadak.ui.util.STATIC.toObservableList
-import javafx.application.Platform
 import javafx.beans.value.ObservableValue
 import javafx.collections.ObservableList
 import javafx.concurrent.Task

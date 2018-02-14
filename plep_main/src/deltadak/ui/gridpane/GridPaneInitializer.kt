@@ -35,10 +35,10 @@ class GridPaneInitializer(
      * @param numberOfDays The total number of days to setup the gridpane with.
      * @param focusDate This date is the central date in the sense it is shown as the second day, which is by default today.
      */
-    fun setup(gridPane: GridPane, numberOfDays: Int, focusDate: LocalDate) {
+    fun setup(gridPane: GridPane, numberOfDays: Int, focusDate: LocalDate, toolBarHeight: Double) {
 
         // Anchor the main GridPane to the bottom of the Toolbar.
-        AnchorPane.setTopAnchor(gridPane, controller.toolBar.prefHeight)
+        AnchorPane.setTopAnchor(gridPane, toolBarHeight) //toolBar.prefHeight
 
         // First clear the GridPane, especially of the day text.
         gridPane.children.clear()

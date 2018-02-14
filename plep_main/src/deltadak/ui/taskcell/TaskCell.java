@@ -30,6 +30,7 @@ import javafx.scene.text.TextAlignment;
 import java.time.LocalDate;
 import java.util.Objects;
 
+import static deltadak.ui.util.STATIC.ConvertersKt.getParentTasks;
 import static java.lang.Math.min;
 
 /**
@@ -303,7 +304,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
                 success = true;
                 // update tasks in database (old day?)
                 controller.updateParentDatabase(day,
-                        controller.getParentTasks(
+                        getParentTasks(
                                 ConvertersKt.toHomeworkTaskList(tree)
                         )
                 );
@@ -366,7 +367,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
 
                 // update in database (new day?)
                 controller.updateParentDatabase(day,
-                        controller.getParentTasks(
+                        getParentTasks(
                                 ConvertersKt.toHomeworkTaskList(tree)
                         )
                 );

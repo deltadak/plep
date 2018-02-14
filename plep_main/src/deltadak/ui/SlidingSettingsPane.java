@@ -2,6 +2,7 @@ package deltadak.ui;
 
 import deltadak.Database;
 import deltadak.database.DatabaseSettings;
+import deltadak.ui.gridpane.GridPaneInitializer;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -139,7 +140,7 @@ public class SlidingSettingsPane extends SlidingPane {
         labelsList.setOnEditCommit(event -> {
             labelsList.getItems().set(event.getIndex(), event.getNewValue());
             updateLabel(event.getIndex(), event.getNewValue());
-            controller.setupGridPane(controller.focusDay);
+            new GridPaneInitializer(controller, controller.undoFacility, controller.progressIndicator).setup(gridPane, controller.numberOfDays, controller.focusDay, controller.toolBar.getPrefHeight());
         });
         
         editLabelsPane.getChildren().add(labelsList);
@@ -175,7 +176,7 @@ public class SlidingSettingsPane extends SlidingPane {
         Database.INSTANCE
                 .updateColor(id, convertColorToWeb(colorPicker.getValue()));
 
-        controller.setupGridPane(controller.focusDay);
+        new GridPaneInitializer(controller, controller.undoFacility, controller.progressIndicator).setup(gridPane, controller.numberOfDays, controller.focusDay, controller.toolBar.getPrefHeight());
         
     }
     
@@ -263,7 +264,7 @@ public class SlidingSettingsPane extends SlidingPane {
         // string, so we can edit it again
         labelsList.getItems().set(selectedIndex, "");
         updateLabel(selectedIndex, "");
-        controller.setupGridPane(controller.focusDay);
+        new GridPaneInitializer(controller, controller.undoFacility, controller.progressIndicator).setup(gridPane, controller.numberOfDays, controller.focusDay, controller.toolBar.getPrefHeight());
     }
     
     /**
@@ -275,8 +276,8 @@ public class SlidingSettingsPane extends SlidingPane {
         // update the value in the database
         updateSetting(DatabaseSettings.NUMBER_OF_MOVING_DAYS.getSettingsName(),
                       String.valueOf(controller.numberOfMovingDays));
-        
-        controller.setupGridPane(controller.focusDay);
+
+        new GridPaneInitializer(controller, controller.undoFacility, controller.progressIndicator).setup(gridPane, controller.numberOfDays, controller.focusDay, controller.toolBar.getPrefHeight());
     }
     
     /**
@@ -288,7 +289,7 @@ public class SlidingSettingsPane extends SlidingPane {
         
         updateSetting(DatabaseSettings.NUMBER_OF_DAYS.getSettingsName(),
                       String.valueOf(controller.numberOfDays));
-        controller.setupGridPane(controller.focusDay);
+        new GridPaneInitializer(controller, controller.undoFacility, controller.progressIndicator).setup(gridPane, controller.numberOfDays, controller.focusDay, controller.toolBar.getPrefHeight());
     }
     
     /**
@@ -302,7 +303,7 @@ public class SlidingSettingsPane extends SlidingPane {
         updateSetting(DatabaseSettings.MAX_COLUMNS.getSettingsName(),
                       String.valueOf(maxColumns));
         autoColumnsCheckBox.setSelected(false);
-        controller.setupGridPane(controller.focusDay);
+        new GridPaneInitializer(controller, controller.undoFacility, controller.progressIndicator).setup(gridPane, controller.numberOfDays, controller.focusDay, controller.toolBar.getPrefHeight());
     }
     
     /**
@@ -318,7 +319,7 @@ public class SlidingSettingsPane extends SlidingPane {
         updateSetting(DatabaseSettings.MAX_COLUMNS_AUTO.getSettingsName(),
                       String.valueOf(newValue));
         // The controller will request settings from the database again.
-        controller.setupGridPane(controller.focusDay);
+        new GridPaneInitializer(controller, controller.undoFacility, controller.progressIndicator).setup(gridPane, controller.numberOfDays, controller.focusDay, controller.toolBar.getPrefHeight());
         
         // update spinner to reflect auto mode on
         if (newValue) {

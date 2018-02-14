@@ -11,6 +11,13 @@ import javafx.scene.control.TreeView
  */
 
 /**
+ * Get all the parent tasks when given a list of lists of HomeworkTasks, assuming that the first item of a sublist is the parent task.
+ *
+ * @return A list of HomeworkTasks, which are the parent tasks.
+ */
+fun List<List<HomeworkTask>>.getParentTasks(): List<HomeworkTask> = this.map { it[0] }
+
+/**
  * Converts a TreeView to a list of lists of tasks. The first item of each
  * list is the parent task, the items after that are its subtasks.
  *

@@ -33,6 +33,7 @@ import java.util.concurrent.Executors;
 import static deltadak.ui.treeview.UtilKt.getAllTreeViews;
 import static deltadak.ui.treeview.UtilKt.getTreeViewHeight;
 import static deltadak.ui.treeview.UtilKt.getTreeViewWidth;
+import static deltadak.ui.util.STATIC.ConvertersKt.getParentTasks;
 
 /**
  * Class to control the UI
@@ -138,7 +139,7 @@ public class Controller implements Initializable, AbstractController {
                 .valueOf(getSetting(DatabaseSettings.NUMBER_OF_MOVING_DAYS.getSettingsName()));
         
         focusDay = LocalDate.now(); // set focus day to today
-        new GridPaneInitializer(this, undoFacility, progressIndicator).setup(gridPane, numberOfDays, focusDay);
+        new GridPaneInitializer(this, undoFacility, progressIndicator).setup(gridPane, numberOfDays, focusDay, toolBar.getPrefHeight());
         
         progressIndicator.setVisible(false);
         
@@ -211,64 +212,6 @@ public class Controller implements Initializable, AbstractController {
     }
     
     /**
-     * sets up listviews for each day, initializes drag and drop, editing items
-     *
-     * @param focusDate
-     *         date that is the top middle one (is today on default)
-     */
-    @Deprecated
-    public void setupGridPane(LocalDate focusDate) {
-        
-        boolean isAuto = Boolean.valueOf(getSetting(DatabaseSettings.MAX_COLUMNS_AUTO.getSettingsName()));
-        int maxColumns;
-        if (isAuto) {
-            maxColumns = maxColumns(numberOfDays);
-        } else {
-            maxColumns = Integer.valueOf(getSetting(DatabaseSettings.MAX_COLUMNS.getSettingsName()));
-        }
-        
-        AnchorPane.setTopAnchor(gridPane, toolBar.getPrefHeight());
-        
-        // first clear the gridpane so we don't get titles overlaying each other
-        gridPane.getChildren().clear();
-        for (int index = 0; index < numberOfDays; index++) {
-            
-            // add days immediately, otherwise we can't use localDate in a
-            // lambda expression (as it is not final)
-            LocalDate localDate = focusDate.plusDays(index - 1);
-            
-            TreeItem<HomeworkTask> rootItem = new TreeItem<>(
-                    new HomeworkTask());
-            rootItem.setExpanded(true);
-            final TreeView<HomeworkTask> tree = new TreeView<>(rootItem);
-            
-            tree.setEditable(true);
-            tree.setCellFactory(param -> {
-                TaskCell treeCell = new TaskCell(this,
-                                                             tree.getRoot());
-                treeCell.setup(tree, localDate, progressIndicator, gridPane, focusDay);
-                return treeCell;
-            });
-            
-            tree.setShowRoot(false);
-            
-            new TreeContainer(tree, localDate).addTreeToGridPane(gridPane, index, maxColumns);
-            
-            // Request content on a separate thread, and hope the content
-            // will be set eventually.
-//            refreshDay(tree, localDate);
-            new ContentProvider().setForOneDay(tree, localDate, progressIndicator);
-            
-            // add the delete key listener
-            new TaskDeletionInitialiser(progressIndicator, undoFacility).addDeleteKeyListener(tree, localDate);
-            
-            tree.setPrefWidth(getTreeViewWidth(maxColumns));
-            tree.setPrefHeight(getTreeViewHeight(maxColumns, numberOfDays));
-        }
-        
-    }
-    
-    /**
      * Sets a listener which checks if it is a new day, when the window becomes
      * focused.
      *
@@ -288,7 +231,7 @@ public class Controller implements Initializable, AbstractController {
                             today = LocalDate.now();
                             // Also update focusDay, before refreshing.
                             focusDay = today;
-                            new GridPaneInitializer(this, undoFacility, progressIndicator).setup(gridPane, numberOfDays, focusDay);
+                            new GridPaneInitializer(this, undoFacility, progressIndicator).setup(gridPane, numberOfDays, focusDay, toolBar.getPrefHeight());
                         }
                     }
                 });
@@ -340,60 +283,6 @@ public class Controller implements Initializable, AbstractController {
     public List<HomeworkTask> convertObservableListToArrayList(
             final ObservableList<HomeworkTask> list) {
         return new ArrayList<>(list);
-    }
-    
-    /**
-     * Get all the parents (or head tasks) when given a list of lists of
-     * HomeworkTasks.
-     *
-     * @param homeworkFamilies
-     *         The list of lists to get the parent tasks from.
-     *
-     * @return A list of HomeworkTasks, which are the parent tasks.
-     */
-    @Deprecated
-    public List<HomeworkTask> getParentTasks(
-            List<List<HomeworkTask>> homeworkFamilies) {
-        
-        // create the list with HomeworkTasks to return
-        List<HomeworkTask> parentTasks = new ArrayList<>();
-        
-        // add the first item of each list to parentTasks
-        for (List<HomeworkTask> homeworkFamily : homeworkFamilies) {
-            parentTasks.add(homeworkFamily.get(0));
-        }
-        return parentTasks;
-    }
-    
-    /**
-     * Refreshes all treeviews using data from the database.
-     */
-    @Deprecated // ContentProvider#setForAllDays
-    public void refreshAllDays() {
-        // Use this so updating the UI works like it should, and the JavaFX
-        // Application thread doesn't hang.
-        Platform.runLater(() -> {
-            // find all treeviews from the gridpane
-            List<TreeView<HomeworkTask>> treeViews = getAllTreeViews(gridPane);
-            
-            for (int i = 0; i < treeViews.size(); i++) {
-                TreeView<HomeworkTask> tree = treeViews.get(i);
-                // create a list to store if the items are expanded
-                List<Boolean> expanded = new ArrayList<>();
-                
-                for (int j = 0; j < tree.getRoot().getChildren().size(); j++) {
-                    // loop through the tree to add all the booleans
-                    expanded.add(
-                            tree.getRoot().getChildren().get(j).isExpanded());
-                }
-                
-                // refresh the treeview from database
-                LocalDate localDate = focusDay.plusDays(i - 1);
-                new ContentProvider().setForOneDay(tree, localDate, progressIndicator);
-            }
-            
-        });
-        
     }
     
     /**
@@ -463,7 +352,7 @@ public class Controller implements Initializable, AbstractController {
     @FXML
     protected void dayBackward() {
         focusDay = focusDay.plusDays(-numberOfMovingDays);
-        new GridPaneInitializer(this, undoFacility, progressIndicator).setup(gridPane, numberOfDays, focusDay);
+        new GridPaneInitializer(this, undoFacility, progressIndicator).setup(gridPane, numberOfDays, focusDay, toolBar.getPrefHeight());
     }
     
     /**
@@ -473,7 +362,7 @@ public class Controller implements Initializable, AbstractController {
     protected void goToToday() {
         //        refreshAllDays();
         focusDay = LocalDate.now();
-        new GridPaneInitializer(this, undoFacility, progressIndicator).setup(gridPane, numberOfDays, focusDay);
+        new GridPaneInitializer(this, undoFacility, progressIndicator).setup(gridPane, numberOfDays, focusDay, toolBar.getPrefHeight());
     }
     
     /**
@@ -482,92 +371,7 @@ public class Controller implements Initializable, AbstractController {
     @FXML
     protected void dayForward() {
         focusDay = focusDay.plusDays(numberOfMovingDays);
-        new GridPaneInitializer(this, undoFacility, progressIndicator).setup(gridPane, numberOfDays, focusDay);
-    }
-    
-    /**
-     * Requests tasks from database, and when done updates the treeview.
-     *
-     * @param tree
-     *         TreeView to be updated.
-     * @param localDate
-     *         The day for which to request tasks.
-     */
-    @Deprecated
-    public void refreshDay(TreeView<HomeworkTask> tree, LocalDate localDate) {
-        progressIndicator.setVisible(true);
-        
-        Task task = new Task() {
-            @Override
-            public Boolean call() throws Exception {
-                // below two database accessors take noticable time
-                
-                // get tasks from the database
-                List<List<HomeworkTask>> allTasks = getDatabaseSynced(
-                        localDate);
-                // get the homework task ids and their corresponding expanded
-                // state from the database, as tuples
-                //                List<Map.Entry<Integer, Boolean>>
-                // allExpandedTasks = getExpandedFromDatabase();
-                // list with the parent tasks
-                ObservableList<HomeworkTask> list
-                        = ConvertersKt.toObservableList(getParentTasks(allTasks));
-                // clear all the items currently showing in the TreeView
-                tree.getRoot().getChildren().clear();
-                
-                // add the items from the database to the TreeView
-                for (int i = 0; i < list.size(); i++) {
-                    // add the parent task to the tree
-                    TreeItem<HomeworkTask> item = new TreeItem<>(list.get(i));
-                    tree.getRoot().getChildren().add(item);
-                    
-                    item.setExpanded(item.getValue().getExpanded());
-                    
-                    int orderInDay = i;
-                    // When expanded state changes, save to database.
-                    item.expandedProperty()
-                            .addListener((observable, oldValue, newValue) -> {
-                                // update the task in the database, with the
-                                // new value for expanded
-                                HomeworkTask task = item.getValue();
-                                task.setExpanded(newValue);
-                                insertOrUpdateTask(localDate, task, orderInDay);
-                            });
-                    
-                    // get the size of the current family, or the number of
-                    // subtasks + 1 (the parent)
-                    int familySize = allTasks.get(i).size();
-                    // add every subtask to the tree as a child of the parent
-                    // task
-                    // we start at j=1 because the first item is the parent task
-                    for (int j = 1; j < familySize; j++) {
-                        // get the subtask
-                        TreeItem<HomeworkTask> childTask = new TreeItem<>(
-                                allTasks.get(i).get(j));
-                        // add the subtask
-                        tree.getRoot().getChildren().get(i).getChildren()
-                                .add(childTask);
-                    }
-                    
-                    // Insert an empty subtask at the end to allow the user
-                    // to easily add more.
-                    if (familySize > 1) {
-                        tree.getRoot().getChildren().get(i).getChildren()
-                                .add(new TreeItem<>(new HomeworkTask()));
-                    }
-                }
-                
-                return true;
-            }
-        };
-        
-        task.setOnSucceeded(e -> {
-            new TreeViewCleaner().cleanSingleTreeView(tree);
-            progressIndicator.setVisible(false);
-            
-        });
-        
-        exec.execute(task);
+        new GridPaneInitializer(this, undoFacility, progressIndicator).setup(gridPane, numberOfDays, focusDay, toolBar.getPrefHeight());
     }
     
     /**
