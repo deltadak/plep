@@ -2,7 +2,7 @@ package deltadak.ui.taskcell.subtasks
 
 import deltadak.HomeworkTask
 import deltadak.database.DatabaseFacade
-import deltadak.ui.util.STATIC.toHomeworkTaskList
+import deltadak.ui.util.toHomeworkTaskList
 import javafx.scene.control.ProgressIndicator
 import javafx.scene.control.TreeView
 import java.time.LocalDate

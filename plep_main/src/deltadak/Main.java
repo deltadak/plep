@@ -25,7 +25,7 @@ public class Main extends Application {
         
         //used to invoke a setup method in controller which needs the stage
         Controller controller = loader.getController();
-        controller.setDayChangeListener(primaryStage);
+        new DayChangeListener(controller).setup(primaryStage);
         
         primaryStage.setTitle("Plep");
         primaryStage.setScene(new Scene(root, 0, 0));

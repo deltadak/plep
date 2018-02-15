@@ -3,7 +3,7 @@ package deltadak.ui.taskcell.courselabel
 import deltadak.HomeworkTask
 import deltadak.database.DatabaseFacade
 import deltadak.ui.taskcell.InvalidationListenerWithBlocker
-import deltadak.ui.util.STATIC.toHomeworkTaskList
+import deltadak.ui.util.toHomeworkTaskList
 import javafx.application.Platform
 import javafx.beans.Observable
 import javafx.beans.value.ObservableValue

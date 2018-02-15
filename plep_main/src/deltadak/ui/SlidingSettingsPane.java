@@ -3,6 +3,7 @@ package deltadak.ui;
 import deltadak.Database;
 import deltadak.database.DatabaseSettings;
 import deltadak.ui.gridpane.GridPaneInitializer;
+import deltadak.ui.util.LayoutKt;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -323,7 +324,7 @@ public class SlidingSettingsPane extends SlidingPane {
         
         // update spinner to reflect auto mode on
         if (newValue) {
-            int columns = controller.maxColumns(controller.numberOfDays);
+            int columns = LayoutKt.getNumberOfColumns(controller.numberOfDays);
             maxColumnsSpinner.getValueFactory().setValue(columns);
         } else {
             // use the value which was saved to the database

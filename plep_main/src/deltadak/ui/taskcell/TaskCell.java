@@ -13,7 +13,7 @@ import deltadak.ui.taskcell.selection.Selector;
 import deltadak.ui.taskcell.subtasks.SubtasksEditor;
 import deltadak.ui.taskcell.textlabel.TextLabelStyle;
 import deltadak.ui.treeview.TreeViewCleaner;
-import deltadak.ui.util.STATIC.ConvertersKt;
+import deltadak.ui.util.ConvertersKt;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
@@ -31,7 +31,7 @@ import javafx.scene.text.TextAlignment;
 import java.time.LocalDate;
 import java.util.Objects;
 
-import static deltadak.ui.util.STATIC.ConvertersKt.getParentTasks;
+import static deltadak.ui.util.ConvertersKt.getParentTasks;
 import static java.lang.Math.min;
 
 /**

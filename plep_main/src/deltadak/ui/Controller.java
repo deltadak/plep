@@ -1,14 +1,9 @@
 package deltadak.ui;
 
 import deltadak.Database;
-import deltadak.HomeworkTask;
 import deltadak.commands.UndoFacility;
 import deltadak.database.DatabaseSettings;
 import deltadak.ui.gridpane.GridPaneInitializer;
-import deltadak.ui.taskcell.TaskCell;
-import javafx.application.Platform;
-import javafx.collections.ObservableList;
-import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -16,15 +11,10 @@ import javafx.scene.input.DataFormat;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import javafx.stage.Stage;
 
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 /**
  * Class to control the UI
@@ -98,10 +88,7 @@ public class Controller implements Initializable, AbstractController {
      * day
      */
     public LocalDate focusDay;
-    private LocalDate today;
-    // Multithreading
-    private Executor exec;
-    
+
     /**
      * keep a reference to the undo facility
      */
@@ -115,13 +102,6 @@ public class Controller implements Initializable, AbstractController {
     public void initialize(final URL location,
                            final ResourceBundle resourceBundle) {
         
-        // Initialize multithreading.
-        exec = Executors.newCachedThreadPool(runnable -> {
-            Thread t = new Thread(runnable);
-            t.setDaemon(true);
-            return t;
-        });
-
         Database.INSTANCE.setDefaultDatabasePath();
         Database.INSTANCE.createTables(); // if not already exists
         
@@ -200,44 +180,6 @@ public class Controller implements Initializable, AbstractController {
                 undoFacility.undo();
             }
         });
-    }
-    
-    /**
-     * Sets a listener which checks if it is a new day, when the window becomes
-     * focused.
-     *
-     * @param primaryStage
-     *         Stage to set listener on.
-     */
-    public void setDayChangeListener(Stage primaryStage) {
-        // debug line, also comment out the line to reset 'today'
-        //        today = LocalDate.now().plusDays(-1);
-        //        focusDay.plusDays(-1);
-        today = LocalDate.now();
-        primaryStage.focusedProperty()
-                .addListener((observable, wasFocused, isFocused) -> {
-                    if (isFocused) { // if becomes focused
-                        if (!today.equals(LocalDate.now())) {
-                            // then reset view
-                            today = LocalDate.now();
-                            // Also update focusDay, before refreshing.
-                            focusDay = today;
-                            new GridPaneInitializer(this, undoFacility, progressIndicator).setup(gridPane, numberOfDays, focusDay, toolBar.getPrefHeight());
-                        }
-                    }
-                });
-    }
-    
-    /**
-     * Calculates and sets the value of maxColumns
-     *
-     * @param numberOfDays
-     *         number of days in total
-     *
-     * @return int for maxColumns
-     */
-    public int maxColumns(int numberOfDays) {
-        return (int)Math.ceil(Math.sqrt(numberOfDays));
     }
     
     /**

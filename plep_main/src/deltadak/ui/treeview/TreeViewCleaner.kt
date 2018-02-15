@@ -1,7 +1,7 @@
 package deltadak.ui.treeview
 
 import deltadak.HomeworkTask
-import deltadak.ui.util.STATIC.NUMBER_OF_TASKS_IN_LIST
+import deltadak.ui.util.NUMBER_OF_TASKS_IN_LIST
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeView
 

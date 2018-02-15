@@ -4,8 +4,8 @@ import deltadak.Database
 import deltadak.HomeworkTask
 import deltadak.ui.treeview.TreeViewCleaner
 import deltadak.ui.treeview.getAllTreeViews
-import deltadak.ui.util.STATIC.getParentTasks
-import deltadak.ui.util.STATIC.toObservableList
+import deltadak.ui.util.getParentTasks
+import deltadak.ui.util.toObservableList
 import javafx.beans.value.ObservableValue
 import javafx.collections.ObservableList
 import javafx.concurrent.Task

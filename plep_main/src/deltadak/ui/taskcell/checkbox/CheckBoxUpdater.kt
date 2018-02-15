@@ -6,7 +6,7 @@ import deltadak.ui.taskcell.ChangeListenerWithBlocker
 import deltadak.ui.taskcell.TaskCell
 import deltadak.ui.taskcell.selection.Selector
 import deltadak.ui.taskcell.textlabel.TextLabelStyle
-import deltadak.ui.util.STATIC.toHomeworkTaskList
+import deltadak.ui.util.toHomeworkTaskList
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
 import javafx.scene.control.CheckBox

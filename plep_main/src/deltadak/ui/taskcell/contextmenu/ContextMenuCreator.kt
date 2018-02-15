@@ -6,9 +6,9 @@ import deltadak.ui.Controller
 import deltadak.ui.taskcell.TaskCell
 import deltadak.ui.taskcell.subtasks.SubtasksCreator
 import deltadak.ui.taskcell.util.setBackgroundColor
-import deltadak.ui.util.STATIC.LABEL_COLOR_CONTEXT_MENU_ITEMS
-import deltadak.ui.util.STATIC.repeatTask
-import deltadak.ui.util.STATIC.toHomeworkTaskList
+import deltadak.ui.util.LABEL_COLOR_CONTEXT_MENU_ITEMS
+import deltadak.ui.util.repeatTask
+import deltadak.ui.util.toHomeworkTaskList
 import javafx.scene.control.*
 import javafx.scene.layout.GridPane
 import java.time.LocalDate

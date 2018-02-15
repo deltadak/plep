@@ -1,4 +1,4 @@
-package deltadak.ui.util.STATIC
+package deltadak.ui.util
 
 import deltadak.Database
 import deltadak.HomeworkTask

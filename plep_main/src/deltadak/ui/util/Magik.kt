@@ -1,4 +1,4 @@
-package deltadak.ui.util.STATIC
+package deltadak.ui.util
 
 /** The number of tasks shown in one listview. */
 const val NUMBER_OF_TASKS_IN_LIST = 6
