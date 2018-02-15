@@ -5,6 +5,7 @@ import deltadak.database.DatabaseFacade
 import deltadak.ui.Controller
 import deltadak.ui.taskcell.TaskCell
 import deltadak.ui.taskcell.subtasks.SubtasksCreator
+import deltadak.ui.taskcell.util.setBackgroundColor
 import deltadak.ui.util.STATIC.LABEL_COLOR_CONTEXT_MENU_ITEMS
 import deltadak.ui.util.STATIC.repeatTask
 import deltadak.ui.util.STATIC.toHomeworkTaskList
@@ -69,7 +70,7 @@ class ContextMenuCreator(
 
             // Add the on-click action.
             colorItem.setOnAction {
-                controller.setBackgroundColor(colorID, taskCell)
+                taskCell.setBackgroundColor(colorID)
                 taskCell.treeItem.value.colorID = colorID
                 DatabaseFacade(progressIndicator).pushData(day, tree.toHomeworkTaskList())
             }

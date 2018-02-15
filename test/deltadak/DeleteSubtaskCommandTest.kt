@@ -1,9 +1,7 @@
 package deltadak
 
 import deltadak.commands.DeleteSubtaskCommand
-import deltadak.ui.AbstractController
 import javafx.scene.control.ProgressIndicator
-import javafx.scene.control.TreeView
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
@@ -14,7 +12,6 @@ import kotlin.test.assertTrue
 
 object DeleteSubtaskCommandTest: Spek({
     given("A command to delete a subtask") {
-        val controller = DummyController()
         val day = LocalDate.now()
         val index = 1
         val tree = null
@@ -23,7 +20,7 @@ object DeleteSubtaskCommandTest: Spek({
         val treeViewItems = mutableListOf<MutableList<HomeworkTask>>()
         treeViewItems.add(mutableListOf(HomeworkTask(), subtask))
 
-        val command = DeleteSubtaskCommand(controller, day, treeViewItems,index, tree)
+        val command = DeleteSubtaskCommand(ProgressIndicator(), day, treeViewItems,index, tree)
         on("executing the command") {
             command.execute()
             it("should be executed") {
@@ -50,9 +47,3 @@ object DeleteSubtaskCommandTest: Spek({
         }
     }
 })
-
-class DummyController : AbstractController {
-    override fun getProgressIndicator(): ProgressIndicator {
-        return ProgressIndicator() // Do nothing, duh.
-    }
-}
