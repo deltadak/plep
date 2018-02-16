@@ -3,13 +3,14 @@ package deltadak.ui;
 import deltadak.Database;
 import deltadak.database.DatabaseSettings;
 import deltadak.ui.gridpane.GridPaneInitializer;
+import deltadak.ui.settingspane.EditCourseLabelsButton;
 import deltadak.ui.util.LayoutKt;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldListCell;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 
@@ -48,11 +49,19 @@ public class SlidingSettingsPane extends SlidingPane {
     /**
      * Construct a new SlidingSettingsPane.
      *
-     * @param controller
-     *         The controller which controls this.
+     * @param controller The controller which controls this.
      */
-    public SlidingSettingsPane(Controller controller) {
+    // The remaining parameters are just FXML references.
+    @SuppressWarnings("JavaDoc")
+    public SlidingSettingsPane(
+            Controller controller,
+            Button editLabelsButton,
+            GridPane editLabelsPane,
+            AnchorPane settingsPane) {
+
         super(controller);
+
+        new EditCourseLabelsButton(editLabelsButton).setAction(editLabelsPane, settingsPane);
     }
     
     /**
@@ -68,7 +77,6 @@ public class SlidingSettingsPane extends SlidingPane {
     }
     
     private void setComponentListeners() {
-        editLabelsButton.setOnAction(event -> editCourseLabels());
         removeLabelButton.setOnAction(event -> removeLabel());
         applyNumberOfDays.setOnAction(event -> applyNumberOfMovingDaysChange());
         applyNumberOfShowDays
@@ -243,18 +251,6 @@ public class SlidingSettingsPane extends SlidingPane {
     }
     
     /**
-     * Toggles the visibility of the listview with labels.
-     */
-    @FXML
-    protected void editCourseLabels() {
-        toggleVisibilityFXMLObject("labelsListView");
-        toggleVisibilityFXMLObject("removeLabelButton");
-        
-        toggleYsettingsObject("editDaysPane");
-        toggleYsettingsObject("colorsPane");
-    }
-    
-    /**
      * Removes the selected label from all the items in the courselabel, also
      * removes it from the database
      */
@@ -331,34 +327,6 @@ public class SlidingSettingsPane extends SlidingPane {
             int columns = Integer
                     .valueOf(getSetting(DatabaseSettings.MAX_COLUMNS.getSettingsName()));
             maxColumnsSpinner.getValueFactory().setValue(columns);
-        }
-    }
-    
-    /**
-     * Toggles the visibility of an object.
-     *
-     * @param id
-     *         String with a FXML id of the object to be toggled.
-     */
-    private void toggleVisibilityFXMLObject(String id) {
-        Boolean isVisible = editLabelsPane.lookup("#" + id).isVisible();
-        editLabelsPane.lookup("#" + id).setVisible(!isVisible);
-    }
-    
-    /**
-     * Moves the FXML object up or down as much as the height of the listview to
-     * edit the labels, because the listview needs to push down the objects
-     * below it.
-     *
-     * @param id
-     *         The fx:id of the object to be moved.
-     */
-    private void toggleYsettingsObject(String id) {
-        Node node = slidingPane.lookup("#" + id);
-        if (node.getTranslateY() == 0) {
-            node.setTranslateY(editLabelsPane.getHeight());
-        } else {
-            node.setTranslateY(0);
         }
     }
     

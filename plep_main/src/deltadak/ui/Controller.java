@@ -115,9 +115,9 @@ public class Controller implements Initializable, AbstractController {
         progressIndicator.setVisible(false);
         
         // setup the settings page
-        SlidingSettingsPane settingsPane = new SlidingSettingsPane(this);
-        copySettingsPaneComponents(settingsPane);
-        settingsPane.setup();
+        SlidingSettingsPane slidingSettingsPane = new SlidingSettingsPane(this, editLabelsButton, editLabelsPane, settingsPane);
+        copySettingsPaneComponents(slidingSettingsPane);
+        slidingSettingsPane.setup();
         
         // setup help page
         SlidingPane helpPane = new SlidingPane(this);
