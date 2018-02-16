@@ -5,7 +5,7 @@ import deltadak.HomeworkTask
 import deltadak.commands.UndoFacility
 import deltadak.database.ContentProvider
 import deltadak.database.DatabaseSettings
-import deltadak.deletion.TaskDeletionInitialiser
+import deltadak.keylisteners.TaskDeletionInitialiser
 import deltadak.ui.Controller
 import deltadak.ui.taskcell.TaskCell
 import deltadak.ui.treeview.getTreeViewHeight

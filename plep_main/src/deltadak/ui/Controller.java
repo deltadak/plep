@@ -3,12 +3,12 @@ package deltadak.ui;
 import deltadak.Database;
 import deltadak.commands.UndoFacility;
 import deltadak.database.DatabaseSettings;
+import deltadak.keylisteners.UndoKeyListener;
 import deltadak.ui.gridpane.GridPaneInitializer;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.DataFormat;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 
@@ -124,10 +124,7 @@ public class Controller implements Initializable, AbstractController {
         copyHelpPageComponents(helpPane);
         helpPane.setup();
         
-        // Notice that the listener which listens for day changes is called from
-        // Main, because it needs the primary Stage.
-        
-        addUndoKeyListener();
+        new UndoKeyListener().set(gridPane, undoFacility);
         
     }
     
@@ -172,14 +169,6 @@ public class Controller implements Initializable, AbstractController {
         helpPane.toolBar = this.toolBar;
         helpPane.slidingPane = this.helpPane;
         helpPane.openCloseButton = this.helpButton;
-    }
-    
-    private void addUndoKeyListener() {
-        gridPane.setOnKeyPressed(event -> {
-            if (event.isControlDown() && (event.getCode() == KeyCode.Z)) {
-                undoFacility.undo();
-            }
-        });
     }
     
     /**

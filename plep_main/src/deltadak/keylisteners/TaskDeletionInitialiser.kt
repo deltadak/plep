@@ -1,10 +1,9 @@
-package deltadak.deletion
+package deltadak.keylisteners
 
 import deltadak.HomeworkTask
 import deltadak.commands.DeleteCommand
 import deltadak.commands.DeleteSubtaskCommand
 import deltadak.commands.UndoFacility
-import deltadak.ui.Controller
 import deltadak.ui.util.toHomeworkTaskList
 import javafx.scene.control.ProgressIndicator
 import javafx.scene.control.TreeView
