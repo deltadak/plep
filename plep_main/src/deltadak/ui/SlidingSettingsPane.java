@@ -3,7 +3,8 @@ package deltadak.ui;
 import deltadak.Database;
 import deltadak.database.DatabaseSettings;
 import deltadak.ui.gridpane.GridPaneInitializer;
-import deltadak.ui.settingspane.EditCourseLabelsButton;
+import deltadak.ui.settingspane.EditCourseLabelsButtonAction;
+import deltadak.ui.settingspane.RemoveLabelButtonAction;
 import deltadak.ui.util.LayoutKt;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,6 +14,8 @@ import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +40,9 @@ public class SlidingSettingsPane extends SlidingPane {
     public ColorPicker colorThree;
     public ColorPicker colorFour;
     public ColorPicker colorFive;
-    
-    private ListView<String> labelsList;
+
+    // temporarily public for Java-Kt interop
+    public ListView<String> labelsList;
     private Spinner<Integer> numberOfMovingDaysSpinner;
     private Spinner<Integer> numberOfShowDaysSpinner;
     private Spinner<Integer> maxColumnsSpinner;
@@ -50,18 +54,24 @@ public class SlidingSettingsPane extends SlidingPane {
      * Construct a new SlidingSettingsPane.
      *
      * @param controller The controller which controls this.
+     * @param refreshUI This is a function which should refresh the UI.
      */
     // The remaining parameters are just FXML references.
     @SuppressWarnings("JavaDoc")
     public SlidingSettingsPane(
             Controller controller,
+            Function0<Unit> refreshUI,
             Button editLabelsButton,
             GridPane editLabelsPane,
-            AnchorPane settingsPane) {
+            AnchorPane settingsPane,
+            Button removeLabelButton) {
 
         super(controller);
 
-        new EditCourseLabelsButton(editLabelsButton).setAction(editLabelsPane, settingsPane);
+        new EditCourseLabelsButtonAction(editLabelsButton).set(editLabelsPane, settingsPane);
+
+        // Replace with regular set on converting to Kotlin.
+        new RemoveLabelButtonAction(removeLabelButton).javaSet(this, refreshUI);
     }
     
     /**
@@ -77,7 +87,6 @@ public class SlidingSettingsPane extends SlidingPane {
     }
     
     private void setComponentListeners() {
-        removeLabelButton.setOnAction(event -> removeLabel());
         applyNumberOfDays.setOnAction(event -> applyNumberOfMovingDaysChange());
         applyNumberOfShowDays
                 .setOnAction(event -> applyNumberOfShowDaysChange());
@@ -255,6 +264,7 @@ public class SlidingSettingsPane extends SlidingPane {
      * removes it from the database
      */
     @FXML
+    @Deprecated
     protected void removeLabel() {
         int selectedIndex = labelsList.getSelectionModel().getSelectedIndex();
         // to remove an item from the listview, we replace it with an empty

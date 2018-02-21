@@ -16,6 +16,7 @@ import javafx.scene.control.TreeView
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.GridPane
 import java.time.LocalDate
+import kotlin.reflect.KMutableProperty
 
 /**
  * Initializes the whole UI of the GridPane.
@@ -29,12 +30,20 @@ class GridPaneInitializer(
         val progressIndicator: ProgressIndicator) {
 
     /**
+     * IMPORTANT Pass variables which are not constants by reference, with ::varName in Kotlin or use JavaHelper in Java.
+     */
+    fun setup(gridPane: GridPane, numberOfDays: KMutableProperty<Int>, focusDate: KMutableProperty<LocalDate>, toolBarHeight: Double) {
+        setup(gridPane, numberOfDays.getter.call(), focusDate.getter.call(), toolBarHeight)
+    }
+
+    /**
      * Sets up TreeViews for each day, including the editing of items and more.
      *
      * @param gridPane The GridPane to setup.
      * @param numberOfDays The total number of days to setup the gridpane with.
      * @param focusDate This date is the central date in the sense it is shown as the second day, which is by default today.
      */
+    @Deprecated("Use other setup method")
     fun setup(gridPane: GridPane, numberOfDays: Int, focusDate: LocalDate, toolBarHeight: Double) {
 
         // Anchor the main GridPane to the bottom of the Toolbar.

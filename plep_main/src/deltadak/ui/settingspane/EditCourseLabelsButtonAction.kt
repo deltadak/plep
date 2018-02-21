@@ -7,7 +7,7 @@ import javafx.scene.layout.GridPane
 /**
  * Handles actions regarding the Button to edit course labels.
  */
-class EditCourseLabelsButton(
+class EditCourseLabelsButtonAction(
         /** The FXML reference to the button. */
         val editLabelsButton: Button) {
 
@@ -17,7 +17,7 @@ class EditCourseLabelsButton(
      * @param editLabelsPane The GridPane which contains the labels.
      * @param slidingPane The Pane which contains all settings objects.
      */
-    fun setAction(editLabelsPane: GridPane, slidingPane: AnchorPane) {
+    fun set(editLabelsPane: GridPane, slidingPane: AnchorPane) {
         editLabelsButton.setOnAction {
             // Show or hide the listview which contains the course labels, and the button which allows for removing labels.
             toggleFXMLObjectVisibility(editLabelsPane, "labelsListView")

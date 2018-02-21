@@ -1,6 +1,7 @@
 package deltadak.ui;
 
 import deltadak.Database;
+import deltadak.JavaHelperKt;
 import deltadak.commands.UndoFacility;
 import deltadak.database.DatabaseSettings;
 import deltadak.keylisteners.UndoKeyListener;
@@ -11,6 +12,9 @@ import javafx.scene.control.*;
 import javafx.scene.input.DataFormat;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
+import kotlin.reflect.KMutableProperty0;
 
 import java.net.URL;
 import java.time.LocalDate;
@@ -68,6 +72,7 @@ public class Controller implements Initializable, AbstractController {
     /**
      * number of days shown
      */
+    @Deprecated // ui.global.LayoutKt
     public int numberOfDays;
     /**
      * number of days to skip when using the forward/backward buttons
@@ -113,9 +118,9 @@ public class Controller implements Initializable, AbstractController {
         new GridPaneInitializer(this, undoFacility, progressIndicator).setup(gridPane, numberOfDays, focusDay, toolBar.getPrefHeight());
         
         progressIndicator.setVisible(false);
-        
+
         // setup the settings page
-        SlidingSettingsPane slidingSettingsPane = new SlidingSettingsPane(this, editLabelsButton, editLabelsPane, settingsPane);
+        SlidingSettingsPane slidingSettingsPane = new SlidingSettingsPane(this, JavaHelperKt.getUIRefresher(this), editLabelsButton, editLabelsPane, settingsPane, removeLabelButton);
         copySettingsPaneComponents(slidingSettingsPane);
         slidingSettingsPane.setup();
         
