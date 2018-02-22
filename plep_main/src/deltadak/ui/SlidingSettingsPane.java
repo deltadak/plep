@@ -3,6 +3,7 @@ package deltadak.ui;
 import deltadak.Database;
 import deltadak.database.DatabaseSettings;
 import deltadak.ui.gridpane.GridPaneInitializer;
+import deltadak.ui.settingspane.ApplyNumberOfDaysAction;
 import deltadak.ui.settingspane.ApplyNumberOfMovingDaysAction;
 import deltadak.ui.settingspane.EditCourseLabelsAction;
 import deltadak.ui.settingspane.RemoveLabelAction;
@@ -32,13 +33,13 @@ public class SlidingSettingsPane extends SlidingPane {
     private AnchorPane settingsPane;
     private Button removeLabelButton;
     private Button applyNumberOfMovingDays;
+    private Button applyNumberOfDays;
 
 
 
     // xml references passed from the controller
     // todo at the end check that all references are assigned something
     public GridPane editDaysPane;
-    public Button applyNumberOfShowDays;
     public CheckBox autoColumnsCheckBox;
     public Button applyMaxColumns;
     public GridPane colorsPane;
@@ -51,7 +52,7 @@ public class SlidingSettingsPane extends SlidingPane {
     // temporarily public for Java-Kt interop
     public ListView<String> labelsList;
     private Spinner<Integer> numberOfMovingDaysSpinner;
-    private Spinner<Integer> numberOfShowDaysSpinner;
+    private Spinner<Integer> numberOfDaysSpinner;
     private Spinner<Integer> maxColumnsSpinner;
     private List<ColorPicker> colorPickers = new ArrayList<>();
 
@@ -74,7 +75,8 @@ public class SlidingSettingsPane extends SlidingPane {
             GridPane editLabelsPane,
             AnchorPane settingsPane,
             Button removeLabelButton,
-            Button applyNumberOfMovingDays) {
+            Button applyNumberOfMovingDays,
+            Button applyNumberOfDays) {
 
         super(controller);
 
@@ -86,7 +88,7 @@ public class SlidingSettingsPane extends SlidingPane {
         this.settingsPane = settingsPane;
         this.removeLabelButton = removeLabelButton;
         this.applyNumberOfMovingDays = applyNumberOfMovingDays;
-
+        this.applyNumberOfDays = applyNumberOfDays;
 
     }
     
@@ -104,6 +106,8 @@ public class SlidingSettingsPane extends SlidingPane {
 
         new ApplyNumberOfMovingDaysAction(applyNumberOfMovingDays, numberOfMovingDaysSpinner).javaSet(controller, refreshUI);
 
+        new ApplyNumberOfDaysAction(applyNumberOfDays, numberOfDaysSpinner).javaSet(controller, refreshUI);
+
         setComponentListeners();
 
         boolean isAuto = Boolean
@@ -112,8 +116,6 @@ public class SlidingSettingsPane extends SlidingPane {
     }
     
     private void setComponentListeners() {
-        applyNumberOfShowDays
-                .setOnAction(event -> applyNumberOfShowDaysChange());
         applyMaxColumns.setOnAction(event -> applyMaxColumnsChange());
         //        autoColumnsCheckBox.setOnAction(event ->
         //                autoColumnsCheckBoxToggled());
@@ -253,18 +255,18 @@ public class SlidingSettingsPane extends SlidingPane {
         editDaysPane.getChildren().add(numberOfMovingDaysSpinner);
         
         // Adding the spinner to change the number of days to show.
-        numberOfShowDaysSpinner = new Spinner<>();
+        numberOfDaysSpinner = new Spinner<>();
         // magik value 31 is the length of the longest month, just to be sure
         SpinnerValueFactory<Integer> valueShowFactory
                 = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 31,
                                                                      controller.numberOfDays);
         
-        numberOfShowDaysSpinner.setValueFactory(valueShowFactory);
-        numberOfShowDaysSpinner.setId("numberOfShowDaysSpinner");
-        numberOfShowDaysSpinner.setPrefWidth(70);
-        GridPane.setColumnIndex(numberOfShowDaysSpinner, 2);
-        GridPane.setRowIndex(numberOfShowDaysSpinner, 1);
-        editDaysPane.getChildren().add(numberOfShowDaysSpinner);
+        numberOfDaysSpinner.setValueFactory(valueShowFactory);
+        numberOfDaysSpinner.setId("numberOfShowDaysSpinner");
+        numberOfDaysSpinner.setPrefWidth(70);
+        GridPane.setColumnIndex(numberOfDaysSpinner, 2);
+        GridPane.setRowIndex(numberOfDaysSpinner, 1);
+        editDaysPane.getChildren().add(numberOfDaysSpinner);
         
         // Adding the spinner to change the number of columns.
         maxColumnsSpinner = new Spinner<>();
@@ -281,18 +283,6 @@ public class SlidingSettingsPane extends SlidingPane {
         GridPane.setColumnIndex(maxColumnsSpinner, 2);
         GridPane.setRowIndex(maxColumnsSpinner, 2);
         editDaysPane.getChildren().add(maxColumnsSpinner);
-    }
-    
-    /**
-     * Applies the value of the numberOfShowDaysSpinner to the main GridPane.
-     */
-    @FXML
-    protected void applyNumberOfShowDaysChange() {
-        controller.numberOfDays = numberOfShowDaysSpinner.getValue();
-        
-        updateSetting(DatabaseSettings.NUMBER_OF_DAYS.getSettingsName(),
-                      String.valueOf(controller.numberOfDays));
-        new GridPaneInitializer(controller, controller.undoFacility, controller.progressIndicator).setup(gridPane, controller.numberOfDays, controller.focusDay, controller.toolBar.getPrefHeight());
     }
     
     /**

@@ -3,17 +3,16 @@ package deltadak.ui.settingspane
 import deltadak.Database
 import deltadak.database.DatabaseSettings
 import deltadak.ui.Controller
-import deltadak.ui.SlidingSettingsPane
 import javafx.scene.control.Button
 import javafx.scene.control.Spinner
 import kotlin.reflect.KMutableProperty
 
 /**
- * This button applies the selected number of days to be shown.
+ * This button applies the number of days that the forward and backward button skip when pressed.
  */
 class ApplyNumberOfMovingDaysAction(
         /** The FXML reference to the button. */
-        val applyNumberOfDaysButton: Button,
+        val applyNumberOfMovingDaysButton: Button,
         /** The FXML reference to the spinner. */
         val numberOfMovingDaysSpinner: Spinner<Int>) {
 
@@ -31,7 +30,7 @@ class ApplyNumberOfMovingDaysAction(
      */
     fun set(numberOfMovingDaysProperty: KMutableProperty<Int>, refreshUI: () -> Unit) {
 
-        applyNumberOfDaysButton.setOnAction {
+        applyNumberOfMovingDaysButton.setOnAction {
 
             // Get current user-selected value.
             val numberOfMovingDays = numberOfMovingDaysSpinner.value

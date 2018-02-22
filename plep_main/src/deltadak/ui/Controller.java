@@ -125,7 +125,8 @@ public class Controller implements Initializable, AbstractController {
                 editLabelsPane,
                 settingsPane,
                 removeLabelButton,
-                applyNumberOfMovingDays);
+                applyNumberOfMovingDays,
+                applyNumberOfDays);
 
         copySettingsPaneComponents(slidingSettingsPane);
         slidingSettingsPane.setup();
@@ -152,7 +153,6 @@ public class Controller implements Initializable, AbstractController {
         settingsPane.slidingPane = this.settingsPane;
         settingsPane.editDaysPane = this.editDaysPane;
         settingsPane.openCloseButton = this.settingsButton;
-        settingsPane.applyNumberOfShowDays = this.applyNumberOfDays;
         settingsPane.autoColumnsCheckBox = this.autoColumnCheckBox;
         settingsPane.applyMaxColumns = this.applyMaxColumns;
         settingsPane.colorsPane = this.colorsPane;
