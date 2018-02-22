@@ -12,9 +12,6 @@ import javafx.scene.control.*;
 import javafx.scene.input.DataFormat;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
-import kotlin.Unit;
-import kotlin.jvm.functions.Function0;
-import kotlin.reflect.KMutableProperty0;
 
 import java.net.URL;
 import java.time.LocalDate;
@@ -50,8 +47,10 @@ public class Controller implements Initializable, AbstractController {
     @FXML Button editLabelsButton;
     @FXML GridPane editDaysPane;
     @FXML Button removeLabelButton;
+    /** To adjust the number of days to skip forward/backward. */
+    @FXML Button applyNumberOfMovingDays;
+    /** To adjust the number of days shown. */
     @FXML Button applyNumberOfDays;
-    @FXML Button applyNumberOfShowDays;
     @FXML CheckBox autoColumnCheckBox;
     @FXML Button applyMaxColumns;
     
@@ -72,7 +71,6 @@ public class Controller implements Initializable, AbstractController {
     /**
      * number of days shown
      */
-    @Deprecated // ui.global.LayoutKt
     public int numberOfDays;
     /**
      * number of days to skip when using the forward/backward buttons
@@ -120,7 +118,15 @@ public class Controller implements Initializable, AbstractController {
         progressIndicator.setVisible(false);
 
         // setup the settings page
-        SlidingSettingsPane slidingSettingsPane = new SlidingSettingsPane(this, JavaHelperKt.getUIRefresher(this), editLabelsButton, editLabelsPane, settingsPane, removeLabelButton);
+        SlidingSettingsPane slidingSettingsPane = new SlidingSettingsPane(
+                this,
+                JavaHelperKt.getUIRefresher(this),
+                editLabelsButton,
+                editLabelsPane,
+                settingsPane,
+                removeLabelButton,
+                applyNumberOfMovingDays);
+
         copySettingsPaneComponents(slidingSettingsPane);
         slidingSettingsPane.setup();
         
@@ -145,12 +151,8 @@ public class Controller implements Initializable, AbstractController {
         settingsPane.toolBar = this.toolBar;
         settingsPane.slidingPane = this.settingsPane;
         settingsPane.editDaysPane = this.editDaysPane;
-        settingsPane.editLabelsPane = this.editLabelsPane;
-        settingsPane.editLabelsButton = this.editLabelsButton;
-        settingsPane.removeLabelButton = this.removeLabelButton;
         settingsPane.openCloseButton = this.settingsButton;
-        settingsPane.applyNumberOfDays = this.applyNumberOfDays;
-        settingsPane.applyNumberOfShowDays = this.applyNumberOfShowDays;
+        settingsPane.applyNumberOfShowDays = this.applyNumberOfDays;
         settingsPane.autoColumnsCheckBox = this.autoColumnCheckBox;
         settingsPane.applyMaxColumns = this.applyMaxColumns;
         settingsPane.colorsPane = this.colorsPane;

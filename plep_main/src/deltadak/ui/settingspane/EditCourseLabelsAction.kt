@@ -7,7 +7,7 @@ import javafx.scene.layout.GridPane
 /**
  * Handles actions regarding the Button to edit course labels.
  */
-class EditCourseLabelsButtonAction(
+class EditCourseLabelsAction(
         /** The FXML reference to the button. */
         val editLabelsButton: Button) {
 

@@ -106,7 +106,7 @@ On the settings pane, click on a colour to edit it."
                   GridPane.columnSpan="2"
                   text="Number of days to go forward:"/>
 
-            <Button fx:id="applyNumberOfDays"
+            <Button fx:id="applyNumberOfMovingDays"
                     GridPane.columnIndex="3"
                     text="Apply"/>
 
@@ -115,7 +115,7 @@ On the settings pane, click on a colour to edit it."
                   text="Number of days to show:"
                   GridPane.rowIndex="1"/>
 
-            <Button fx:id="applyNumberOfShowDays"
+            <Button fx:id="applyNumberOfDays"
                     GridPane.columnIndex="3"
                     GridPane.rowIndex="1"
                     text="Apply"/>

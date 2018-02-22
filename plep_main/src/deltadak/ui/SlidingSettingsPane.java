@@ -3,8 +3,9 @@ package deltadak.ui;
 import deltadak.Database;
 import deltadak.database.DatabaseSettings;
 import deltadak.ui.gridpane.GridPaneInitializer;
-import deltadak.ui.settingspane.EditCourseLabelsButtonAction;
-import deltadak.ui.settingspane.RemoveLabelButtonAction;
+import deltadak.ui.settingspane.ApplyNumberOfMovingDaysAction;
+import deltadak.ui.settingspane.EditCourseLabelsAction;
+import deltadak.ui.settingspane.RemoveLabelAction;
 import deltadak.ui.util.LayoutKt;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -24,13 +25,19 @@ import java.util.List;
  * A pane which provides settings.
  */
 public class SlidingSettingsPane extends SlidingPane {
-    
+
+    // FXML references.
+    private Button editLabelsButton;
+    private GridPane editLabelsPane;
+    private AnchorPane settingsPane;
+    private Button removeLabelButton;
+    private Button applyNumberOfMovingDays;
+
+
+
     // xml references passed from the controller
-    public GridPane editLabelsPane;
-    public Button editLabelsButton;
-    public Button removeLabelButton;
+    // todo at the end check that all references are assigned something
     public GridPane editDaysPane;
-    public Button applyNumberOfDays;
     public Button applyNumberOfShowDays;
     public CheckBox autoColumnsCheckBox;
     public Button applyMaxColumns;
@@ -47,6 +54,8 @@ public class SlidingSettingsPane extends SlidingPane {
     private Spinner<Integer> numberOfShowDaysSpinner;
     private Spinner<Integer> maxColumnsSpinner;
     private List<ColorPicker> colorPickers = new ArrayList<>();
+
+    private Function0<Unit> refreshUI;
     
     private final int MAX_NUMBER_LABELS = 5;
     
@@ -55,8 +64,8 @@ public class SlidingSettingsPane extends SlidingPane {
      *
      * @param controller The controller which controls this.
      * @param refreshUI This is a function which should refresh the UI.
+     * The remaining parameters are just FXML references.
      */
-    // The remaining parameters are just FXML references.
     @SuppressWarnings("JavaDoc")
     public SlidingSettingsPane(
             Controller controller,
@@ -64,30 +73,45 @@ public class SlidingSettingsPane extends SlidingPane {
             Button editLabelsButton,
             GridPane editLabelsPane,
             AnchorPane settingsPane,
-            Button removeLabelButton) {
+            Button removeLabelButton,
+            Button applyNumberOfMovingDays) {
 
         super(controller);
 
-        new EditCourseLabelsButtonAction(editLabelsButton).set(editLabelsPane, settingsPane);
+        // todo check at the end that all fxml references are assigned here
+        // The references are copied to instance variables so they can be access in the setup hook method - order of initialisation is important!
+        this.refreshUI = refreshUI;
+        this.editLabelsButton = editLabelsButton;
+        this.editLabelsPane = editLabelsPane;
+        this.settingsPane = settingsPane;
+        this.removeLabelButton = removeLabelButton;
+        this.applyNumberOfMovingDays = applyNumberOfMovingDays;
 
-        // Replace with regular set on converting to Kotlin.
-        new RemoveLabelButtonAction(removeLabelButton).javaSet(this, refreshUI);
+
     }
     
     /**
-     * Setup components, which are hopefully not null...
+     * Hook into the setup method, use the instance variables with FXML references to set up components.
      */
     @Override
     public void setupHook() {
         setupSettingsMenu();
+
+        new EditCourseLabelsAction(editLabelsButton).set(editLabelsPane, settingsPane);
+
+        // Replace with regular set on converting to Kotlin.
+        new RemoveLabelAction(removeLabelButton).javaSet(this, refreshUI);
+
+        new ApplyNumberOfMovingDaysAction(applyNumberOfMovingDays, numberOfMovingDaysSpinner).javaSet(controller, refreshUI);
+
         setComponentListeners();
+
         boolean isAuto = Boolean
                 .valueOf(getSetting(DatabaseSettings.MAX_COLUMNS_AUTO.getSettingsName()));
         autoColumnsCheckBox.setSelected(isAuto);
     }
     
     private void setComponentListeners() {
-        applyNumberOfDays.setOnAction(event -> applyNumberOfMovingDaysChange());
         applyNumberOfShowDays
                 .setOnAction(event -> applyNumberOfShowDaysChange());
         applyMaxColumns.setOnAction(event -> applyMaxColumnsChange());
@@ -257,34 +281,6 @@ public class SlidingSettingsPane extends SlidingPane {
         GridPane.setColumnIndex(maxColumnsSpinner, 2);
         GridPane.setRowIndex(maxColumnsSpinner, 2);
         editDaysPane.getChildren().add(maxColumnsSpinner);
-    }
-    
-    /**
-     * Removes the selected label from all the items in the courselabel, also
-     * removes it from the database
-     */
-    @FXML
-    @Deprecated
-    protected void removeLabel() {
-        int selectedIndex = labelsList.getSelectionModel().getSelectedIndex();
-        // to remove an item from the listview, we replace it with an empty
-        // string, so we can edit it again
-        labelsList.getItems().set(selectedIndex, "");
-        updateLabel(selectedIndex, "");
-        new GridPaneInitializer(controller, controller.undoFacility, controller.progressIndicator).setup(gridPane, controller.numberOfDays, controller.focusDay, controller.toolBar.getPrefHeight());
-    }
-    
-    /**
-     * Applies the value of the numberOfMovingDaysSpinner to the main GridPane.
-     */
-    @FXML
-    protected void applyNumberOfMovingDaysChange() {
-        controller.numberOfMovingDays = numberOfMovingDaysSpinner.getValue();
-        // update the value in the database
-        updateSetting(DatabaseSettings.NUMBER_OF_MOVING_DAYS.getSettingsName(),
-                      String.valueOf(controller.numberOfMovingDays));
-
-        new GridPaneInitializer(controller, controller.undoFacility, controller.progressIndicator).setup(gridPane, controller.numberOfDays, controller.focusDay, controller.toolBar.getPrefHeight());
     }
     
     /**

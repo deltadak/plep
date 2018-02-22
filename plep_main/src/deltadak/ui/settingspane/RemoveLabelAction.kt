@@ -1,5 +1,6 @@
 package deltadak.ui.settingspane
 
+import deltadak.Database
 import deltadak.ui.SlidingSettingsPane
 import javafx.scene.control.Button
 import javafx.scene.control.ListView
@@ -8,7 +9,7 @@ import kotlin.reflect.KMutableProperty
 /**
  * This buttons removes the selected course label from the list.
  */
-class RemoveLabelButtonAction(
+class RemoveLabelAction(
         /** The FXML reference to the button. */
         val removeLabelButton: Button) {
 
@@ -36,7 +37,7 @@ class RemoveLabelButtonAction(
             val selectedIndex = labelsList.selectionModel.selectedIndex
             // Removing an item means replacing it with an empty item, so it is again editable.
             labelsList.items[selectedIndex] = ""
-
+            Database.INSTANCE.updateLabel(selectedIndex, "")
             refreshUI()
 
         }
