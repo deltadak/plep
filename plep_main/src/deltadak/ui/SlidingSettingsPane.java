@@ -110,6 +110,8 @@ public class SlidingSettingsPane extends SlidingPane {
 
         new ApplyNumberOfColumnsAction(applyNumberOfColumns, numberOfColumnsSpinner, autoColumnsCheckBox).set(refreshUI);
 
+        new AutoColumnsAction(autoColumnsCheckBox, numberOfColumnsSpinner).javaSet(refreshUI, controller);
+
         setComponentListeners();
 
         boolean isAuto = Boolean
@@ -120,9 +122,6 @@ public class SlidingSettingsPane extends SlidingPane {
     private void setComponentListeners() {
         //        autoColumnsCheckBox.setOnAction(event ->
         //                autoColumnsCheckBoxToggled());
-        autoColumnsCheckBox.selectedProperty().addListener(
-                (observable, oldValue, newValue) -> autoColumnsCheckBoxToggled(
-                        newValue));
         //        colorOne.setOnMouseClicked(event -> editColor(colorOne));
         //        colorTwo.setOnMouseClicked(event -> editColor(colorTwo));
         for (int i = 0; i < colorPickers.size(); i++) {
@@ -284,33 +283,6 @@ public class SlidingSettingsPane extends SlidingPane {
         GridPane.setColumnIndex(numberOfColumnsSpinner, 2);
         GridPane.setRowIndex(numberOfColumnsSpinner, 2);
         editDaysPane.getChildren().add(numberOfColumnsSpinner);
-    }
-    
-    /**
-     * Updates the value of 'max_columns_auto' in the database to the new value
-     * of the check box.
-     *
-     * @param newValue
-     *         a boolean with true or false. True if the box is selected, false
-     *         if it is not selected.
-     */
-    @FXML
-    protected void autoColumnsCheckBoxToggled(boolean newValue) {
-        updateSetting(DatabaseSettings.MAX_COLUMNS_AUTO.getSettingsName(),
-                      String.valueOf(newValue));
-        // The controller will request settings from the database again.
-        new GridPaneInitializer(controller, controller.undoFacility, controller.progressIndicator).setup(gridPane, controller.numberOfDays, controller.focusDay, controller.toolBar.getPrefHeight());
-        
-        // update spinner to reflect auto mode on
-        if (newValue) {
-            int columns = LayoutKt.getNumberOfColumns(controller.numberOfDays);
-            numberOfColumnsSpinner.getValueFactory().setValue(columns);
-        } else {
-            // use the value which was saved to the database
-            int columns = Integer
-                    .valueOf(getSetting(DatabaseSettings.MAX_COLUMNS.getSettingsName()));
-            numberOfColumnsSpinner.getValueFactory().setValue(columns);
-        }
     }
     
 }
