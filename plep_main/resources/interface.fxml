@@ -129,7 +129,7 @@ On the settings pane, click on a colour to edit it."
                       GridPane.columnIndex="1"
                       GridPane.rowIndex="2"/>
 
-            <Button fx:id="applyMaxColumns"
+            <Button fx:id="applyNumberOfColumns"
                     GridPane.columnIndex="3"
                     GridPane.rowIndex="2"
                     text="Apply"/>

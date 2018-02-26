@@ -108,9 +108,7 @@ public class SlidingSettingsPane extends SlidingPane {
 
         new ApplyNumberOfDaysAction(applyNumberOfDays, numberOfDaysSpinner).javaSet(controller, refreshUI);
 
-        if (applyNumberOfColumns != null) {
-            new ApplyNumberOfColumnsAction(applyNumberOfColumns, numberOfColumnsSpinner, autoColumnsCheckBox).set(refreshUI);
-        }
+        new ApplyNumberOfColumnsAction(applyNumberOfColumns, numberOfColumnsSpinner, autoColumnsCheckBox).set(refreshUI);
 
         setComponentListeners();
 
