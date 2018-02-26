@@ -3,10 +3,7 @@ package deltadak.ui;
 import deltadak.Database;
 import deltadak.database.DatabaseSettings;
 import deltadak.ui.gridpane.GridPaneInitializer;
-import deltadak.ui.settingspane.ApplyNumberOfDaysAction;
-import deltadak.ui.settingspane.ApplyNumberOfMovingDaysAction;
-import deltadak.ui.settingspane.EditCourseLabelsAction;
-import deltadak.ui.settingspane.RemoveLabelAction;
+import deltadak.ui.settingspane.*;
 import deltadak.ui.util.LayoutKt;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -34,14 +31,13 @@ public class SlidingSettingsPane extends SlidingPane {
     private Button removeLabelButton;
     private Button applyNumberOfMovingDays;
     private Button applyNumberOfDays;
-
+    private Button applyNumberOfColumns;
+    private CheckBox autoColumnsCheckBox;
 
 
     // xml references passed from the controller
     // todo at the end check that all references are assigned something
     public GridPane editDaysPane;
-    public CheckBox autoColumnsCheckBox;
-    public Button applyMaxColumns;
     public GridPane colorsPane;
     public ColorPicker colorOne;
     public ColorPicker colorTwo;
@@ -53,7 +49,7 @@ public class SlidingSettingsPane extends SlidingPane {
     public ListView<String> labelsList;
     private Spinner<Integer> numberOfMovingDaysSpinner;
     private Spinner<Integer> numberOfDaysSpinner;
-    private Spinner<Integer> maxColumnsSpinner;
+    private Spinner<Integer> numberOfColumnsSpinner;
     private List<ColorPicker> colorPickers = new ArrayList<>();
 
     private Function0<Unit> refreshUI;
@@ -76,7 +72,9 @@ public class SlidingSettingsPane extends SlidingPane {
             AnchorPane settingsPane,
             Button removeLabelButton,
             Button applyNumberOfMovingDays,
-            Button applyNumberOfDays) {
+            Button applyNumberOfDays,
+            Button applyNumberOfColumns,
+            CheckBox autoColumnsCheckBox) {
 
         super(controller);
 
@@ -89,6 +87,8 @@ public class SlidingSettingsPane extends SlidingPane {
         this.removeLabelButton = removeLabelButton;
         this.applyNumberOfMovingDays = applyNumberOfMovingDays;
         this.applyNumberOfDays = applyNumberOfDays;
+        this.applyNumberOfColumns = applyNumberOfColumns;
+        this.autoColumnsCheckBox = autoColumnsCheckBox;
 
     }
     
@@ -108,6 +108,10 @@ public class SlidingSettingsPane extends SlidingPane {
 
         new ApplyNumberOfDaysAction(applyNumberOfDays, numberOfDaysSpinner).javaSet(controller, refreshUI);
 
+        if (applyNumberOfColumns != null) {
+            new ApplyNumberOfColumnsAction(applyNumberOfColumns, numberOfColumnsSpinner, autoColumnsCheckBox).set(refreshUI);
+        }
+
         setComponentListeners();
 
         boolean isAuto = Boolean
@@ -116,7 +120,6 @@ public class SlidingSettingsPane extends SlidingPane {
     }
     
     private void setComponentListeners() {
-        applyMaxColumns.setOnAction(event -> applyMaxColumnsChange());
         //        autoColumnsCheckBox.setOnAction(event ->
         //                autoColumnsCheckBoxToggled());
         autoColumnsCheckBox.selectedProperty().addListener(
@@ -269,7 +272,7 @@ public class SlidingSettingsPane extends SlidingPane {
         editDaysPane.getChildren().add(numberOfDaysSpinner);
         
         // Adding the spinner to change the number of columns.
-        maxColumnsSpinner = new Spinner<>();
+        numberOfColumnsSpinner = new Spinner<>();
         // Get the previous value from the database.
         int defaultValue = Integer
                 .valueOf(getSetting(DatabaseSettings.MAX_COLUMNS.getSettingsName()));
@@ -277,26 +280,12 @@ public class SlidingSettingsPane extends SlidingPane {
                 = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 14,
                                                                      defaultValue);
         
-        maxColumnsSpinner.setValueFactory(valueColumnFactory);
-        maxColumnsSpinner.setId("maxColumnsSpinner");
-        maxColumnsSpinner.setPrefWidth(70);
-        GridPane.setColumnIndex(maxColumnsSpinner, 2);
-        GridPane.setRowIndex(maxColumnsSpinner, 2);
-        editDaysPane.getChildren().add(maxColumnsSpinner);
-    }
-    
-    /**
-     * Applies the new number of columns to the main GridPane, and toggles the
-     * autoColumnsCheckBox to unselected. So the number of columns isn't
-     * automatically calculated, but manually set.
-     */
-    @FXML
-    protected void applyMaxColumnsChange() {
-        int maxColumns = maxColumnsSpinner.getValue();
-        updateSetting(DatabaseSettings.MAX_COLUMNS.getSettingsName(),
-                      String.valueOf(maxColumns));
-        autoColumnsCheckBox.setSelected(false);
-        new GridPaneInitializer(controller, controller.undoFacility, controller.progressIndicator).setup(gridPane, controller.numberOfDays, controller.focusDay, controller.toolBar.getPrefHeight());
+        numberOfColumnsSpinner.setValueFactory(valueColumnFactory);
+        numberOfColumnsSpinner.setId("maxColumnsSpinner");
+        numberOfColumnsSpinner.setPrefWidth(70);
+        GridPane.setColumnIndex(numberOfColumnsSpinner, 2);
+        GridPane.setRowIndex(numberOfColumnsSpinner, 2);
+        editDaysPane.getChildren().add(numberOfColumnsSpinner);
     }
     
     /**
@@ -317,12 +306,12 @@ public class SlidingSettingsPane extends SlidingPane {
         // update spinner to reflect auto mode on
         if (newValue) {
             int columns = LayoutKt.getNumberOfColumns(controller.numberOfDays);
-            maxColumnsSpinner.getValueFactory().setValue(columns);
+            numberOfColumnsSpinner.getValueFactory().setValue(columns);
         } else {
             // use the value which was saved to the database
             int columns = Integer
                     .valueOf(getSetting(DatabaseSettings.MAX_COLUMNS.getSettingsName()));
-            maxColumnsSpinner.getValueFactory().setValue(columns);
+            numberOfColumnsSpinner.getValueFactory().setValue(columns);
         }
     }
     

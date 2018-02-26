@@ -52,7 +52,7 @@ public class Controller implements Initializable, AbstractController {
     /** To adjust the number of days shown. */
     @FXML Button applyNumberOfDays;
     @FXML CheckBox autoColumnCheckBox;
-    @FXML Button applyMaxColumns;
+    @FXML Button applyNumberOfColumns;
     
     @FXML GridPane colorsPane;
     @FXML ColorPicker colorOne;
@@ -126,7 +126,7 @@ public class Controller implements Initializable, AbstractController {
                 settingsPane,
                 removeLabelButton,
                 applyNumberOfMovingDays,
-                applyNumberOfDays);
+                applyNumberOfDays, applyNumberOfColumns, autoColumnCheckBox);
 
         copySettingsPaneComponents(slidingSettingsPane);
         slidingSettingsPane.setup();
@@ -153,8 +153,6 @@ public class Controller implements Initializable, AbstractController {
         settingsPane.slidingPane = this.settingsPane;
         settingsPane.editDaysPane = this.editDaysPane;
         settingsPane.openCloseButton = this.settingsButton;
-        settingsPane.autoColumnsCheckBox = this.autoColumnCheckBox;
-        settingsPane.applyMaxColumns = this.applyMaxColumns;
         settingsPane.colorsPane = this.colorsPane;
         settingsPane.colorOne = this.colorOne;
         settingsPane.colorTwo = this.colorTwo;

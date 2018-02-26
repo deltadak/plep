@@ -27,6 +27,7 @@ class ApplyNumberOfDaysAction(
      * Set the button action.
      *
      * @param numberOfDaysProperty Should point to the number of days to be shown.
+     * @param refreshUI Should refresh UI when called.
      */
     fun set(numberOfDaysProperty: KMutableProperty<Int>, refreshUI: () -> Unit) {
 
