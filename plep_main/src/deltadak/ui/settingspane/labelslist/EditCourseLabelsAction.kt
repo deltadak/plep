@@ -1,4 +1,4 @@
-package deltadak.ui.settingspane
+package deltadak.ui.settingspane.labelslist
 
 import javafx.scene.control.Button
 import javafx.scene.layout.AnchorPane

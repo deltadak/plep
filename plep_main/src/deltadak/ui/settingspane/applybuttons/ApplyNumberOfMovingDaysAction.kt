@@ -1,4 +1,4 @@
-package deltadak.ui.settingspane
+package deltadak.ui.settingspane.applybuttons
 
 import deltadak.Database
 import deltadak.database.DatabaseSettings

@@ -1,4 +1,4 @@
-package deltadak.ui.settingspane
+package deltadak.ui.settingspane.labelslist
 
 import deltadak.Database
 import deltadak.ui.SlidingSettingsPane

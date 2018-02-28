@@ -4,10 +4,14 @@ import deltadak.Database;
 import deltadak.database.DatabaseSettings;
 import deltadak.ui.gridpane.GridPaneInitializer;
 import deltadak.ui.settingspane.*;
-import deltadak.ui.util.LayoutKt;
+import deltadak.ui.settingspane.applybuttons.ApplyNumberOfColumnsAction;
+import deltadak.ui.settingspane.applybuttons.ApplyNumberOfDaysAction;
+import deltadak.ui.settingspane.applybuttons.ApplyNumberOfMovingDaysAction;
+import deltadak.ui.settingspane.labelslist.EditCourseLabelsAction;
+import deltadak.ui.settingspane.labelslist.EditLabelsList;
+import deltadak.ui.settingspane.labelslist.RemoveLabelAction;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.layout.AnchorPane;
@@ -18,6 +22,9 @@ import kotlin.jvm.functions.Function0;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static deltadak.ui.settingspane.LayoutConstantsKt.LABELS_LIST_ROW_HEIGHT;
+import static deltadak.ui.settingspane.LayoutConstantsKt.MAX_NUMBER_LABELS;
 
 /**
  * A pane which provides settings.
@@ -53,8 +60,6 @@ public class SlidingSettingsPane extends SlidingPane {
     private List<ColorPicker> colorPickers = new ArrayList<>();
 
     private Function0<Unit> refreshUI;
-    
-    private final int MAX_NUMBER_LABELS = 5;
     
     /**
      * Construct a new SlidingSettingsPane.
@@ -99,6 +104,20 @@ public class SlidingSettingsPane extends SlidingPane {
     public void setupHook() {
         setupSettingsMenu();
 
+        setComponentListeners();
+
+        for (int i = 0; i < colorPickers.size(); i++) {
+            ColorPicker colorPicker = colorPickers.get(i);
+            colorPicker.setOnAction(event -> editColor(colorPicker));
+        }
+
+        boolean isAuto = Boolean
+                .valueOf(getSetting(DatabaseSettings.MAX_COLUMNS_AUTO.getSettingsName()));
+        autoColumnsCheckBox.setSelected(isAuto);
+    }
+    
+    private void setComponentListeners() {
+
         new EditCourseLabelsAction(editLabelsButton).set(editLabelsPane, settingsPane);
 
         // Replace with regular set on converting to Kotlin.
@@ -112,82 +131,19 @@ public class SlidingSettingsPane extends SlidingPane {
 
         new AutoColumnsAction(autoColumnsCheckBox, numberOfColumnsSpinner).javaSet(refreshUI, controller);
 
-        setComponentListeners();
-
-        boolean isAuto = Boolean
-                .valueOf(getSetting(DatabaseSettings.MAX_COLUMNS_AUTO.getSettingsName()));
-        autoColumnsCheckBox.setSelected(isAuto);
-    }
-    
-    private void setComponentListeners() {
-        //        autoColumnsCheckBox.setOnAction(event ->
-        //                autoColumnsCheckBoxToggled());
-        //        colorOne.setOnMouseClicked(event -> editColor(colorOne));
-        //        colorTwo.setOnMouseClicked(event -> editColor(colorTwo));
-        for (int i = 0; i < colorPickers.size(); i++) {
-            ColorPicker colorPicker = colorPickers.get(i);
-            colorPicker.setOnAction(event -> editColor(colorPicker));
-        }
     }
     
     /**
      * Sets up the content of the settings menu.
      */
     private void setupSettingsMenu() {
-        
-        addEditLabelsPane();
+
+        ListView<String> labelsList = new EditLabelsList().set(refreshUI);
+        editLabelsPane.getChildren().add(labelsList);
+
         addChangeNumberOfDaysSettings();
         addColorsPane();
         
-    }
-    
-    /**
-     * Sets up the editable ListView to edit the labels/items we want to see in
-     * the comboboxes on the main screen.
-     */
-    private void addEditLabelsPane() {
-        labelsList = new ListView<>();
-        // first set up the listview with empty labels in order to allow editing
-        ObservableList<String> itemsLabelsList = FXCollections
-                .observableArrayList("", "", "", "", "");
-        
-        // get the labels from the database and store them in the listview
-        ArrayList<String> labelStrings = getLabels();
-        // add items starting at the top
-        for (int i = 0; i < labelStrings.size(); i++) {
-            itemsLabelsList.set(i, labelStrings.get(i));
-        }
-        
-        // set a CellFactory on the listview to be able make the cells editable
-        // using setEditable(true) isn't enough
-        labelsList.setCellFactory(TextFieldListCell.forListView());
-        labelsList.setEditable(true);
-        
-        // give the listview an id (FXML) so we can look it up by its id, and
-        // toggle the visibility
-        labelsList.setId("labelsListView");
-        labelsList.setItems(itemsLabelsList);
-        labelsList.setVisible(false);
-        // "magik numbers" are figured out by observations
-        labelsList.setPrefWidth(120);
-        labelsList
-                .setPrefHeight((LISTVIEW_ROW_HEIGHT * MAX_NUMBER_LABELS) + 18);
-        
-        // position the listview in the settings pane
-        GridPane.setColumnIndex(labelsList, 1);
-        GridPane.setRowIndex(labelsList, 0);
-        GridPane.setRowSpan(labelsList, 2);
-        
-        // when editing a label in the listview, update the value
-        // in the database and setup the main gridpane with the new items in the
-        // comboboxes
-        labelsList.setOnEditCommit(event -> {
-            labelsList.getItems().set(event.getIndex(), event.getNewValue());
-            updateLabel(event.getIndex(), event.getNewValue());
-            new GridPaneInitializer(controller, controller.undoFacility, controller.progressIndicator).setup(gridPane, controller.numberOfDays, controller.focusDay, controller.toolBar.getPrefHeight());
-        });
-        
-        editLabelsPane.getChildren().add(labelsList);
     }
     
     private void addColorsPane() {

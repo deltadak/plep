@@ -14,6 +14,9 @@ import javafx.util.Duration;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import static deltadak.ui.settingspane.LayoutConstantsKt.PANE_WIDTH;
+import static deltadak.ui.settingspane.LayoutConstantsKt.TOGGLE_DURATION;
+
 /**
  * A general Pane which slides in from the left.
  */
@@ -27,12 +30,6 @@ public class SlidingPane {
     public ToolBar toolBar;
     public AnchorPane slidingPane;
     public Button openCloseButton;
-
-    // layout globals for the settings pane
-    protected static final int PANE_WIDTH = 400;
-    protected static final int LISTVIEW_ROW_HEIGHT = 29;
-    // the duration of the animation when opening and closing the settings pane
-    protected static final int TOGGLE_DURATION = 350;
 
     /**
      * Construct a new SlidingPane.
