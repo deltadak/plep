@@ -12,6 +12,9 @@ import kotlin.test.assertTrue
 
 object DeleteSubtaskCommandTest: Spek({
     given("A command to delete a subtask") {
+        // Initialise JavaFX Toolkit, needed for things like ProgressIndicator.
+        com.sun.javafx.application.PlatformImpl.startup { }
+
         val day = LocalDate.now()
         val index = 1
         val tree = null

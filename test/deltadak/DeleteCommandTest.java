@@ -20,6 +20,9 @@ public class DeleteCommandTest {
     DeleteCommand command;
 
     private void setup() {
+        // Initialise JavaFX Toolkit, needed for things like ProgressIndicator.
+        com.sun.javafx.application.PlatformImpl.startup(()->{});
+
         LocalDate dayState = LocalDate.now();
         List<List<HomeworkTask>> list = new ArrayList<>();
         taskToDelete = new ArrayList<>();
