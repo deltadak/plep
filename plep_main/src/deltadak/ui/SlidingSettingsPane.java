@@ -54,7 +54,7 @@ public class SlidingSettingsPane extends SlidingPane {
     public ColorPicker colorFour;
     public ColorPicker colorFive;
 
-    // temporarily public for Java-Kt interop
+    /** temporarily public for Java-Kt interop */
     public ListView<String> labelsList;
     private List<ColorPicker> colorPickers = new ArrayList<>();
 
@@ -129,9 +129,9 @@ public class SlidingSettingsPane extends SlidingPane {
         editLabelsPane.getChildren().add(labelsList);
 
         // Add spinners to a separate pane.
-        numberOfMovingDaysSpinner = new NumberOfMovingDaysSpinner().getNew(controller.numberOfMovingDays);
+        numberOfMovingDaysSpinner = new NumberOfMovingDaysSpinner().getNew();
 
-        numberOfDaysSpinner = new NumberOfDaysSpinner().getNew(controller.numberOfDays);
+        numberOfDaysSpinner = new NumberOfDaysSpinner().getNew();
 
         numberOfColumnsSpinner = new NumberOfColumnsSpinner().getNew();
 
