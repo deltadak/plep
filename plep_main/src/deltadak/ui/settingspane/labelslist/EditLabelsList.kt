@@ -20,7 +20,7 @@ class EditLabelsList {
      *
      * @param refreshUI Should refresh UI when called.
      */
-    fun set(refreshUI: () -> Unit): ListView<String> {
+    fun getNew(refreshUI: () -> Unit): ListView<String> {
 
         val labelsList = ListView<String>()
 
@@ -63,5 +63,4 @@ class EditLabelsList {
         return labelsList
 
     }
-
 }

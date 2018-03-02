@@ -10,10 +10,10 @@ import deltadak.ui.settingspane.applybuttons.ApplyNumberOfMovingDaysAction;
 import deltadak.ui.settingspane.labelslist.EditCourseLabelsAction;
 import deltadak.ui.settingspane.labelslist.EditLabelsList;
 import deltadak.ui.settingspane.labelslist.RemoveLabelAction;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import deltadak.ui.settingspane.spinners.NumberOfColumnsSpinner;
+import deltadak.ui.settingspane.spinners.NumberOfDaysSpinner;
+import deltadak.ui.settingspane.spinners.NumberOfMovingDaysSpinner;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.TextFieldListCell;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
@@ -23,9 +23,6 @@ import kotlin.jvm.functions.Function0;
 import java.util.ArrayList;
 import java.util.List;
 
-import static deltadak.ui.settingspane.LayoutConstantsKt.LABELS_LIST_ROW_HEIGHT;
-import static deltadak.ui.settingspane.LayoutConstantsKt.MAX_NUMBER_LABELS;
-
 /**
  * A pane which provides settings.
  */
@@ -34,6 +31,7 @@ public class SlidingSettingsPane extends SlidingPane {
     // FXML references.
     private Button editLabelsButton;
     private GridPane editLabelsPane;
+    private GridPane editDaysPane;
     private AnchorPane settingsPane;
     private Button removeLabelButton;
     private Button applyNumberOfMovingDays;
@@ -41,10 +39,14 @@ public class SlidingSettingsPane extends SlidingPane {
     private Button applyNumberOfColumns;
     private CheckBox autoColumnsCheckBox;
 
+    // References to object generated during runtime.
+    private Spinner<Integer> numberOfMovingDaysSpinner;
+    private Spinner<Integer> numberOfDaysSpinner;
+    private Spinner<Integer> numberOfColumnsSpinner;
+
 
     // xml references passed from the controller
     // todo at the end check that all references are assigned something
-    public GridPane editDaysPane;
     public GridPane colorsPane;
     public ColorPicker colorOne;
     public ColorPicker colorTwo;
@@ -54,9 +56,6 @@ public class SlidingSettingsPane extends SlidingPane {
 
     // temporarily public for Java-Kt interop
     public ListView<String> labelsList;
-    private Spinner<Integer> numberOfMovingDaysSpinner;
-    private Spinner<Integer> numberOfDaysSpinner;
-    private Spinner<Integer> numberOfColumnsSpinner;
     private List<ColorPicker> colorPickers = new ArrayList<>();
 
     private Function0<Unit> refreshUI;
@@ -74,6 +73,7 @@ public class SlidingSettingsPane extends SlidingPane {
             Function0<Unit> refreshUI,
             Button editLabelsButton,
             GridPane editLabelsPane,
+            GridPane editDaysPane,
             AnchorPane settingsPane,
             Button removeLabelButton,
             Button applyNumberOfMovingDays,
@@ -88,6 +88,7 @@ public class SlidingSettingsPane extends SlidingPane {
         this.refreshUI = refreshUI;
         this.editLabelsButton = editLabelsButton;
         this.editLabelsPane = editLabelsPane;
+        this.editDaysPane = editDaysPane;
         this.settingsPane = settingsPane;
         this.removeLabelButton = removeLabelButton;
         this.applyNumberOfMovingDays = applyNumberOfMovingDays;
@@ -104,7 +105,7 @@ public class SlidingSettingsPane extends SlidingPane {
     public void setupHook() {
         setupSettingsMenu();
 
-        setComponentListeners();
+        setComponentActions(numberOfMovingDaysSpinner, numberOfDaysSpinner, numberOfColumnsSpinner);
 
         for (int i = 0; i < colorPickers.size(); i++) {
             ColorPicker colorPicker = colorPickers.get(i);
@@ -115,8 +116,47 @@ public class SlidingSettingsPane extends SlidingPane {
                 .valueOf(getSetting(DatabaseSettings.MAX_COLUMNS_AUTO.getSettingsName()));
         autoColumnsCheckBox.setSelected(isAuto);
     }
-    
-    private void setComponentListeners() {
+
+    /**
+     * Sets up the content of the settings menu.
+     */
+    private void setupSettingsMenu() {
+
+        // todo get initial values from  database in spinners?
+
+        // Add labels to their pane.
+        ListView<String> labelsList = new EditLabelsList().getNew(refreshUI);
+        editLabelsPane.getChildren().add(labelsList);
+
+        // Add spinners to a separate pane.
+        numberOfMovingDaysSpinner = new NumberOfMovingDaysSpinner().getNew(controller.numberOfMovingDays);
+
+        numberOfDaysSpinner = new NumberOfDaysSpinner().getNew(controller.numberOfDays);
+
+        numberOfColumnsSpinner = new NumberOfColumnsSpinner().getNew();
+
+        editDaysPane.getChildren().addAll(
+                numberOfMovingDaysSpinner,
+                numberOfDaysSpinner,
+                numberOfColumnsSpinner
+        );
+
+        addColorsPane();
+
+    }
+
+    /**
+     * Set correct actions on various buttons and such.
+     * The following spinners are request as parameters so it is clear that they have to be initialised before this methods makes any sense!
+     *
+     * @param numberOfMovingDaysSpinner Option to choose number of moving days.
+     * @param numberOfDaysSpinner Option to choose number of days.
+     * @param numberOfColumnsSpinner Option to choose number of columns.
+     */
+    private void setComponentActions(
+            Spinner<Integer> numberOfMovingDaysSpinner,
+            Spinner<Integer> numberOfDaysSpinner,
+            Spinner<Integer> numberOfColumnsSpinner) {
 
         new EditCourseLabelsAction(editLabelsButton).set(editLabelsPane, settingsPane);
 
@@ -131,19 +171,6 @@ public class SlidingSettingsPane extends SlidingPane {
 
         new AutoColumnsAction(autoColumnsCheckBox, numberOfColumnsSpinner).javaSet(refreshUI, controller);
 
-    }
-    
-    /**
-     * Sets up the content of the settings menu.
-     */
-    private void setupSettingsMenu() {
-
-        ListView<String> labelsList = new EditLabelsList().set(refreshUI);
-        editLabelsPane.getChildren().add(labelsList);
-
-        addChangeNumberOfDaysSettings();
-        addColorsPane();
-        
     }
     
     private void addColorsPane() {
@@ -191,54 +218,6 @@ public class SlidingSettingsPane extends SlidingPane {
     private String convertColorToWeb(Color color) {
         
         return color.toString().substring(2, 8);
-    }
-    
-    /**
-     * Adds the Spinners to be able to change the number of days to move and
-     * number of days to show to the settings pane.
-     */
-    private void addChangeNumberOfDaysSettings() {
-        // Adding the spinner to change the number of days to move.
-        numberOfMovingDaysSpinner = new Spinner<>();
-        SpinnerValueFactory<Integer> valueFactory
-                = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 14,
-                                                                     controller.numberOfMovingDays);
-        
-        numberOfMovingDaysSpinner.setValueFactory(valueFactory);
-        numberOfMovingDaysSpinner.setId("numberOfMovingDaysSpinner");
-        numberOfMovingDaysSpinner.setPrefWidth(70);
-        GridPane.setColumnIndex(numberOfMovingDaysSpinner, 2);
-        editDaysPane.getChildren().add(numberOfMovingDaysSpinner);
-        
-        // Adding the spinner to change the number of days to show.
-        numberOfDaysSpinner = new Spinner<>();
-        // magik value 31 is the length of the longest month, just to be sure
-        SpinnerValueFactory<Integer> valueShowFactory
-                = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 31,
-                                                                     controller.numberOfDays);
-        
-        numberOfDaysSpinner.setValueFactory(valueShowFactory);
-        numberOfDaysSpinner.setId("numberOfShowDaysSpinner");
-        numberOfDaysSpinner.setPrefWidth(70);
-        GridPane.setColumnIndex(numberOfDaysSpinner, 2);
-        GridPane.setRowIndex(numberOfDaysSpinner, 1);
-        editDaysPane.getChildren().add(numberOfDaysSpinner);
-        
-        // Adding the spinner to change the number of columns.
-        numberOfColumnsSpinner = new Spinner<>();
-        // Get the previous value from the database.
-        int defaultValue = Integer
-                .valueOf(getSetting(DatabaseSettings.MAX_COLUMNS.getSettingsName()));
-        SpinnerValueFactory<Integer> valueColumnFactory
-                = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 14,
-                                                                     defaultValue);
-        
-        numberOfColumnsSpinner.setValueFactory(valueColumnFactory);
-        numberOfColumnsSpinner.setId("maxColumnsSpinner");
-        numberOfColumnsSpinner.setPrefWidth(70);
-        GridPane.setColumnIndex(numberOfColumnsSpinner, 2);
-        GridPane.setRowIndex(numberOfColumnsSpinner, 2);
-        editDaysPane.getChildren().add(numberOfColumnsSpinner);
     }
     
 }

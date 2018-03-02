@@ -17,3 +17,6 @@ const val PANE_WIDTH = 400
 
 /** The duration of the animation when opening and closing the settings pane. */
 const val TOGGLE_DURATION = 350
+
+/** Width of spinners. */
+const val SPINNER_WIDTH = 70.0

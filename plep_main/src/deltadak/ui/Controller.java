@@ -123,6 +123,7 @@ public class Controller implements Initializable, AbstractController {
                 JavaHelperKt.getUIRefresher(this),
                 editLabelsButton,
                 editLabelsPane,
+                editDaysPane,
                 settingsPane,
                 removeLabelButton,
                 applyNumberOfMovingDays,
@@ -146,12 +147,12 @@ public class Controller implements Initializable, AbstractController {
      * @param settingsPane
      *         which needs the references
      */
+    @Deprecated
     private void copySettingsPaneComponents(SlidingSettingsPane settingsPane) {
         settingsPane.main = this.main;
         settingsPane.gridPane = this.gridPane;
         settingsPane.toolBar = this.toolBar;
         settingsPane.slidingPane = this.settingsPane;
-        settingsPane.editDaysPane = this.editDaysPane;
         settingsPane.openCloseButton = this.settingsButton;
         settingsPane.colorsPane = this.colorsPane;
         settingsPane.colorOne = this.colorOne;
