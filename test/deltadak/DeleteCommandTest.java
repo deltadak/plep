@@ -3,10 +3,13 @@ package deltadak;
 import deltadak.commands.DeleteCommand;
 import javafx.scene.control.ProgressIndicator;
 import org.junit.jupiter.api.Test;
+import org.testfx.api.FxRobot;
+import org.testfx.api.FxToolkit;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeoutException;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -14,14 +17,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * Tests {@link DeleteCommand}.
  */
-public class DeleteCommandTest {
+public class DeleteCommandTest extends FxRobot {
 
     List<HomeworkTask> taskToDelete;
     DeleteCommand command;
 
-    private void setup() {
+    private void setup() throws TimeoutException {
         // Initialise JavaFX Toolkit, needed for things like ProgressIndicator.
-        com.sun.javafx.application.PlatformImpl.startup(()->{});
+        FxToolkit.registerPrimaryStage();
+        FxToolkit.setupApplication(Main.class);
 
         LocalDate dayState = LocalDate.now();
         List<List<HomeworkTask>> list = new ArrayList<>();
@@ -33,7 +37,7 @@ public class DeleteCommandTest {
     }
 
     @Test
-    void testIsExecuted() {
+    void testIsExecuted() throws TimeoutException {
         setup();
 
         assertFalse(command.isExecuted(), "Command should not be executed initially");
@@ -44,7 +48,7 @@ public class DeleteCommandTest {
     }
 
     @Test
-    void testContent() {
+    void testContent() throws TimeoutException {
         setup();
 
         command.execute();

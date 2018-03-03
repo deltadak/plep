@@ -6,6 +6,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
+import org.testfx.api.FxToolkit
 import java.time.LocalDate
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -13,7 +14,8 @@ import kotlin.test.assertTrue
 object DeleteSubtaskCommandTest: Spek({
     given("A command to delete a subtask") {
         // Initialise JavaFX Toolkit, needed for things like ProgressIndicator.
-        com.sun.javafx.application.PlatformImpl.startup { }
+        FxToolkit.registerPrimaryStage()
+        FxToolkit.setupApplication(Main::class.java)
 
         val day = LocalDate.now()
         val index = 1

@@ -90,9 +90,18 @@ dependencies {
     testCompile 'org.jetbrains.spek:spek-api:1.1.2'
     testRuntime 'org.jetbrains.spek:spek-junit-platform-engine:1.1.2'
 
+    // Needed for JavaFX tests.
+    testCompile "org.testfx:testfx-core:4.0.12-alpha"
+    testCompile "org.testfx:testfx-junit:4.0.12-alpha"
+
 }
 
-junitPlatform {
-    // show test results in output in tree form
-    details 'tree'
+test {
+    // Always run tests, even when nothing changed.
+    dependsOn 'cleanTest'
+
+    // Show test results.
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
 }
