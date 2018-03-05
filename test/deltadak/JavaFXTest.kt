@@ -1,6 +1,7 @@
 package deltadak
 
 import javafx.scene.control.ProgressIndicator
+import junit.framework.Assert.fail
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
@@ -17,6 +18,7 @@ object JavaFXTest: Spek({
             val progress = ProgressIndicator()
             it("should not throw any errors") {
                 progress.isVisible = false
+                fail("it works!")
             }
         }
 
