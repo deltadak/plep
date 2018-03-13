@@ -7,6 +7,7 @@ import nl.deltadak.plep.ui.settingspane.AutoColumnsAction;
 import nl.deltadak.plep.ui.settingspane.applybuttons.ApplyNumberOfColumnsAction;
 import nl.deltadak.plep.ui.settingspane.applybuttons.ApplyNumberOfDaysAction;
 import nl.deltadak.plep.ui.settingspane.applybuttons.ApplyNumberOfMovingDaysAction;
+import nl.deltadak.plep.ui.settingspane.colors.ColorsList;
 import nl.deltadak.plep.ui.settingspane.labelslist.EditCourseLabelsAction;
 import nl.deltadak.plep.ui.settingspane.labelslist.EditLabelsList;
 import nl.deltadak.plep.ui.settingspane.labelslist.RemoveLabelAction;
@@ -38,25 +39,15 @@ public class SlidingSettingsPane extends SlidingPane {
     private Button applyNumberOfDays;
     private Button applyNumberOfColumns;
     private CheckBox autoColumnsCheckBox;
+    private List<ColorPicker> colorPickers;
 
     // References to object generated during runtime.
     private Spinner<Integer> numberOfMovingDaysSpinner;
     private Spinner<Integer> numberOfDaysSpinner;
     private Spinner<Integer> numberOfColumnsSpinner;
 
-
-    // xml references passed from the controller
-    // todo at the end check that all references are assigned something
-    public GridPane colorsPane;
-    public ColorPicker colorOne;
-    public ColorPicker colorTwo;
-    public ColorPicker colorThree;
-    public ColorPicker colorFour;
-    public ColorPicker colorFive;
-
     /** temporarily public for Java-Kt interop */
     public ListView<String> labelsList;
-    private List<ColorPicker> colorPickers = new ArrayList<>();
 
     private Function0<Unit> refreshUI;
     
@@ -79,12 +70,12 @@ public class SlidingSettingsPane extends SlidingPane {
             Button applyNumberOfMovingDays,
             Button applyNumberOfDays,
             Button applyNumberOfColumns,
-            CheckBox autoColumnsCheckBox) {
+            CheckBox autoColumnsCheckBox,
+            List<ColorPicker> colorPickers) {
 
         super(controller);
 
-        // todo check at the end that all fxml references are assigned here
-        // The references are copied to instance variables so they can be access in the setup hook method - order of initialisation is important!
+        // The references are copied to instance variables so they can be accessed in the setup hook method - order of initialisation is important!
         this.refreshUI = refreshUI;
         this.editLabelsButton = editLabelsButton;
         this.editLabelsPane = editLabelsPane;
@@ -95,6 +86,7 @@ public class SlidingSettingsPane extends SlidingPane {
         this.applyNumberOfDays = applyNumberOfDays;
         this.applyNumberOfColumns = applyNumberOfColumns;
         this.autoColumnsCheckBox = autoColumnsCheckBox;
+        this.colorPickers = new ArrayList<>(colorPickers); // Copying is safer.
 
     }
     
@@ -106,11 +98,6 @@ public class SlidingSettingsPane extends SlidingPane {
         setupSettingsMenu();
 
         setComponentActions(numberOfMovingDaysSpinner, numberOfDaysSpinner, numberOfColumnsSpinner);
-
-        for (int i = 0; i < colorPickers.size(); i++) {
-            ColorPicker colorPicker = colorPickers.get(i);
-            colorPicker.setOnAction(event -> editColor(colorPicker));
-        }
 
         boolean isAuto = Boolean
                 .valueOf(getSetting(DatabaseSettings.MAX_COLUMNS_AUTO.getSettingsName()));
@@ -141,7 +128,8 @@ public class SlidingSettingsPane extends SlidingPane {
                 numberOfColumnsSpinner
         );
 
-        addColorsPane();
+        // The options to customise colors.
+        new ColorsList(colorPickers).setup(refreshUI);
 
     }
 
@@ -171,53 +159,6 @@ public class SlidingSettingsPane extends SlidingPane {
 
         new AutoColumnsAction(autoColumnsCheckBox, numberOfColumnsSpinner).javaSet(refreshUI, controller);
 
-    }
-    
-    private void addColorsPane() {
-        colorPickers.add(colorOne);
-        colorPickers.add(colorTwo);
-        colorPickers.add(colorThree);
-        colorPickers.add(colorFour);
-        colorPickers.add(colorFive);
-        
-        // Get the colors from the database, so the colorpickers can be set
-        // to those colors.
-        String[] colors = Database.INSTANCE.getColorsFromDatabase();
-        for (int i = 0; i < colorPickers.size(); i++) {
-            colorPickers.get(i).getStyleClass().add("button");
-            // Set the color in the database on the color picker.
-            colorPickers.get(i).setValue(Color.web(colors[i]));
-        }
-    }
-    
-    /**
-     * Called when the value of a color picker is changed. Updates the value of
-     * the color in the database.
-     *
-     * @param colorPicker
-     *         The ColorPicker that is edited.
-     */
-    private void editColor(ColorPicker colorPicker) {
-        
-        int id = colorPickers.indexOf(colorPicker);
-        Database.INSTANCE
-                .updateColor(id, convertColorToWeb(colorPicker.getValue()));
-
-        new GridPaneInitializer(controller, controller.undoFacility, controller.progressIndicator).setup(gridPane, controller.numberOfDays, controller.focusDay, controller.toolBar.getPrefHeight());
-        
-    }
-    
-    /**
-     * Converts a Color to a string hex value.
-     *
-     * @param color
-     *         The Color to convert to hex.
-     *
-     * @return A String with the hex value of color.
-     */
-    private String convertColorToWeb(Color color) {
-        
-        return color.toString().substring(2, 8);
     }
     
 }

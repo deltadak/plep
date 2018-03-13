@@ -26,12 +26,12 @@ import javafx.scene.text.TextAlignment;
 import nl.deltadak.plep.Database;
 import nl.deltadak.plep.HomeworkTask;
 import nl.deltadak.plep.ui.Controller;
-import nl.deltadak.plep.ui.util.ConvertersKt;
+import nl.deltadak.plep.ui.util.converters.ConvertersKt;
 
 import java.time.LocalDate;
 import java.util.Objects;
 
-import static nl.deltadak.plep.ui.util.ConvertersKt.getParentTasks;
+import static nl.deltadak.plep.ui.util.converters.ConvertersKt.getParentTasks;
 import static java.lang.Math.min;
 
 /**

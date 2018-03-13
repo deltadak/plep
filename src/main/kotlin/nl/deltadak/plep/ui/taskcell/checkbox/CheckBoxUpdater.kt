@@ -3,7 +3,7 @@ package nl.deltadak.plep.ui.taskcell.checkbox
 import nl.deltadak.plep.database.DatabaseFacade
 import nl.deltadak.plep.ui.taskcell.selection.Selector
 import nl.deltadak.plep.ui.taskcell.textlabel.TextLabelStyle
-import nl.deltadak.plep.ui.util.toHomeworkTaskList
+import nl.deltadak.plep.ui.util.converters.toHomeworkTaskList
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
 import javafx.scene.control.CheckBox

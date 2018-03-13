@@ -1,7 +1,7 @@
 package nl.deltadak.plep.ui.taskcell.courselabel
 
 import nl.deltadak.plep.database.DatabaseFacade
-import nl.deltadak.plep.ui.util.toHomeworkTaskList
+import nl.deltadak.plep.ui.util.converters.toHomeworkTaskList
 import javafx.application.Platform
 import javafx.beans.Observable
 import javafx.beans.value.ObservableValue

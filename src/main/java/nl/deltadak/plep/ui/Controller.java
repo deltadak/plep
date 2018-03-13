@@ -15,6 +15,8 @@ import nl.deltadak.plep.commands.UndoFacility;
 
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -117,6 +119,13 @@ public class Controller implements Initializable, AbstractController {
         
         progressIndicator.setVisible(false);
 
+        ArrayList<ColorPicker> colorPickers = new ArrayList<>();
+        colorPickers.add(colorOne);
+        colorPickers.add(colorTwo);
+        colorPickers.add(colorThree);
+        colorPickers.add(colorFour);
+        colorPickers.add(colorFive);
+
         // setup the settings page
         SlidingSettingsPane slidingSettingsPane = new SlidingSettingsPane(
                 this,
@@ -127,7 +136,7 @@ public class Controller implements Initializable, AbstractController {
                 settingsPane,
                 removeLabelButton,
                 applyNumberOfMovingDays,
-                applyNumberOfDays, applyNumberOfColumns, autoColumnCheckBox);
+                applyNumberOfDays, applyNumberOfColumns, autoColumnCheckBox, colorPickers);
 
         copySettingsPaneComponents(slidingSettingsPane);
         slidingSettingsPane.setup();
@@ -154,13 +163,7 @@ public class Controller implements Initializable, AbstractController {
         settingsPane.toolBar = this.toolBar;
         settingsPane.slidingPane = this.settingsPane;
         settingsPane.openCloseButton = this.settingsButton;
-        settingsPane.colorsPane = this.colorsPane;
-        settingsPane.colorOne = this.colorOne;
-        settingsPane.colorTwo = this.colorTwo;
-        settingsPane.colorThree = this.colorThree;
-        settingsPane.colorFour = this.colorFour;
-        settingsPane.colorFive = this.colorFive;
-        
+
     }
     
     /**
