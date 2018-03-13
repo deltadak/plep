@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1"
+            xmlns="http://javafx.com/javafx/2.2"
+            fx:controller="nl.deltadak.plep.ui.Controller"
+            fx:id="main">
+
+    <ToolBar fx:id="toolBar"
+             prefHeight="75.0"
+             prefWidth="200.0"
+             AnchorPane.topAnchor="0.0"
+             AnchorPane.rightAnchor="0.0"
+             AnchorPane.leftAnchor="0.0">
+        <!--<items>--> <!-- default property tag -->
+            <Button fx:id="settingsButton" text="Settings" />
+            <Button fx:id="helpButton" text="Hidden Features" />
+            <Pane prefWidth="20.0" HBox.hgrow="SOMETIMES" />
+            <Button text="&lt;" onAction="#dayBackward"/>
+            <Button text="Today" onAction="#goToToday" />
+            <Button text="&gt;" onAction="#dayForward" />
+            <Pane prefWidth="20.0" HBox.hgrow="SOMETIMES" />
+            <ProgressIndicator fx:id="progressIndicator" />
+
+        <!--</items>-->
+    </ToolBar>
+
+    <GridPane fx:id="gridPane"
+              AnchorPane.bottomAnchor="0.0"
+              AnchorPane.rightAnchor="0.0"
+              AnchorPane.leftAnchor="0.0"
+              alignment="CENTER"
+              hgap="10.0"
+              prefHeight="300.0"
+              prefWidth="600.0"
+              vgap="10.0">
+    </GridPane>
+
+    <!-- help -->
+    <AnchorPane fx:id="helpPane"
+                AnchorPane.bottomAnchor="0.0">
+        <GridPane
+                AnchorPane.topAnchor="10.0"
+                AnchorPane.leftAnchor="10.0"
+                hgap="2"
+                vgap="2"
+                prefWidth="400">
+            <!-- again set prefwidth because otherwise wrapping text doesn't work -->
+
+
+            <Text id="helpTextTitle"
+                  text="The cool features:"
+                  GridPane.columnIndex="0"
+                  GridPane.rowIndex="0"/>
+
+            <Label id="helpText" text="Drag and drop! &#13;
+Double-click to edit, enter to save. &#13;
+Right-click on an item: Add a subtask, choose a colour or repeat weekly. &#13;
+DEL: Delete the selected item. &#13;
+Ctrl+Z: Undo a deletion. &#13;
+On the settings pane, click on a colour to edit it."
+                  wrapText="true"
+                  GridPane.columnIndex="0"
+                  GridPane.rowIndex="1"/>
+        </GridPane>
+    </AnchorPane>
+
+    <!-- settings -->
+    <AnchorPane fx:id="settingsPane"
+                AnchorPane.bottomAnchor="0.0">
+
+        <GridPane fx:id="editLabelsPane"
+                  AnchorPane.topAnchor="10.0"
+                  AnchorPane.leftAnchor="10.0"
+                  hgap="10"
+                  vgap="10">
+            <Button fx:id="editLabelsButton"
+                    text="Edit course labels"
+                    GridPane.columnIndex="0"
+                    GridPane.rowIndex="0"/>
+            <Button fx:id="removeLabelButton"
+                    text="Remove"
+                    GridPane.rowIndex="1"
+                    GridPane.columnIndex="0"
+                    visible="false"/>
+        </GridPane>
+
+        <GridPane fx:id="editDaysPane"
+                  hgap="10"
+                  vgap="10"
+                  AnchorPane.topAnchor="44.0"
+                  AnchorPane.leftAnchor="10.0">
+
+            <Text id="numberOfMovingDaysText"
+                  GridPane.columnSpan="2"
+                  text="Number of days to go forward:"/>
+
+            <Button fx:id="applyNumberOfMovingDays"
+                    GridPane.columnIndex="3"
+                    text="Apply"/>
+
+            <Text id="numberOfShowDaysText"
+                  GridPane.columnSpan="2"
+                  text="Number of days to show:"
+                  GridPane.rowIndex="1"/>
+
+            <Button fx:id="applyNumberOfDays"
+                    GridPane.columnIndex="3"
+                    GridPane.rowIndex="1"
+                    text="Apply"/>
+
+            <Text id="maxColumnsText"
+                  text="Number of columns:"
+                  GridPane.rowIndex="2"/>
+
+            <CheckBox fx:id="autoColumnCheckBox"
+                      text="Auto"
+                      GridPane.columnIndex="1"
+                      GridPane.rowIndex="2"/>
+
+            <Button fx:id="applyNumberOfColumns"
+                    GridPane.columnIndex="3"
+                    GridPane.rowIndex="2"
+                    text="Apply"/>
+
+        </GridPane>
+
+        <GridPane fx:id="colorsPane"
+                  hgap="10"
+                  vgap="10"
+                  AnchorPane.topAnchor="180.0"
+                  AnchorPane.leftAnchor="10.0">
+
+            <Text text="Background colours"
+                    GridPane.columnIndex="0"
+                    GridPane.rowIndex="0"
+                    GridPane.columnSpan="5"/>
+
+            <ColorPicker fx:id="colorOne"
+                        GridPane.columnIndex="0"
+                        GridPane.rowIndex="1"/>
+
+            <ColorPicker fx:id="colorTwo"
+                       GridPane.columnIndex="1"
+                       GridPane.rowIndex="1"/>
+
+            <ColorPicker fx:id="colorThree"
+                         GridPane.columnIndex="2"
+                         GridPane.rowIndex="1"/>
+
+            <ColorPicker fx:id="colorFour"
+                         GridPane.columnIndex="3"
+                         GridPane.rowIndex="1"/>
+
+            <Label text="Default:"
+                  GridPane.columnIndex="4"
+                  GridPane.rowIndex="0"/>
+            <ColorPicker fx:id="colorFive"
+                         GridPane.columnIndex="4"
+                         GridPane.rowIndex="1"/>
+
+        </GridPane>
+
+
+    </AnchorPane>
+</AnchorPane>
+
+
+
+
