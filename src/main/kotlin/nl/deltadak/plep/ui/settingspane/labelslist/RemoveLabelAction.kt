@@ -24,7 +24,7 @@ class RemoveLabelAction(
      * Set the button action.
      *
      * @param labelsListProp Should be a variable reference to the list of labels.
-     * The rest of the parameters are needed to update the UI later on.
+     * @param refreshUI Should refresh the UI when called.
      */
     fun set(labelsListProp: KMutableProperty<ListView<String>>,
             refreshUI: () -> Unit) {

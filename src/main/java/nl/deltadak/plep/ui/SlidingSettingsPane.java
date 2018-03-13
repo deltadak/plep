@@ -1,8 +1,11 @@
 package nl.deltadak.plep.ui;
 
+import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function0;
 import nl.deltadak.plep.database.DatabaseSettings;
-import nl.deltadak.plep.ui.gridpane.GridPaneInitializer;
-import nl.deltadak.plep.Database;
 import nl.deltadak.plep.ui.settingspane.AutoColumnsAction;
 import nl.deltadak.plep.ui.settingspane.applybuttons.ApplyNumberOfColumnsAction;
 import nl.deltadak.plep.ui.settingspane.applybuttons.ApplyNumberOfDaysAction;
@@ -14,12 +17,6 @@ import nl.deltadak.plep.ui.settingspane.labelslist.RemoveLabelAction;
 import nl.deltadak.plep.ui.settingspane.spinners.NumberOfColumnsSpinner;
 import nl.deltadak.plep.ui.settingspane.spinners.NumberOfDaysSpinner;
 import nl.deltadak.plep.ui.settingspane.spinners.NumberOfMovingDaysSpinner;
-import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.paint.Color;
-import kotlin.Unit;
-import kotlin.jvm.functions.Function0;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -108,8 +105,6 @@ public class SlidingSettingsPane extends SlidingPane {
      * Sets up the content of the settings menu.
      */
     private void setupSettingsMenu() {
-
-        // todo get initial values from  database in spinners?
 
         // Add labels to their pane.
         ListView<String> labelsList = new EditLabelsList().getNew(refreshUI);
