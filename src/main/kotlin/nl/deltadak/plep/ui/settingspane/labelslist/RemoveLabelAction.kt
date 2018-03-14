@@ -3,7 +3,6 @@ package nl.deltadak.plep.ui.settingspane.labelslist
 import javafx.scene.control.Button
 import javafx.scene.control.ListView
 import nl.deltadak.plep.Database
-import nl.deltadak.plep.ui.SlidingSettingsPane
 import kotlin.reflect.KMutableProperty
 
 /**
@@ -12,13 +11,6 @@ import kotlin.reflect.KMutableProperty
 class RemoveLabelAction(
         /** The FXML reference to the button. */
         val removeLabelButton: Button) {
-
-    /**
-     * Temporary function to be called from Java, since that has no pass by reference for variables.
-     */
-    fun javaSet(slidingSettingsPane: SlidingSettingsPane, refreshUI: () -> Unit) {
-        set(slidingSettingsPane::labelsList, refreshUI)
-    }
 
     /**
      * Set the button action.

@@ -9,6 +9,7 @@ import javafx.scene.control.ListView
 import javafx.scene.control.cell.TextFieldListCell
 import javafx.scene.layout.GridPane
 import nl.deltadak.plep.Database
+import kotlin.reflect.KMutableProperty
 
 /**
  * The list with course labels can be edited by the user.
@@ -20,9 +21,9 @@ class EditLabelsList {
      *
      * @param refreshUI Should refresh UI when called.
      */
-    fun getNew(refreshUI: () -> Unit): ListView<String> {
+    fun getNew(labelsListProperty: KMutableProperty<ListView<String>>, refreshUI: () -> Unit): ListView<String> {
 
-        val labelsList = ListView<String>()
+        val labelsList = labelsListProperty.getter.call()
 
         // Set up the listview with empty labels to allow editing.
         val items = FXCollections.observableArrayList<String>("", "", "", "", "")
@@ -56,6 +57,8 @@ class EditLabelsList {
         labelsList.setOnEditCommit {
             event ->
             labelsList.items[event.index] = event.newValue
+            // Also update the reference to the labels.
+            labelsListProperty.setter.call(labelsList)
             Database.INSTANCE.updateLabel(event.index, event.newValue)
             refreshUI()
         }

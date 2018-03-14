@@ -1,8 +1,5 @@
 package nl.deltadak.plep.ui;
 
-import nl.deltadak.plep.database.DatabaseSettings;
-import nl.deltadak.plep.keylisteners.UndoKeyListener;
-import nl.deltadak.plep.ui.gridpane.GridPaneInitializer;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -12,11 +9,14 @@ import javafx.scene.layout.GridPane;
 import nl.deltadak.plep.Database;
 import nl.deltadak.plep.JavaHelperKt;
 import nl.deltadak.plep.commands.UndoFacility;
+import nl.deltadak.plep.database.DatabaseSettings;
+import nl.deltadak.plep.keylisteners.UndoKeyListener;
+import nl.deltadak.plep.ui.gridpane.GridPaneInitializer;
+import nl.deltadak.plep.ui.settingspane.SlidingSettingsPane;
 
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 
 /**
