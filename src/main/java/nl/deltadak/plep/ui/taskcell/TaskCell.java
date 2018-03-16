@@ -3,6 +3,7 @@ package nl.deltadak.plep.ui.taskcell;
 import nl.deltadak.plep.database.ContentProvider;
 import nl.deltadak.plep.database.DatabaseFacade;
 import nl.deltadak.plep.ui.taskcell.blockerlisteners.ChangeListenerWithBlocker;
+import nl.deltadak.plep.ui.taskcell.blockerlisteners.InvalidationListenerWithBlocker;
 import nl.deltadak.plep.ui.taskcell.checkbox.CheckBoxUpdater;
 import nl.deltadak.plep.ui.taskcell.contextmenu.ContextMenuCreator;
 import nl.deltadak.plep.ui.taskcell.courselabel.OnCourseLabelChangeUpdater;

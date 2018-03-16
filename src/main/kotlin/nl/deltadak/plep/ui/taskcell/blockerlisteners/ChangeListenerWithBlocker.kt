@@ -5,15 +5,14 @@ import javafx.beans.value.ObservableValue
 
 /**
  * A custom listener for the checkboxes which can be blocked.
- * You should use this to block the listener on the checkbox when
- * programmatically setting its value.
+ * You should use this to block the listener on the checkbox when programmatically setting its value.
  *
  * Using a {@code ChangeListener} because we need to have access to the new value.
  *
  */
 class ChangeListenerWithBlocker<Boolean> (
         /** The listener to block or unblock. */
-        private var decoratedListener: ChangeListener<Boolean>) : ChangeListener<Boolean> {
+        private val decoratedListener: ChangeListener<Boolean>) : ChangeListener<Boolean> {
 
     /** Whether the listener should be blocked. */
     var block = false
