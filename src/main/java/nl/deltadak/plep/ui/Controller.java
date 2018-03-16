@@ -12,7 +12,8 @@ import nl.deltadak.plep.commands.UndoFacility;
 import nl.deltadak.plep.database.DatabaseSettings;
 import nl.deltadak.plep.keylisteners.UndoKeyListener;
 import nl.deltadak.plep.ui.gridpane.GridPaneInitializer;
-import nl.deltadak.plep.ui.settingspane.SlidingSettingsPane;
+import nl.deltadak.plep.ui.settingspane.panes.SlidingPane;
+import nl.deltadak.plep.ui.settingspane.panes.SlidingSettingsPane;
 
 import java.net.URL;
 import java.time.LocalDate;
@@ -136,48 +137,23 @@ public class Controller implements Initializable, AbstractController {
                 settingsPane,
                 removeLabelButton,
                 applyNumberOfMovingDays,
-                applyNumberOfDays, applyNumberOfColumns, autoColumnCheckBox, colorPickers);
+                applyNumberOfDays,
+                applyNumberOfColumns,
+                autoColumnCheckBox,
+                colorPickers,
+                main,
+                gridPane,
+                toolBar,
+                settingsPane,
+                settingsButton);
 
-        copySettingsPaneComponents(slidingSettingsPane);
         slidingSettingsPane.setup();
         
         // setup help page
-        SlidingPane helpPane = new SlidingPane(this);
-        copyHelpPageComponents(helpPane);
-        helpPane.setup();
+        new SlidingPane(main, gridPane, toolBar, helpPane, helpButton).setup();
         
         new UndoKeyListener().set(gridPane, undoFacility);
         
-    }
-    
-    /**
-     * Copy references from fxml components needed to the SettingsPane
-     *
-     * @param settingsPane
-     *         which needs the references
-     */
-    @Deprecated
-    private void copySettingsPaneComponents(SlidingSettingsPane settingsPane) {
-        settingsPane.main = this.main;
-        settingsPane.gridPane = this.gridPane;
-        settingsPane.toolBar = this.toolBar;
-        settingsPane.slidingPane = this.settingsPane;
-        settingsPane.openCloseButton = this.settingsButton;
-
-    }
-    
-    /**
-     * Copy references from fxml components needed to the SlidingPane
-     *
-     * @param helpPane
-     *         which needs the references
-     */
-    private void copyHelpPageComponents(SlidingPane helpPane) {
-        helpPane.main = this.main;
-        helpPane.gridPane = this.gridPane;
-        helpPane.toolBar = this.toolBar;
-        helpPane.slidingPane = this.helpPane;
-        helpPane.openCloseButton = this.helpButton;
     }
     
     /**

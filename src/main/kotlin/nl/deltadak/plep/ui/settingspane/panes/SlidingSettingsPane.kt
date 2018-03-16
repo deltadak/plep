@@ -1,14 +1,12 @@
-package nl.deltadak.plep.ui.settingspane
+package nl.deltadak.plep.ui.settingspane.panes
 
-import javafx.scene.control.Button
-import javafx.scene.control.CheckBox
-import javafx.scene.control.ColorPicker
-import javafx.scene.control.ListView
+import javafx.scene.control.*
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.GridPane
+import nl.deltadak.plep.Database
 import nl.deltadak.plep.database.DatabaseSettings
 import nl.deltadak.plep.ui.Controller
-import nl.deltadak.plep.ui.SlidingPane
+import nl.deltadak.plep.ui.settingspane.AutoColumnsAction
 import nl.deltadak.plep.ui.settingspane.applybuttons.ApplyNumberOfColumnsAction
 import nl.deltadak.plep.ui.settingspane.applybuttons.ApplyNumberOfDaysAction
 import nl.deltadak.plep.ui.settingspane.applybuttons.ApplyNumberOfMovingDaysAction
@@ -25,8 +23,6 @@ import kotlin.reflect.KMutableProperty
  * A pane which provides settings.
  */
 class SlidingSettingsPane(
-        /** Only needed for SlidingPane. */
-        controller: Controller,
         /** Should refresh UI when called. */
         private val refreshUI: () -> Unit,
         /** Should point to the number of days that the forward and backward button skip when pressed. */
@@ -43,7 +39,13 @@ class SlidingSettingsPane(
         private val applyNumberOfDays: Button,
         private val applyNumberOfColumns: Button,
         private val autoColumnsCheckBox: CheckBox,
-        private val colorPickers: List<ColorPicker>) : SlidingPane(controller) {
+        private val colorPickers: List<ColorPicker>,
+        /** General SlidingPane FXML references. */
+        main: AnchorPane,
+        gridPane: GridPane,
+        toolBar: ToolBar,
+        slidingPane: AnchorPane,
+        openCloseButton: Button) : SlidingPane(main, gridPane, toolBar, slidingPane, openCloseButton) {
 
     @Deprecated("only for Java callers")
     constructor(
@@ -58,9 +60,13 @@ class SlidingSettingsPane(
             applyNumberOfDays: Button,
             applyNumberOfColumns: Button,
             autoColumnsCheckBox: CheckBox,
-            colorPickers: List<ColorPicker>
+            colorPickers: List<ColorPicker>,
+            main: AnchorPane,
+            gridPane: GridPane,
+            toolBar: ToolBar,
+            slidingPane: AnchorPane,
+            openCloseButton: Button
     ) : this(
-            controller,
             refreshUI,
             controller::numberOfMovingDays,
             controller::numberOfDays,
@@ -73,11 +79,16 @@ class SlidingSettingsPane(
             applyNumberOfDays,
             applyNumberOfColumns,
             autoColumnsCheckBox,
-            colorPickers
+            colorPickers,
+            main,
+            gridPane,
+            toolBar,
+            slidingPane,
+            openCloseButton
     )
 
     @Suppress("MemberVisibilityCanBePrivate") // Making it private will not compile.
-    /** Keep a reference to the labels shown. */
+            /** Keep a reference to the labels shown. */
     var labelsList: ListView<String> = ListView()
 
     /**
@@ -123,7 +134,7 @@ class SlidingSettingsPane(
         ApplyNumberOfColumnsAction(applyNumberOfColumns, numberOfColumnsSpinner, autoColumnsCheckBox).set(refreshUI)
 
         val isAuto = java.lang.Boolean
-                .valueOf(getSetting(DatabaseSettings.MAX_COLUMNS_AUTO.settingsName))
+                .valueOf(Database.INSTANCE.getSetting(DatabaseSettings.MAX_COLUMNS_AUTO.settingsName))
         autoColumnsCheckBox.isSelected = isAuto
         AutoColumnsAction(autoColumnsCheckBox, numberOfColumnsSpinner).set(refreshUI, numberOfDaysProperty)
 
