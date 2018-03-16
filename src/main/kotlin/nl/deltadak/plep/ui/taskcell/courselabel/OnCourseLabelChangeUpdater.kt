@@ -41,7 +41,7 @@ class OnCourseLabelChangeUpdater(
                 // In practice the delay is unnoticable.
                 Platform.runLater({comboBox.value = ""})
             } else {
-                task.label = newValue
+                task.label = newValue ?: ""
             }
 
         })
