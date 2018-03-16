@@ -52,9 +52,9 @@ public class DeleteCommandTest extends FxRobot {
         setup();
 
         command.execute();
-        assertFalse(command.getListItems().contains(taskToDelete));
+        assertFalse(command.getTreeViewItems().contains(taskToDelete));
         command.undo();
-        assertTrue(command.getListItems().contains(taskToDelete));
+        assertTrue(command.getTreeViewItems().contains(taskToDelete));
     }
 
 }

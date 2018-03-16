@@ -38,16 +38,16 @@ object DeleteSubtaskCommandTest: Spek({
                 assertFalse { command.isExecuted }
             }
             it("should contain all the tasks again") {
-                assertTrue { command.listItems.size == 1 }
-                assertTrue { command.listItems.first().size == 2 }
-                assertTrue { command.listItems.first().first().text == "" }
+                assertTrue { command.treeViewItems.size == 1 }
+                assertTrue { command.treeViewItems.first().size == 2 }
+                assertTrue { command.treeViewItems.first().first().text == "" }
             }
         }
         on("deleting a subtask") {
             command.execute()
             it("should have deleted the subtask") {
-                assertTrue { command.listItems.first().first().text == "" }
-                assertTrue { command.listItems.first().size == 1 }
+                assertTrue { command.treeViewItems.first().first().text == "" }
+                assertTrue { command.treeViewItems.first().size == 1 }
             }
         }
     }
