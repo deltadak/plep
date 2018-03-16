@@ -31,7 +31,7 @@ open class SlidingPane(
     }
 
     /**
-     * Allow hooking into [.setup].
+     * Allow hooking into [setup].
      */
     open fun setupHook() {}
 

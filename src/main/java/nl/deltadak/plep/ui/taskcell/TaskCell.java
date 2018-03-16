@@ -1,17 +1,5 @@
 package nl.deltadak.plep.ui.taskcell;
 
-import nl.deltadak.plep.database.ContentProvider;
-import nl.deltadak.plep.database.DatabaseFacade;
-import nl.deltadak.plep.ui.taskcell.blockerlisteners.ChangeListenerWithBlocker;
-import nl.deltadak.plep.ui.taskcell.blockerlisteners.InvalidationListenerWithBlocker;
-import nl.deltadak.plep.ui.taskcell.checkbox.CheckBoxUpdater;
-import nl.deltadak.plep.ui.taskcell.contextmenu.ContextMenuCreator;
-import nl.deltadak.plep.ui.taskcell.courselabel.OnCourseLabelChangeUpdater;
-import nl.deltadak.plep.ui.taskcell.selection.SelectionCleaner;
-import nl.deltadak.plep.ui.taskcell.selection.Selector;
-import nl.deltadak.plep.ui.taskcell.subtasks.SubtasksEditor;
-import nl.deltadak.plep.ui.taskcell.textlabel.TextLabelStyle;
-import nl.deltadak.plep.ui.treeview.TreeViewCleaner;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
@@ -27,14 +15,27 @@ import javafx.scene.layout.Region;
 import javafx.scene.text.TextAlignment;
 import nl.deltadak.plep.Database;
 import nl.deltadak.plep.HomeworkTask;
+import nl.deltadak.plep.database.ContentProvider;
+import nl.deltadak.plep.database.DatabaseFacade;
 import nl.deltadak.plep.ui.Controller;
+import nl.deltadak.plep.ui.taskcell.blockerlisteners.ChangeListenerWithBlocker;
+import nl.deltadak.plep.ui.taskcell.blockerlisteners.InvalidationListenerWithBlocker;
+import nl.deltadak.plep.ui.taskcell.checkbox.CheckBoxUpdater;
+import nl.deltadak.plep.ui.taskcell.contextmenu.ContextMenuCreator;
+import nl.deltadak.plep.ui.taskcell.courselabel.OnCourseLabelChangeUpdater;
+import nl.deltadak.plep.ui.taskcell.selection.SelectionCleaner;
+import nl.deltadak.plep.ui.taskcell.selection.Selector;
+import nl.deltadak.plep.ui.taskcell.subtasks.SubtasksEditor;
+import nl.deltadak.plep.ui.taskcell.textlabel.TextLabelStyle;
+import nl.deltadak.plep.ui.taskcell.treecell.TaskConverter;
+import nl.deltadak.plep.ui.treeview.TreeViewCleaner;
 import nl.deltadak.plep.ui.util.converters.ConvertersKt;
 
 import java.time.LocalDate;
 import java.util.Objects;
 
-import static nl.deltadak.plep.ui.util.converters.ConvertersKt.getParentTasks;
 import static java.lang.Math.min;
+import static nl.deltadak.plep.ui.util.converters.ConvertersKt.getParentTasks;
 
 /**
  * Custom TextFieldTreeCell, because we can't set the converter on a regular

@@ -6,7 +6,7 @@ import javafx.beans.Observable
 /**
  * A custom listener for the combo boxes which can be blocked, with intended use case that you block the listener when setting the value of a combo box programmatically.
  *
- * Using an {@code InvalidationListener} instead of a {@code ChangeListener} has some slight performance improvement or so.
+ * Using an [InvalidationListener] instead of a [ChangeListenerWithBlocker] has some slight performance improvement or so.
  */
 class InvalidationListenerWithBlocker(
         /** Listener to block or not. */
