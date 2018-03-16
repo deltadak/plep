@@ -2,6 +2,7 @@ package nl.deltadak.plep.ui.taskcell;
 
 import nl.deltadak.plep.database.ContentProvider;
 import nl.deltadak.plep.database.DatabaseFacade;
+import nl.deltadak.plep.ui.taskcell.blockerlisteners.ChangeListenerWithBlocker;
 import nl.deltadak.plep.ui.taskcell.checkbox.CheckBoxUpdater;
 import nl.deltadak.plep.ui.taskcell.contextmenu.ContextMenuCreator;
 import nl.deltadak.plep.ui.taskcell.courselabel.OnCourseLabelChangeUpdater;
@@ -97,6 +98,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
      * @param localDate The date to which this TreeView (and thus TreeCell) belongs.
      * @param progressIndicator User feedback.
      * @param gridPane Main UI element.
+     * @param focusDay Focusday of UI.
      */
     public void setup(TreeView<HomeworkTask> tree, LocalDate localDate, ProgressIndicator progressIndicator, GridPane gridPane, LocalDate focusDay) {
         this.tree = tree;
