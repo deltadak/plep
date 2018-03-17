@@ -1,11 +1,12 @@
 .check-box > .box > .mark {
     /* color of checkmark */
-    -fx-background-color: -checkbox-background;
+    /*-fx-background-color: -checkbox-background;*/
+    -fx-background-color: -fx-control-inner-background;
 }
 
 .check-box > .box {
     /*!* remove checkmark when deselected by making background the same color *!*/
-    -fx-background-color: -checkbox-background;
+    -fx-background-color: -fx-control-inner-background;
 
     /*!* style the border *!*/
     -fx-border-color: #6D6D6D;
@@ -25,5 +26,5 @@
 /* Make background a little darker on hover. */
 .check-box:hover > .box,
 .check-box:hover > .box > .mark {
-    -fx-background-color: derive(-checkbox-background, -5%);
+    -fx-background-color: derive(-fx-control-inner-background, -5%);
 }

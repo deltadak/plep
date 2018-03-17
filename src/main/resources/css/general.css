@@ -46,11 +46,11 @@
     /*-fx-accent: derive(-fx-control-inner-background, -15%);*/
 
     -fx-font-size: 12pt;
-    -fx-text-fill: -fx-primary-text;
     -fx-base: #EEEEEE;
     -fx-background-color: -general-background;
     -checkbox-background: -general-background;
 }
+
 
 .tool-bar {
     -fx-background-color: -primary;

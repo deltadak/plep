@@ -19,11 +19,11 @@
 }
 
 .tree-cell {
-    -fx-background: -general-background;
+    -fx-background: -fx-control-inner-background;
 }
 
 .list-cell:odd {
-    -fx-background: -general-background;
+    -fx-background: -fx-control-inner-background;
 }
 
 /* text of the tasks marked as done */
