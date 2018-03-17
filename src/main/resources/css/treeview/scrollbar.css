@@ -1,0 +1,30 @@
+/* disable scrollbars which appeared because of a one pixel shortage somewhere */
+.tree-view *.column-header-background *.show-hide-columns-button,
+.tree-view *.scroll-bar:vertical *.increment-button,
+.tree-view *.scroll-bar:vertical *.decrement-button,
+.tree-view *.scroll-bar:vertical *.increment-arrow,
+.tree-view *.scroll-bar:vertical *.decrement-arrow,
+
+.list-view *.column-header-background *.show-hide-columns-button,
+.list-view *.scroll-bar:vertical *.increment-button,
+.list-view *.scroll-bar:vertical *.decrement-button,
+.list-view *.scroll-bar:vertical *.increment-arrow,
+.list-view *.scroll-bar:vertical *.decrement-arrow {
+    -fx-background-color: null;
+    -fx-background-radius: 0;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
+    -fx-shape: null;
+}
+
+.tree-view *.scroll-bar:horizontal,
+.tree-view *.scroll-bar:horizontal *.track,
+.tree-view *.scroll-bar:horizontal *.track-background,
+.tree-view *.scroll-bar:horizontal *.thumb,
+.tree-view *.scroll-bar:horizontal *.increment-button,
+.tree-view *.scroll-bar:horizontal *.decrement-button,
+.tree-view *.scroll-bar:horizontal *.increment-arrow,
+.tree-view *.scroll-bar:horizontal *.decrement-arrow {
+    -fx-base: transparent;
+    -fx-background-color: white;
+}

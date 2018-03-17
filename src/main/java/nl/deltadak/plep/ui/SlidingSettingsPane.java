@@ -1,5 +1,6 @@
 package nl.deltadak.plep.ui;
 
+import javafx.scene.text.Text;
 import nl.deltadak.plep.database.DatabaseSettings;
 import nl.deltadak.plep.ui.gridpane.GridPaneInitializer;
 import nl.deltadak.plep.Database;
@@ -33,6 +34,7 @@ public class SlidingSettingsPane extends SlidingPane {
     private GridPane editLabelsPane;
     private GridPane editDaysPane;
     private AnchorPane settingsPane;
+    private Text settingsTextTitle;
     private Button removeLabelButton;
     private Button applyNumberOfMovingDays;
     private Button applyNumberOfDays;
@@ -75,6 +77,7 @@ public class SlidingSettingsPane extends SlidingPane {
             GridPane editLabelsPane,
             GridPane editDaysPane,
             AnchorPane settingsPane,
+            Text settingsTextTitle,
             Button removeLabelButton,
             Button applyNumberOfMovingDays,
             Button applyNumberOfDays,
@@ -90,6 +93,7 @@ public class SlidingSettingsPane extends SlidingPane {
         this.editLabelsPane = editLabelsPane;
         this.editDaysPane = editDaysPane;
         this.settingsPane = settingsPane;
+        this.settingsTextTitle = settingsTextTitle;
         this.removeLabelButton = removeLabelButton;
         this.applyNumberOfMovingDays = applyNumberOfMovingDays;
         this.applyNumberOfDays = applyNumberOfDays;

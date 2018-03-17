@@ -47,6 +47,12 @@ public class SlidingPane {
         AnchorPane.setTopAnchor(slidingPane, toolBar.getPrefHeight());
         preparePaneToggle();
         setupHook();
+    
+        // Add styling to the side pane. Buttons and text etc are different
+        // than in rest of plep.
+        slidingPane.getStylesheets().add("css/sidepane/sidepane.css");
+        // Add new style class to style the background.
+        slidingPane.getStyleClass().add("side-pane");
     }
 
     /**

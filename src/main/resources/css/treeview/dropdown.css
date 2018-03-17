@@ -1,5 +1,5 @@
 .combo-box {
-    -fx-background-color:  Transparent;
+    -fx-background-color:  white;
 }
 
 /* Color of the text of the courselabel based on the background color. */
@@ -25,10 +25,10 @@
     -fx-background-color: -fx-accent;
 }
 
-/* Styling for a item of which the checkbox is checked */
+/* Styling for an item of which the checkbox is checked */
 
 .combobox-done .list-cell {
-    -fx-text-fill: ladder(-fx-control-inner-background, -fx-text-gray-light 0%, -fx-text-gray-light 59%, -fx-text-gray-dark 60%, -fx-text-gray-dark 100%);
+    -fx-text-fill: ladder(-fx-control-inner-background, -fx-gray-light 0%, -fx-gray-light 59%, -fx-gray-dark 60%, -fx-gray-dark 100%);
     -fx-font-style: oblique;
 }
 

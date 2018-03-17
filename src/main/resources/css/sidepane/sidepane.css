@@ -1,0 +1,21 @@
+@import url("colorpicker.css");
+@import url("spinner.css");
+
+* {
+    -button-background: -fx-base;
+    -button-text: -secondary;
+}
+
+/* Style the background.  */
+.side-pane {
+    -fx-background-color: -fx-base;
+}
+
+.text-title {
+    -fx-fill: -secondary-dark;
+    -fx-font-size: 18pt;
+}
+
+.label {
+    -fx-text-fill: -fx-primary-text;
+}

@@ -1,0 +1,42 @@
+/* TreeView and TreeView */
+
+/* Selected rows */
+.tree-view:focused > .virtual-flow > .clipped-container > .sheet > .text-field-tree-cell:filled:selected,
+.list-view:focused > .virtual-flow > .clipped-container > .sheet > .text-field-list-cell:filled:selected {
+    /*-fx-background-color: -fx-selection-bar; !* default *!*/
+    /*-fx-border-color: black; !* change border instead of background so it doesn't override item colors *!*/
+
+    /* First two are the borders, the last one the color of the listcell background. Here we take it the color it already is so the item colors do not get overridden, but darker so the white ones are also readable (the text is forced to white when selected, didn't find out how to change that) */
+    -fx-background-color: -fx-accent, -fx-accent, -fx-accent;
+
+    /*-fx-table-cell-border-color: derive(-fx-selection-bar, 20%);*/
+}
+
+.tree-view,
+.list-view {
+    /* remove border */
+    -fx-background-color: -general-background;
+}
+
+.tree-cell {
+    -fx-background: -fx-control-inner-background;
+}
+
+.list-cell:odd {
+    -fx-background: -fx-control-inner-background;
+}
+
+/* text of the tasks marked as done */
+.label-done {
+    -fx-text-fill: ladder(-fx-control-inner-background, -fx-gray-light 0%, -fx-gray-light 59%, -fx-gray-dark 60%, -fx-gray-dark 100%);
+    -fx-font-style: oblique;
+}
+
+.label-done .text {
+    -fx-strikethrough: true;
+    -fx-wrap-text: true;
+}
+
+.label {
+    -fx-wrap-text: true;
+}

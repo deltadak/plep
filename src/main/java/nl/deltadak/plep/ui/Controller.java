@@ -1,5 +1,6 @@
 package nl.deltadak.plep.ui;
 
+import javafx.scene.text.Text;
 import nl.deltadak.plep.database.DatabaseSettings;
 import nl.deltadak.plep.keylisteners.UndoKeyListener;
 import nl.deltadak.plep.ui.gridpane.GridPaneInitializer;
@@ -42,6 +43,7 @@ public class Controller implements Initializable, AbstractController {
     // settings pane
     @FXML AnchorPane settingsPane;
     @FXML Button settingsButton;
+    @FXML Text settingsTextTitle;
     
     @FXML GridPane editLabelsPane;
     @FXML Button editLabelsButton;
@@ -125,6 +127,7 @@ public class Controller implements Initializable, AbstractController {
                 editLabelsPane,
                 editDaysPane,
                 settingsPane,
+                settingsTextTitle,
                 removeLabelButton,
                 applyNumberOfMovingDays,
                 applyNumberOfDays, applyNumberOfColumns, autoColumnCheckBox);

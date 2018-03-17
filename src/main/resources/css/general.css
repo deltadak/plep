@@ -14,38 +14,57 @@
 .root {
     -fx-font-family: Roboto;
     /* should be 13 but this allows more tasks per day */
-    -fx-font-size: 12pt;
-    -fx-base: #EEEEEE;
-    -fx-background-color: -fx-base;
+
+    -primary: #9575cd;
+    -primary-light: #c7a4ff;
+    -primary-dark: #65499c;
+
+    -secondary: #66bb6a;
+    -secondary-light: #98ee99;
+    -secondary-dark: #338a3e;
+
+    -general-background: white;
+    -checkmark-color: white;
 
     /* custom base colors */
-    -fx-button: #2397F3;
-    /* The last two numbers is opacity */
-    -fx-button-hover: #D9D9D940;
-    -fx-button-pressed: #D9D9D9;
+    /*-fx-button: -secondary;*/
+
+    -button-background: -primary;
+    -button-text: black;
+
+    -fx-primary-text: #00000087;
+    -fx-secondary-text: #00000054;
+    -fx-disabled-text: #00000038;
+
+    -fx-primary-light-text: #ffffff;
+    -fx-secondary-light-text: #ffffff70;
+    -fx-disabled-light-text: #ffffff50;
+
     /* Grayed out text when an item is selected. */
-    -fx-text-gray: #949494;
-    -fx-text-gray-light: #dfdfdf;
-    -fx-text-gray-dark: #767676;
 
     /* Color of the selector */
-    -fx-accent: derive(-fx-control-inner-background, -15%);
+    /*-fx-accent: derive(-fx-control-inner-background, -15%);*/
+
+    -fx-font-size: 12pt;
+    -fx-text-fill: -fx-primary-text;
+    -fx-base: #EEEEEE;
+    -fx-background-color: -general-background;
 }
 
 .tool-bar {
-    -fx-background-color: -fx-base;
+    -fx-background-color: -primary;
 }
 
 /* style panes apart because using .pane didn't work */
-#settingsPane {
-    -fx-background-color: -fx-base;
-}
+/*#settingsPane {*/
+    /*-fx-background-color: -primary-dark;*/
+/*}*/
 
-#helpPane {
-    -fx-background-color: -fx-base;
-}
+/*#helpPane {*/
+    /*-fx-background-color: -primary-dark;*/
+/*}*/
 
-/* italic title on features page */
-#helpTextTitle {
-    -fx-font-style: italic;
-}
+/*!* italic title on features page *!*/
+/*#helpTextTitle {*/
+    /*-fx-font-style: italic;*/
+/*}*/

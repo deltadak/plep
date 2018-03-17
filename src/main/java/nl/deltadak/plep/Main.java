@@ -38,15 +38,22 @@ public class Main extends Application {
         primaryStage.setWidth(primaryScreenBounds.getWidth()/2);
         primaryStage.setHeight(primaryScreenBounds.getHeight());
         
-        String treeViewCSS = this.getClass().getResource("/css/treeview.css").toExternalForm();
+        String treeViewCSS = this.getClass().getResource(
+                "/css/treeview/treeview.css").toExternalForm();
         String generalCSS = this.getClass().getResource("/css/general.css").toExternalForm();
         String buttonCSS = this.getClass().getResource("/css/button.css").toExternalForm();
-        String spinnerCSS = this.getClass().getResource("/css/spinner.css").toExternalForm();
-        String checkboxCSS = this.getClass().getResource("/css/checkbox.css").toExternalForm();
-        String dropdownCSS = this.getClass().getResource("/css/dropdown.css").toExternalForm();
-        String colorPickerCSS = this.getClass().getResource("/css/colorpicker.css").toExternalForm();
+//        String spinnerCSS = this.getClass().getResource(
+//                "/css/sidepane/spinner.css").toExternalForm();
+        String checkboxCSS = this.getClass().getResource(
+                "/css/treeview/checkbox.css").toExternalForm();
+        String dropdownCSS = this.getClass().getResource(
+                "/css/treeview/dropdown.css").toExternalForm();
+        String scrollBarCSS = this.getClass().getResource(
+                "/css/treeview/scrollbar.css").toExternalForm();
+//        String colorPickerCSS = this.getClass().getResource(
+//                "/css/sidepane/colorpicker.css").toExternalForm();
 
-        primaryStage.getScene().getStylesheets().addAll(treeViewCSS, generalCSS, buttonCSS, spinnerCSS, checkboxCSS, dropdownCSS, colorPickerCSS);
+        primaryStage.getScene().getStylesheets().addAll(treeViewCSS, generalCSS, buttonCSS, checkboxCSS, dropdownCSS, scrollBarCSS);
 
         // check if running in debug mode
         // to display the default java icon so we can distinguish between

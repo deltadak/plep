@@ -43,7 +43,7 @@ class GridPaneInitializer(
      * @param numberOfDays The total number of days to setup the gridpane with.
      * @param focusDate This date is the central date in the sense it is shown as the second day, which is by default today.
      */
-    @Deprecated("Use other setup method")
+    @Deprecated("Use other setup method.")
     fun setup(gridPane: GridPane, numberOfDays: Int, focusDate: LocalDate, toolBarHeight: Double) {
 
         // Anchor the main GridPane to the bottom of the Toolbar.

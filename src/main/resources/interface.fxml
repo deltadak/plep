@@ -15,11 +15,11 @@
              AnchorPane.rightAnchor="0.0"
              AnchorPane.leftAnchor="0.0">
         <!--<items>--> <!-- default property tag -->
-            <Button fx:id="settingsButton" text="Settings" />
-            <Button fx:id="helpButton" text="Hidden Features" />
+            <Button fx:id="settingsButton" text="SETTINGS" />
+            <Button fx:id="helpButton" text="FEATURES" />
             <Pane prefWidth="20.0" HBox.hgrow="SOMETIMES" />
             <Button text="&lt;" onAction="#dayBackward"/>
-            <Button text="Today" onAction="#goToToday" />
+            <Button text="TODAY" onAction="#goToToday" />
             <Button text="&gt;" onAction="#dayForward" />
             <Pane prefWidth="20.0" HBox.hgrow="SOMETIMES" />
             <ProgressIndicator fx:id="progressIndicator" />
@@ -51,7 +51,8 @@
 
 
             <Text id="helpTextTitle"
-                  text="The cool features:"
+                  text="Features"
+                  styleClass="text-title"
                   GridPane.columnIndex="0"
                   GridPane.rowIndex="0"/>
 
@@ -77,11 +78,11 @@ On the settings pane, click on a colour to edit it."
                   hgap="10"
                   vgap="10">
             <Button fx:id="editLabelsButton"
-                    text="Edit course labels"
+                    text="EDIT COURSE LABELS"
                     GridPane.columnIndex="0"
                     GridPane.rowIndex="0"/>
             <Button fx:id="removeLabelButton"
-                    text="Remove"
+                    text="REMOVE LABEL"
                     GridPane.rowIndex="1"
                     GridPane.columnIndex="0"
                     visible="false"/>
@@ -99,7 +100,7 @@ On the settings pane, click on a colour to edit it."
 
             <Button fx:id="applyNumberOfMovingDays"
                     GridPane.columnIndex="3"
-                    text="Apply"/>
+                    text="APPLY"/>
 
             <Text id="numberOfShowDaysText"
                   GridPane.columnSpan="2"
@@ -109,7 +110,7 @@ On the settings pane, click on a colour to edit it."
             <Button fx:id="applyNumberOfDays"
                     GridPane.columnIndex="3"
                     GridPane.rowIndex="1"
-                    text="Apply"/>
+                    text="APPLY"/>
 
             <Text id="maxColumnsText"
                   text="Number of columns:"
@@ -123,7 +124,7 @@ On the settings pane, click on a colour to edit it."
             <Button fx:id="applyNumberOfColumns"
                     GridPane.columnIndex="3"
                     GridPane.rowIndex="2"
-                    text="Apply"/>
+                    text="APPLY"/>
 
         </GridPane>
 

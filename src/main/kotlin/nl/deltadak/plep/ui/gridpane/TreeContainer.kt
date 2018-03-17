@@ -30,6 +30,8 @@ class TreeContainer(
         // The title will be put in a VBox
         val vbox = VBox()
         val title = Label(localDate.dayOfWeek.toString() + " " + localDate)
+        // Add styling to the title.
+        title.stylesheets.add("css/treeview/title.css")
 
         // Use a Pane to align them properly, also includes the tree.
         val pane = Pane()

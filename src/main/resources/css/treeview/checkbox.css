@@ -1,0 +1,39 @@
+.check-box > .box > .mark {
+    /* color of checkmark */
+    -fx-background-color: -checkmark-color;
+}
+
+.check-box {
+    /* background color of checkbox including label */
+    /*-fx-background-color: red;*/
+}
+
+.check-box > .box {
+    /*!* remove checkmark when deselected by making background the same color *!*/
+    -fx-background-color: -checkmark-color;
+
+    /*!* style the border *!*/
+    -fx-border-color: -fx-gray-dark;
+    -fx-border-radius: 3, 2, 1;
+    -fx-background-radius: 3, 2, 1;
+    /* TODO Something strange happens when using -fx-border-width > 1.65 and < 4.65.
+     To reproduce: Plep half screen, click Settings. */
+    -fx-border-width: 2;
+}
+
+.check-box:selected > .box {
+    /* background of box which contains checkmark */
+    -fx-border-color: -primary;
+    -fx-background-color: -primary;
+}
+
+.check-box:hover > .box {
+    -fx-border-color: -primary;
+}
+
+/* don't increase this checkbox */
+#autoColumnCheckBox:hover > .box {
+    /* TODO */
+    /* standard setting */
+    /*-fx-padding: 0.166667em 0.166667em 0.25em 0.25em; !* 2 2 3 3 *!*/
+}
