@@ -4,6 +4,7 @@
 * {
     -button-background: -fx-base;
     -button-text: -secondary;
+    -checkbox-background: -fx-base;
 }
 
 /* Style the background.  */

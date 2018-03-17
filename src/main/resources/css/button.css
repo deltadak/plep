@@ -1,4 +1,3 @@
-/* Default button. Primary colour as background. */
 .button {
     -fx-background-color: -button-background;
     -fx-text-fill: -button-text;
@@ -8,9 +7,9 @@
 }
 
 .button:hover {
-    -fx-background-color: derive(-button-background, -15%);
+    -fx-background-color: derive(-button-background, -5%);
 }
 
 .button:pressed {
-    -fx-background-color: derive(-button-background, -30%);
+    -fx-background-color: derive(-button-background, -10%);
 }

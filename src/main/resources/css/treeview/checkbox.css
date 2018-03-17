@@ -1,39 +1,29 @@
 .check-box > .box > .mark {
     /* color of checkmark */
-    -fx-background-color: -checkmark-color;
-}
-
-.check-box {
-    /* background color of checkbox including label */
-    /*-fx-background-color: red;*/
+    -fx-background-color: -checkbox-background;
 }
 
 .check-box > .box {
     /*!* remove checkmark when deselected by making background the same color *!*/
-    -fx-background-color: -checkmark-color;
+    -fx-background-color: -checkbox-background;
 
     /*!* style the border *!*/
-    -fx-border-color: -fx-gray-dark;
+    -fx-border-color: #6D6D6D;
     -fx-border-radius: 3, 2, 1;
     -fx-background-radius: 3, 2, 1;
     /* TODO Something strange happens when using -fx-border-width > 1.65 and < 4.65.
      To reproduce: Plep half screen, click Settings. */
-    -fx-border-width: 2;
+    -fx-border-width: 2.5;
 }
 
 .check-box:selected > .box {
     /* background of box which contains checkmark */
-    -fx-border-color: -primary;
-    -fx-background-color: -primary;
+    -fx-border-color: -secondary;
+    -fx-background-color: -secondary;
 }
 
-.check-box:hover > .box {
-    -fx-border-color: -primary;
-}
-
-/* don't increase this checkbox */
-#autoColumnCheckBox:hover > .box {
-    /* TODO */
-    /* standard setting */
-    /*-fx-padding: 0.166667em 0.166667em 0.25em 0.25em; !* 2 2 3 3 *!*/
+/* Make background a little darker on hover. */
+.check-box:hover > .box,
+.check-box:hover > .box > .mark {
+    -fx-background-color: derive(-checkbox-background, -5%);
 }

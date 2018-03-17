@@ -49,6 +49,7 @@
     -fx-text-fill: -fx-primary-text;
     -fx-base: #EEEEEE;
     -fx-background-color: -general-background;
+    -checkbox-background: -general-background;
 }
 
 .tool-bar {

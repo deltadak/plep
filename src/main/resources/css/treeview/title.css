@@ -2,5 +2,5 @@
 .label {
     -fx-font-size: 15pt;
     -fx-text-fill: -primary;
-    -fx-padding: 0 16px 0 16px;
+    -fx-padding: 4px 16px 4px 16px;
 }
