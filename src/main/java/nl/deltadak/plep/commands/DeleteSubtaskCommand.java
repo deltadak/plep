@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 /**
  * Delete a subtask only.
  */
-public class DeleteSubtaskCommand extends DeleteCommand {
+public class DeleteSubtaskCommand extends DeleteCommandJava {
 
     protected HomeworkTask deletedTask;
     protected int indexWithinParent; /* Index of subtask in the list of children of it's parent */

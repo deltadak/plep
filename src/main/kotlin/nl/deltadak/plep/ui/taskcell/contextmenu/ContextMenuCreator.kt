@@ -4,7 +4,7 @@ import nl.deltadak.plep.database.DatabaseFacade
 import nl.deltadak.plep.ui.taskcell.subtasks.SubtasksCreator
 import nl.deltadak.plep.ui.util.LABEL_COLOR_CONTEXT_MENU_ITEMS
 import nl.deltadak.plep.ui.util.repeatTask
-import nl.deltadak.plep.ui.util.toHomeworkTaskList
+import nl.deltadak.plep.ui.util.converters.toHomeworkTaskList
 import nl.deltadak.plep.ui.Controller
 import nl.deltadak.plep.ui.taskcell.TaskCell
 import javafx.scene.control.*

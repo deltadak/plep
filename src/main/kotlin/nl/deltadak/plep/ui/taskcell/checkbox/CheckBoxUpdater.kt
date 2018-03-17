@@ -1,17 +1,17 @@
 package nl.deltadak.plep.ui.taskcell.checkbox
 
-import nl.deltadak.plep.database.DatabaseFacade
-import nl.deltadak.plep.ui.taskcell.selection.Selector
-import nl.deltadak.plep.ui.taskcell.textlabel.TextLabelStyle
-import nl.deltadak.plep.ui.util.toHomeworkTaskList
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue
 import javafx.scene.control.CheckBox
 import javafx.scene.control.ProgressIndicator
 import javafx.scene.control.TreeView
 import nl.deltadak.plep.HomeworkTask
-import nl.deltadak.plep.ui.taskcell.ChangeListenerWithBlocker
+import nl.deltadak.plep.database.DatabaseFacade
 import nl.deltadak.plep.ui.taskcell.TaskCell
+import nl.deltadak.plep.ui.taskcell.blockerlisteners.ChangeListenerWithBlocker
+import nl.deltadak.plep.ui.taskcell.selection.Selector
+import nl.deltadak.plep.ui.taskcell.textlabel.TextLabelStyle
+import nl.deltadak.plep.ui.util.converters.toHomeworkTaskList
 import java.time.LocalDate
 
 @Suppress("UNUSED_ANONYMOUS_PARAMETER")

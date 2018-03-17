@@ -1,7 +1,7 @@
 package nl.deltadak.plep.ui.taskcell.subtasks
 
 import nl.deltadak.plep.database.DatabaseFacade
-import nl.deltadak.plep.ui.util.toHomeworkTaskList
+import nl.deltadak.plep.ui.util.converters.toHomeworkTaskList
 import nl.deltadak.plep.HomeworkTask
 import javafx.scene.control.ProgressIndicator
 import javafx.scene.control.TreeView

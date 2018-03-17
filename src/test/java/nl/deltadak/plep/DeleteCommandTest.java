@@ -1,6 +1,8 @@
 package nl.deltadak.plep;
 
 import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 import nl.deltadak.plep.commands.DeleteCommand;
 import org.junit.jupiter.api.Test;
 import org.testfx.api.FxRobot;
@@ -33,7 +35,12 @@ public class DeleteCommandTest extends FxRobot {
         taskToDelete.add(new HomeworkTask());
         taskToDelete.add(new HomeworkTask());
         list.add(taskToDelete);
-        command = new DeleteCommand(new ProgressIndicator(), dayState, list, 0, null);
+        // It doesn't really matter what's in here, but it needs something.
+        TreeView<HomeworkTask> treeView = new TreeView<>();
+        TreeItem<HomeworkTask> root = new TreeItem<>();
+        treeView.setRoot(root);
+        root.getChildren().add(new TreeItem<>());
+        command = new DeleteCommand(new ProgressIndicator(), dayState, list, 0, treeView);
     }
 
     @Test
@@ -52,9 +59,9 @@ public class DeleteCommandTest extends FxRobot {
         setup();
 
         command.execute();
-        assertFalse(command.getListItems().contains(taskToDelete));
+        assertFalse(command.getTreeViewItems().contains(taskToDelete));
         command.undo();
-        assertTrue(command.getListItems().contains(taskToDelete));
+        assertTrue(command.getTreeViewItems().contains(taskToDelete));
     }
 
 }

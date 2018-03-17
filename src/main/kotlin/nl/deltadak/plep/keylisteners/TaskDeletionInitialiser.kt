@@ -1,6 +1,6 @@
 package nl.deltadak.plep.keylisteners
 
-import nl.deltadak.plep.ui.util.toHomeworkTaskList
+import nl.deltadak.plep.ui.util.converters.toHomeworkTaskList
 import nl.deltadak.plep.commands.UndoFacility
 import javafx.scene.control.ProgressIndicator
 import javafx.scene.control.TreeView
