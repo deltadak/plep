@@ -23,6 +23,12 @@
     -fx-background-color: -secondary;
 }
 
+.check-box:selected > .box > .mark {
+    /* color of checkmark */
+    /*-fx-background-color: -checkbox-background;*/
+    -fx-background-color: -checkbox-background;
+}
+
 /* Make background a little darker on hover. */
 .check-box:hover > .box,
 .check-box:hover > .box > .mark {

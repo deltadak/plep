@@ -13,7 +13,7 @@ const val MAX_NUMBER_LABELS = 5
 const val LABELS_LIST_EXTRA_HEIGHT = 18
 
 /** Width of the settings pane. */
-const val PANE_WIDTH = 400
+const val PANE_WIDTH = 410
 
 /** The duration of the animation when opening and closing the settings pane. */
 const val TOGGLE_DURATION = 350

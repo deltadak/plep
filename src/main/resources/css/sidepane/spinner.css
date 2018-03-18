@@ -27,22 +27,22 @@
 /* also remove gradient in text field */
 .spinner > .text-field {
     -fx-background-color: transparent;
-    -fx-text-fill: -fx-gray-dark;
+    -fx-text-fill: -fx-primary-text;
 }
 
 /* same as normal buttons */
 .spinner .increment-arrow-button:hover,
 .spinner .decrement-arrow-button:hover {
-    -fx-background-color: -fx-gray-light;
+    -fx-background-color: derive(-fx-base, -5%);
 }
 
 .spinner .increment-arrow-button:pressed,
 .spinner .decrement-arrow-button:pressed {
-    -fx-background-color: -secondary-dark;
+    -fx-background-color: derive(-fx-base, -10%);
 }
 
 /* color of arrow buttons */
 .spinner .increment-arrow-button .increment-arrow,
 .spinner .decrement-arrow-button .decrement-arrow {
-    -fx-background-color: -fx-button;
+    -fx-background-color: -secondary;
 }
