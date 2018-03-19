@@ -1,8 +1,7 @@
 package nl.deltadak.plep.ui.taskcell.courselabel
 
-import nl.deltadak.plep.database.DatabaseFacade
-import nl.deltadak.plep.ui.util.toHomeworkTaskList
 import javafx.application.Platform
+import javafx.beans.InvalidationListener
 import javafx.beans.Observable
 import javafx.beans.value.ObservableValue
 import javafx.scene.control.ComboBox
@@ -10,7 +9,9 @@ import javafx.scene.control.ProgressIndicator
 import javafx.scene.control.TreeView
 import javafx.scene.control.cell.TextFieldTreeCell
 import nl.deltadak.plep.HomeworkTask
-import nl.deltadak.plep.ui.taskcell.InvalidationListenerWithBlocker
+import nl.deltadak.plep.database.DatabaseFacade
+import nl.deltadak.plep.ui.taskcell.blockerlisteners.InvalidationListenerWithBlocker
+import nl.deltadak.plep.ui.util.converters.toHomeworkTaskList
 import java.time.LocalDate
 
 /**
@@ -40,7 +41,7 @@ class OnCourseLabelChangeUpdater(
                 // In practice the delay is unnoticable.
                 Platform.runLater({comboBox.value = ""})
             } else {
-                task.label = newValue
+                task.label = newValue ?: ""
             }
 
         })
@@ -58,7 +59,7 @@ class OnCourseLabelChangeUpdater(
      */
     fun addDatabaseUpdaterChangeListener(tree: TreeView<HomeworkTask>, day: LocalDate) : InvalidationListenerWithBlocker {
         // Define a standard listener.
-        val invalidationListener = { observable: Observable ->
+        val invalidationListener = InvalidationListener { observable: Observable ->
             DatabaseFacade(progressIndicator).pushData(day, tree.toHomeworkTaskList())
             // We do not need to cleanup here, as no tasks were added or deleted.
         }

@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Command to delete an {@link HomeworkTask} from a TreeView.
  */
-public class DeleteCommand extends Command {
+public class DeleteCommandJava extends Command {
 
     /** remember state */
     protected ProgressIndicator progressIndicator;
@@ -33,7 +33,7 @@ public class DeleteCommand extends Command {
      * @param index index of task in treeViewItems to delete, needed as parameter for testing (which can't use a listview)
      * @param tree to provide immediate user feedback
      */
-    public DeleteCommand(ProgressIndicator progressIndicator, LocalDate day, List<List<HomeworkTask>> treeViewItems, int index, TreeView<HomeworkTask> tree) {
+    public DeleteCommandJava(ProgressIndicator progressIndicator, LocalDate day, List<List<HomeworkTask>> treeViewItems, int index, TreeView<HomeworkTask> tree) {
         this.progressIndicator = progressIndicator;
         this.dayState = day;
         this.treeViewItems = new ArrayList<>(treeViewItems);
@@ -99,7 +99,7 @@ public class DeleteCommand extends Command {
      * Get the treeViewItems this command remembers, mainly used for testing purposes.
      * @return treeViewItems of {@link HomeworkTask}s.
      */
-    public List<List<HomeworkTask>> getListItems() {
+    public List<List<HomeworkTask>> getTreeViewItems() {
         return treeViewItems;
     }
 

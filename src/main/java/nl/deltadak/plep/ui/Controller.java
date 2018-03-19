@@ -13,9 +13,15 @@ import javafx.scene.layout.GridPane;
 import nl.deltadak.plep.Database;
 import nl.deltadak.plep.JavaHelperKt;
 import nl.deltadak.plep.commands.UndoFacility;
+import nl.deltadak.plep.database.DatabaseSettings;
+import nl.deltadak.plep.keylisteners.UndoKeyListener;
+import nl.deltadak.plep.ui.gridpane.GridPaneInitializer;
+import nl.deltadak.plep.ui.settingspane.panes.SlidingPane;
+import nl.deltadak.plep.ui.settingspane.panes.SlidingSettingsPane;
 
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 /**
@@ -119,6 +125,13 @@ public class Controller implements Initializable, AbstractController {
         
         progressIndicator.setVisible(false);
 
+        ArrayList<ColorPicker> colorPickers = new ArrayList<>();
+        colorPickers.add(colorOne);
+        colorPickers.add(colorTwo);
+        colorPickers.add(colorThree);
+        colorPickers.add(colorFour);
+        colorPickers.add(colorFive);
+
         // setup the settings page
         SlidingSettingsPane slidingSettingsPane = new SlidingSettingsPane(
                 this,
@@ -130,54 +143,23 @@ public class Controller implements Initializable, AbstractController {
                 settingsTextTitle,
                 removeLabelButton,
                 applyNumberOfMovingDays,
-                applyNumberOfDays, applyNumberOfColumns, autoColumnCheckBox);
+                applyNumberOfDays,
+                applyNumberOfColumns,
+                autoColumnCheckBox,
+                colorPickers,
+                main,
+                gridPane,
+                toolBar,
+                settingsPane,
+                settingsButton);
 
-        copySettingsPaneComponents(slidingSettingsPane);
         slidingSettingsPane.setup();
         
         // setup help page
-        SlidingPane helpPane = new SlidingPane(this);
-        copyHelpPageComponents(helpPane);
-        helpPane.setup();
+        new SlidingPane(main, gridPane, toolBar, helpPane, helpButton).setup();
         
         new UndoKeyListener().set(gridPane, undoFacility);
         
-    }
-    
-    /**
-     * Copy references from fxml components needed to the SettingsPane
-     *
-     * @param settingsPane
-     *         which needs the references
-     */
-    @Deprecated
-    private void copySettingsPaneComponents(SlidingSettingsPane settingsPane) {
-        settingsPane.main = this.main;
-        settingsPane.gridPane = this.gridPane;
-        settingsPane.toolBar = this.toolBar;
-        settingsPane.slidingPane = this.settingsPane;
-        settingsPane.openCloseButton = this.settingsButton;
-        settingsPane.colorsPane = this.colorsPane;
-        settingsPane.colorOne = this.colorOne;
-        settingsPane.colorTwo = this.colorTwo;
-        settingsPane.colorThree = this.colorThree;
-        settingsPane.colorFour = this.colorFour;
-        settingsPane.colorFive = this.colorFive;
-        
-    }
-    
-    /**
-     * Copy references from fxml components needed to the SlidingPane
-     *
-     * @param helpPane
-     *         which needs the references
-     */
-    private void copyHelpPageComponents(SlidingPane helpPane) {
-        helpPane.main = this.main;
-        helpPane.gridPane = this.gridPane;
-        helpPane.toolBar = this.toolBar;
-        helpPane.slidingPane = this.helpPane;
-        helpPane.openCloseButton = this.helpButton;
     }
     
     /**

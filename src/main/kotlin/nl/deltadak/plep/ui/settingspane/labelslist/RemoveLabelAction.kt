@@ -3,7 +3,6 @@ package nl.deltadak.plep.ui.settingspane.labelslist
 import javafx.scene.control.Button
 import javafx.scene.control.ListView
 import nl.deltadak.plep.Database
-import nl.deltadak.plep.ui.SlidingSettingsPane
 import kotlin.reflect.KMutableProperty
 
 /**
@@ -14,17 +13,10 @@ class RemoveLabelAction(
         val removeLabelButton: Button) {
 
     /**
-     * Temporary function to be called from Java, since that has no pass by reference for variables.
-     */
-    fun javaSet(slidingSettingsPane: SlidingSettingsPane, refreshUI: () -> Unit) {
-        set(slidingSettingsPane::labelsList, refreshUI)
-    }
-
-    /**
      * Set the button action.
      *
      * @param labelsListProp Should be a variable reference to the list of labels.
-     * The rest of the parameters are needed to update the UI later on.
+     * @param refreshUI Should refresh the UI when called.
      */
     fun set(labelsListProp: KMutableProperty<ListView<String>>,
             refreshUI: () -> Unit) {

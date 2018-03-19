@@ -1,4 +1,4 @@
-package nl.deltadak.plep.ui.util
+package nl.deltadak.plep.ui.util.converters
 
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList

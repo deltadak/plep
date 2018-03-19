@@ -2,8 +2,8 @@ package nl.deltadak.plep.database
 
 import nl.deltadak.plep.ui.treeview.TreeViewCleaner
 import nl.deltadak.plep.ui.treeview.getAllTreeViews
-import nl.deltadak.plep.ui.util.getParentTasks
-import nl.deltadak.plep.ui.util.toObservableList
+import nl.deltadak.plep.ui.util.converters.getParentTasks
+import nl.deltadak.plep.ui.util.converters.toObservableList
 import javafx.beans.value.ObservableValue
 import javafx.collections.ObservableList
 import javafx.concurrent.Task
