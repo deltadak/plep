@@ -33,14 +33,20 @@ class DeleteSubtaskCommand(progressIndicator: ProgressIndicator, day: LocalDate,
                 // Subtract one because the parent is the first item in the list.
                 indexWithinParent = taskList.indexOf(deletedTask) - 1
                 taskList.remove(deletedTask)
+                treeViewItems[i] = taskList
             }
         }
 
-        val parent = tree.root.children[parentIndex]
-        parent.children.removeAt(indexWithinParent)
+        // Known to be null when testing.
+        if (tree.root != null && tree.root.children != null) {
+            val parent = tree.root.children[parentIndex]
+            if (parent != null && parent.children.size > 0) {
+                parent.children.removeAt(indexWithinParent)
 
-        DatabaseFacade(progressIndicator).pushData(day, treeViewItems)
-        TreeViewCleaner().cleanSingleTreeView(tree)
+                DatabaseFacade(progressIndicator).pushData(day, treeViewItems)
+                TreeViewCleaner().cleanSingleTreeView(tree)
+            }
+        }
 
     }
 

@@ -40,29 +40,34 @@ open class DeleteCommand(
         deletedItemsList = treeViewItems[this.index]
         treeViewItems.removeAt(this.index)
 
-        // Use the TreeView to delete an item, to provide user feedback.
-        tree.root.children.removeAt(this.index)
+        // Known to be null when testing.
+        if (tree.root != null) {
+            // Use the TreeView to delete an item, to provide user feedback.
+            tree.root.children.removeAt(this.index)
 
-        Database.INSTANCE.deleteByID(deletedItemsList[0].databaseID)
-        TreeViewCleaner().cleanSingleTreeView(tree)
+            Database.INSTANCE.deleteByID(deletedItemsList[0].databaseID)
+            TreeViewCleaner().cleanSingleTreeView(tree)
+        }
 
     }
 
     override fun undoHook() {
         treeViewItems.add(this.index, deletedItemsList.toMutableList())
 
-        // First add parent.
-        val parent = TreeItem<HomeworkTask>(deletedItemsList[0])
-        tree.root.children.add(this.index, parent)
+        if (tree.root != null) {
+            // First add parent.
+            val parent = TreeItem<HomeworkTask>(deletedItemsList[0])
+            tree.root.children.add(this.index, parent)
 
-        // Then the children.
-        deletedItemsList.subList(1, deletedItemsList.size)
-                .forEach {
-                    parent.children.add(TreeItem<HomeworkTask>(it))
-                }
+            // Then the children.
+            deletedItemsList.subList(1, deletedItemsList.size)
+                    .forEach {
+                        parent.children.add(TreeItem<HomeworkTask>(it))
+                    }
 
-        DatabaseFacade(progressIndicator).pushData(day, treeViewItems)
-        TreeViewCleaner().cleanSingleTreeView(tree)
+            DatabaseFacade(progressIndicator).pushData(day, treeViewItems)
+            TreeViewCleaner().cleanSingleTreeView(tree)
+        }
 
     }
 
