@@ -12,7 +12,7 @@ import java.time.LocalDate
 /**
  * Command to delete a [HomeworkTask] from a TreeView.
  */
-class DeleteCommand(
+open class DeleteCommand(
         /** To show progress. */
         val progressIndicator: ProgressIndicator,
         /** Day of the task to delete. */
@@ -20,16 +20,15 @@ class DeleteCommand(
         /** All the tasks of that day. */
         treeViewItemsImmutable: List<List<HomeworkTask>>,
         /** Index of the task in treeViewItems. */
-        val index: Int,
+        private val index: Int,
         /** To provide feedback immediately in the TreeView. */
         val tree: TreeView<HomeworkTask>) : Command() {
 
-    private var indexState: Int = index
     /** List including subtasks. */
     private var deletedItemsList: List<HomeworkTask> = emptyList()
 
-    /** All the tasks of the day. */
-    var treeViewItems: MutableList<List<HomeworkTask>> = treeViewItemsImmutable.toMutableList()
+    /** All the tasks of the day, making the given list mutable in order to edit, original reference need not be preserved. */
+    var treeViewItems: MutableList<MutableList<HomeworkTask>> = treeViewItemsImmutable.toMutableList().map{it.toMutableList()}.toMutableList()
 
     override fun executionHook() {
 
@@ -38,11 +37,11 @@ class DeleteCommand(
         }
 
         // Save the deleted tasks so we can undo later.
-        deletedItemsList = treeViewItems[indexState]
-        treeViewItems.removeAt(indexState)
+        deletedItemsList = treeViewItems[this.index]
+        treeViewItems.removeAt(this.index)
 
         // Use the TreeView to delete an item, to provide user feedback.
-        tree.root.children.removeAt(indexState)
+        tree.root.children.removeAt(this.index)
 
         Database.INSTANCE.deleteByID(deletedItemsList[0].databaseID)
         TreeViewCleaner().cleanSingleTreeView(tree)
@@ -50,11 +49,11 @@ class DeleteCommand(
     }
 
     override fun undoHook() {
-        treeViewItems.add(indexState, deletedItemsList)
+        treeViewItems.add(this.index, deletedItemsList.toMutableList())
 
         // First add parent.
         val parent = TreeItem<HomeworkTask>(deletedItemsList[0])
-        tree.root.children.add(indexState, parent)
+        tree.root.children.add(this.index, parent)
 
         // Then the children.
         deletedItemsList.subList(1, deletedItemsList.size)

@@ -1,6 +1,8 @@
 package nl.deltadak.plep
 
 import javafx.scene.control.ProgressIndicator
+import javafx.scene.control.TreeItem
+import javafx.scene.control.TreeView
 import nl.deltadak.plep.commands.DeleteSubtaskCommand
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
@@ -19,11 +21,14 @@ object DeleteSubtaskCommandTest: Spek({
 
         val day = LocalDate.now()
         val index = 1
-        val tree = null
         val subtask = HomeworkTask()
         subtask.text = "subtask"
         val treeViewItems = mutableListOf<MutableList<HomeworkTask>>()
         treeViewItems.add(mutableListOf(HomeworkTask(), subtask))
+
+        // It doesn't really matter what's in here, but it needs something.
+        val tree = TreeView<HomeworkTask>()
+        tree.root = TreeItem<HomeworkTask>().apply { children.add(TreeItem()) }
 
         val command = DeleteSubtaskCommand(ProgressIndicator(), day, treeViewItems,index, tree)
         on("executing the command") {
