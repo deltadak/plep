@@ -40,7 +40,11 @@ open class SlidingPane(
      */
     private fun setupPaneToggle() {
 
-
+        // Add styling to the side pane. Buttons and text etc are different
+        // than in rest of plep.
+        slidingPane.stylesheets.add("css/sidepane/sidepane.css")
+        // Add new style class to style the background.
+        slidingPane.styleClass.add("side-pane")
 
         slidingPane.prefWidth = PANE_WIDTH.toDouble()
         // Set the left x coordinate of the settings pane at -PANE_WIDTH on initialization, so the entire pane is outside of the window.

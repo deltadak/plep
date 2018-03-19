@@ -140,7 +140,6 @@ public class Controller implements Initializable, AbstractController {
                 editLabelsPane,
                 editDaysPane,
                 settingsPane,
-                settingsTextTitle,
                 removeLabelButton,
                 applyNumberOfMovingDays,
                 applyNumberOfDays,
