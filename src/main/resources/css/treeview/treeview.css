@@ -30,6 +30,7 @@
 
 .label {
     -fx-wrap-text: true;
+    -fx-text-fill: ladder(-fx-control-inner-background, white 49%, -fx-primary-text 50%);
 }
 
 /* text of the tasks marked as done */

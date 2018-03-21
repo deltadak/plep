@@ -87,11 +87,11 @@ public class Controller implements Initializable, AbstractController {
 
     /** Default (initial) colors */
     public static final String[] DEFAULT_COLORS = new String[] {
-            "ff1a00",
-            "00cbef",
-            "7df202",
-            "f444a7",
-            "ffffff"
+            "E55E5E", // Red.
+            "5E78E5", // Blue.
+            "60ed79", // Green.
+            "ffd253", // Orange.
+            "ffffff" // White.
     };
     
     /**

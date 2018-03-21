@@ -9,28 +9,27 @@
     -fx-background-color: -fx-control-inner-background;
 
     /*!* style the border *!*/
-    -fx-border-color: #6D6D6D;
-    -fx-border-radius: 3, 2, 1;
-    -fx-background-radius: 3, 2, 1;
-    /* TODO Something strange happens when using -fx-border-width > 1.65 and < 4.65.
-     To reproduce: Plep half screen, click Settings. */
+    -fx-border-color: ladder(-fx-control-inner-background, white 49%, -fx-primary-text 50%);
+    -fx-border-radius: 2, 2, 1;
+    -fx-background-radius: 2, 2, 1;
     -fx-border-width: 2.5;
 }
 
 .check-box:selected > .box {
     /* background of box which contains checkmark */
-    -fx-border-color: -secondary;
-    -fx-background-color: -secondary;
+    -fx-background-color: ladder(-fx-control-inner-background, white 49%, -fx-primary-text 50%);
 }
 
 .check-box:selected > .box > .mark {
     /* color of checkmark */
-    /*-fx-background-color: -checkbox-background;*/
-    -fx-background-color: -checkbox-background;
+    -fx-background-color: ladder(-fx-control-inner-background, -fx-primary-text 49%, white 50%);
 }
 
-/* Make background a little darker on hover. */
+/* Make background a little darker (or lighter) on hover. */
 .check-box:hover > .box,
 .check-box:hover > .box > .mark {
-    -fx-background-color: derive(-fx-control-inner-background, -5%);
+    color-darker: derive(-fx-control-inner-background, -10%);
+    color-lighter: derive(-fx-control-inner-background, 40%);
+
+    -fx-background-color: ladder(-fx-control-inner-background, color-lighter 49%, color-darker 50%);
 }

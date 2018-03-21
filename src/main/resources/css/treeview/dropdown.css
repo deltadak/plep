@@ -4,29 +4,34 @@
 
 /* Color of the text of the courselabel based on the background color. */
 .combo-box .list-cell {
-    -fx-text-fill: ladder(-fx-control-inner-background, white 0%, white 59%, black 60%, black 100%);
+    -fx-text-fill: ladder(-fx-control-inner-background, white 49%, -fx-primary-text 50%);
 }
 
 .combo-box:hover {
-    -fx-background-color: derive(-fx-control-inner-background, -5%);
+    color-darker: derive(-fx-control-inner-background, -5%);
+    color-lighter: derive(-fx-control-inner-background, 30%);
+
+    -fx-background-color: ladder(-fx-control-inner-background, color-lighter 49%, color-darker 50%);
 }
 
 .combo-box:pressed {
-    -fx-background-color: derive(-fx-control-inner-background, -10%);
+    color-darker: derive(-fx-control-inner-background, -15%);
+    color-lighter: derive(-fx-control-inner-background, 50%);
+
+    -fx-background-color: ladder(-fx-control-inner-background, color-lighter 49%, color-darker 50%);
 }
 
 /* an arrow is a button */
 .combo-box .arrow {
-    -fx-background-color: -secondary;
-}
-
-.combo-box .list-cell:hover{
-    -fx-background-color: derive(-fx-control-inner-background, -5%);
+    -fx-background-color: ladder(-fx-control-inner-background, white 49%, -fx-primary-text 50%);
 }
 
 .combo-box-popup  > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected,
 .combo-box-popup  > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:hover {
-    -fx-background-color: derive(-fx-control-inner-background, -10%);
+    color-darker: derive(-fx-control-inner-background, -5%);
+    color-lighter: derive(-fx-control-inner-background, 30%);
+
+    -fx-background-color: ladder(-fx-control-inner-background, color-lighter 49%, color-darker 50%);
 }
 
 /* Styling for an item of which the checkbox is checked */
