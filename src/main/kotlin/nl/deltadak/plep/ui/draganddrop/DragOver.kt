@@ -7,9 +7,9 @@ import nl.deltadak.plep.HomeworkTask
 
 /**
  * When something is draggend over a cell.
+ * @property taskCell TreeCell on which the drag should be detected.
  */
 class DragOver(
-        /** TreeCell on which the drag should be detected. */
         private val taskCell: TreeCell<HomeworkTask>) {
 
     init {

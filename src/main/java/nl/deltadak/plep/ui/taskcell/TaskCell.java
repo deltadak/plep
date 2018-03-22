@@ -19,6 +19,8 @@ import nl.deltadak.plep.database.ContentProvider;
 import nl.deltadak.plep.database.DatabaseFacade;
 import nl.deltadak.plep.ui.Controller;
 import nl.deltadak.plep.ui.draganddrop.DragDetection;
+import nl.deltadak.plep.ui.draganddrop.DragEnter;
+import nl.deltadak.plep.ui.draganddrop.DragExit;
 import nl.deltadak.plep.ui.draganddrop.DragOver;
 import nl.deltadak.plep.ui.taskcell.blockerlisteners.ChangeListenerWithBlocker;
 import nl.deltadak.plep.ui.taskcell.blockerlisteners.InvalidationListenerWithBlocker;
@@ -125,8 +127,8 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
     
         new DragDetection(this, root);
         new DragOver(this);
-        setOnDragEntered(tree);
-        setOnDragExited(tree);
+        new DragEnter(this, tree);
+        new DragExit(this, tree);
         setOnDragDropped(tree, localDate, progressIndicator, gridPane, focusDay);
         setOnDragDone(tree, localDate, progressIndicator);
 
@@ -218,34 +220,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
         }
     }
 
-    
-    /**
-     * Sets on drag entered.
-     * @param tree TreeView to style as focused.
-     */
-    void setOnDragEntered(TreeView<HomeworkTask> tree) {
-        setOnDragEntered(event -> {
-            if ((!Objects.equals(event.getGestureSource(), this)) && event
-                    .getDragboard().hasContent(DATA_FORMAT)) {
-                tree.setStyle("-fx-background-color: -fx-accent;");
-            }
-            
-            event.consume();
-        });
-    }
-    
-    /**
-     * Sets on drag exited.
-     * @param tree TreeView to style as not focused.
-     */
-    void setOnDragExited(TreeView<HomeworkTask> tree) {
-        setOnDragExited(event -> {
-            tree.setStyle("-fx-background-color: -fx-base;");
-            event.consume();
-    
-        });
-    }
-    
+
     /**
      * updates the ListView and database when a TaskCell is being dropped
      *
