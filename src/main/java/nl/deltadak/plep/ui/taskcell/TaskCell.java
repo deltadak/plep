@@ -18,6 +18,8 @@ import nl.deltadak.plep.HomeworkTask;
 import nl.deltadak.plep.database.ContentProvider;
 import nl.deltadak.plep.database.DatabaseFacade;
 import nl.deltadak.plep.ui.Controller;
+import nl.deltadak.plep.ui.draganddrop.DragDetection;
+import nl.deltadak.plep.ui.draganddrop.DragOver;
 import nl.deltadak.plep.ui.taskcell.blockerlisteners.ChangeListenerWithBlocker;
 import nl.deltadak.plep.ui.taskcell.blockerlisteners.InvalidationListenerWithBlocker;
 import nl.deltadak.plep.ui.taskcell.checkbox.CheckBoxUpdater;
@@ -35,6 +37,7 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 import static java.lang.Math.min;
+import static nl.deltadak.plep.ui.draganddrop.UtilKt.DATA_FORMAT;
 import static nl.deltadak.plep.ui.util.converters.ConvertersKt.getParentTasks;
 
 /**
@@ -120,8 +123,8 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
         
         doneChangeListener = new CheckBoxUpdater(controller.getProgressIndicator(), checkBox).setChangeListener(tree, this, localDate);
     
-        setOnDragDetected();
-        setOnDragOver();
+        new DragDetection(this, root);
+        new DragOver(this);
         setOnDragEntered(tree);
         setOnDragExited(tree);
         setOnDragDropped(tree, localDate, progressIndicator, gridPane, focusDay);
@@ -215,40 +218,6 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
         }
     }
 
-    /**
-     * When the dragging is detected, we place the content of the LabelCell
-     * in the DragBoard.
-     */
-    void setOnDragDetected() {
-        setOnDragDetected(event -> {
-
-            boolean isParentTask = getTreeItem().getParent().equals(root);
-
-            boolean isEmpty = getTreeItem().getValue().getText().equals("");
-
-            if (!isEmpty && isParentTask) {
-                Dragboard db = startDragAndDrop(TransferMode.MOVE);
-                ClipboardContent content = new ClipboardContent();
-                content.put(controller.DATA_FORMAT, getTreeItem()
-                        .getValue());
-                db.setContent(content);
-            }
-            event.consume();
-        });
-    }
-    
-    /**
-     * Sets on drag over.
-     */
-    void setOnDragOver() {
-        setOnDragOver(event -> {
-            if (!Objects.equals(event.getGestureSource(), this) && event
-                    .getDragboard().hasContent(controller.DATA_FORMAT)) {
-                event.acceptTransferModes(TransferMode.MOVE);
-            }
-            event.consume();
-        });
-    }
     
     /**
      * Sets on drag entered.
@@ -257,7 +226,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
     void setOnDragEntered(TreeView<HomeworkTask> tree) {
         setOnDragEntered(event -> {
             if ((!Objects.equals(event.getGestureSource(), this)) && event
-                    .getDragboard().hasContent(controller.DATA_FORMAT)) {
+                    .getDragboard().hasContent(DATA_FORMAT)) {
                 tree.setStyle("-fx-background-color: -fx-accent;");
             }
             
@@ -288,9 +257,9 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
         setOnDragDropped(event -> {
             Dragboard db = event.getDragboard();
             boolean success = false;
-            if (db.hasContent(controller.DATA_FORMAT)) {
+            if (db.hasContent(DATA_FORMAT)) {
                 HomeworkTask newHomeworkTask
-                        = (HomeworkTask)db.getContent(controller.DATA_FORMAT);
+                        = (HomeworkTask)db.getContent(DATA_FORMAT);
                 //insert new task, removing will happen in onDragDone
                 int index = min(getIndex(), tree.getRoot().getChildren()
                         .size()); // item can be dropped way below
@@ -344,7 +313,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
             if (event.getTransferMode() == TransferMode.MOVE) {
                 Dragboard db = event.getDragboard();
                 HomeworkTask newHomeworkTask
-                        = (HomeworkTask)db.getContent(controller.DATA_FORMAT);
+                        = (HomeworkTask)db.getContent(DATA_FORMAT);
                 HomeworkTask emptyHomeworkTask = new HomeworkTask();
                 //remove original item
                 //item can have been moved up (so index becomes one

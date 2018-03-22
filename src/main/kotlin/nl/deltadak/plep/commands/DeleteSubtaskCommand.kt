@@ -20,6 +20,7 @@ class DeleteSubtaskCommand(progressIndicator: ProgressIndicator, day: LocalDate,
     /** Index of subtask in the list of children of it's parent */
     private var indexWithinParent: Int = -1
 
+    /** {@inheritDoc} */
     override fun executionHook() {
         if (treeViewItems.isEmpty()) {
             throw IllegalStateException("cannot delete item from empty treeview")
@@ -50,6 +51,7 @@ class DeleteSubtaskCommand(progressIndicator: ProgressIndicator, day: LocalDate,
 
     }
 
+    /** {@inheritDoc} */
     override fun undoHook() {
 
         if (parentIndex == -1 || indexWithinParent == -1) {

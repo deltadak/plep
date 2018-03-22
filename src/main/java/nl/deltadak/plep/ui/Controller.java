@@ -3,7 +3,6 @@ package nl.deltadak.plep.ui;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.input.DataFormat;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import nl.deltadak.plep.Database;
@@ -63,12 +62,6 @@ public class Controller implements Initializable, AbstractController {
     @FXML ColorPicker colorThree;
     @FXML ColorPicker colorFour;
     @FXML ColorPicker colorFive;
-    
-    /**
-     * used to transfer tasks with drag and drop
-     */
-    public static final DataFormat DATA_FORMAT = new DataFormat(
-            "com.deltadak.HomeworkTask");
     
     // layout globals, are public for the SettingsPane to access them
     /**
