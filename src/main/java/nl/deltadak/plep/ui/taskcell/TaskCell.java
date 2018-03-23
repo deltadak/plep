@@ -125,8 +125,9 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
         new DragOver(this);
         new DragEnter(this, tree);
         new DragExit(this, tree);
-        new DragDrop(this, tree, localDate, progressIndicator, gridPane, focusDay);
-        setOnDragDone(tree, localDate, progressIndicator);
+        new DragDrop(this, tree, localDate, progressIndicator);
+//        setOnDragDone(tree, localDate, progressIndicator);
+        new DragDone(this, tree, localDate, progressIndicator);
 
         new SubtasksEditor(controller.getProgressIndicator(), tree, localDate).setup();
         
@@ -223,6 +224,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
      * @param tree TreeView needed for updating the database
      * @param day LocalDate needed for updating the database
      */
+    @Deprecated
     void setOnDragDone(final TreeView<HomeworkTask> tree, final LocalDate day, ProgressIndicator progressIndicator) {
         setOnDragDone(event -> {
             //ensures the original element is only removed on a

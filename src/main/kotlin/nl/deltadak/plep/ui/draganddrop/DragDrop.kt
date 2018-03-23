@@ -5,7 +5,6 @@ import javafx.scene.control.TreeCell
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeView
 import javafx.scene.input.DragEvent
-import javafx.scene.layout.GridPane
 import nl.deltadak.plep.HomeworkTask
 import nl.deltadak.plep.database.ContentProvider
 import nl.deltadak.plep.database.DatabaseFacade
@@ -20,20 +19,16 @@ import java.time.LocalDate
 /**
  * When the dragged object is dropped, update TreeView and database.
  *
- * @property taskCell TreeCell on which the drag should be detected.
+ * @property taskCell TreeCell on which the task is dropped.
  * @property tree TreeView to update.
  * @property day of the TreeView.
  * @property progressIndicator Needed for refreshing UI.
- * @property gridPane Needed for refreshing UI.
- * @property focusDay Needed for refreshing UI.
  */
 class DragDrop(
         private val taskCell: TreeCell<HomeworkTask>,
         val tree: TreeView<HomeworkTask>,
         val day: LocalDate,
-        val progressIndicator: ProgressIndicator,
-        val gridPane: GridPane,
-        private val focusDay: LocalDate) {
+        val progressIndicator: ProgressIndicator) {
 
     init {
         taskCell.setOnDragDropped { event ->
