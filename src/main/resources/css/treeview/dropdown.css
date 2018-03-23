@@ -9,14 +9,14 @@
 
 .combo-box:hover {
     color-darker: derive(-fx-control-inner-background, -5%);
-    color-lighter: derive(-fx-control-inner-background, 30%);
+    color-lighter: derive(-fx-control-inner-background, 50%);
 
     -fx-background-color: ladder(-fx-control-inner-background, color-lighter 49%, color-darker 50%);
 }
 
 .combo-box:pressed {
     color-darker: derive(-fx-control-inner-background, -15%);
-    color-lighter: derive(-fx-control-inner-background, 50%);
+    color-lighter: derive(-fx-control-inner-background, 65%);
 
     -fx-background-color: ladder(-fx-control-inner-background, color-lighter 49%, color-darker 50%);
 }
@@ -29,7 +29,7 @@
 .combo-box-popup  > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected,
 .combo-box-popup  > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:hover {
     color-darker: derive(-fx-control-inner-background, -5%);
-    color-lighter: derive(-fx-control-inner-background, 30%);
+    color-lighter: derive(-fx-control-inner-background, 50%);
 
     -fx-background-color: ladder(-fx-control-inner-background, color-lighter 49%, color-darker 50%);
 }

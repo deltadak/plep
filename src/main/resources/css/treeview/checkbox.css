@@ -29,7 +29,7 @@
 .check-box:hover > .box,
 .check-box:hover > .box > .mark {
     color-darker: derive(-fx-control-inner-background, -10%);
-    color-lighter: derive(-fx-control-inner-background, 40%);
+    color-lighter: derive(-fx-control-inner-background, 50%);
 
     -fx-background-color: ladder(-fx-control-inner-background, color-lighter 49%, color-darker 50%);
 }
