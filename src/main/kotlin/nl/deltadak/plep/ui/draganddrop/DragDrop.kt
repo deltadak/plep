@@ -52,11 +52,12 @@ class DragDrop(
 
         event.isDropCompleted = success
         event.consume()
-        // clean up immediately for a smooth reaction
+        // Clean up immediately for a smooth reaction.
         TreeViewCleaner().cleanSingleTreeView(tree)
 
-        // works to let the subtasks show up after the drag, except when dragging a task with subtasks in the same list...
-        ContentProvider().setForAllDays(gridPane, focusDay, progressIndicator) // todo this is overkill refresh
+        // In order to show the subtasks again for the dropped item, we request them from the database.
+        // This may seem slow but in practice fast enough.
+        ContentProvider().setForOneDay(tree, day, progressIndicator)
     }
 
     private fun dropTask(newHomeworkTask: HomeworkTask): Boolean {
