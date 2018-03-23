@@ -5,7 +5,6 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTreeCell;
-import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
@@ -18,10 +17,7 @@ import nl.deltadak.plep.HomeworkTask;
 import nl.deltadak.plep.database.ContentProvider;
 import nl.deltadak.plep.database.DatabaseFacade;
 import nl.deltadak.plep.ui.Controller;
-import nl.deltadak.plep.ui.draganddrop.DragDetection;
-import nl.deltadak.plep.ui.draganddrop.DragEnter;
-import nl.deltadak.plep.ui.draganddrop.DragExit;
-import nl.deltadak.plep.ui.draganddrop.DragOver;
+import nl.deltadak.plep.ui.draganddrop.*;
 import nl.deltadak.plep.ui.taskcell.blockerlisteners.ChangeListenerWithBlocker;
 import nl.deltadak.plep.ui.taskcell.blockerlisteners.InvalidationListenerWithBlocker;
 import nl.deltadak.plep.ui.taskcell.checkbox.CheckBoxUpdater;
@@ -125,11 +121,11 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
         
         doneChangeListener = new CheckBoxUpdater(controller.getProgressIndicator(), checkBox).setChangeListener(tree, this, localDate);
     
-        new DragDetection(this, root);
+        new DragDetect(this, root);
         new DragOver(this);
         new DragEnter(this, tree);
         new DragExit(this, tree);
-        setOnDragDropped(tree, localDate, progressIndicator, gridPane, focusDay);
+        new DragDrop(this, tree, localDate, progressIndicator, gridPane, focusDay);
         setOnDragDone(tree, localDate, progressIndicator);
 
         new SubtasksEditor(controller.getProgressIndicator(), tree, localDate).setup();
@@ -220,60 +216,6 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
         }
     }
 
-
-    /**
-     * updates the ListView and database when a TaskCell is being dropped
-     *
-     * @param tree TreeView needed for updating the database
-     * @param day LocalDate needed for updating the database
-     * @param progressIndicator User feedback.
-     */
-    void setOnDragDropped(final TreeView<HomeworkTask> tree, final LocalDate day, ProgressIndicator progressIndicator, GridPane gridPane, LocalDate focusDay) {
-        setOnDragDropped(event -> {
-            Dragboard db = event.getDragboard();
-            boolean success = false;
-            if (db.hasContent(DATA_FORMAT)) {
-                HomeworkTask newHomeworkTask
-                        = (HomeworkTask)db.getContent(DATA_FORMAT);
-                //insert new task, removing will happen in onDragDone
-                int index = min(getIndex(), tree.getRoot().getChildren()
-                        .size()); // item can be dropped way below
-                // the existing list
-                
-                //we have put an empty item instead of no items
-                //because otherwise there are no treeCells that can
-                // receive an item
-                if (tree.getRoot().getChildren().get(index).getValue().getText().equals("")) {
-                    tree.getRoot().getChildren().get(index)
-                            .setValue(newHomeworkTask); //replace empty item
-                } else {
-                    TreeItem<HomeworkTask> item = new TreeItem<>(newHomeworkTask);
-                    tree.getRoot().getChildren().add(index, item);
-                }
-                success = true;
-                // update tasks in database (old day?)
-                // we only have to update the parents, because the subtasks only depend on their parents, and are independent of the day and the order in the day.
-                new DatabaseFacade(progressIndicator).pushParentData(day,
-                        getParentTasks(
-                                ConvertersKt.toHomeworkTaskList(tree)
-                        )
-                );
-
-                // Clear selection on all other items immediately. This will result in a smooth reaction, whereas otherwise it takes a bit of noticable time before selection of the just-dragged item (on its previous location) is cleared.
-                new Selector(tree).deselectAll();
-
-            }
-            
-            
-            event.setDropCompleted(success);
-            event.consume();
-            // clean up immediately for a smooth reaction
-            new TreeViewCleaner().cleanSingleTreeView(tree);
-
-            // works to let the subtasks show up after the drag, except when dragging a task with subtasks in the same list...
-            new ContentProvider().setForAllDays(gridPane, focusDay, progressIndicator); // todo this is overkill refresh
-        });
-    }
     
     /**
      * removing the original copy

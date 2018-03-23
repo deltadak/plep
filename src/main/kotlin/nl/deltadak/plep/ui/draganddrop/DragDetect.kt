@@ -9,7 +9,7 @@ import nl.deltadak.plep.HomeworkTask
 /**
  * When the dragging is detected, we place the content of the LabelCell in the DragBoard.
  */
-class DragDetection(
+class DragDetect(
         /** TreeCell on which the drag should be detected. */
         private val taskCell: TreeCell<HomeworkTask>,
         /** Root of the TreeView. */
