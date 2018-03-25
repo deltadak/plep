@@ -6,7 +6,6 @@
 
 .check-box > .box {
     /*!* remove checkmark when deselected by making background the same color *!*/
-    /*-fx-background-color: -fx-control-inner-background;*/
     -fx-background-color: transparent;
 
     /*!* style the border *!*/
@@ -18,6 +17,7 @@
 
 .check-box:selected > .box {
     /* background of box which contains checkmark */
+    -fx-border-color: transparent;
     -fx-background-color: ladder(-fx-control-inner-background, white 49%, -fx-primary-text 50%);
 }
 
