@@ -1,5 +1,6 @@
 /* TreeView and TreeView */
 
+
 /* Selected rows */
 .tree-view:focused > .virtual-flow > .clipped-container > .sheet > .text-field-tree-cell:filled:selected,
 .list-view:focused > .virtual-flow > .clipped-container > .sheet > .text-field-list-cell:filled:selected {
@@ -7,9 +8,13 @@
     /*-fx-border-color: black; !* change border instead of background so it doesn't override item colors *!*/
 
     /* First two are the borders, the last one the color of the listcell background. Here we take it the color it already is so the item colors do not get overridden, but darker so the white ones are also readable (the text is forced to white when selected, didn't find out how to change that) */
-    -fx-background-color: derive(-fx-control-inner-background, 5%),
-    derive(-fx-control-inner-background, 5%),
-    derive(-fx-control-inner-background, 5%);
+    color-darker: derive(-fx-control-inner-background, -25%);
+    color-lighter: derive(-fx-control-inner-background, 75%);
+
+    -fx-background-color:
+            ladder(-fx-control-inner-background, color-lighter 49%, color-darker 50%),
+            ladder(-fx-control-inner-background, color-lighter 49%, color-darker 50%),
+            ladder(-fx-control-inner-background, color-lighter 49%, color-darker 50%);
 
     /*-fx-table-cell-border-color: derive(-fx-selection-bar, 20%);*/
 }
@@ -35,13 +40,13 @@
 
 /* text of the tasks marked as done */
 
-/*.label-done {*/
-    /*-fx-text-fill: ladder(-fx-control-inner-background, -fx-primary-light-text 0%, -fx-secondary-light-text 59%, -fx-secondary-text, -fx-primary-text);*/
-    /*-fx-font-style: oblique;*/
-/*}*/
+.label-done {
+    -fx-text-fill: ladder(-fx-control-inner-background, -fx-primary-light-text 0%, -fx-secondary-light-text 59%, -fx-secondary-text, -fx-primary-text);
+    -fx-font-style: oblique;
+}
 
-/*.label-done .text {*/
-    /*-fx-strikethrough: true;*/
-    /*-fx-wrap-text: true;*/
-/*}*/
+.label-done .text {
+    -fx-strikethrough: true;
+    -fx-wrap-text: true;
+}
 

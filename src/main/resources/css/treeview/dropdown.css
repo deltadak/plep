@@ -1,5 +1,6 @@
 .combo-box {
-    -fx-background-color:  -fx-control-inner-background;
+    /*-fx-background-color:  -fx-control-inner-background;*/
+    -fx-background-color: transparent;
 }
 
 /* Color of the text of the courselabel based on the background color. */

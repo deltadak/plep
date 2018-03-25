@@ -1,12 +1,13 @@
 .check-box > .box > .mark {
     /* color of checkmark */
-    /*-fx-background-color: -checkbox-background;*/
-    -fx-background-color: -fx-control-inner-background;
+    -fx-background-color: transparent;
+    /*-fx-background-color: -fx-control-inner-background;*/
 }
 
 .check-box > .box {
     /*!* remove checkmark when deselected by making background the same color *!*/
-    -fx-background-color: -fx-control-inner-background;
+    /*-fx-background-color: -fx-control-inner-background;*/
+    -fx-background-color: transparent;
 
     /*!* style the border *!*/
     -fx-border-color: ladder(-fx-control-inner-background, white 49%, -fx-primary-text 50%);
