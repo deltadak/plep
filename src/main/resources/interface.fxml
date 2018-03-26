@@ -94,7 +94,7 @@ On the settings pane, click on a colour to edit it."
                   AnchorPane.topAnchor="44.0"
                   AnchorPane.leftAnchor="10.0">
 
-            <Text id="numberOfMovingDaysText"
+            <Label id="numberOfMovingDaysText"
                   GridPane.columnSpan="2"
                   text="Number of days to go forward:"/>
 
@@ -102,7 +102,7 @@ On the settings pane, click on a colour to edit it."
                     GridPane.columnIndex="3"
                     text="APPLY"/>
 
-            <Text id="numberOfShowDaysText"
+            <Label id="numberOfShowDaysText"
                   GridPane.columnSpan="2"
                   text="Number of days to show:"
                   GridPane.rowIndex="1"/>
@@ -112,7 +112,7 @@ On the settings pane, click on a colour to edit it."
                     GridPane.rowIndex="1"
                     text="APPLY"/>
 
-            <Text id="maxColumnsText"
+            <Label id="maxColumnsText"
                   text="Number of columns:"
                   GridPane.rowIndex="2"/>
 
@@ -134,7 +134,7 @@ On the settings pane, click on a colour to edit it."
                   AnchorPane.topAnchor="180.0"
                   AnchorPane.leftAnchor="10.0">
 
-            <Text text="Background colours"
+            <Label text="Background colours"
                     GridPane.columnIndex="0"
                     GridPane.rowIndex="0"
                     GridPane.columnSpan="5"/>
