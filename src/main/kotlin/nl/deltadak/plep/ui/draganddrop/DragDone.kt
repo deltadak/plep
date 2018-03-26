@@ -28,7 +28,7 @@ class DragDone(
         val progressIndicator: ProgressIndicator) {
 
     init {
-        taskCell.setOnDragExited {
+        taskCell.setOnDragDone {
             event -> setDragDone(event)
             event.consume()
             // Clean up immediately for a smooth reaction.
@@ -38,28 +38,10 @@ class DragDone(
 
     private fun setDragDone(event: DragEvent) {
         if (event.transferMode == TransferMode.MOVE) {
-            val dragBoard = event.dragboard
-            val oldHomeworkTask = dragBoard.getContent(DATA_FORMAT) as HomeworkTask
 
-            // The old item needs to be removed, but it could be that the item was moved up in the list, so the index increases by one, or (down or to another day), when the index doesn't change.
-
-            // In the case that the current index is larger equal to the size of the list, then todo
-            if (taskCell.index >= tree.root.children.size) {
-                // happens...
-            }
-            val currentItem = tree.root.children[taskCell.index]
-            val currentText = currentItem.value.text
-
-            // If item was moved to an other day, or down in same list
-            if (currentText == oldHomeworkTask.text) {
-                // Set empty HomeworkTask.
-                currentItem.value = HomeworkTask()
-                taskCell.graphic = null
-            } else {
-                // The item was moved up in the same TreeView.
-                val index = taskCell.index + 1
-                tree.getTreeItem(index).value = HomeworkTask()
-            }
+            // Set empty HomeworkTask.
+            taskCell.treeItem.value = HomeworkTask()
+            taskCell.graphic = null
 
             // Update database.
             // We only have to update the parents, because the subtasks only depend on their parents, and are independent of the day and the order in the day.
