@@ -5,8 +5,6 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTreeCell;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -14,29 +12,22 @@ import javafx.scene.layout.Region;
 import javafx.scene.text.TextAlignment;
 import nl.deltadak.plep.Database;
 import nl.deltadak.plep.HomeworkTask;
-import nl.deltadak.plep.database.ContentProvider;
-import nl.deltadak.plep.database.DatabaseFacade;
 import nl.deltadak.plep.ui.Controller;
 import nl.deltadak.plep.ui.draganddrop.*;
-import nl.deltadak.plep.ui.taskcell.blockerlisteners.ChangeListenerWithBlocker;
-import nl.deltadak.plep.ui.taskcell.blockerlisteners.InvalidationListenerWithBlocker;
-import nl.deltadak.plep.ui.taskcell.checkbox.CheckBoxUpdater;
+import nl.deltadak.plep.ui.taskcell.util.blockerlisteners.ChangeListenerWithBlocker;
+import nl.deltadak.plep.ui.taskcell.util.blockerlisteners.InvalidationListenerWithBlocker;
+import nl.deltadak.plep.ui.taskcell.components.checkbox.CheckBoxUpdater;
 import nl.deltadak.plep.ui.taskcell.contextmenu.ContextMenuCreator;
-import nl.deltadak.plep.ui.taskcell.courselabel.OnCourseLabelChangeUpdater;
+import nl.deltadak.plep.ui.taskcell.components.courselabel.OnCourseLabelChangeUpdater;
 import nl.deltadak.plep.ui.taskcell.selection.SelectionCleaner;
-import nl.deltadak.plep.ui.taskcell.selection.Selector;
 import nl.deltadak.plep.ui.taskcell.subtasks.SubtasksEditor;
-import nl.deltadak.plep.ui.taskcell.textlabel.TextLabelStyle;
+import nl.deltadak.plep.ui.taskcell.components.textlabel.TextLabelStyle;
 import nl.deltadak.plep.ui.taskcell.treecell.TaskConverter;
-import nl.deltadak.plep.ui.treeview.TreeViewCleaner;
-import nl.deltadak.plep.ui.util.converters.ConvertersKt;
 
 import java.time.LocalDate;
 import java.util.Objects;
 
 import static java.lang.Math.min;
-import static nl.deltadak.plep.ui.draganddrop.UtilKt.DATA_FORMAT;
-import static nl.deltadak.plep.ui.util.converters.ConvertersKt.getParentTasks;
 
 /**
  * Custom TextFieldTreeCell, because we can't set the converter on a regular
@@ -126,7 +117,6 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
         new DragEnter(this, tree);
         new DragExit(this, tree);
         new DragDrop(this, tree, localDate, progressIndicator);
-//        setOnDragDone(tree, localDate, progressIndicator);
         new DragDone(this, tree, localDate, progressIndicator);
 
         new SubtasksEditor(controller.getProgressIndicator(), tree, localDate).setup();
@@ -217,61 +207,4 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
         }
     }
 
-    
-    /**
-     * removing the original copy
-     *
-     * @param tree TreeView needed for updating the database
-     * @param day LocalDate needed for updating the database
-     */
-    @Deprecated
-    void setOnDragDone(final TreeView<HomeworkTask> tree, final LocalDate day, ProgressIndicator progressIndicator) {
-        setOnDragDone(event -> {
-            //ensures the original element is only removed on a
-            // valid copy transfer (no dropping outside listviews)
-            if (event.getTransferMode() == TransferMode.MOVE) {
-                Dragboard db = event.getDragboard();
-                HomeworkTask newHomeworkTask
-                        = (HomeworkTask)db.getContent(DATA_FORMAT);
-                HomeworkTask emptyHomeworkTask = new HomeworkTask();
-                //remove original item
-                //item can have been moved up (so index becomes one
-                // too much)
-                // or such that the index didn't change, like to
-                // another day
-                
-                // If item was moved to an other day, or down in same list
-                TreeItem<HomeworkTask> currentItem = tree.getRoot().getChildren().get(getIndex());
-                String currentText = currentItem.getValue().getText();
-                // if text at current location is equal to
-                String newText = newHomeworkTask.getText();
-
-                if (currentText.equals(newText)) {
-                    tree.getRoot().getChildren().get(getIndex())
-                            .setValue(emptyHomeworkTask);
-                    setGraphic(null);
-                    
-                    // deleting blank row from database which updating creates
-                } else { // item was moved up in same tree
-                    // we get here when dragging a task from below an
-                    // expanded task
-                    int index = getIndex() + 1;
-                    tree.getTreeItem(index).setValue(emptyHomeworkTask);
-                }
-
-                // update in database (new day?)
-                // we only have to update the parents, because the subtasks only depend on their parents, and are independent of the day and the order in the day.
-                new DatabaseFacade(progressIndicator).pushParentData(day,
-                        getParentTasks(
-                                ConvertersKt.toHomeworkTaskList(tree)
-                        )
-                );
-
-            }
-            event.consume();
-            // clean up immediately for a smooth reaction
-            new TreeViewCleaner().cleanSingleTreeView(tree);
-
-        });
-    }
 }

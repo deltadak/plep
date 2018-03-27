@@ -1,4 +1,4 @@
-package nl.deltadak.plep.ui.taskcell.textlabel
+package nl.deltadak.plep.ui.taskcell.components.textlabel
 
 import javafx.scene.control.ComboBox
 import javafx.scene.control.Label
