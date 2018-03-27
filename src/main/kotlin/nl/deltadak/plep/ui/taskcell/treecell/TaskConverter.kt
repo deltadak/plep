@@ -15,7 +15,7 @@ class TaskConverter(
     /**
      * Converts the HomeworkTask provided into its string form.
      */
-    override fun toString(homeworkTask: HomeworkTask): String = homeworkTask.text
+    override fun toString(homeworkTask: HomeworkTask?): String = homeworkTask?.text ?: ""
 
     /**
      * Converts a string into a HomeworkTask.
