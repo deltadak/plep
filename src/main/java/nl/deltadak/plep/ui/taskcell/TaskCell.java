@@ -2,32 +2,24 @@ package nl.deltadak.plep.ui.taskcell;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTreeCell;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.Region;
-import javafx.scene.text.TextAlignment;
 import nl.deltadak.plep.Database;
 import nl.deltadak.plep.HomeworkTask;
 import nl.deltadak.plep.ui.Controller;
 import nl.deltadak.plep.ui.draganddrop.*;
-import nl.deltadak.plep.ui.taskcell.util.blockerlisteners.ChangeListenerWithBlocker;
-import nl.deltadak.plep.ui.taskcell.util.blockerlisteners.InvalidationListenerWithBlocker;
 import nl.deltadak.plep.ui.taskcell.components.checkbox.CheckBoxUpdater;
-import nl.deltadak.plep.ui.taskcell.contextmenu.ContextMenuCreator;
 import nl.deltadak.plep.ui.taskcell.components.courselabel.OnCourseLabelChangeUpdater;
+import nl.deltadak.plep.ui.taskcell.contextmenu.ContextMenuCreator;
 import nl.deltadak.plep.ui.taskcell.selection.SelectionCleaner;
 import nl.deltadak.plep.ui.taskcell.subtasks.SubtasksEditor;
-import nl.deltadak.plep.ui.taskcell.components.textlabel.TextLabelStyle;
 import nl.deltadak.plep.ui.taskcell.treecell.TaskConverter;
+import nl.deltadak.plep.ui.taskcell.util.blockerlisteners.ChangeListenerWithBlocker;
+import nl.deltadak.plep.ui.taskcell.util.blockerlisteners.InvalidationListenerWithBlocker;
 
 import java.time.LocalDate;
-import java.util.Objects;
-
-import static java.lang.Math.min;
 
 /**
  * Custom TextFieldTreeCell, because we can't set the converter on a regular
@@ -60,7 +52,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
      * ComboBox, in order to choose whether to block it temporarily or not.
      */
     InvalidationListenerWithBlocker labelChangeListener;
-    ChangeListenerWithBlocker doneChangeListener;
+    ChangeListenerWithBlocker<Boolean> doneChangeListener;
     
     /**
      * Constructor for the TaskCell.
@@ -71,6 +63,8 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
     public TaskCell(Controller controller, TreeItem<HomeworkTask> root) {
         this.controller = controller;
         this.root = root;
+
+        // Initialize components with something default.
     
         checkBox = new CheckBox();
         
@@ -79,6 +73,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
         comboList.add(0, "<no label>");
     
         comboBox = new ComboBox<>(comboList);
+        label = new Label("");
     }
     
     /**
@@ -136,75 +131,7 @@ public class TaskCell extends TextFieldTreeCell<HomeworkTask> {
     public void updateItem(HomeworkTask homeworkTask, boolean empty) {
         super.updateItem(homeworkTask, empty);
 
-        if(isEmpty()) {
-            setGraphic(null);
-            setText(null);
-        } else {
-            // create the items that are on every cell
-            cellBox = new HBox(10);
-            cellBox.setAlignment(Pos.CENTER_LEFT);
-            
-            // block the listener on the checkbox when we manually toggle it
-            // so it corresponds to the value in the database
-            doneChangeListener.setBlock(true);
-                boolean done = homeworkTask.getDone();
-                checkBox.setSelected(done); // manually toggle (if necessary)
-            doneChangeListener.setBlock(false); // unblock the listener
-            
-            label = new Label(homeworkTask.getText());
-
-            // This won't work for long text without spaces, and more.
-//            label.prefWidthProperty().bind(getTreeView().widthProperty().subtract(comboBox.widthProperty()).subtract(checkBox.widthProperty()));
-            // courselabel.getWidth() is equal to 0 here, we can't use that.
-            // Result:
-//            label.setPrefWidth(getTreeView().getWidth() - LABEL_MAGIK);
-    
-            // This works? :
-            label.prefWidthProperty().bind(getTreeView().widthProperty()
-                                                   .subtract(LABEL_MAGIK));
-            label.setWrapText(true);
-            label.setTextAlignment(TextAlignment.JUSTIFY);
-    
-            // Get style from the database and apply to the item
-            int colorID = homeworkTask.getColorID();
-            String color = Database.INSTANCE.getColorFromDatabase(colorID);
-
-            setStyle("-fx-control-inner-background: #" + color);
-    
-            // set the style on the label
-            new TextLabelStyle().setDoneStyle(done, label, comboBox);
-    
-            // if the item is first level, it has to show a course label
-            // (ComboBox), and it has to have a context menu
-            // Note: replacing equals() with a 'safe' equals() resolved NPE.
-            if(Objects.equals(getTreeItem().getParent(), root)) {
-    
-                // Before setting value, we need to temporarily disable the
-                // listener, otherwise it fires and goes unnecessarily updating
-                // the database, which takes a lot of time.
-                labelChangeListener.setBlock(true);
-                comboBox.setValue((homeworkTask.getLabel() != null) ? homeworkTask.getLabel() : "<null>");
-                labelChangeListener.setBlock(false);
-                
-                // create a region to make sure that the ComboBox is aligned
-                // on the right
-                Region region = new Region();
-                HBox.setHgrow(region, Priority.ALWAYS);
-                
-                cellBox.getChildren().addAll(checkBox, label, region, comboBox);
-
-                // set the context menu
-                setContextMenu(contextMenu);
-                setGraphic(cellBox);
-                setText(null);
-            } else {
-                setContextMenu(null); // disable the context menu on subtasks
-                cellBox.getChildren().addAll(checkBox, label);
-                setGraphic(cellBox);
-                setText(null);
-            }
-            
-        }
+        new TaskLayout(this, doneChangeListener, checkBox, label, labelChangeListener, contextMenu, root, comboBox).update(homeworkTask);
     }
 
 }
