@@ -1,7 +1,10 @@
 package nl.deltadak.plep.ui.taskcell
 
 import javafx.geometry.Pos
-import javafx.scene.control.*
+import javafx.scene.control.CheckBox
+import javafx.scene.control.ComboBox
+import javafx.scene.control.Label
+import javafx.scene.control.TreeItem
 import javafx.scene.layout.HBox
 import javafx.scene.layout.Priority
 import javafx.scene.layout.Region
@@ -22,11 +25,10 @@ import nl.deltadak.plep.ui.util.LABEL_MAGIK
  * @property checkBox Checkbox of the task.
  * @property label Text of the task.
  * @property labelChangeListener Should provide the ability to temporarily block the listener of the combobox.
- * @property contextMenu Context menu to add to the layout.
  * @property root Root item of the TreeView in which the task is.
  * @property comboBox Combobox of the task.
  */
-class TaskLayout(private val taskCell: TaskCell, private val doneChangeListener: ChangeListenerWithBlocker<Boolean>, private val checkBox: CheckBox, val label: Label, private val labelChangeListener: InvalidationListenerWithBlocker, private val contextMenu: ContextMenu, val root: TreeItem<HomeworkTask>, private val comboBox: ComboBox<String>) {
+class TaskLayout(private val taskCell: TaskCell, private val doneChangeListener: ChangeListenerWithBlocker<Boolean>, private val checkBox: CheckBox, val label: Label, private val labelChangeListener: InvalidationListenerWithBlocker, val root: TreeItem<HomeworkTask>, private val comboBox: ComboBox<String>) {
 
     /**
      * Updates the layout.
@@ -66,16 +68,15 @@ class TaskLayout(private val taskCell: TaskCell, private val doneChangeListener:
             val region = setComboBox(homeworkTask)
             cellBox.children.addAll(checkBox, label, region, comboBox)
 
-            // Set the context menu.
-            taskCell.contextMenu = contextMenu
             taskCell.graphic = cellBox
             taskCell.text = null
         } else {
             // Set up subtask, with context menu disabled.
-            taskCell.contextMenu = null
-            cellBox.children.addAll(checkBox, label)
-            taskCell.graphic = cellBox
-            taskCell.text = null
+            with(taskCell) {
+                contextMenu = null
+                graphic = cellBox.apply { children.addAll(checkBox, label) }
+                text = null
+            }
         }
 
     }
@@ -98,10 +99,12 @@ class TaskLayout(private val taskCell: TaskCell, private val doneChangeListener:
      * Setup text label.
      */
     private fun setTextLabel(homeworkTask: HomeworkTask) {
-        label.text = homeworkTask.text
-        label.prefWidthProperty().bind(taskCell.treeView.widthProperty().subtract(LABEL_MAGIK))
-        label.isWrapText = true
-        label.textAlignment = TextAlignment.JUSTIFY
+        with(label) {
+            text = homeworkTask.text
+            prefWidthProperty().bind(taskCell.treeView.widthProperty().subtract(LABEL_MAGIK))
+            isWrapText = true
+            textAlignment = TextAlignment.JUSTIFY
+        }
     }
 
     /**

@@ -1,12 +1,5 @@
 package nl.deltadak.plep.ui.gridpane
 
-import nl.deltadak.plep.database.ContentProvider
-import nl.deltadak.plep.database.DatabaseSettings
-import nl.deltadak.plep.keylisteners.TaskDeletionInitialiser
-import nl.deltadak.plep.ui.treeview.getTreeViewHeight
-import nl.deltadak.plep.ui.treeview.getTreeViewWidth
-import nl.deltadak.plep.ui.Controller
-import nl.deltadak.plep.commands.UndoFacility
 import javafx.scene.control.ProgressIndicator
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeView
@@ -14,7 +7,14 @@ import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.GridPane
 import nl.deltadak.plep.Database
 import nl.deltadak.plep.HomeworkTask
+import nl.deltadak.plep.commands.UndoFacility
+import nl.deltadak.plep.database.ContentProvider
+import nl.deltadak.plep.database.DatabaseSettings
+import nl.deltadak.plep.keylisteners.TaskDeletionInitialiser
+import nl.deltadak.plep.ui.Controller
 import nl.deltadak.plep.ui.taskcell.TaskCell
+import nl.deltadak.plep.ui.treeview.getTreeViewHeight
+import nl.deltadak.plep.ui.treeview.getTreeViewWidth
 import java.time.LocalDate
 import kotlin.reflect.KMutableProperty
 
@@ -25,7 +25,7 @@ class GridPaneInitializer(
         /** The main Controller. */
         val controller: Controller,
         /** Facility which provides deletion. */
-        val undoFacility: UndoFacility,
+        private val undoFacility: UndoFacility,
         /** User feedback. */
         val progressIndicator: ProgressIndicator) {
 
@@ -53,7 +53,8 @@ class GridPaneInitializer(
         gridPane.children.clear()
 
         // Find out whether the number of columns should be calculated automatically or is user overridden.
-        val isAutoColumns: Boolean = Database.INSTANCE.getSetting(DatabaseSettings.MAX_COLUMNS_AUTO.settingsName).toBoolean()
+        val columnsSetting: String = Database.INSTANCE.getSetting(DatabaseSettings.MAX_COLUMNS_AUTO.settingsName) ?: "false"
+        val isAutoColumns: Boolean = columnsSetting.toBoolean()
         val nrColumns = if (isAutoColumns) {
             Math.ceil(Math.sqrt(numberOfDays.toDouble())).toInt()
         } else {
@@ -73,9 +74,7 @@ class GridPaneInitializer(
 
             tree.isEditable = true
             tree.setCellFactory {
-                val treeCell = TaskCell(controller, tree.root)
-                treeCell.setup(tree, date, progressIndicator, gridPane, focusDate)
-                treeCell
+                TaskCell(tree, date).apply { setup(progressIndicator, gridPane, focusDate) }
             }
             tree.isShowRoot = false
 
