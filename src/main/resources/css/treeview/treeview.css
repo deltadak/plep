@@ -22,15 +22,19 @@
 .tree-view,
 .list-view {
     /* remove border */
-    -fx-background-color: -general-background;
+    -fx-background-color: -general-background, -general-background, -general-background;
 }
 
 .tree-cell {
-    -fx-background: -fx-control-inner-background;
+    /*-fx-background: -fx-control-inner-background;*/
+    -fx-control-inner-background: -general-background;
+    -fx-min-height: 40px;
 }
 
 .list-cell:odd {
-    -fx-background: -fx-control-inner-background;
+    /*-fx-background: -fx-control-inner-background;*/
+    /*-fx-control-inner-background: red;*/
+    -fx-control-inner-background: -general-background;
 }
 
 .label {

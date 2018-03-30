@@ -91,7 +91,7 @@ public class Controller implements Initializable, AbstractController {
             "5E78E5", // Blue.
             "60ed79", // Green.
             "ffd253", // Orange.
-            "ffffff" // White.
+            "EEE3FF" // White.
     };
     
     /**

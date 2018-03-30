@@ -23,7 +23,7 @@
     -secondary-light: #98ee99;
     -secondary-dark: #338a3e;
 
-    -general-background: white;
+
     -checkmark-color: white;
 
     /* custom base colors */
@@ -47,8 +47,8 @@
 
     -fx-font-size: 12pt;
     -fx-base: #EEEEEE;
+    -general-background: #EEE3FF;
     -fx-background-color: -general-background;
-    -checkbox-background: -general-background;
 }
 
 

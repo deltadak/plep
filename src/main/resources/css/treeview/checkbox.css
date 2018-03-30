@@ -38,3 +38,16 @@
 
     -fx-background-color: ladder(-fx-control-inner-background, color-lighter 49%, color-darker 50%);
 }
+
+.check-box:hover > .box {
+    -fx-border-color: ladder(-fx-control-inner-background, white 49%, -fx-primary-text 50%);
+}
+
+.combobox-done .list-cell {
+    -fx-text-fill: ladder(-fx-control-inner-background, white 49%, -fx-primary-text 50%);
+    -fx-font-style: oblique;
+}
+
+.combobox-done .text {
+    -fx-strikethrough: true;
+}
