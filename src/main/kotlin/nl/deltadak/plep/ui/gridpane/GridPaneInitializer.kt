@@ -11,7 +11,6 @@ import nl.deltadak.plep.commands.UndoFacility
 import nl.deltadak.plep.database.ContentProvider
 import nl.deltadak.plep.database.DatabaseSettings
 import nl.deltadak.plep.keylisteners.TaskDeletionInitialiser
-import nl.deltadak.plep.ui.Controller
 import nl.deltadak.plep.ui.taskcell.TaskCell
 import nl.deltadak.plep.ui.treeview.getTreeViewHeight
 import nl.deltadak.plep.ui.treeview.getTreeViewWidth
@@ -22,29 +21,22 @@ import kotlin.reflect.KMutableProperty
  * Initializes the whole UI of the GridPane.
  */
 class GridPaneInitializer(
-        /** The main Controller. */
-        val controller: Controller,
         /** Facility which provides deletion. */
         private val undoFacility: UndoFacility,
         /** User feedback. */
         val progressIndicator: ProgressIndicator) {
 
     /**
-     * IMPORTANT Pass variables which are not constants by reference, with ::varName in Kotlin or use JavaHelper in Java.
-     */
-    fun setup(gridPane: GridPane, numberOfDays: KMutableProperty<Int>, focusDate: KMutableProperty<LocalDate>, toolBarHeight: Double) {
-        setup(gridPane, numberOfDays.getter.call(), focusDate.getter.call(), toolBarHeight)
-    }
-
-    /**
      * Sets up TreeViews for each day, including the editing of items and more.
      *
      * @param gridPane The GridPane to setup.
-     * @param numberOfDays The total number of days to setup the gridpane with.
-     * @param focusDate This date is the central date in the sense it is shown as the second day, which is by default today.
+     * @param numberOfDaysProperty The total number of days to setup the gridpane with. Pass reference instead of value, with ::numberOfDays.
+     * @param focusDateProperty This date is the central date in the sense it is shown as the second day, which is by default today. Pass reference instead of value, with ::focusDate.
      */
-    @Deprecated("Use other setup method")
-    fun setup(gridPane: GridPane, numberOfDays: Int, focusDate: LocalDate, toolBarHeight: Double) {
+    fun setup(gridPane: GridPane, numberOfDaysProperty: KMutableProperty<Int>, focusDateProperty: KMutableProperty<LocalDate>, toolBarHeight: Double) {
+
+        val numberOfDays = numberOfDaysProperty.getter.call()
+        val focusDate = focusDateProperty.getter.call()
 
         // Anchor the main GridPane to the bottom of the Toolbar.
         AnchorPane.setTopAnchor(gridPane, toolBarHeight) //toolBar.prefHeight

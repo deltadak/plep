@@ -8,9 +8,9 @@ import javafx.scene.control.TreeView
 import nl.deltadak.plep.HomeworkTask
 import nl.deltadak.plep.database.DatabaseFacade
 import nl.deltadak.plep.ui.taskcell.TaskCell
-import nl.deltadak.plep.ui.taskcell.util.blockerlisteners.ChangeListenerWithBlocker
-import nl.deltadak.plep.ui.taskcell.selection.Selector
 import nl.deltadak.plep.ui.taskcell.components.textlabel.TextLabelStyle
+import nl.deltadak.plep.ui.taskcell.selection.Selector
+import nl.deltadak.plep.ui.taskcell.util.blockerlisteners.ChangeListenerWithBlocker
 import nl.deltadak.plep.ui.util.converters.toHomeworkTaskList
 import java.time.LocalDate
 
@@ -51,8 +51,7 @@ class CheckBoxUpdater(
 
         }
 
-        @Suppress("RemoveExplicitTypeArguments") // Not true, removing is a compiler error.
-        val doneChangeListener = ChangeListenerWithBlocker<Boolean>(changeListener)
+        val doneChangeListener = ChangeListenerWithBlocker(changeListener)
 
         checkbox.selectedProperty().addListener(doneChangeListener)
 
