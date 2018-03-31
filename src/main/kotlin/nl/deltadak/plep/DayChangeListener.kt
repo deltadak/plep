@@ -12,7 +12,7 @@ import java.time.LocalDate
  */
 class DayChangeListener(
         /** The main Controller. */
-        val controller: Controller) {
+        private val controller: Controller) {
 
     /** We do need to remember which day is the last known day. */
     private var today: LocalDate = LocalDate.now()

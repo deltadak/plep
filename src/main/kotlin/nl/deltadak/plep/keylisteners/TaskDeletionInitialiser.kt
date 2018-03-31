@@ -1,13 +1,13 @@
 package nl.deltadak.plep.keylisteners
 
-import nl.deltadak.plep.ui.util.converters.toHomeworkTaskList
-import nl.deltadak.plep.commands.UndoFacility
 import javafx.scene.control.ProgressIndicator
 import javafx.scene.control.TreeView
 import javafx.scene.input.KeyCode
 import nl.deltadak.plep.HomeworkTask
 import nl.deltadak.plep.commands.DeleteCommand
 import nl.deltadak.plep.commands.DeleteSubtaskCommand
+import nl.deltadak.plep.commands.UndoFacility
+import nl.deltadak.plep.ui.util.converters.toHomeworkTaskList
 import java.time.LocalDate
 
 /**
@@ -17,7 +17,7 @@ class TaskDeletionInitialiser(
         /** User feedback. */
         val progressIndicator: ProgressIndicator,
         /** The facility which provides deletion including the undoing of deletion. */
-        val undoFacility: UndoFacility) {
+        private val undoFacility: UndoFacility) {
 
     /**
      * Add a listener on a TreeView which listens for the delete key to be pressed. It will find out which item was selected and delete that one.

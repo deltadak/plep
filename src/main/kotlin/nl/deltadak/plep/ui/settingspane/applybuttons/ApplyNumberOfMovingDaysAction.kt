@@ -1,10 +1,9 @@
 package nl.deltadak.plep.ui.settingspane.applybuttons
 
-import nl.deltadak.plep.database.DatabaseSettings
 import javafx.scene.control.Button
 import javafx.scene.control.Spinner
 import nl.deltadak.plep.Database
-import nl.deltadak.plep.ui.Controller
+import nl.deltadak.plep.database.DatabaseSettings
 import kotlin.reflect.KMutableProperty
 
 /**
@@ -12,16 +11,9 @@ import kotlin.reflect.KMutableProperty
  */
 class ApplyNumberOfMovingDaysAction(
         /** The FXML reference to the button. */
-        val applyNumberOfMovingDaysButton: Button,
+        private val applyNumberOfMovingDaysButton: Button,
         /** The FXML reference to the spinner. */
-        val numberOfMovingDaysSpinner: Spinner<Int>) {
-
-    /**
-     * Temporary function to be called from Java, since that has no pass by reference for variables.
-     */
-    fun javaSet(controller: Controller, refreshUI: () -> Unit) {
-        set(controller::numberOfMovingDays, refreshUI)
-    }
+        private val numberOfMovingDaysSpinner: Spinner<Int>) {
 
     /**
      * Set the button action.

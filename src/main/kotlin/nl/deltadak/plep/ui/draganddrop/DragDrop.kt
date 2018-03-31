@@ -8,13 +8,10 @@ import javafx.scene.input.DragEvent
 import nl.deltadak.plep.HomeworkTask
 import nl.deltadak.plep.database.ContentProvider
 import nl.deltadak.plep.database.DatabaseFacade
-import nl.deltadak.plep.min
-import nl.deltadak.plep.minZero
 import nl.deltadak.plep.ui.taskcell.selection.Selector
 import nl.deltadak.plep.ui.treeview.TreeViewCleaner
 import nl.deltadak.plep.ui.util.converters.getParentTasks
 import nl.deltadak.plep.ui.util.converters.toHomeworkTaskList
-import java.lang.Math.min
 import java.time.LocalDate
 
 

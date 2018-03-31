@@ -10,7 +10,6 @@ import nl.deltadak.plep.database.DatabaseFacade
 import nl.deltadak.plep.ui.treeview.TreeViewCleaner
 import nl.deltadak.plep.ui.util.converters.getParentTasks
 import nl.deltadak.plep.ui.util.converters.toHomeworkTaskList
-import java.lang.Integer.min
 import java.time.LocalDate
 
 /**

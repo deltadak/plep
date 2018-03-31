@@ -71,6 +71,8 @@ class Controller {
     /** Refreshes UI when called. */
     private val refreshUI = { GridPaneInitializer(undoFacility, progressIndicator).setup(gridPane, ::numberOfDays, ::focusDay, toolBar.prefHeight) }
 
+    // Cannot be private, is called by JavaFX.
+    @Suppress("MemberVisibilityCanBePrivate")
     /**
      * Initialization method for the controller.
      */
