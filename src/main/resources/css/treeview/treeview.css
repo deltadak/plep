@@ -31,10 +31,10 @@
     -fx-min-height: 40px;
 }
 
-.list-cell:odd {
+.list-cell {
     /*-fx-background: -fx-control-inner-background;*/
     /*-fx-control-inner-background: red;*/
-    -fx-control-inner-background: -general-background;
+    /*-fx-control-inner-background: -general-background;*/
 }
 
 .label {
