@@ -1,14 +1,8 @@
 package nl.deltadak.plep;
 
-import nl.deltadak.plep.ui.Controller;
-
 import java.io.File;
 import java.security.CodeSource;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -265,13 +259,17 @@ public enum Database {
         String sql = "SELECT value FROM settings where name = '" + name + "'";
         Connection connection = setConnection();
         try {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(sql);
-            while (resultSet.next()) {
-                value = resultSet.getString("value");
+            if (connection != null) {
+                Statement statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery(sql);
+                while (resultSet.next()) {
+                    value = resultSet.getString("value");
+                }
+                statement.close();
             }
-            statement.close();
-            connection.close();
+            if (connection != null) {
+                connection.close();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -796,7 +794,7 @@ public enum Database {
                 + "hex CHAR(10))";
         query(sql);
         
-        String[] colors = Controller.DEFAULT_COLORS;
+        String[] colors = JavaHelper.DEFAULT_COLORS;
         String sql2 = "INSERT OR IGNORE INTO colors(id, hex) VALUES (1, " + "'"
                 + colors[0] + "'), (2, '" + colors[1] + "'), (3, '" + colors[2]
                 + "'), (4, '" + colors[3] + "'), (5, '" + colors[4] + "')";

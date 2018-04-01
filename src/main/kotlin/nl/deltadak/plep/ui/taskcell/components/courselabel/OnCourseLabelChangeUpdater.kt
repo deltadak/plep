@@ -1,4 +1,4 @@
-package nl.deltadak.plep.ui.taskcell.courselabel
+package nl.deltadak.plep.ui.taskcell.components.courselabel
 
 import javafx.application.Platform
 import javafx.beans.InvalidationListener
@@ -10,7 +10,7 @@ import javafx.scene.control.TreeView
 import javafx.scene.control.cell.TextFieldTreeCell
 import nl.deltadak.plep.HomeworkTask
 import nl.deltadak.plep.database.DatabaseFacade
-import nl.deltadak.plep.ui.taskcell.blockerlisteners.InvalidationListenerWithBlocker
+import nl.deltadak.plep.ui.taskcell.util.blockerlisteners.InvalidationListenerWithBlocker
 import nl.deltadak.plep.ui.util.converters.toHomeworkTaskList
 import java.time.LocalDate
 
@@ -22,7 +22,7 @@ class OnCourseLabelChangeUpdater(
         /** For user feedback. */
         val progressIndicator: ProgressIndicator,
         /** The ComboBox on which to listen for changes. */
-        val comboBox: ComboBox<String>) {
+        private val comboBox: ComboBox<String>) {
 
     /**
      * Add a listener to the ComboBox which listens for value changes and applies them normally with one exception: when <no label> is selected then the empty string will be shown.

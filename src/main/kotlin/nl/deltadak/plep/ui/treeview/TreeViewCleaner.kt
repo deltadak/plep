@@ -18,9 +18,9 @@ class TreeViewCleaner {
      *
      * @param tree The TreeView to clean up.
      */
-    fun cleanSingleTreeView(tree: TreeView<HomeworkTask>?) {
+    fun cleanSingleTreeView(tree: TreeView<HomeworkTask>) {
 
-        if (tree != null) {
+        if (tree.root != null && tree.root.children != null) {
 
             // Remove empty items.
             tree.root.children.removeIf { it.value.text == "" }

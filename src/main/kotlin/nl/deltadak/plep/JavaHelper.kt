@@ -1,11 +1,17 @@
 package nl.deltadak.plep
 
-import nl.deltadak.plep.ui.Controller
-import nl.deltadak.plep.ui.gridpane.GridPaneInitializer
-
 /**
- * Temporary helper function for Java interop.
+ * Because Java cannot call top level Kotlin fields. Can be removed if no callers left. See [nl.deltadak.plep.ui.util.DEFAULT_COLORS].
  */
-fun getUIRefresher(controller: Controller): Function0<Unit> {
-    return { GridPaneInitializer(controller, controller.undoFacility, controller.progressIndicator).setup(controller.gridPane, controller::numberOfDays, controller::focusDay, controller.toolBar.prefHeight) }
+class JavaHelper {
+    companion object {
+        /** */
+        @JvmField val DEFAULT_COLORS = arrayOf(
+                "ff1a00",
+                "00cbef",
+                "7df202",
+                "f444a7",
+                "ffffff"
+        )
+    }
 }

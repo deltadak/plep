@@ -1,11 +1,6 @@
 package nl.deltadak.plep.ui.settingspane.panes
 
-import javafx.animation.TranslateTransition
-import javafx.event.EventHandler
 import javafx.scene.Node
-import javafx.scene.input.MouseEvent
-import javafx.scene.layout.AnchorPane
-import javafx.scene.layout.GridPane
 
 /**
  * Returns whether a MouseEvent happened in a certain node or not.

@@ -10,7 +10,7 @@ import kotlin.reflect.KMutableProperty
  */
 class RemoveLabelAction(
         /** The FXML reference to the button. */
-        val removeLabelButton: Button) {
+        private val removeLabelButton: Button) {
 
     /**
      * Set the button action.

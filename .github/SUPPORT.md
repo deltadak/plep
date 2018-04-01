@@ -1,0 +1,1 @@
+Please let us know if you have any clue as to what should be in this file. [This is a link to GitHub docs](https://help.github.com/articles/adding-support-resources-to-your-project/) about support resources.

@@ -1,12 +1,12 @@
 package nl.deltadak.plep.ui.gridpane
 
-import nl.deltadak.plep.HomeworkTask
 import javafx.scene.control.Label
 import javafx.scene.control.TreeView
 import javafx.scene.layout.GridPane
 import javafx.scene.layout.Pane
 import javafx.scene.layout.Priority
 import javafx.scene.layout.VBox
+import nl.deltadak.plep.HomeworkTask
 import java.time.LocalDate
 
 /**
@@ -16,7 +16,7 @@ class TreeContainer(
         /** The TreeView for this day. */
         val tree: TreeView<HomeworkTask>,
         /** The date to be shown for this TreeView. */
-        val localDate: LocalDate) {
+        private val localDate: LocalDate) {
 
     /**
      * Put the tree in a VBox container, add the title and add it to the GridPane.

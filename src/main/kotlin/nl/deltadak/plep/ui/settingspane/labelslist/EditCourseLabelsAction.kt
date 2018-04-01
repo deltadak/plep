@@ -9,7 +9,7 @@ import javafx.scene.layout.GridPane
  */
 class EditCourseLabelsAction(
         /** The FXML reference to the button. */
-        val editLabelsButton: Button) {
+        private val editLabelsButton: Button) {
 
     /**
      * Toggles the visibility of the course labels.
@@ -36,7 +36,7 @@ class EditCourseLabelsAction(
      * @param id FXML id of the object to be toggled.
      */
     private fun toggleFXMLObjectVisibility(gridPane: GridPane, id: String) {
-        val node = gridPane.lookup("#" + id)
+        val node = gridPane.lookup("#$id")
         node.isVisible = !node.isVisible
     }
 
@@ -48,7 +48,7 @@ class EditCourseLabelsAction(
      * @param gridPane The height to use for pushing down the object.
      */
     private fun toggleHeight(id: String, slidingPane: AnchorPane, gridPane: GridPane) {
-        val node = slidingPane.lookup("#" + id)
+        val node = slidingPane.lookup("#$id")
         if (node.translateY == 0.0) {
             node.translateY = gridPane.height
         } else {

@@ -1,21 +1,21 @@
 package nl.deltadak.plep.ui.settingspane.applybuttons
 
-import nl.deltadak.plep.database.DatabaseSettings
 import javafx.scene.control.Button
 import javafx.scene.control.CheckBox
 import javafx.scene.control.Spinner
 import nl.deltadak.plep.Database
+import nl.deltadak.plep.database.DatabaseSettings
 
 /**
  * This button applies the selected number of columns (using the given Spinner) to the user interface.
  */
 class ApplyNumberOfColumnsAction(
         /** The FXML reference to the button. */
-        val applyNumberOfColumnsButton: Button,
+        private val applyNumberOfColumnsButton: Button,
         /** The FXML reference to the spinner. */
-        val numberOfColumnsSpinner: Spinner<Int>,
+        private val numberOfColumnsSpinner: Spinner<Int>,
         /** The FXML reference to the checkbox which selects whether the number of columns should be calculated automatically. */
-        val autoColumnsCheckBox: CheckBox) {
+        private val autoColumnsCheckBox: CheckBox) {
 
     /**
      * When called, the user has selected a custom number of columns overriding the automatic calculation of that number.
