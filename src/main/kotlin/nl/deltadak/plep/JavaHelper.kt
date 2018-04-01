@@ -7,11 +7,11 @@ class JavaHelper {
     companion object {
         /** */
         @JvmField val DEFAULT_COLORS = arrayOf(
-                "ff1a00",
-                "00cbef",
-                "7df202",
-                "f444a7",
-                "ffffff"
+                "ee5e5e", // Red.
+                "5e78e5", // Blue.
+                "60ed79", // Green.
+                "ffd253", // Orange.
+                "eee3ff" // Very light purple.
         )
     }
 }

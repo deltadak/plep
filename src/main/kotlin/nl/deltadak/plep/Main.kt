@@ -41,13 +41,12 @@ class Main : Application() {
         }
 
         val css = arrayOf(
-                "/css/treeview.css",
                 "/css/general.css",
                 "/css/button.css",
-                "/css/spinner.css",
-                "/css/checkbox.css",
-                "/css/dropdown.css",
-                "/css/colorpicker.css"
+                "/css/treeview/treeview.css",
+                "/css/treeview/checkbox.css",
+                "/css/treeview/dropdown.css",
+                "/css/treeview/scrollbar.css"
         )
 
         css.map {
