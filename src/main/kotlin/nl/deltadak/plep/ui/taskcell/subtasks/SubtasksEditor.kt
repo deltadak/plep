@@ -1,10 +1,10 @@
 package nl.deltadak.plep.ui.taskcell.subtasks
 
-import nl.deltadak.plep.database.DatabaseFacade
-import nl.deltadak.plep.ui.util.converters.toHomeworkTaskList
-import nl.deltadak.plep.HomeworkTask
 import javafx.scene.control.ProgressIndicator
 import javafx.scene.control.TreeView
+import nl.deltadak.plep.HomeworkTask
+import nl.deltadak.plep.database.DatabaseFacade
+import nl.deltadak.plep.ui.util.converters.toHomeworkTaskList
 import java.time.LocalDate
 
 /**
@@ -16,7 +16,7 @@ class SubtasksEditor(
         /** The TreeView in which the subtasks resides. */
         val tree: TreeView<HomeworkTask>,
         /** The day corresponding to the TreeView. */
-        val localDate: LocalDate) {
+        private val localDate: LocalDate) {
 
     /**
      * Initialize what happens after the user edited a subtask.

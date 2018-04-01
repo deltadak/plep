@@ -2,9 +2,9 @@
 
 package nl.deltadak.plep
 
-import nl.deltadak.plep.ui.gridpane.GridPaneInitializer
-import nl.deltadak.plep.ui.Controller
 import javafx.stage.Stage
+import nl.deltadak.plep.ui.Controller
+import nl.deltadak.plep.ui.gridpane.GridPaneInitializer
 import java.time.LocalDate
 
 /**
@@ -12,10 +12,10 @@ import java.time.LocalDate
  */
 class DayChangeListener(
         /** The main Controller. */
-        val controller: Controller) {
+        private val controller: Controller) {
 
     /** We do need to remember which day is the last known day. */
-    var today: LocalDate = LocalDate.now()
+    private var today: LocalDate = LocalDate.now()
 
     /**
      * Sets a listener which checks if it is a new day, when the window becomes
@@ -35,7 +35,7 @@ class DayChangeListener(
 
                 controller.focusDay = today
 
-                GridPaneInitializer(controller, controller.undoFacility, controller.progressIndicator).setup(controller.gridPane, controller.numberOfDays, today, controller.toolBar.prefHeight)
+                GridPaneInitializer(controller.undoFacility, controller.progressIndicator).setup(controller.gridPane, controller::numberOfDays, controller::focusDay, controller.toolBar.prefHeight)
             }
         }
     }

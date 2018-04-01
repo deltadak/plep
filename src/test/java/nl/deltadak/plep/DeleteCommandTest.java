@@ -37,9 +37,6 @@ public class DeleteCommandTest extends FxRobot {
         list.add(taskToDelete);
         // It doesn't really matter what's in here, but it needs something.
         TreeView<HomeworkTask> treeView = new TreeView<>();
-        TreeItem<HomeworkTask> root = new TreeItem<>();
-        treeView.setRoot(root);
-        root.getChildren().add(new TreeItem<>());
         command = new DeleteCommand(new ProgressIndicator(), dayState, list, 0, treeView);
     }
 

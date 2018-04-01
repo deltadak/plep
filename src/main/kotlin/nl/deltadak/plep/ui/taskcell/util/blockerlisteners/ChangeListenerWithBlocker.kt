@@ -1,4 +1,4 @@
-package nl.deltadak.plep.ui.taskcell.blockerlisteners
+package nl.deltadak.plep.ui.taskcell.util.blockerlisteners
 
 import javafx.beans.value.ChangeListener
 import javafx.beans.value.ObservableValue

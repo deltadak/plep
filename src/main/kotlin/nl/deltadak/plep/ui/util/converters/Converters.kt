@@ -62,8 +62,6 @@ fun TreeView<HomeworkTask>.toHomeworkTaskList(): List<List<HomeworkTask>> {
 /**
  * Converts List of TreeItems of Homeworktasks to List of Homeworktasks.
  *
- * @param list List to convert.
- *
  * @return List of Homeworktasks.
  */
 fun <H> ObservableList<TreeItem<H>>.toFlatList() = this.map {it.value}

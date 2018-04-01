@@ -1,16 +1,16 @@
 package nl.deltadak.plep.ui.taskcell.subtasks
 
-import nl.deltadak.plep.HomeworkTask
-import nl.deltadak.plep.ui.util.NUMBER_OF_TASKS_IN_LIST
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeView
+import nl.deltadak.plep.HomeworkTask
+import nl.deltadak.plep.ui.util.NUMBER_OF_TASKS_IN_LIST
 
 /**
  * Handles creation of subtasks.
  */
 class SubtasksCreator(
         /** The TreeView in which the subtasks are. */
-        val treeView: TreeView<HomeworkTask>) {
+        private val treeView: TreeView<HomeworkTask>) {
 
     /**
      * Creates an empty subtask, a child, of the parentItem.

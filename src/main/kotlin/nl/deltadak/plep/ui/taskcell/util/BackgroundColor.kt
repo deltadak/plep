@@ -18,7 +18,7 @@ fun TaskCell.setBackgroundColor(colorID: Int) {
         if (colorID == 4) {
             this.style = "-fx-text-fill: none"
         } else {
-            this.style = "-fx-control-inner-background: #" + colorString
+            this.style = "-fx-control-inner-background: #$colorString"
         }
 
         this.item.colorID = colorID

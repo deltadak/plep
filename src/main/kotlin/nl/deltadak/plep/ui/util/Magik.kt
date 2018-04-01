@@ -8,3 +8,6 @@ const val NUMBER_OF_TASKS_IN_LIST = 6
 
 /** Use a number of spaces so when we color the label of a context menu item, we get a decent looking colored area. */
 const val LABEL_COLOR_CONTEXT_MENU_ITEMS = "                                "
+
+/** Helps to fix too long labels. Should equal the size of the courselabel plus the size of the checkbox plus the size of the little arrow to view subtasks.  */
+const val LABEL_MAGIK = 215

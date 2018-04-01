@@ -1,6 +1,8 @@
 package nl.deltadak.plep
 
 import javafx.scene.control.ProgressIndicator
+import javafx.scene.control.TreeItem
+import javafx.scene.control.TreeView
 import nl.deltadak.plep.commands.DeleteSubtaskCommand
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
@@ -19,11 +21,14 @@ object DeleteSubtaskCommandTest: Spek({
 
         val day = LocalDate.now()
         val index = 1
-        val tree = null
         val subtask = HomeworkTask()
         subtask.text = "subtask"
         val treeViewItems = mutableListOf<MutableList<HomeworkTask>>()
         treeViewItems.add(mutableListOf(HomeworkTask(), subtask))
+
+        // It doesn't really matter what's in here, but it needs something.
+        val tree = TreeView<HomeworkTask>()
+        tree.root = TreeItem<HomeworkTask>().apply { children.add(TreeItem<HomeworkTask>(HomeworkTask())) }
 
         val command = DeleteSubtaskCommand(ProgressIndicator(), day, treeViewItems,index, tree)
         on("executing the command") {
@@ -33,21 +38,30 @@ object DeleteSubtaskCommandTest: Spek({
             }
         }
         on("undoing the command") {
+            if (!command.isExecuted) {
+                command.execute()
+            }
             command.undo()
             it("should not be executed") {
                 assertFalse { command.isExecuted }
             }
-            it("should contain all the tasks again") {
+            it("should have only one parent") {
                 assertTrue { command.treeViewItems.size == 1 }
+            }
+            it("should have two children") {
                 assertTrue { command.treeViewItems.first().size == 2 }
+            }
+            it("should be an empty child") {
                 assertTrue { command.treeViewItems.first().first().text == "" }
             }
         }
         on("deleting a subtask") {
             command.execute()
             it("should have deleted the subtask") {
-                assertTrue { command.treeViewItems.first().first().text == "" }
                 assertTrue { command.treeViewItems.first().size == 1 }
+            }
+            it("should have empty parent text") {
+                assertTrue { command.treeViewItems.first().first().text == "" }
             }
         }
     }

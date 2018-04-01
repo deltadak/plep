@@ -2,12 +2,11 @@
 
 package nl.deltadak.plep.ui.settingspane
 
-import nl.deltadak.plep.database.DatabaseSettings
-import nl.deltadak.plep.ui.util.getNumberOfColumns
 import javafx.scene.control.CheckBox
 import javafx.scene.control.Spinner
 import nl.deltadak.plep.Database
-import nl.deltadak.plep.ui.Controller
+import nl.deltadak.plep.database.DatabaseSettings
+import nl.deltadak.plep.ui.util.getNumberOfColumns
 import kotlin.reflect.KMutableProperty
 
 /**
@@ -15,16 +14,9 @@ import kotlin.reflect.KMutableProperty
  */
 class AutoColumnsAction(
         /** The FXML reference to the checkbox. */
-        val autoColumnsCheckBox: CheckBox,
+        private val autoColumnsCheckBox: CheckBox,
         /** The FXML reference to the number of columns spinner. */
-        val numberOfColumnsSpinner: Spinner<Int>) {
-
-    /**
-     * Temporary function to be called from Java, since that has no pass by reference for variables.
-     */
-    fun javaSet(refreshUI: () -> Unit, controller: Controller) {
-        set(refreshUI, controller::numberOfDays)
-    }
+        private val numberOfColumnsSpinner: Spinner<Int>) {
 
     /**
      * Set the action on toggle.
