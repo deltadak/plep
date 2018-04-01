@@ -34,7 +34,7 @@ Note: The first time plep is ran, it will create a database file in the folder w
 ![screenshot-settings](screenshots/v2.0.0-beta.5.settings.PNG)
 
 ## Instructions for building from source in IntelliJ
-This application works with a database, so you need to add the sqlite library by going to project structure -> libaries -> add new one and then selecting the file located at something like C:\Users\username\\.IntelliJIdea2016.2\config\jdbc-drivers\sqlite-jdbc-3.8.11.2.jar
-Then you go to view -> tool windows -> database and follow the instructions to add an SQLite data source.
+* To run or debug, use the Gradle task `run`.
+* To build an executable jar, use the task `build`, the file is then in `build/libs/`.
 
 ## [Javadoc](http://htmlpreview.github.io/?https://github.com/deltadak/plep/blob/master/Javadoc/index.html)

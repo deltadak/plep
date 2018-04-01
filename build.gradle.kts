@@ -5,9 +5,10 @@ import org.gradle.api.plugins.ExtensionAware
 import org.junit.platform.gradle.plugin.FiltersExtension
 import org.junit.platform.gradle.plugin.EnginesExtension
 import org.junit.platform.gradle.plugin.JUnitPlatformExtension
+import org.gradle.jvm.tasks.Jar
 
 group = "deltadak"
-version = "0.1"
+version = "v2.0.0-beta.7"
 
 // Latest version as of 2018-03-13: JUnit 5.1.0 = Platform 1.1.0 + Jupiter 5.1.0 + Vintage 5.1.0
 
@@ -78,4 +79,22 @@ dependencies {
 
 repositories {
     jcenter()
+}
+
+/** Build an executable jar. */
+val fatJar = task("fatJar", type = Jar::class) {
+    baseName = project.name
+    manifest {
+        attributes["Implementation-Title"] = "Gradle Jar File Example"
+        attributes["Implementation-Version"] = version
+        attributes["Main-Class"] = "nl.deltadak.plep.Main"
+    }
+    from(configurations.runtime.map({ if (it.isDirectory) it else zipTree(it) }))
+    with(tasks["jar"] as CopySpec)
+}
+
+tasks {
+    "build" {
+        dependsOn(fatJar)
+    }
 }
