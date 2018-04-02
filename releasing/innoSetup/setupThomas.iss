@@ -35,8 +35,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Users\s156757\GitRepos\plep\releasing\jsmooth\plep.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\s156757\GitRepos\plep\releasing\jsmooth\plep-v2.0.0-beta.7.jar"; DestDir: "{app}";
+Source: "C:\Users\s156757\GitRepos\plep\releasing\innoSetup\plep.exe"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

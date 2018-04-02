@@ -34,11 +34,10 @@ Note: The first time plep is ran, it will create a database file in the folder w
 * To build an executable jar, use the task `build`, the file is then in `build/libs/`.
 
 ## Building a release
-* Put the new jar in releasing/jsmooth/
-* Update the path to that jar in JSmooth | Application
-* Click Project | Compile
-* Open InnoSetup on your setup file in releasing/innoSetup/*.iss
-* Update the version number in 3 places
+* Run the gradle task launch4j/createExe 
+* Copy the `.exe` from `build/launch4j/` to `releasing/innoSetup/`
+* Open InnoSetup on your setup file in `releasing/innoSetup/*.iss`
+* Update the version number in 2 places
 * Click Build | Compile
 
 ## [Javadoc](http://htmlpreview.github.io/?https://github.com/deltadak/plep/blob/master/Javadoc/index.html)

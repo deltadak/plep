@@ -33,6 +33,13 @@ plugins {
     application
     kotlin("jvm") version "1.2.31"
     java // Required by at least JUnit.
+    // Plugin to build .exe files.
+    id("edu.sc.seis.launch4j") version "2.4.3"
+}
+
+launch4j {
+    mainClassName = "nl.deltadak.plep.MainKt"
+    icon = "$projectDir/icon/icon.ico"
 }
 
 application {
