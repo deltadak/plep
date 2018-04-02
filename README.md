@@ -7,11 +7,7 @@ Plep works like a real agenda, but with the advantages of your Windows computer.
 
 [Download stable version v1.2.2.](https://github.com/deltadak/plep/releases/download/v1.2.2/plep_v1.2.2.jar)
 
-[I'm looking for beta versions.](https://github.com/deltadak/plep/releases)
-
 [Download the experimental windows installer for v1.2.1.](https://github.com/deltadak/plep/releases/download/v1.2.1/setup_plep_v1.2.1.exe)
-
-[I want the really most up to date and buggy version.](https://github.com/deltadak/plep/blob/master/out/artifacts/plep_jar/plep.jar?raw=true).
 
 We try to adhere to [Semantic Versioning](http://semver.org/). An update with a new first number means it won't work with your old database.
 
@@ -26,7 +22,7 @@ We try to adhere to [Semantic Versioning](http://semver.org/). An update with a 
 + Deletion and undoing deletion
 + Plep will remember all deleted tasks until you close it.
 
-Note: The first time plep is ran, it will create a database file in the folder where plep.jar is stored. Check for this file, otherwise your data won't be saved. You can backup this if you don't want to lose your data.
+Note: The first time plep is ran, it will create a database file in the folder where the jar is stored. Check for this file, otherwise your data won't be saved. You can backup this if you don't want to lose your data.
 
 ## Screenshot of v2.0.0
 ![screenshot](screenshots/v2.0.0-beta.5.PNG)
@@ -36,5 +32,13 @@ Note: The first time plep is ran, it will create a database file in the folder w
 ## Instructions for building from source in IntelliJ
 * To run or debug, use the Gradle task `run`.
 * To build an executable jar, use the task `build`, the file is then in `build/libs/`.
+
+## Building a release
+* Put the new jar in releasing/jsmooth/
+* Update the path to that jar in JSmooth | Application
+* Click Project | Compile
+* Open InnoSetup on your setup file in releasing/innoSetup/*.iss
+* Update the version number in 3 places
+* Click Build | Compile
 
 ## [Javadoc](http://htmlpreview.github.io/?https://github.com/deltadak/plep/blob/master/Javadoc/index.html)
