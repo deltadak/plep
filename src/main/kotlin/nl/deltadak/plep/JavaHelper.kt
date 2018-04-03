@@ -11,7 +11,7 @@ class JavaHelper {
                 "5e78e5", // Blue.
                 "60ed79", // Green.
                 "ffd253", // Orange.
-                "eee3ff" // Very light purple.
+                "F4F1FA" // Very light purple.
         )
     }
 }

@@ -386,7 +386,7 @@ public enum Database {
     public String getColorFromDatabase(int colorID) {
         int id = colorID + 1;
         
-        String hex = "EEE3FF"; // Default color is white.
+        String hex = "F4F1FA"; // Default color is white.
         
         String sql = "SELECT hex FROM colors WHERE id =" + id;
         Connection connection = setConnection();
