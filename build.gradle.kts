@@ -40,6 +40,7 @@ plugins {
 launch4j {
     mainClassName = "nl.deltadak.plep.MainKt"
     icon = "$projectDir/icon/icon.ico"
+    manifest = "$projectDir/releasing/launch4j/plep.manifest"
 }
 
 application {
