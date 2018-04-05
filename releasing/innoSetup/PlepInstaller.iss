@@ -24,7 +24,7 @@ DisableProgramGroupPage=yes
 LicenseFile=..\..\LICENSE
 OutputDir=..\innoSetup
 OutputBaseFilename=setup_plep_{#MyAppVersion}
-SetupIconFile=..\..\icon\icon.ico
+SetupIconFile=..\..\src\main\resources\icon.ico
 Compression=lzma
 SolidCompression=yes
 
@@ -35,7 +35,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "plep.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\build\launch4j\plep.exe"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
