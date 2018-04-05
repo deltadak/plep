@@ -22,7 +22,9 @@ class Main : Application() {
      * {@inheritdoc}
      */
     override fun start(primaryStage: Stage) {
-        registerTaskbar()
+        if (System.getProperty("os.name").contains("Windows", true) ) {
+            registerTaskbar()
+        }
 
         val loader = FXMLLoader(javaClass.getResource("/interface.fxml"))
         val root: Parent = loader.load()
