@@ -1,7 +1,11 @@
-!releases/setup/*.exe
-!releases/setup/*.iss
-!out/artifacts/plep_jar/plep.jar
-!releases/*.jar
+# InnoSetup
+!**/*.iss
+
+# launch4j
+!releasing/launch4j/*.manifest
+
+# Executables
+**/*.exe
 
 *.class
 

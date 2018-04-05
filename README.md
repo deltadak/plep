@@ -37,7 +37,7 @@ Note: The first time plep is ran, it will create a database file in the folder w
 * Run the gradle task launch4j/createExe 
 * Copy the `.exe` from `build/launch4j/` to `releasing/innoSetup/`
 * Open InnoSetup on your setup file in `releasing/innoSetup/*.iss`
-* Update the version number in 2 places
+* Update the version number
 * Click Build | Compile
 
 ## [Javadoc](http://htmlpreview.github.io/?https://github.com/deltadak/plep/blob/master/Javadoc/index.html)

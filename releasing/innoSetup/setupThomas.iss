@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Plep"
-#define MyAppVersion "2.0.0-beta.7"
+#define MyAppVersion "2.0.0-beta.8"
 #define MyAppPublisher "Deltadak"
 #define MyAppURL "https://github.com/deltadak/plep"
 #define MyAppExeName "plep.exe"
@@ -23,8 +23,8 @@ DefaultDirName={pf}\{#MyAppName}
 DisableProgramGroupPage=yes
 LicenseFile=C:\Users\s156757\GitRepos\plep\LICENSE
 OutputDir=C:\Users\s156757\GitRepos\plep\releasing\innoSetup
-OutputBaseFilename=setup_plep_v2.0.0-beta.7
-SetupIconFile=C:\Users\s156757\GitRepos\plep\releasing\icon.ico
+OutputBaseFilename=setup_plep_{#MyAppVersion}
+SetupIconFile=C:\Users\s156757\GitRepos\plep\icon\icon.ico
 Compression=lzma
 SolidCompression=yes
 
@@ -40,7 +40,10 @@ Source: "C:\Users\s156757\GitRepos\plep\releasing\innoSetup\plep.exe"; DestDir: 
 
 [Icons]
 Name: "{commonprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
-Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
+Name: "{commondesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon; Comment: "Plep {#MyAppVersion}"; AppUserModelID: "nl.deltadak.plep.Main"
+; create icon shortcut that embeds AppUserModelID information, which is the same as
+; set in the program, to enable pinning to taskbar.
+
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: shellexec postinstall skipifsilent
