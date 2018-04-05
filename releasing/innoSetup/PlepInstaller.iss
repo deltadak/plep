@@ -21,10 +21,10 @@ AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\{#MyAppName}
 DisableProgramGroupPage=yes
-LicenseFile=C:\Users\s156757\GitRepos\plep\LICENSE
-OutputDir=C:\Users\s156757\GitRepos\plep\releasing\innoSetup
+LicenseFile=..\..\LICENSE
+OutputDir=..\innoSetup
 OutputBaseFilename=setup_plep_{#MyAppVersion}
-SetupIconFile=C:\Users\s156757\GitRepos\plep\icon\icon.ico
+SetupIconFile=..\..\icon\icon.ico
 Compression=lzma
 SolidCompression=yes
 
@@ -35,7 +35,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "C:\Users\s156757\GitRepos\plep\releasing\innoSetup\plep.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "plep.exe"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
