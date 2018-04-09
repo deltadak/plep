@@ -47,7 +47,7 @@ plugins {
 
 launch4j {
     mainClassName = "nl.deltadak.plep.MainKt"
-    icon = "$projectDir/icon/icon.ico"
+    icon = "$projectDir/src/main/resources/icon.ico"
     manifest = "$projectDir/releasing/launch4j/plep.manifest"
 }
 
@@ -62,6 +62,10 @@ dependencies {
     // 'compile' is deprecated, now it is 'api' but that fails to build with
 //    Could not find method api() for arguments [org.xerial:sqlite-jdbc:3.18.0] on object of type org.gradle.api.internal.artifacts.dsl.dependencies.DefaultDependencyHandler.
     compile("org.xerial:sqlite-jdbc:3.21.0.1")
+
+    // JNA, used to e.g. make a program pinnable to taskbar.
+    compile("net.java.dev.jna:jna:4.5.1")
+    compile("net.java.dev.jna:jna-platform:4.5.1")
 
     // Kotlin
     compile(kotlin("stdlib"))
@@ -106,7 +110,10 @@ val fatJar = task("fatJar", type = Jar::class) {
         attributes["Implementation-Version"] = version
         attributes["Main-Class"] = "nl.deltadak.plep.Main"
     }
-    from(configurations.runtime.map({ if (it.isDirectory) it else zipTree(it) }))
+    from(configurations.runtime.map({
+        @Suppress("IMPLICIT_CAST_TO_ANY")
+        if (it.isDirectory) it else zipTree(it)
+    }))
     with(tasks["jar"] as CopySpec)
 }
 

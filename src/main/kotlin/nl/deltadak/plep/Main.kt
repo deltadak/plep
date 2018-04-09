@@ -1,5 +1,8 @@
 package nl.deltadak.plep
 
+import com.sun.jna.Native
+import com.sun.jna.NativeLong
+import com.sun.jna.WString
 import javafx.application.Application
 import javafx.fxml.FXMLLoader
 import javafx.scene.Parent
@@ -8,6 +11,7 @@ import javafx.scene.image.Image
 import javafx.stage.Screen
 import javafx.stage.Stage
 import nl.deltadak.plep.ui.Controller
+
 
 /**
  * Main class.
@@ -18,6 +22,10 @@ class Main : Application() {
      * {@inheritdoc}
      */
     override fun start(primaryStage: Stage) {
+        if (System.getProperty("os.name").contains("Windows", true) ) {
+            registerTaskbar()
+        }
+
         val loader = FXMLLoader(javaClass.getResource("/interface.fxml"))
         val root: Parent = loader.load()
 
@@ -82,3 +90,23 @@ class Main : Application() {
 fun main(args: Array<String>) {
     Application.launch(Main::class.java, *args)
 }
+
+/**
+ * Register Plep to Windows, specifically the App User Model ID.
+ * Seems to need be outside of the Main class.
+ */
+fun registerTaskbar() {
+    Native.register("shell32")
+    setCurrentProcessExplicitAppUserModelID(Main::class.java.name)
+}
+
+/**
+ * Make the app pinnable to the Windows taskbar.
+ */
+fun setCurrentProcessExplicitAppUserModelID(appID: String) {
+    if (SetCurrentProcessExplicitAppUserModelID(WString(appID)) != NativeLong(0))
+        throw RuntimeException("unable to set current process explicit AppUserModelID to: $appID")
+}
+
+@Suppress("FunctionName") // C!
+private external fun SetCurrentProcessExplicitAppUserModelID(appID: WString): NativeLong
