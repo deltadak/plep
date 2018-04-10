@@ -15,7 +15,6 @@ version = "v2.0.0-beta.7"
 // JUnit 5
 buildscript {
     repositories {
-        maven { url = uri("https://dl.bintray.com/jetbrains/spek") }
         mavenLocal()
         mavenCentral()
         jcenter()
@@ -98,7 +97,6 @@ dependencies {
 }
 
 repositories {
-    maven { url = uri("https://dl.bintray.com/jetbrains/spek") }
     mavenCentral()
     jcenter()
     mavenLocal()
