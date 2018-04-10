@@ -15,10 +15,10 @@ version = "v2.0.0-beta.7"
 // JUnit 5
 buildscript {
     repositories {
+        maven { url = uri("https://dl.bintray.com/jetbrains/spek") }
         mavenLocal()
         mavenCentral()
         jcenter()
-        maven { url = uri("https://dl.bintray.com/jetbrains/spek") }
     }
     dependencies {
         classpath("org.junit.platform:junit-platform-gradle-plugin:1.1.1")
@@ -94,10 +94,12 @@ dependencies {
 
     // Spek
     testCompile("org.jetbrains.spek:spek-api:1.1.19")
-    testRuntime("org.jetbrains.spek:spek-junit-platform-engine:1.1.19")
+    testRuntime("org.jetbrains.spek:spek-junit-platform-engine:1.1.5")
 }
 
 repositories {
+    maven { url = uri("https://dl.bintray.com/jetbrains/spek") }
+    mavenCentral()
     jcenter()
     mavenLocal()
 }
