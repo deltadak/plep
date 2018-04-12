@@ -67,7 +67,9 @@ class Main : Application() {
                 .toString()
                 .indexOf("-agentlib:jdwp") > 0
         if (!isDebug) {
-            primaryStage.icons.add(Image(this.javaClass.getResourceAsStream("/icon.png")))
+            primaryStage.icons.addAll(
+                    Image(this.javaClass.getResourceAsStream("/plep32.png"))
+                    )
         }
 
         primaryStage.show()
