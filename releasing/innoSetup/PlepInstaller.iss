@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Plep"
-#define MyAppVersion "2.0.0-beta.8"
+#define MyAppVersion "2.0.0-beta.9"
 #define MyAppPublisher "Deltadak"
 #define MyAppURL "https://github.com/deltadak/plep"
 #define MyAppExeName "plep.exe"
@@ -24,7 +24,7 @@ DisableProgramGroupPage=yes
 LicenseFile=..\..\LICENSE
 OutputDir=..\innoSetup
 OutputBaseFilename=setup_plep_{#MyAppVersion}
-SetupIconFile=..\..\src\main\resources\icon.ico
+SetupIconFile=..\..\src\main\resources\plep32.ico
 Compression=lzma
 SolidCompression=yes
 
