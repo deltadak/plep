@@ -20,7 +20,7 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath("org.junit.platform:junit-platform-gradle-plugin:1.1.1")
+        classpath("org.junit.platform:junit-platform-gradle-plugin:1.2.0-RC1")
     }
 }
 
@@ -31,17 +31,16 @@ apply {
 // Kotlin configuration.
 plugins {
     application
-    kotlin("jvm") version "1.2.31"
+    kotlin("jvm") version "1.2.40"
     java // Required by at least JUnit.
     // Plugin to build .exe files.
     id("edu.sc.seis.launch4j") version "2.4.3"
 
     // help/dependencyUpdates checks for dependency updates.
-    id("com.github.ben-manes.versions") version "0.16.0"
+    id("com.github.ben-manes.versions") version "0.17.0"
 
-    // other/useLatestVersions should update version numbers
-    // Does not work yet for the GK DSL
-//    id("se.patrikerdes.use-latest-versions") version "0.2.0"
+    // help/useLatestVersions should update version numbers
+    id("se.patrikerdes.use-latest-versions") version "0.2.1"
 }
 
 launch4j {
@@ -78,9 +77,9 @@ dependencies {
     testCompile("io.kotlintest:kotlintest:2.0.7")
 
     // JUnit 5
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.1.1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.1.1")
-    testRuntime("org.junit.platform:junit-platform-console:1.1.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.2.0-RC1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.2.0-RC1")
+    testRuntime("org.junit.platform:junit-platform-console:1.2.0-RC1")
 
     // Kotlintests are not run anyway when using JUnit 5 as well.
     testCompile("io.kotlintest:kotlintest:2.0.7")
