@@ -6,7 +6,7 @@ Plep
 
 Plepping is the new planning.
 
-## `Download latest version`_
+`Download latest version`_
 
 Plep works like a real agenda, but with the advantages of your Windows
 computer.
@@ -38,7 +38,12 @@ won’t be saved. You can backup this if you don’t want to lose your data.
 Screenshot of v2.0.0
 --------------------
 
-|screenshot| ### Settings of v2.0.0 |screenshotSettings|
+|screenshot|
+
+Settings of v2.0.0
+------------------
+
+|screenshotSettings|
 
 Instructions for building from source in IntelliJ
 -------------------------------------------------
@@ -69,10 +74,10 @@ Building a release
     :target: https://travis-ci.org/deltadak/plep
     :alt: Build Status
 .. |DocumentationStatus| image:: https://readthedocs.org/projects/plep/badge/?version=latest
-:target: http://plep.readthedocs.io/en/latest/?badge=latest
-:alt: Documentation Status
+    :target: http://plep.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
 .. |OpenHub| image:: https://www.openhub.net/p/plep/widgets/project_thin_badge.gif
-:target: https://www.openhub.net/p/plep
-:alt: OpenHub
+    :target: https://www.openhub.net/p/plep
+    :alt: OpenHub
 .. |screenshot| image:: screenshots/v2.0.0-beta.5.PNG
 .. |screenshotSettings| image:: screenshots/v2.0.0-beta.5.settings.PNG
