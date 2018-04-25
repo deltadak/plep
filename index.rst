@@ -60,14 +60,14 @@ Building a release
 -  Update the version number
 -  Click Build \| Compile
 
-`Javadoc`_
-----------
+`Javadoc (obsolete)`_
+---------------------
 
 .. _Download latest version: https://github.com/deltadak/plep/releases
 .. _Download stable version v1.2.2.: https://github.com/deltadak/plep/releases/download/v1.2.2/plep_v1.2.2.jar
 .. _Download the experimental windows installer for v1.2.1.: https://github.com/deltadak/plep/releases/download/v1.2.1/setup_plep_v1.2.1.exe
 .. _Semantic Versioning: http://semver.org/
-.. _Javadoc: http://htmlpreview.github.io/?https://github.com/deltadak/plep/blob/master/Javadoc/index.html
+.. _Javadoc (obsolete): http://htmlpreview.github.io/?https://github.com/deltadak/plep/blob/master/Javadoc/index.html
 
 
 .. |BuildStatus| image:: https://travis-ci.org/deltadak/plep.svg?branch=master
