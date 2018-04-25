@@ -638,7 +638,7 @@ public enum Database {
     
     /**
      * Update all the ids of the subtasks when the id of their parent task has
-     * changed. NOTE: We have to call this method ourselves.
+     * changed. NOTE: We have to call this method ourselves. https://github.com/deltadak/plep/issues/118 id:0
      *
      * @param parentTask
      *         The parent task of which the id has changed.
