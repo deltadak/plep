@@ -23,7 +23,7 @@ class NumberOfColumnsSpinner {
         val initialNumberOfColumns = Database.INSTANCE.getSetting(DatabaseSettings.MAX_COLUMNS.settingsName)
         spinner.valueFactory = SpinnerValueFactory.IntegerSpinnerValueFactory(1, 14, initialNumberOfColumns.toInt())
         spinner.id = "maxColumnsSpinner"
-        spinner.prefWidth = SPINNER_WIDTH // todo Check width for double digits
+        spinner.prefWidth = SPINNER_WIDTH // TODO Check width for double digits
         GridPane.setColumnIndex(spinner, 2)
         GridPane.setRowIndex(spinner, 2)
 

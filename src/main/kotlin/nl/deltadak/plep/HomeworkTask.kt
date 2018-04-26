@@ -7,7 +7,7 @@ import java.io.Serializable
  *
  * When transferred with the dragboard, the object is serialized which means that a new object is created and you lose the reference to the old one.
  * That is fine here, since only content matters. */
-// todo Remove "@JvmOverloads constructor" when no Java callers are left
+// TODO Remove "@JvmOverloads constructor" when no Java callers are left
 data class HomeworkTask @JvmOverloads constructor(
         /** Whether the task is finished or not. */
         var done: Boolean = false,
