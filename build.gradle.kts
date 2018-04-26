@@ -8,7 +8,7 @@ import org.junit.platform.gradle.plugin.JUnitPlatformExtension
 import org.gradle.jvm.tasks.Jar
 
 group = "deltadak"
-version = "v2.0.0-beta.7"
+version = "v2.0.0-beta.9"
 
 // Latest version as of 2018-03-13: JUnit 5.1.0 = Platform 1.1.0 + Jupiter 5.1.0 + Vintage 5.1.0
 
