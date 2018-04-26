@@ -13,11 +13,13 @@ Downloads
 ---------
 
 Latest stable version:
+
 .. image:: https://img.shields.io/github/release/deltadak/plep.svg?maxAge=2592000
     :target: https://github.com/deltadak/plep/releases/latest
     :alt: Release
 |
 Latest pre-release version:
+
 .. image:: https://img.shields.io/github/release/deltadak/plep/all.svg?maxAge=2592000
     :target: https://github.com/deltadak/plep/releases
     :alt: Pre-release
