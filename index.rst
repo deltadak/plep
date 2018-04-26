@@ -6,14 +6,21 @@ Plep
 
 Plepping is the new planning.
 
-`Download latest version`_
-
 Plep works like a real agenda, but with the advantages of your Windows
 computer.
 
-`Download stable version v1.2.2.`_
+Downloads
+---------
 
-`Download the experimental windows installer for v1.2.1.`_
+Latest stable version:
+.. image:: https://img.shields.io/github/release/deltadak/plep.svg?maxAge=2592000
+:target: https://github.com/deltadak/plep/releases/latest
+    :alt: Release
+|
+Latest pre-release version:
+.. image:: https://img.shields.io/github/release/deltadak/plep/all.svg?maxAge=2592000
+:target: https://github.com/deltadak/plep/releases
+    :alt: Pre-release
 
 We try to adhere to `Semantic Versioning`_. An update with a new first
 number means it won’t work with your old database.
