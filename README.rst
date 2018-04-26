@@ -38,7 +38,7 @@
     :alt: Closed Issues
 
 .. image:: https://img.shields.io/github/issues-pr-closed/deltadak/plep.svg?maxAge=2592000
-:target: https://github.com/deltadak/plep/pulls?q=is%3Apr+is%3Aclosed
+    :target: https://github.com/deltadak/plep/pulls?q=is%3Apr+is%3Aclosed
     :alt: Closed Pull Requests
 
 .. image:: https://img.shields.io/issuestats/p/long/github/deltadak/plep.svg?maxAge=2592000
