@@ -20,12 +20,6 @@
       "BUG"
     ]
   },
-  "lists": [
-    {
-      "name": "NOTE",
-      "hidden": false
-    }
-  ],
   "marked": {
     "gfm": true,
     "tables": true,

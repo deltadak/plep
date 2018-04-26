@@ -1,4 +1,4 @@
-|BuildStatus| |DocumentationStatus| |OpenHub|
+|BuildStatus| |DocumentationStatus|
 
 ====
 Plep
@@ -62,6 +62,8 @@ Building a release
 
 `Javadoc (obsolete)`_
 ---------------------
+
+Badges with thanks to `shields.io <https://shields.io/>`_.
 
 .. _Download latest version: https://github.com/deltadak/plep/releases
 .. _Download stable version v1.2.2.: https://github.com/deltadak/plep/releases/download/v1.2.2/plep_v1.2.2.jar
