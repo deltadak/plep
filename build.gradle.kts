@@ -41,6 +41,12 @@ plugins {
 
     // help/useLatestVersions should update version numbers
     id("se.patrikerdes.use-latest-versions") version "0.2.1"
+
+    // Code coverage
+    jacoco
+
+    // Upload jacoco coverage reports to coveralls
+    id("com.github.kt3k.coveralls") version "2.8.2"
 }
 
 launch4j {
@@ -120,4 +126,20 @@ tasks {
     "build" {
         dependsOn(fatJar)
     }
+
+    // Enable xml for coveralls.
+    "jacocoTestReport"(JacocoReport::class) {
+        reports {
+            // To be read by humans
+            html.isEnabled = true
+            // To be read by Coveralls etc.
+            xml.isEnabled = true
+            xml.destination = file("$buildDir/reports/jacoco/test/jacocoTestReport.xml")
+        }
+
+    }
 }
+
+//jacoco {
+//    reportsDir = file("$buildDir/reports")
+//}

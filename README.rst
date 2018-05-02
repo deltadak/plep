@@ -4,6 +4,9 @@
 .. image:: https://readthedocs.org/projects/plep/badge/?version=latest
     :target: http://plep.readthedocs.io/
     :alt: Docs
+.. image:: https://coveralls.io/repos/github/deltadak/plep/badge.svg?branch=master
+    :target: https://coveralls.io/github/deltadak/plep?branch=master
+    :alt: Coverage
 
 .. image:: https://www.openhub.net/p/plep/widgets/project_thin_badge.gif
     :target: https://www.openhub.net/p/plep
