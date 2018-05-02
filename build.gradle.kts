@@ -2,37 +2,16 @@
 
 import org.gradle.api.plugins.ExtensionAware
 
-import org.junit.platform.gradle.plugin.FiltersExtension
-import org.junit.platform.gradle.plugin.EnginesExtension
-import org.junit.platform.gradle.plugin.JUnitPlatformExtension
 import org.gradle.jvm.tasks.Jar
 
 group = "deltadak"
 version = "v2.0.0-beta.9"
 
-// Latest version as of 2018-03-13: JUnit 5.1.0 = Platform 1.1.0 + Jupiter 5.1.0 + Vintage 5.1.0
-
-// JUnit 5
-buildscript {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-        jcenter()
-    }
-    dependencies {
-        classpath("org.junit.platform:junit-platform-gradle-plugin:1.2.0-RC1")
-    }
-}
-
-apply {
-    plugin("org.junit.platform.gradle.plugin")
-}
-
-// Kotlin configuration.
 plugins {
     application
     kotlin("jvm") version "1.2.40"
     java // Required by at least JUnit.
+
     // Plugin to build .exe files.
     id("edu.sc.seis.launch4j") version "2.4.3"
 
@@ -83,9 +62,9 @@ dependencies {
     testCompile("io.kotlintest:kotlintest:2.0.7")
 
     // JUnit 5
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.2.0-RC1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.2.0-RC1")
-    testRuntime("org.junit.platform:junit-platform-console:1.2.0-RC1")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.2.0")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.2.0")
+    testRuntime("org.junit.platform:junit-platform-console:1.2.0")
 
     // Kotlintests are not run anyway when using JUnit 5 as well.
     testCompile("io.kotlintest:kotlintest:2.0.7")
@@ -125,6 +104,11 @@ val fatJar = task("fatJar", type = Jar::class) {
 tasks {
     "build" {
         dependsOn(fatJar)
+    }
+
+    // Use the built-in JUnit support of Gradle.
+    "test"(Test::class) {
+        useJUnitPlatform()
     }
 
     // Enable xml for coveralls.
