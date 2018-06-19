@@ -25,9 +25,10 @@ before_script:
 script:
  - ./gradlew check
 
-# Generate coverage report and upload to coveralls
+# Generate coverage report and upload to codecov
 after_success:
-  - ./gradlew jacocoTestReport coveralls
+  - ./gradlew jacocoTestReport
+  - bash <(curl -s https://codecov.io/bash)
 
 before_cache:
  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock

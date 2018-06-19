@@ -64,7 +64,7 @@ Building a release
 ------------------
 
 -  Run the gradle task launch4j/createExe
--  Open InnoSetup on your setup file in ``releasing/innoSetup/*.iss``
+-  Open InnoSetup on the setup file in ``releasing/innoSetup/PlepInstaller.iss``
 -  Update the version number
 -  Click Build \| Compile
 

@@ -13,13 +13,13 @@ plugins {
     java // Required by at least JUnit.
 
     // Plugin to build .exe files.
-    id("edu.sc.seis.launch4j") version "2.4.3"
+    id("edu.sc.seis.launch4j") version "2.4.4"
 
     // help/dependencyUpdates checks for dependency updates.
-    id("com.github.ben-manes.versions") version "0.17.0"
+    id("com.github.ben-manes.versions") version "0.19.0"
 
     // help/useLatestVersions should update version numbers
-    id("se.patrikerdes.use-latest-versions") version "0.2.1"
+    id("se.patrikerdes.use-latest-versions") version "0.2.3"
 
     // Code coverage
     jacoco
@@ -44,7 +44,7 @@ dependencies {
     // https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc
     // 'compile' is deprecated, now it is 'api' but that fails to build with
 //    Could not find method api() for arguments [org.xerial:sqlite-jdbc:3.18.0] on object of type org.gradle.api.internal.artifacts.dsl.dependencies.DefaultDependencyHandler.
-    compile("org.xerial:sqlite-jdbc:3.21.0.1")
+    compile("org.xerial:sqlite-jdbc:3.23.1")
 
     // JNA, used to e.g. make a program pinnable to taskbar.
     compile("net.java.dev.jna:jna:4.5.1")
