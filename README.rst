@@ -7,7 +7,7 @@
 .. image:: https://codecov.io/gh/deltadak/plep/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/deltadak/plep
     :alt: Codecov
-.. image:: codebeat badge](https://codebeat.co/badges/b613da2c-d3a4-4dd7-8846-7c023554fe3b
+.. image:: https://codebeat.co/badges/b613da2c-d3a4-4dd7-8846-7c023554fe3b
     :target: https://codebeat.co/projects/github-com-deltadak-plep-master
     :alt: Codebeat
 
