@@ -63,3 +63,8 @@ Plepping is the new planning.
 
 `Docs <http://plep.readthedocs.io/en/latest/?badge=latest>`_
 ------------------------------------------------------------
+
+
+.. image:: https://codecov.io/gh/deltadak/plep/branch/master/graphs/sunburst.svg
+    :target: https://codecov.io/gh/deltadak/plep
+    :alt: Codecov sunburst
