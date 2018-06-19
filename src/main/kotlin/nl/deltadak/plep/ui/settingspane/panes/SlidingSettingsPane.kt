@@ -5,7 +5,6 @@ import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.GridPane
 import nl.deltadak.plep.Database
 import nl.deltadak.plep.database.DatabaseSettings
-import nl.deltadak.plep.ui.Controller
 import nl.deltadak.plep.ui.settingspane.AutoColumnsAction
 import nl.deltadak.plep.ui.settingspane.applybuttons.ApplyNumberOfColumnsAction
 import nl.deltadak.plep.ui.settingspane.applybuttons.ApplyNumberOfDaysAction
@@ -46,46 +45,6 @@ class SlidingSettingsPane(
         toolBar: ToolBar,
         slidingPane: AnchorPane,
         openCloseButton: Button) : SlidingPane(main, gridPane, toolBar, slidingPane, openCloseButton) {
-
-    @Deprecated("only for Java callers")
-    constructor(
-            controller: Controller,
-            refreshUI: () -> Unit,
-            editLabelsButton: Button,
-            editLabelsPane: GridPane,
-            editDaysPane: GridPane,
-            settingsPane: AnchorPane,
-            removeLabelButton: Button,
-            applyNumberOfMovingDays: Button,
-            applyNumberOfDays: Button,
-            applyNumberOfColumns: Button,
-            autoColumnsCheckBox: CheckBox,
-            colorPickers: List<ColorPicker>,
-            main: AnchorPane,
-            gridPane: GridPane,
-            toolBar: ToolBar,
-            slidingPane: AnchorPane,
-            openCloseButton: Button
-    ) : this(
-            refreshUI,
-            controller::numberOfMovingDays,
-            controller::numberOfDays,
-            editLabelsButton,
-            editLabelsPane,
-            editDaysPane,
-            settingsPane,
-            removeLabelButton,
-            applyNumberOfMovingDays,
-            applyNumberOfDays,
-            applyNumberOfColumns,
-            autoColumnsCheckBox,
-            colorPickers,
-            main,
-            gridPane,
-            toolBar,
-            slidingPane,
-            openCloseButton
-    )
 
     @Suppress("MemberVisibilityCanBePrivate") // Making it private will not compile.
             /** Keep a reference to the labels shown. */
