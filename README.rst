@@ -68,3 +68,7 @@ Plepping is the new planning.
 .. image:: https://codecov.io/gh/deltadak/plep/branch/master/graphs/sunburst.svg
     :target: https://codecov.io/gh/deltadak/plep
     :alt: Codecov sunburst
+
+.. image:: https://api.codacy.com/project/badge/Grade/bed6901c70194d5a949b2779fb5620d1
+   :alt: Codacy Badge
+   :target: https://app.codacy.com/app/PHPirates/plep?utm_source=github.com&utm_medium=referral&utm_content=deltadak/plep&utm_campaign=badger
