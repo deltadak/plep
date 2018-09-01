@@ -9,14 +9,14 @@ version = "v2.0.0-beta.9"
 
 plugins {
     application
-    kotlin("jvm") version "1.2.40"
+    kotlin("jvm") version "1.2.60"
     java // Required by at least JUnit.
 
     // Plugin to build .exe files.
     id("edu.sc.seis.launch4j") version "2.4.4"
 
     // help/dependencyUpdates checks for dependency updates.
-    id("com.github.ben-manes.versions") version "0.19.0"
+    id("com.github.ben-manes.versions") version "0.20.0"
 
     // help/useLatestVersions should update version numbers
     id("se.patrikerdes.use-latest-versions") version "0.2.3"
@@ -47,8 +47,8 @@ dependencies {
     compile("org.xerial:sqlite-jdbc:3.23.1")
 
     // JNA, used to e.g. make a program pinnable to taskbar.
-    compile("net.java.dev.jna:jna:4.5.1")
-    compile("net.java.dev.jna:jna-platform:4.5.1")
+    compile("net.java.dev.jna:jna:4.5.2")
+    compile("net.java.dev.jna:jna-platform:4.5.2")
 
     // Kotlin
     compile(kotlin("stdlib"))
@@ -62,22 +62,22 @@ dependencies {
     testCompile("io.kotlintest:kotlintest:2.0.7")
 
     // JUnit 5
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.2.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.2.0")
-    testRuntime("org.junit.platform:junit-platform-console:1.2.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.3.0-RC1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.3.0-RC1")
+    testRuntime("org.junit.platform:junit-platform-console:1.3.0-RC1")
 
     // Kotlintests are not run anyway when using JUnit 5 as well.
     testCompile("io.kotlintest:kotlintest:2.0.7")
 
     // JavaFX tests using TestFX
-    testCompile("org.testfx:testfx-core:4.0.13-alpha")
-    testCompile("org.testfx:testfx-junit:4.0.13-alpha")
+    testCompile("org.testfx:testfx-core:4.0.14-alpha")
+    testCompile("org.testfx:testfx-junit:4.0.14-alpha")
     // Only needed for headless testing.
 //    testCompile("org.testfx:openjfx-monocle:8u76-b04") // jdk-9+181 for Java 9
 
     // Spek
-    testCompile("org.jetbrains.spek:spek-api:1.1.5")
-    testRuntime("org.jetbrains.spek:spek-junit-platform-engine:1.1.5")
+    testCompile("org.jetbrains.spek:spek-api:1.2.1")
+    testRuntime("org.jetbrains.spek:spek-junit-platform-engine:1.2.1")
 }
 
 repositories {
