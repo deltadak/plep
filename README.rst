@@ -1,3 +1,5 @@
+[![TODO board](https://imdone.io/api/1.0/projects/5ae2247d774eb026da0b25f4/badge)](https://imdone.io/app#/board/deltadak/plep)
+
 .. image:: https://travis-ci.org/deltadak/plep.svg?branch=master
     :target: https://travis-ci.org/deltadak/plep
     :alt: Build Status
