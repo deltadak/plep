@@ -14,11 +14,29 @@
       "ARCHIVE",
       "HACK",
       "CHANGED",
+      "XXX",
+      "IDEA",
+      "NOTE",
       "REVIEW",
       "ISSUE",
-      "BUG"
+      "BUG",
+      "HELP"
     ]
   },
+  "lists": [
+    {
+      "name": "HELP",
+      "hidden": false
+    },
+    {
+      "hidden": false,
+      "name": "DONE"
+    },
+    {
+      "name": "NOTE",
+      "hidden": false
+    }
+  ],
   "marked": {
     "gfm": true,
     "tables": true,
@@ -31,5 +49,6 @@
     "id": "5ae04b96f1162e7e4c50047b",
     "name": "deltadak/plep",
     "useImdoneioForPriority": true
-  }
+  },
+  "noHelp": true
 }
