@@ -42,5 +42,6 @@ check() {
 package() {
 	# The compiled files have to be in pkg, replicating the root hierarchy
 	mkdir -p "$pkgdir/opt/$pkgname"
-	# copy build file?
+	# copy the jar that we have build
+	cp $pkgname/build/libs/$pkgname-$pkgver.jar $pkgdir/opt/$pkgname
 }
