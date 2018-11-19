@@ -19,7 +19,7 @@ backup=()
 options=()
 install=
 changelog=
-source=("$pkgname-$pkgver.jar")
+source=("${pkgname}::git+https://github.com/deltadak/plep.git")
 noextract=()
 md5sums=('SKIP')
 validpgpkeys=()
@@ -30,16 +30,17 @@ validpgpkeys=()
 build() {
 	# Bash commands to build the software
 	# makepkg cd's to src before build()
-	cd ..
+	cd $pkgname
 	./gradlew build
 }
 
 check() {
-	cd ..
+    cd $pkgname
 	./gradlew check
 }
 
 package() {
 	# The compiled files have to be in pkg, replicating the root hierarchy
 	mkdir -p "$pkgdir/opt/$pkgname"
+	# copy build file?
 }
