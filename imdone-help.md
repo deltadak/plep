@@ -1,17 +1,19 @@
 imdone-help
 ====
-#HELP: Try dragging this card to your new list +imdone-help id:1
-#HELP: Ignore files by adding `.imdoneignore` to the root of your project. +imdone-help id:0
-- [imdone.io](https://imdone.io) implements this with the [ignore package](https://www.npmjs.com/package/ignore)
+#HELP: Try dragging this card to your new list id:1 +imdone-help
 
-#HELP: Use markdown in todo comments or in the description +imdone-help id:4
-- **This is a description...**
+#HELP: Ignore files by adding `.imdoneignore` to the root of your project. id:0 +imdone-help
+ - [imdone.io](https://imdone.io) implements this with the [ignore package](https://www.npmjs.com/package/ignore)
 
-#HELP: Add tags to your comments like this `+mvp` +imdone-help id:3
+#HELP: Use markdown in todo comments or in the description id:4 +imdone-help
+ - **This is a description...**
 
-#HELP: Add metadata like this... +imdone-help points:5 id:5
-- [imdone.io](https://imdone.io) adds `id:n` to all your todo comments, so take care to leave that one alone
+#HELP: Add tags to your comments like this `+mvp` id:3 +imdone-help
 
-#HELP: Include subtasks using GFM task lists +imdone-help id:2
-- [ ] A task yet to be done
-- [x] This is done
+
+#HELP: Add metadata like this... points:5 id:5 +imdone-help
+ - [imdone.io](https://imdone.io) adds `id:n` to all your todo comments, so take care to leave that one alone
+
+#HELP: Include subtasks using GFM task lists id:2 +imdone-help
+ - [ ] A task yet to be done
+ - [x] This is done
