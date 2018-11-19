@@ -56,12 +56,14 @@ Settings of v2.0.0
 Instructions for building from source in IntelliJ
 -------------------------------------------------
 
+Make sure you have JavaFX installed, for example on Arch Linux you can install the ``java-openjfx`` package.
+
 -  To run or debug, use the Gradle task ``run``.
 -  To build an executable jar, use the task ``build``, the file is then
    in ``build/libs/``.
 
-Building a release
-------------------
+Building a Windows release
+--------------------------
 
 -  Run the gradle task launch4j/createExe
 -  Open InnoSetup on the setup file in ``releasing/innoSetup/PlepInstaller.iss``

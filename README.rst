@@ -1,5 +1,6 @@
-[![TODO board](https://imdone.io/api/1.0/projects/5ae2247d774eb026da0b25f4/badge)](https://imdone.io/app#/board/deltadak/plep)
-
+.. image:: https://imdone.io/api/1.0/projects/5ae2247d774eb026da0b25f4/badge
+    :target: https://imdone.io/app#/board/deltadak/plep
+    :alt: Imdone board
 .. image:: https://travis-ci.org/deltadak/plep.svg?branch=master
     :target: https://travis-ci.org/deltadak/plep
     :alt: Build Status
@@ -12,6 +13,9 @@
 .. image:: https://codebeat.co/badges/b613da2c-d3a4-4dd7-8846-7c023554fe3b
     :target: https://codebeat.co/projects/github-com-deltadak-plep-master
     :alt: Codebeat
+.. image:: https://api.codacy.com/project/badge/Grade/bed6901c70194d5a949b2779fb5620d1
+   :alt: Codacy Badge
+   :target: https://app.codacy.com/app/PHPirates/plep?utm_source=github.com&utm_medium=referral&utm_content=deltadak/plep&utm_campaign=badger
 
 .. image:: https://www.openhub.net/p/plep/widgets/project_thin_badge.gif
     :target: https://www.openhub.net/p/plep
@@ -73,7 +77,3 @@ Plepping is the new planning.
 .. image:: https://codecov.io/gh/deltadak/plep/branch/master/graphs/sunburst.svg
     :target: https://codecov.io/gh/deltadak/plep
     :alt: Codecov sunburst
-
-.. image:: https://api.codacy.com/project/badge/Grade/bed6901c70194d5a949b2779fb5620d1
-   :alt: Codacy Badge
-   :target: https://app.codacy.com/app/PHPirates/plep?utm_source=github.com&utm_medium=referral&utm_content=deltadak/plep&utm_campaign=badger
