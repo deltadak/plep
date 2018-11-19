@@ -1,0 +1,45 @@
+# Maintainers: Abby and Thomas at abbythomasorganisation@gmail.com
+pkgname=plep
+pkgver=v1.2.3
+pkgrel=1
+epoch=
+pkgdesc=" An agenda for planning a few tasks per day right on your desktop."
+arch=('any')
+url="https://github.com/deltadak/plep"
+license=('MIT')
+groups=()
+depends=('java-openjfx' 'jre8-openjdk')
+makedepends=()
+checkdepends=()
+optdepends=()
+provides=()
+conflicts=()
+replaces=()
+backup=()
+options=()
+install=
+changelog=
+source=("$pkgname-$pkgver.jar")
+noextract=()
+md5sums=('SKIP')
+validpgpkeys=()
+
+#prepare() {
+#}
+
+build() {
+	# Bash commands to build the software
+	# makepkg cd's to src before build()
+	cd ..
+	./gradlew build
+}
+
+check() {
+	cd ..
+	./gradlew check
+}
+
+package() {
+	# The compiled files have to be in pkg, replicating the root hierarchy
+	mkdir -p "$pkgdir/opt/$pkgname"
+}

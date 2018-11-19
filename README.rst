@@ -1,6 +1,3 @@
-.. image:: https://imdone.io/api/1.0/projects/5ae2247d774eb026da0b25f4/badge
-    :target: https://imdone.io/app#/board/deltadak/plep
-    :alt: Imdone board
 .. image:: https://travis-ci.org/deltadak/plep.svg?branch=master
     :target: https://travis-ci.org/deltadak/plep
     :alt: Build Status
@@ -16,10 +13,12 @@
 .. image:: https://api.codacy.com/project/badge/Grade/bed6901c70194d5a949b2779fb5620d1
    :alt: Codacy Badge
    :target: https://app.codacy.com/app/PHPirates/plep?utm_source=github.com&utm_medium=referral&utm_content=deltadak/plep&utm_campaign=badger
-
 .. image:: https://www.openhub.net/p/plep/widgets/project_thin_badge.gif
     :target: https://www.openhub.net/p/plep
     :alt: OpenHub
+.. image:: https://imdone.io/api/1.0/projects/5ae2247d774eb026da0b25f4/badge
+:target: https://imdone.io/app#/board/deltadak/plep
+    :alt: Imdone board
 |
 .. image:: https://img.shields.io/github/license/deltadak/plep.svg?maxAge=2592000
     :target: https://github.com/deltadak/plep/blob/master/LICENSE

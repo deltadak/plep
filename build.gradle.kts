@@ -5,7 +5,7 @@ import org.gradle.api.plugins.ExtensionAware
 import org.gradle.jvm.tasks.Jar
 
 group = "deltadak"
-version = "v2.0.0-beta.9"
+version = "v1.2.3"
 
 plugins {
     application
