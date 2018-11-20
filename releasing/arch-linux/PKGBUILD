@@ -19,7 +19,7 @@ backup=()
 options=()
 install=
 changelog=
-source=("${pkgname}-$pkgver::git+https://github.com/deltadak/plep.git")
+source=("${pkgname}-source::git+https://github.com/deltadak/plep.git")
 noextract=()
 md5sums=('SKIP')
 validpgpkeys=()
@@ -30,12 +30,12 @@ validpgpkeys=()
 build() {
 	# Bash commands to build the software
 	# makepkg cd's to src before build()
-	cd $pkgname
+	cd $pkgname-source
 	./gradlew build
 }
 
 check() {
-    cd $pkgname
+    cd $pkgname-source
 	./gradlew check
 }
 
@@ -44,7 +44,7 @@ package() {
 	# Install in /usr/bin so it will be (probably) in PATH
 	mkdir -p "$pkgdir/usr/bin/$pkgname"
 	# copy the jar that we have build
-	cp $pkgname/build/libs/$pkgname-$pkgver.jar $pkgdir/usr/bin/$pkgname
+	cp $pkgname-source/build/libs/$pkgname-$pkgver.jar $pkgdir/usr/bin/$pkgname
 	# copy the file with the command to execute the jar
-	cp $pkgname/releasing/arch-linux/$pkgname $pkgdir/usr/bin/$pkgname
+	cp $pkgname-source/releasing/arch-linux/$pkgname $pkgdir/usr/bin/$pkgname
 }
