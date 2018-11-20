@@ -66,7 +66,7 @@ Building a Windows release
 --------------------------
 
 -  Run the gradle task launch4j/createExe
--  Open InnoSetup on the setup file in ``releasing/innoSetup/PlepInstaller.iss``
+-  Open InnoSetup on the setup file in ``releasing/Windows/innoSetup/PlepInstaller.iss``
 -  Update the version number
 -  Click Build \| Compile
 

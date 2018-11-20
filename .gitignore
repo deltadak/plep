@@ -2,7 +2,7 @@
 !**/*.iss
 
 # launch4j
-!releasing/launch4j/*.manifest
+!releasing/Windows/launch4j/*.manifest
 
 # Executables
 **/*.exe
@@ -30,3 +30,5 @@ releases/resources/
 # makepkg
 releasing/arch-linux/plep/
 releasing/arch-linux/src/
+releasing/arch-linux/*.pkg.tar.xz
+releasing/arch-linux/pkg

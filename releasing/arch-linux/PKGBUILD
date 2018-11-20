@@ -19,7 +19,7 @@ backup=()
 options=()
 install=
 changelog=
-source=("${pkgname}::git+https://github.com/deltadak/plep.git")
+source=("${pkgname}-$pkgver::git+https://github.com/deltadak/plep.git")
 noextract=()
 md5sums=('SKIP')
 validpgpkeys=()
@@ -41,7 +41,10 @@ check() {
 
 package() {
 	# The compiled files have to be in pkg, replicating the root hierarchy
-	mkdir -p "$pkgdir/opt/$pkgname"
+	# Install in /usr/bin so it will be (probably) in PATH
+	mkdir -p "$pkgdir/usr/bin/$pkgname"
 	# copy the jar that we have build
-	cp $pkgname/build/libs/$pkgname-$pkgver.jar $pkgdir/opt/$pkgname
+	cp $pkgname/build/libs/$pkgname-$pkgver.jar $pkgdir/usr/bin/$pkgname
+	# copy the file with the command to execute the jar
+	cp $pkgname/releasing/arch-linux/$pkgname $pkgdir/usr/bin/$pkgname
 }
