@@ -70,6 +70,17 @@ Building a Windows release
 -  Update the version number
 -  Click Build \| Compile
 
+Building an Arch Linux release
+------------------------------
+
+- Make sure you have everything pushed
+- Go to ``releasing/arch-linux``
+- Run ``makepkg``
+- The generated package file will be ``plep-vx.x.x-1-any.pkg.tar.xz``
+- Check that it contains the right files with ``sudo pacman -Qlp plep-vx.x.x-1-any.pkg.tar.xz``
+- Install with ``sudo pacman -U plep-vx.x.x-1-any.pkg.tar.xz``
+
+
 `Javadoc (obsolete)`_
 ---------------------
 
