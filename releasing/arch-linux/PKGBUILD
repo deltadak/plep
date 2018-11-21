@@ -24,9 +24,6 @@ noextract=()
 md5sums=('SKIP')
 validpgpkeys=()
 
-#prepare() {
-#}
-
 build() {
 	# Bash commands to build the software
 	# makepkg cd's to src before build()
