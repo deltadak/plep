@@ -1,7 +1,8 @@
 package nl.deltadak.plep.database
 
-import javafx.concurrent.Task
 import javafx.scene.control.ProgressIndicator
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import nl.deltadak.plep.Database
 import nl.deltadak.plep.HomeworkTask
 import java.time.LocalDate
@@ -19,14 +20,11 @@ class DatabaseFacade(
      * @param day Date from which the tasks are.
      * @param homeworkTasks Tasks to be put in the database.
      */
-    fun pushData(day: LocalDate, homeworkTasks: List<List<HomeworkTask>> ) {
+    fun pushData(day: LocalDate, homeworkTasks: List<List<HomeworkTask>>) {
 
-        val task: Task<Any> = object : Task<Any>() {
-            @Throws(Exception::class)
-            /** Specifies task. */
-            public override fun call() {
-                Database.INSTANCE.updateTasksDay(day, homeworkTasks)
-            }
+        // Pushing to the database using coroutines.
+        val job = GlobalScope.launch {
+            Database.INSTANCE.updateTasksDay(day, homeworkTasks)
         }
 
         // Only switch it on and off if it's not yet on.
@@ -36,12 +34,8 @@ class DatabaseFacade(
             progressIndicator.isVisible = true
 
             // Switch off progress indicator.
-            task.setOnSucceeded { progressIndicator.isVisible = false }
-
+            job.invokeOnCompletion { progressIndicator.isVisible = false }
         }
-
-        // Database calls will be executed on a different thread.
-        executeMultithreading(task)
 
     }
 
@@ -53,12 +47,8 @@ class DatabaseFacade(
      */
     fun pushParentData(day: LocalDate, parentTasks: List<HomeworkTask>) {
 
-        val task: Task<Any> = object : Task<Any>() {
-            @Throws(Exception::class)
-            /** Specifies task. */
-            public override fun call() {
-                Database.INSTANCE.updateParentsDay(day, parentTasks)
-            }
+        val job = GlobalScope.launch {
+            Database.INSTANCE.updateParentsDay(day, parentTasks)
         }
 
         // Only switch it on and off if it's not yet on.
@@ -68,13 +58,8 @@ class DatabaseFacade(
             progressIndicator.isVisible = true
 
             // Switch off progress indicator.
-            task.setOnSucceeded { progressIndicator.isVisible = false }
-
+            job.invokeOnCompletion { progressIndicator.isVisible = false }
         }
-
-        // Database calls will be executed on a different thread.
-        executeMultithreading(task)
-
     }
 
 }

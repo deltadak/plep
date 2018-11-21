@@ -6,11 +6,12 @@ import nl.deltadak.plep.ui.util.converters.getParentTasks
 import nl.deltadak.plep.ui.util.converters.toObservableList
 import javafx.beans.value.ObservableValue
 import javafx.collections.ObservableList
-import javafx.concurrent.Task
 import javafx.scene.control.ProgressIndicator
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeView
 import javafx.scene.layout.GridPane
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import nl.deltadak.plep.Database
 import nl.deltadak.plep.HomeworkTask
 import java.time.LocalDate
@@ -29,23 +30,14 @@ class ContentProvider {
      */
     fun setForAllDays(gridPane: GridPane, focusDay: LocalDate, progressIndicator: ProgressIndicator) {
 
-        val task: Task<Any> = object : Task<Any>() {
-            @Throws(Exception::class)
-            /** Specifies task. */
-            public override fun call(): Any? {
+        val job = GlobalScope.launch {
 
                 val treeViews = getAllTreeViews(gridPane)
                 for (i in 0 until treeViews.size) {
                     val date = focusDay.plusDays(i .toLong() - 1)
                     setForOneDay(treeViews[i], date, progressIndicator)
                 }
-
-                return null
-            }
         }
-
-        executeMultithreading(task)
-
     }
 
     /**
@@ -80,22 +72,14 @@ class ContentProvider {
 
         progressIndicator.isVisible = true
 
-        val task = object : Task<Any>() {
-            @Throws(Exception::class)
-            override fun call(): Boolean {
-                databaseTask()
-                return true
-            }
-        }
+        // Do the database stuff in a coroutine.
+        val job = GlobalScope.launch { databaseTask() }
 
-        task.setOnSucceeded {
+        job.invokeOnCompletion {
             // Make sure that there are empty tasks added to fill up.
             TreeViewCleaner().cleanSingleTreeView(tree)
             progressIndicator.isVisible = false
         }
-
-        executeMultithreading(task)
-
     }
 
 
@@ -131,9 +115,5 @@ class ContentProvider {
         if (familySize > 1) {
             tree.root.children[parentIndex].children.add(TreeItem<HomeworkTask>(HomeworkTask()))
         }
-
     }
-
-
-
 }
