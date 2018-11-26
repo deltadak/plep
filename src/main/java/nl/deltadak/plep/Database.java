@@ -488,7 +488,7 @@ public enum Database {
             //    nothing
             
             if (homeworkTask.getDatabaseID() == -1) {
-                // if the database of homeworkTask is currently -1, that
+                // if the database id of homeworkTask is currently -1, that
                 // means that it first was an empty task and that it's not in
                 // the database yet, so it has to get an id
                 
@@ -811,6 +811,7 @@ public enum Database {
     private Connection setConnection() {
         try {
             if (databasePath != null) {
+//                Class.forName("org.h2.Driver");
                 Class.forName("org.sqlite.JDBC");
                 return DriverManager.getConnection(databasePath);
             }

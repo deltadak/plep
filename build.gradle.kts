@@ -46,6 +46,12 @@ dependencies {
 //    Could not find method api() for arguments [org.xerial:sqlite-jdbc:3.18.0] on object of type org.gradle.api.internal.artifacts.dsl.dependencies.DefaultDependencyHandler.
     compile("org.xerial:sqlite-jdbc:3.23.1")
 
+    // Database driver (for possible future use with Exposed).
+    compile("com.h2database:h2:1.4.197")
+    // Kotlin Exposed SQL DSL
+    compile("org.jetbrains.exposed:exposed:0.11.2")
+    compile("org.slf4j:slf4j-simple:1.6.1")
+
     // JNA, used to e.g. make a program pinnable to task bar.
     compile("net.java.dev.jna:jna:4.5.2")
     compile("net.java.dev.jna:jna-platform:4.5.2")
@@ -58,6 +64,8 @@ dependencies {
     compile(kotlin("test"))
     compile(kotlin("test-junit"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:0.27.0-eap13")
+
 
     // Built-in Kotlin test framework.
     testCompile("io.kotlintest:kotlintest:2.0.7")

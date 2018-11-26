@@ -10,11 +10,13 @@ import javafx.scene.control.ProgressIndicator
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeView
 import javafx.scene.layout.GridPane
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import nl.deltadak.plep.Database
 import nl.deltadak.plep.HomeworkTask
 import java.time.LocalDate
+import kotlinx.coroutines.javafx.JavaFx as FxMain
 
 /**
  * Provides the content of the GridPane: all the tasks and subtasks.
@@ -30,8 +32,7 @@ class ContentProvider {
      */
     fun setForAllDays(gridPane: GridPane, focusDay: LocalDate, progressIndicator: ProgressIndicator) {
 
-        val job = GlobalScope.launch {
-
+        GlobalScope.launch(Dispatchers.FxMain) {
                 val treeViews = getAllTreeViews(gridPane)
                 for (i in 0 until treeViews.size) {
                     val date = focusDay.plusDays(i .toLong() - 1)
@@ -73,7 +74,7 @@ class ContentProvider {
         progressIndicator.isVisible = true
 
         // Do the database stuff in a coroutine.
-        val job = GlobalScope.launch { databaseTask() }
+        val job = GlobalScope.launch(Dispatchers.FxMain) { databaseTask() }
 
         job.invokeOnCompletion {
             // Make sure that there are empty tasks added to fill up.

@@ -1,11 +1,14 @@
 package nl.deltadak.plep.database
 
 import javafx.scene.control.ProgressIndicator
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.javafx.JavaFx as FxMain
 import kotlinx.coroutines.launch
 import nl.deltadak.plep.Database
 import nl.deltadak.plep.HomeworkTask
 import java.time.LocalDate
+
 
 /**
  * This class provides a facade to the database. General methods like pushing and pulling data from the database are included here, so extras can be added like proper user feedback and multithreading.
@@ -23,7 +26,7 @@ class DatabaseFacade(
     fun pushData(day: LocalDate, homeworkTasks: List<List<HomeworkTask>>) {
 
         // Pushing to the database using coroutines.
-        val job = GlobalScope.launch {
+        val job = GlobalScope.launch(Dispatchers.FxMain) {
             Database.INSTANCE.updateTasksDay(day, homeworkTasks)
         }
 
@@ -47,7 +50,7 @@ class DatabaseFacade(
      */
     fun pushParentData(day: LocalDate, parentTasks: List<HomeworkTask>) {
 
-        val job = GlobalScope.launch {
+        val job = GlobalScope.launch(Dispatchers.FxMain) {
             Database.INSTANCE.updateParentsDay(day, parentTasks)
         }
 
