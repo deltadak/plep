@@ -1,2 +1,0 @@
-#!/bin/sh
-java -jar /usr/lib/plep/plep-v1.2.3.jar

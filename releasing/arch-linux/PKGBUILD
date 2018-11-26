@@ -48,9 +48,9 @@ package() {
     # Copy an empty database so we can set permissions on it
     cp $pkgname-source/build/classes/java/plep.db $pkgdir/usr/lib/$pkgname
 
-	# Copy the file with the command to execute the jar
-	# todo set command here so we don't have the version hard-coded
-	cp $pkgname-source/releasing/arch-linux/$pkgname $pkgdir/usr/bin/
+    # Create a file with a command to execute the jar
+	echo "#!/bin/sh
+java -jar /usr/lib/$pkgname/$pkgname-$pkgver.jar" > $pkgdir/usr/bin/$pkgname
 
     # Since git only saves execute and not write permissions, we have to set it manually.
     # We have to make both the database and folder containing it writable in order to create a writable database
