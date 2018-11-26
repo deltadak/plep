@@ -4,9 +4,6 @@
 # launch4j
 !releasing/Windows/launch4j/*.manifest
 
-# Executables
-**/*.exe
-
 *.class
 
 # Database files

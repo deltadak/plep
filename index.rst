@@ -68,7 +68,7 @@ Building a Windows release
 -  Run the gradle task launch4j/createExe
 -  Open InnoSetup on the setup file in ``releasing/Windows/innoSetup/PlepInstaller.iss``
 -  Update the version number
--  Click Build \| Compile
+-  Click Build \| Compile, the generated installer will be next to the setup file.
 
 Building an Arch Linux release
 ------------------------------
