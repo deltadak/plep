@@ -10,6 +10,7 @@
 *.class
 
 # Database files
+!releasing/arch-linux/plep.db
 plep.db
 Plep.iml
 

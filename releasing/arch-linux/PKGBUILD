@@ -45,6 +45,9 @@ package() {
 	# copy the jar that we have build
 	cp $pkgname-source/build/libs/$pkgname-$pkgver.jar $pkgdir/usr/lib/$pkgname
 
+    # copy an empty database, in case we don't have write permissions
+    cp $pkgname-source/releasing/arch-linux/plep.db $pkgdir/usr/lib/$pkgname
+
 	# copy the file with the command to execute the jar
 	cp $pkgname-source/releasing/arch-linux/$pkgname $pkgdir/usr/bin/
 }
