@@ -433,7 +433,7 @@ public enum Database {
             
             // set up the path of the database to make connection with the
             // database
-            databasePath = "jdbc:sqlite:" + jarDir + "\\plep.db";
+            databasePath = "jdbc:sqlite:" + jarDir + "/plep.db";
             System.out.println(databasePath);
         } catch (Exception e) {
             e.printStackTrace();
