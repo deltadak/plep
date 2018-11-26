@@ -31,5 +31,4 @@ releases/resources/
 # makepkg
 releasing/arch-linux/plep-source/
 releasing/arch-linux/src/
-releasing/arch-linux/*.pkg.tar.xz
 releasing/arch-linux/pkg
