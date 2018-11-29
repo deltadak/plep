@@ -1,5 +1,8 @@
 package nl.deltadak.plep;
 
+import nl.deltadak.plep.database.TransactionKt;
+import nl.deltadak.plep.database.tables.Settings;
+
 import java.io.File;
 import java.security.CodeSource;
 import java.sql.*;
@@ -254,6 +257,7 @@ public enum Database {
      *
      * @return String with the value.
      */
+    @Deprecated
     public String getSetting(String name) {
         String value = "";
         String sql = "SELECT value FROM settings where name = '" + name + "'";
@@ -284,6 +288,7 @@ public enum Database {
      * @param newValue
      *         The new value to update the setting with.
      */
+    @Deprecated
     public void updateSetting(String name, String newValue) {
         String sql = "UPDATE settings SET value = '" + newValue
                 + "' WHERE name = '" + name + "'";
@@ -715,6 +720,7 @@ public enum Database {
      * settings table contains - the name of the setting as primary key, - the
      * value of the setting as a string.
      */
+    @Deprecated
     private void createSettingsTable() {
         String sql = "CREATE TABLE IF NOT EXISTS settings("
                 + "name CHAR(50) PRIMARY KEY, " + "value CHAR(50))";
@@ -737,6 +743,7 @@ public enum Database {
      * @param value
      *         Value of the setting, as a string.
      */
+    @Deprecated
     private void insertSetting(String name, String value) {
         String sql = "INSERT OR IGNORE INTO settings(name, value) VALUES ('"
                 + name + "', '" + value + "')";

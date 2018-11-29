@@ -6,11 +6,13 @@ import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.GridPane
 import nl.deltadak.plep.Database
 import nl.deltadak.plep.commands.UndoFacility
-import nl.deltadak.plep.database.DatabaseSettings
+import nl.deltadak.plep.database.namesanddefaults.DatabaseSettings
+import nl.deltadak.plep.database.tables.*
 import nl.deltadak.plep.keylisteners.UndoKeyListener
 import nl.deltadak.plep.ui.gridpane.GridPaneInitializer
 import nl.deltadak.plep.ui.settingspane.panes.SlidingPane
 import nl.deltadak.plep.ui.settingspane.panes.SlidingSettingsPane
+import org.jetbrains.exposed.sql.SchemaUtils
 import java.time.LocalDate
 
 @Suppress("KDocMissingDocumentation") // FXML references.
@@ -81,8 +83,10 @@ class Controller {
         Database.INSTANCE.setDefaultDatabasePath()
         Database.INSTANCE.createTables()
 
-        numberOfDays = Integer.valueOf(Database.INSTANCE.getSetting(DatabaseSettings.NUMBER_OF_DAYS.settingsName).let { if(it=="") "0" else it})
+        listOf(Tasks, SubTasks, Settings, Labels, Colors).forEach { SchemaUtils.create(it) }
+        DatabaseSettings.values().forEach { Settings.insert(it, it.default) }
 
+        numberOfDays = Settings.get(DatabaseSettings.NUMBER_OF_DAYS).let { if(it=="") 0 else it.toInt() }
         numberOfMovingDays = Integer
                 .valueOf(Database.INSTANCE.getSetting(DatabaseSettings.NUMBER_OF_MOVING_DAYS.settingsName).let { if(it=="") "0" else it})
 

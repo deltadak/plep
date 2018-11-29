@@ -3,8 +3,8 @@ package nl.deltadak.plep.ui.settingspane.applybuttons
 import javafx.scene.control.Button
 import javafx.scene.control.CheckBox
 import javafx.scene.control.Spinner
-import nl.deltadak.plep.Database
-import nl.deltadak.plep.database.DatabaseSettings
+import nl.deltadak.plep.database.namesanddefaults.DatabaseSettings
+import nl.deltadak.plep.database.tables.Settings
 
 /**
  * This button applies the selected number of columns (using the given Spinner) to the user interface.
@@ -29,7 +29,8 @@ class ApplyNumberOfColumnsAction(
             val nrColumns = numberOfColumnsSpinner.value
 
             // Store the new custom value.
-            Database.INSTANCE.updateSetting(DatabaseSettings.MAX_COLUMNS.settingsName, nrColumns.toString())
+//            Database.INSTANCE.updateSetting(DatabaseSettings.MAX_COLUMNS.settingsName, nrColumns.toString())
+            Settings.edit(DatabaseSettings.MAX_COLUMNS, nrColumns.toString())
 
             // User has overridden the automatic calculation.
             autoColumnsCheckBox.isSelected = false

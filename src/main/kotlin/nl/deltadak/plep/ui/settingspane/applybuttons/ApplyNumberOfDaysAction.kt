@@ -3,7 +3,7 @@ package nl.deltadak.plep.ui.settingspane.applybuttons
 import javafx.scene.control.Button
 import javafx.scene.control.Spinner
 import nl.deltadak.plep.Database
-import nl.deltadak.plep.database.DatabaseSettings
+import nl.deltadak.plep.database.namesanddefaults.DatabaseSettings
 import kotlin.reflect.KMutableProperty
 
 /**

@@ -4,7 +4,7 @@ import javafx.scene.control.Spinner
 import javafx.scene.control.SpinnerValueFactory
 import javafx.scene.layout.GridPane
 import nl.deltadak.plep.Database
-import nl.deltadak.plep.database.DatabaseSettings
+import nl.deltadak.plep.database.namesanddefaults.DatabaseSettings
 import nl.deltadak.plep.ui.settingspane.SPINNER_WIDTH
 
 /**

@@ -1,6 +1,6 @@
 package nl.deltadak.plep.ui.settingspane.spinners
 
-import nl.deltadak.plep.database.DatabaseSettings
+import nl.deltadak.plep.database.namesanddefaults.DatabaseSettings
 import nl.deltadak.plep.ui.settingspane.SPINNER_WIDTH
 import javafx.scene.control.Spinner
 import javafx.scene.control.SpinnerValueFactory

@@ -67,20 +67,19 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:0.27.0-eap13")
 
 
-    // Built-in Kotlin test framework.
-    testCompile("io.kotlintest:kotlintest:2.0.7")
-
     // JUnit 5
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.3.0-RC1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.3.0-RC1")
-    testRuntime("org.junit.platform:junit-platform-console:1.3.0-RC1")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.3.1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.3.1")
+    testRuntime("org.junit.platform:junit-platform-console:1.3.1")
 
     // Kotlintests are not run anyway when using JUnit 5 as well.
-    testCompile("io.kotlintest:kotlintest:2.0.7")
+    testCompile("io.kotlintest:kotlintest-core:3.1.10")
+    testCompile("io.kotlintest:kotlintest-assertions:3.1.10")
+    testCompile("io.kotlintest:kotlintest-runner-junit5:3.1.10")
 
     // JavaFX tests using TestFX
-    testCompile("org.testfx:testfx-core:4.0.14-alpha")
-    testCompile("org.testfx:testfx-junit:4.0.14-alpha")
+    testCompile("org.testfx:testfx-core:4.0.15-alpha")
+    testCompile("org.testfx:testfx-junit:4.0.15-alpha")
     // Only needed for headless testing.
 //    testCompile("org.testfx:openjfx-monocle:8u76-b04") // jdk-9+181 for Java 9
 

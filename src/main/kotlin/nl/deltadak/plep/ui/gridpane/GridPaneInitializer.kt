@@ -9,7 +9,7 @@ import nl.deltadak.plep.Database
 import nl.deltadak.plep.HomeworkTask
 import nl.deltadak.plep.commands.UndoFacility
 import nl.deltadak.plep.database.ContentProvider
-import nl.deltadak.plep.database.DatabaseSettings
+import nl.deltadak.plep.database.namesanddefaults.DatabaseSettings
 import nl.deltadak.plep.keylisteners.TaskDeletionInitialiser
 import nl.deltadak.plep.ui.taskcell.TaskCell
 import nl.deltadak.plep.ui.treeview.getTreeViewHeight
