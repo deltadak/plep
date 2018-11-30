@@ -5,11 +5,11 @@ import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeView
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.GridPane
-import nl.deltadak.plep.Database
 import nl.deltadak.plep.HomeworkTask
 import nl.deltadak.plep.commands.UndoFacility
 import nl.deltadak.plep.database.ContentProvider
 import nl.deltadak.plep.database.namesanddefaults.DatabaseSettings
+import nl.deltadak.plep.database.tables.Settings
 import nl.deltadak.plep.keylisteners.TaskDeletionInitialiser
 import nl.deltadak.plep.ui.taskcell.TaskCell
 import nl.deltadak.plep.ui.treeview.getTreeViewHeight
@@ -45,12 +45,11 @@ class GridPaneInitializer(
         gridPane.children.clear()
 
         // Find out whether the number of columns should be calculated automatically or is user overridden.
-        val columnsSetting: String = Database.INSTANCE.getSetting(DatabaseSettings.MAX_COLUMNS_AUTO.settingsName) ?: "false"
-        val isAutoColumns: Boolean = columnsSetting.toBoolean()
+        val isAutoColumns: Boolean = Settings.get(DatabaseSettings.MAX_COLUMNS_AUTO).toBoolean()
         val nrColumns = if (isAutoColumns) {
             Math.ceil(Math.sqrt(numberOfDays.toDouble())).toInt()
         } else {
-            Database.INSTANCE.getSetting(DatabaseSettings.MAX_COLUMNS.settingsName).toInt()
+            Settings.get(DatabaseSettings.MAX_COLUMNS).toInt()
         }
 
         // For every day, add a list for that day.

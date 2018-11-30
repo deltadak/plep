@@ -4,6 +4,7 @@ import javafx.scene.control.Button
 import javafx.scene.control.Spinner
 import nl.deltadak.plep.Database
 import nl.deltadak.plep.database.namesanddefaults.DatabaseSettings
+import nl.deltadak.plep.database.tables.Settings
 import kotlin.reflect.KMutableProperty
 
 /**
@@ -31,7 +32,7 @@ class ApplyNumberOfMovingDaysAction(
             numberOfMovingDaysProperty.setter.call(numberOfMovingDays)
 
             // Update database.
-            Database.INSTANCE.updateSetting(DatabaseSettings.NUMBER_OF_MOVING_DAYS.settingsName, numberOfMovingDays.toString())
+            Settings.edit(DatabaseSettings.NUMBER_OF_MOVING_DAYS, numberOfMovingDays.toString())
 
             // Update UI.
             refreshUI()

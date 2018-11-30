@@ -7,6 +7,7 @@ import javafx.scene.layout.GridPane
 import nl.deltadak.plep.Database
 import nl.deltadak.plep.commands.UndoFacility
 import nl.deltadak.plep.database.namesanddefaults.DatabaseSettings
+import nl.deltadak.plep.database.regularTransaction
 import nl.deltadak.plep.database.tables.*
 import nl.deltadak.plep.keylisteners.UndoKeyListener
 import nl.deltadak.plep.ui.gridpane.GridPaneInitializer
@@ -83,12 +84,11 @@ class Controller {
         Database.INSTANCE.setDefaultDatabasePath()
         Database.INSTANCE.createTables()
 
-        listOf(Tasks, SubTasks, Settings, Labels, Colors).forEach { SchemaUtils.create(it) }
+        listOf(Tasks, SubTasks, Settings, Labels, Colors).forEach { regularTransaction { SchemaUtils.create(it) }}
         DatabaseSettings.values().forEach { Settings.insert(it, it.default) }
 
         numberOfDays = Settings.get(DatabaseSettings.NUMBER_OF_DAYS).let { if(it=="") 0 else it.toInt() }
-        numberOfMovingDays = Integer
-                .valueOf(Database.INSTANCE.getSetting(DatabaseSettings.NUMBER_OF_MOVING_DAYS.settingsName).let { if(it=="") "0" else it})
+        numberOfMovingDays = Settings.get(DatabaseSettings.NUMBER_OF_MOVING_DAYS).let {if(it=="") 0 else it.toInt()}
 
         refreshUI()
 

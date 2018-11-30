@@ -34,7 +34,7 @@ class AutoColumnsAction(
             observable, oldValue, newValue ->
 
             // Updating the database is enough, since these values will be used when refreshing the UI.
-            Settings.edit(DatabaseSettings.MAX_COLUMNS, newValue.toString())
+            Settings.edit(DatabaseSettings.MAX_COLUMNS_AUTO, newValue.toString())
 
             // Update spinner, if the checkbox is checked then the calculated number of columns will be shown.
             numberOfColumnsSpinner.valueFactory.value =

@@ -12,8 +12,10 @@ import kotlin.test.assertEquals
 
 object SettingsTableTest : Spek({
     given("database with settings table") {
-        SchemaUtils.create(Settings) // Drop the old table to ensure testing with fresh settings.
-        SchemaUtils.drop(Settings)
+        regularTransaction {
+            SchemaUtils.drop(Settings) // Drop the old table to ensure testing with fresh settings.
+            SchemaUtils.create(Settings)
+        }
 
         on("inserting default values") {
             DatabaseSettings.values().forEach {
@@ -38,6 +40,20 @@ object SettingsTableTest : Spek({
             }
         }
 
+        on("requesting a setting which has a number as value") {
+            val value = Settings.get(DatabaseSettings.MAX_COLUMNS)
+            it("should be convertible to an int") {
+                assertEquals(3, value.toInt())
+            }
+        }
+
+        on("requesting a setting which has a boolean as value") {
+            val value = Settings.get(DatabaseSettings.MAX_COLUMNS_AUTO)
+            it("should be convertible to a boolean") {
+                assertEquals(true, value.toBoolean())
+            }
+        }
+
         on("editing a setting") {
             val name = DatabaseSettings.NUMBER_OF_MOVING_DAYS
             val newValue = "4"
@@ -47,10 +63,10 @@ object SettingsTableTest : Spek({
             }
         }
 
-        on("inserting a setting") {
+        on("inserting a setting that already exists") {
             val name = DatabaseSettings.MAX_COLUMNS
             Settings.insert(name, "4")
-            it("should do nothing if this setting is already in the database") {
+            it("should do nothing/not change the value") {
                 assertEquals("3", Settings.get(name))
             }
         }

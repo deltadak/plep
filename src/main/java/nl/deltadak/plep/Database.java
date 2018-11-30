@@ -247,54 +247,6 @@ public enum Database {
         return order;
     }
     
-    // settings ------------------------------------------------------
-    
-    /**
-     * Gets the value of a setting from the database.
-     *
-     * @param name
-     *         Name of the setting to get the value from.
-     *
-     * @return String with the value.
-     */
-    @Deprecated
-    public String getSetting(String name) {
-        String value = "";
-        String sql = "SELECT value FROM settings where name = '" + name + "'";
-        Connection connection = setConnection();
-        try {
-            if (connection != null) {
-                Statement statement = connection.createStatement();
-                ResultSet resultSet = statement.executeQuery(sql);
-                while (resultSet.next()) {
-                    value = resultSet.getString("value");
-                }
-                statement.close();
-            }
-            if (connection != null) {
-                connection.close();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return value;
-    }
-    
-    /**
-     * Updates a setting in the database.
-     *
-     * @param name
-     *         The name of the setting to update.
-     * @param newValue
-     *         The new value to update the setting with.
-     */
-    @Deprecated
-    public void updateSetting(String name, String newValue) {
-        String sql = "UPDATE settings SET value = '" + newValue
-                + "' WHERE name = '" + name + "'";
-        query(sql);
-    }
-    
     // labels ---------------------------------------------------------
     
     /**
@@ -419,7 +371,6 @@ public enum Database {
         createHomeworkTable();
         //        createExpandedItemstable();
         createSubtaskTable();
-        createSettingsTable();
         createLabelsTable();
         createColorsTable();
     }
@@ -713,43 +664,6 @@ public enum Database {
         return subtasks;
     }
     
-    // settings -------------------------------------------------------------
-    
-    /**
-     * Creates a table with settings and populates it with default settings. The
-     * settings table contains - the name of the setting as primary key, - the
-     * value of the setting as a string.
-     */
-    @Deprecated
-    private void createSettingsTable() {
-        String sql = "CREATE TABLE IF NOT EXISTS settings("
-                + "name CHAR(50) PRIMARY KEY, " + "value CHAR(50))";
-        query(sql);
-        
-        // insert the default settings
-        insertSetting("number_of_days", "9");
-        insertSetting("number_of_moving_days", "7");
-        insertSetting("max_columns", "3");
-        insertSetting("max_columns_auto", "true");
-        
-    }
-    
-    /**
-     * Inserts a setting with given name and value into the settings table. Only
-     * insert it when there is no row with the same name in the table.
-     *
-     * @param name
-     *         Name of the setting.
-     * @param value
-     *         Value of the setting, as a string.
-     */
-    @Deprecated
-    private void insertSetting(String name, String value) {
-        String sql = "INSERT OR IGNORE INTO settings(name, value) VALUES ('"
-                + name + "', '" + value + "')";
-        query(sql);
-    }
-    
     // labels ---------------------------------------------------------------
     
     /**
@@ -877,54 +791,4 @@ public enum Database {
             e.printStackTrace();
         }
     }
-    
-    //    /**
-    //     * used to change the directory of the database
-    //     * not used yet because we only set default database
-    //     */
-    //    private void changeDirectory() {
-    //        Dialog chooseDialog = new Dialog();
-    //        chooseDialog.setHeight(100);
-    //        chooseDialog.setWidth(300);
-    //        //            chooseDialog.setResizable(true);
-    //        chooseDialog.setTitle("Decisions!");
-    //
-    //        GridPane grid = new GridPane();
-    //        grid.setPrefHeight(chooseDialog.getHeight());
-    //        grid.setPrefWidth(chooseDialog.getWidth());
-    //
-    //        Button browseButton = new Button("Browse");
-    //        Text text = new Text("Choose database directory...");
-    //
-    //        ButtonType browseButtonType = new ButtonType("OK",
-    //                                                     ButtonBar
-    // .ButtonData.OK_DONE);
-    //        chooseDialog.getDialogPane().getButtonTypes().add
-    // (browseButtonType);
-    //        chooseDialog.getDialogPane().lookupButton(browseButtonType)
-    // .setDisable(true);
-    //
-    //        browseButton.setOnMouseClicked(event -> {
-    //
-    //            System.out.println("button clicked");
-    //            DirectoryChooser directoryChooser = new DirectoryChooser();
-    //            directoryChooser.setTitle("Choose Directory");
-    //            File directory = directoryChooser.showDialog(new Stage());
-    //            String databaseDirectory = directory.getAbsolutePath();
-    //            text.setText(databaseDirectory);
-    //            databasePath = "jdbc:sqlite:";
-    //            databasePath += databaseDirectory + "\\plep.db";
-    //            System.out.println(databasePath);
-    //            chooseDialog.getDialogPane().lookupButton(browseButtonType)
-    // .setDisable(false);
-    //
-    //        });
-    //
-    //
-    //        grid.add(browseButton,0,1);
-    //        grid.add(text,0,0);
-    //        chooseDialog.getDialogPane().setContent(grid);
-    //
-    //        chooseDialog.showAndWait();
-    //    }
 }

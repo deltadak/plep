@@ -41,6 +41,6 @@ object Settings : Table() {
      * @param name of the setting to be requested.
      */
     fun get(name: DatabaseSettings): String = regularTransaction {
-        select { Settings.name eq name.settingsName }.distinct().map { it[value] }.first()
+        select { Settings.name eq name.settingsName }.map { it[value] }.first()
     }
 }
