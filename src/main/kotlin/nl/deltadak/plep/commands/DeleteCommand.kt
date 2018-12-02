@@ -27,7 +27,7 @@ open class DeleteCommand(
     /** List including subtasks. */
     private var deletedItemsList: List<HomeworkTask> = emptyList()
 
-    /** All the tasks of the day, making the given list mutable in order to edit, original reference need not be preserved. */
+    /** All the tasks of the day, making the given list mutable in order to update, original reference need not be preserved. */
     var treeViewItems: MutableList<MutableList<HomeworkTask>> = treeViewItemsImmutable.toMutableList().map{it.toMutableList()}.toMutableList()
 
     override fun executionHook() {

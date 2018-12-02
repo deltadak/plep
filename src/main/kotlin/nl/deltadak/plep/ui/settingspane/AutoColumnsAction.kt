@@ -4,8 +4,7 @@ package nl.deltadak.plep.ui.settingspane
 
 import javafx.scene.control.CheckBox
 import javafx.scene.control.Spinner
-import nl.deltadak.plep.Database
-import nl.deltadak.plep.database.namesanddefaults.DatabaseSettings
+import nl.deltadak.plep.database.namesanddefaults.SettingsDefaults
 import nl.deltadak.plep.database.tables.Settings
 import nl.deltadak.plep.ui.util.getNumberOfColumns
 import kotlin.reflect.KMutableProperty
@@ -34,7 +33,7 @@ class AutoColumnsAction(
             observable, oldValue, newValue ->
 
             // Updating the database is enough, since these values will be used when refreshing the UI.
-            Settings.edit(DatabaseSettings.MAX_COLUMNS_AUTO, newValue.toString())
+            Settings.update(SettingsDefaults.MAX_COLUMNS_AUTO, newValue.toString())
 
             // Update spinner, if the checkbox is checked then the calculated number of columns will be shown.
             numberOfColumnsSpinner.valueFactory.value =
@@ -43,7 +42,7 @@ class AutoColumnsAction(
                 getNumberOfColumns(numberOfDaysProperty.getter.call())
             } else {
                 // The checkbox was unchecked, use the last known custom value.
-                Settings.get(DatabaseSettings.MAX_COLUMNS).toInt()
+                Settings.get(SettingsDefaults.MAX_COLUMNS).toInt()
             }
 
             refreshUI()

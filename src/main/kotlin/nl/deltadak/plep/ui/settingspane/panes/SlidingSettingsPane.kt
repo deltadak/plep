@@ -3,8 +3,7 @@ package nl.deltadak.plep.ui.settingspane.panes
 import javafx.scene.control.*
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.GridPane
-import nl.deltadak.plep.Database
-import nl.deltadak.plep.database.namesanddefaults.DatabaseSettings
+import nl.deltadak.plep.database.namesanddefaults.SettingsDefaults
 import nl.deltadak.plep.database.tables.Settings
 import nl.deltadak.plep.ui.settingspane.AutoColumnsAction
 import nl.deltadak.plep.ui.settingspane.applybuttons.ApplyNumberOfColumnsAction
@@ -93,7 +92,7 @@ class SlidingSettingsPane(
         editDaysPane.children.add(numberOfColumnsSpinner)
         ApplyNumberOfColumnsAction(applyNumberOfColumns, numberOfColumnsSpinner, autoColumnsCheckBox).set(refreshUI)
 
-        val isAuto = Settings.get(DatabaseSettings.MAX_COLUMNS_AUTO).toBoolean()
+        val isAuto = Settings.get(SettingsDefaults.MAX_COLUMNS_AUTO).toBoolean()
         autoColumnsCheckBox.isSelected = isAuto
         AutoColumnsAction(autoColumnsCheckBox, numberOfColumnsSpinner).set(refreshUI, numberOfDaysProperty)
 

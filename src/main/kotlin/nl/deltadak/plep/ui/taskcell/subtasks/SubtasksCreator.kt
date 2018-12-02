@@ -33,8 +33,8 @@ class SubtasksCreator(
         // Select the new subtask.
         treeView.selectionModel.select(emptyItem)
 
-        // In theory to edit an item:
-//        treeView.edit(emptyItem)
+        // In theory to update an item:
+//        treeView.update(emptyItem)
         // May help:
 //        treeView.layout()
 

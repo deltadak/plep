@@ -3,8 +3,7 @@ package nl.deltadak.plep.ui.settingspane.spinners
 import javafx.scene.control.Spinner
 import javafx.scene.control.SpinnerValueFactory
 import javafx.scene.layout.GridPane
-import nl.deltadak.plep.Database
-import nl.deltadak.plep.database.namesanddefaults.DatabaseSettings
+import nl.deltadak.plep.database.namesanddefaults.SettingsDefaults
 import nl.deltadak.plep.database.tables.Settings
 import nl.deltadak.plep.ui.settingspane.SPINNER_WIDTH
 
@@ -20,7 +19,7 @@ class NumberOfDaysSpinner {
 
         val spinner = Spinner<Int>()
 
-        val initialNumberOfDays = Settings.get(DatabaseSettings.NUMBER_OF_DAYS).toInt()
+        val initialNumberOfDays = Settings.get(SettingsDefaults.NUMBER_OF_DAYS).toInt()
         spinner.valueFactory = SpinnerValueFactory.IntegerSpinnerValueFactory(1, 31, initialNumberOfDays)
         spinner.id = "numberOfShowDaysSpinner"
         spinner.prefWidth = SPINNER_WIDTH // TODO Check width for double digits

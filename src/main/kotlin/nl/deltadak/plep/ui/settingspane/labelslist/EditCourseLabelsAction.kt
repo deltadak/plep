@@ -5,7 +5,7 @@ import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.GridPane
 
 /**
- * Handles actions regarding the Button to edit course labels.
+ * Handles actions regarding the Button to update course labels.
  */
 class EditCourseLabelsAction(
         /** The FXML reference to the button. */

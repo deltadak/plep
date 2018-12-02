@@ -1,6 +1,6 @@
 package nl.deltadak.plep.database.tables
 
-import nl.deltadak.plep.database.namesanddefaults.DatabaseSettings
+import nl.deltadak.plep.database.namesanddefaults.SettingsDefaults
 import nl.deltadak.plep.database.regularTransaction
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.insertIgnore
@@ -12,12 +12,12 @@ object Settings : Table() {
     val value = varchar("value", length = 50)
 
     /**
-     * Insert a setting in the database if its name isn't in the database yet.
+     * Insert a setting in the database if its name is not in the database yet.
      *
      * @param name of the setting.
      * @param value of the setting.
      */
-    fun insert(name: DatabaseSettings, value: String) = regularTransaction {
+    fun insert(name: SettingsDefaults, value: String) = regularTransaction {
         insertIgnore {
             it[this.name] = name.settingsName
             it[this.value] = value
@@ -27,11 +27,11 @@ object Settings : Table() {
     /**
      * Edit setting, i.e., update its value in the database.
      *
-     * @param name type of [DatabaseSettings] to be edited.
+     * @param name type of [SettingsDefaults] to be edited.
      * @param value to be submitted to the database.
      */
-    fun edit(name: DatabaseSettings, value: String) = regularTransaction {
-            update({ Settings.name eq name.settingsName }) { it[this.value] = value }
+    fun update(name: SettingsDefaults, value: String) = regularTransaction {
+        update({ Settings.name eq name.settingsName }) { it[this.value] = value }
     }
 
     /**
@@ -39,8 +39,10 @@ object Settings : Table() {
      * first. This is valid because the names are unique, so there will always be only one result.
      *
      * @param name of the setting to be requested.
+     *
+     * @return The value of the requested setting.
      */
-    fun get(name: DatabaseSettings): String = regularTransaction {
+    fun get(name: SettingsDefaults): String = regularTransaction {
         select { Settings.name eq name.settingsName }.map { it[value] }.first()
     }
 }

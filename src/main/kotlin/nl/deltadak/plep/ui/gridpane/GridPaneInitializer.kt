@@ -8,7 +8,7 @@ import javafx.scene.layout.GridPane
 import nl.deltadak.plep.HomeworkTask
 import nl.deltadak.plep.commands.UndoFacility
 import nl.deltadak.plep.database.ContentProvider
-import nl.deltadak.plep.database.namesanddefaults.DatabaseSettings
+import nl.deltadak.plep.database.namesanddefaults.SettingsDefaults
 import nl.deltadak.plep.database.tables.Settings
 import nl.deltadak.plep.keylisteners.TaskDeletionInitialiser
 import nl.deltadak.plep.ui.taskcell.TaskCell
@@ -45,11 +45,11 @@ class GridPaneInitializer(
         gridPane.children.clear()
 
         // Find out whether the number of columns should be calculated automatically or is user overridden.
-        val isAutoColumns: Boolean = Settings.get(DatabaseSettings.MAX_COLUMNS_AUTO).toBoolean()
+        val isAutoColumns: Boolean = Settings.get(SettingsDefaults.MAX_COLUMNS_AUTO).toBoolean()
         val nrColumns = if (isAutoColumns) {
             Math.ceil(Math.sqrt(numberOfDays.toDouble())).toInt()
         } else {
-            Settings.get(DatabaseSettings.MAX_COLUMNS).toInt()
+            Settings.get(SettingsDefaults.MAX_COLUMNS).toInt()
         }
 
         // For every day, add a list for that day.

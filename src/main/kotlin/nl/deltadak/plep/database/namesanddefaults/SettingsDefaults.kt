@@ -3,7 +3,7 @@ package nl.deltadak.plep.database.namesanddefaults
 /**
  * The names of some settings in the database.
  */
-enum class DatabaseSettings(
+enum class SettingsDefaults(
         /** Name. */
         val settingsName: String,
         /** Default value. */

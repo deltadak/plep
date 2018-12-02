@@ -1,11 +1,10 @@
 package nl.deltadak.plep.ui.settingspane.spinners
 
-import nl.deltadak.plep.database.namesanddefaults.DatabaseSettings
+import nl.deltadak.plep.database.namesanddefaults.SettingsDefaults
 import nl.deltadak.plep.ui.settingspane.SPINNER_WIDTH
 import javafx.scene.control.Spinner
 import javafx.scene.control.SpinnerValueFactory
 import javafx.scene.layout.GridPane
-import nl.deltadak.plep.Database
 import nl.deltadak.plep.database.tables.Settings
 
 /**
@@ -20,7 +19,7 @@ class NumberOfMovingDaysSpinner {
 
         val spinner = Spinner<Int>()
 
-        val initialNumberOfMovingDays = Settings.get(DatabaseSettings.NUMBER_OF_MOVING_DAYS).toInt()
+        val initialNumberOfMovingDays = Settings.get(SettingsDefaults.NUMBER_OF_MOVING_DAYS).toInt()
         spinner.valueFactory = SpinnerValueFactory.IntegerSpinnerValueFactory(1, 14, initialNumberOfMovingDays)
         spinner.id = "numberOfMovingDaysSpinner"
         spinner.prefWidth = SPINNER_WIDTH

@@ -8,7 +8,7 @@ import nl.deltadak.plep.ui.util.converters.toHomeworkTaskList
 import java.time.LocalDate
 
 /**
- * This class customizes what happens when users edit a subtask.
+ * This class customizes what happens when users update a subtask.
  */
 class SubtasksEditor(
         /** For user feedback. */
