@@ -1,8 +1,5 @@
 package nl.deltadak.plep;
 
-import nl.deltadak.plep.database.TransactionKt;
-import nl.deltadak.plep.database.tables.Settings;
-
 import java.io.File;
 import java.security.CodeSource;
 import java.sql.*;
@@ -288,80 +285,7 @@ public enum Database {
         deleteEmptyRows("labels", "label");
     }
     
-    // colors -------------------------------------------------------------
-    
-    /**
-     * Updates a color in the database.
-     *
-     * @param id
-     *         The id of the color to update.
-     * @param hex
-     *         The new hex value of the color.
-     */
-    public void updateColor(int id, String hex) {
-        id++;
-        String sql = "UPDATE colors " + "SET id=" + id + ", hex='" + hex + "' "
-                + "WHERE id=" + id;
-        query(sql);
-    }
-    
-    /**
-     * Returns all hex values of the colors that are in the colors table.
-     *
-     * @return An string array with the hex values of the colors.
-     */
-    public String[] getColorsFromDatabase() {
-        
-        ArrayList<String> temp = new ArrayList<String>();
-        String sql = "SELECT hex FROM colors";
-        
-        Connection connection = setConnection();
-        try {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(sql);
-            
-            while (resultSet.next()) {
-                String hex = resultSet.getString("hex");
-                temp.add(hex);
-            }
-            
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        
-        return temp.toArray(new String[temp.size()]);
-    }
-    
-    /**
-     * Returns the color with id colorID from the database.
-     *
-     * @param colorID
-     *         The id for which to get the corresponding hex value.
-     *
-     * @return A string with the hex value.
-     */
-    public String getColorFromDatabase(int colorID) {
-        int id = colorID + 1;
-        
-        String hex = "F4F1FA"; // Default color is white.
-        
-        String sql = "SELECT hex FROM colors WHERE id =" + id;
-        Connection connection = setConnection();
-        
-        try {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(sql);
-            
-            while (resultSet.next()) {
-                hex = resultSet.getString("hex");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        
-        return hex;
-    }
-    
+
     // misc ---------------------------------------------------------------
     
     /**
@@ -372,7 +296,7 @@ public enum Database {
         //        createExpandedItemstable();
         createSubtaskTable();
         createLabelsTable();
-        createColorsTable();
+//        createColorsTable();
     }
     
     /**
@@ -702,24 +626,6 @@ public enum Database {
     private void removeLabel(int id) {
         String sql = "DELETE FROM labels WHERE id = " + id;
         query(sql);
-    }
-    
-    // Colors -----------------------------------------------------------
-    
-    /**
-     * Creates a table in the database for the colours, if it doesn't exist yet.
-     * Populates this table with the default colours.
-     */
-    private void createColorsTable() {
-        String sql = "CREATE TABLE IF NOT EXISTS colors(id INT PRIMARY KEY, "
-                + "hex CHAR(10))";
-        query(sql);
-        
-        String[] colors = JavaHelper.DEFAULT_COLORS;
-        String sql2 = "INSERT OR IGNORE INTO colors(id, hex) VALUES (1, " + "'"
-                + colors[0] + "'), (2, '" + colors[1] + "'), (3, '" + colors[2]
-                + "'), (4, '" + colors[3] + "'), (5, '" + colors[4] + "')";
-        query(sql2);
     }
     
     // misc -------------------------------------------------------------

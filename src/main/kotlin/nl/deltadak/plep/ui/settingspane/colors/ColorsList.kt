@@ -2,6 +2,7 @@ package nl.deltadak.plep.ui.settingspane.colors
 
 import javafx.scene.control.ColorPicker
 import nl.deltadak.plep.Database
+import nl.deltadak.plep.database.tables.Colors
 import nl.deltadak.plep.ui.util.converters.toColor
 import nl.deltadak.plep.ui.util.converters.toHex
 
@@ -19,7 +20,7 @@ class ColorsList(
      */
     fun setup(refreshUI: () -> Unit) {
         // Get the colors from the database, so the colorpickers can be set to those colors.
-        Database.INSTANCE.colorsFromDatabase.mapIndexed { index, color ->
+        Colors.getAll().mapIndexed { index, color ->
             colorPickers[index].styleClass.add("button")
             // Set the color in the database on the color picker.
             colorPickers[index].value = color.toColor()
@@ -37,7 +38,7 @@ class ColorsList(
      */
     private fun editColor(colorPicker: ColorPicker, refreshUI: () -> Unit) {
         val id = colorPickers.indexOf(colorPicker)
-        Database.INSTANCE.updateColor(id, colorPicker.value.toHex())
+        Colors.update(id, colorPicker.value.toHex())
         refreshUI()
     }
 

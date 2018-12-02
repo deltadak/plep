@@ -27,7 +27,7 @@ object Colors : Table() {
      * @param value the new value to be stored in the database.
      */
     fun update(id: Int, value: String) = regularTransaction {
-        update({ Colors.id eq id }) { it[hex] = value }
+        update({ Colors.id eq id + 1 }) { it[hex] = value }
     }
 
     /**
@@ -44,6 +44,6 @@ object Colors : Table() {
      * @return the hex of the requested color.
      */
     fun get(id: Int): String = regularTransaction {
-        select { Colors.id eq id }.map { it[hex] }.first()
+        select { Colors.id eq id + 1 }.map { it[hex] }.first()
     }
 }

@@ -4,6 +4,7 @@ import javafx.scene.control.*
 import javafx.scene.layout.GridPane
 import nl.deltadak.plep.Database
 import nl.deltadak.plep.database.DatabaseFacade
+import nl.deltadak.plep.database.tables.Colors
 import nl.deltadak.plep.ui.taskcell.TaskCell
 import nl.deltadak.plep.ui.taskcell.subtasks.SubtasksCreator
 import nl.deltadak.plep.ui.taskcell.util.setBackgroundColor
@@ -58,7 +59,7 @@ class ContextMenuCreator(
         val separatorItem = SeparatorMenuItem()
         contextMenu.items.add(separatorItem)
 
-        val colors = Database.INSTANCE.colorsFromDatabase
+        val colors = Colors.getAll()
 
         for (colorID in 0..4) {
             // Initialize the color menu items with a certain number of spaces.

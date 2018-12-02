@@ -2,6 +2,7 @@ package nl.deltadak.plep.ui.taskcell.util
 
 import javafx.application.Platform
 import nl.deltadak.plep.Database
+import nl.deltadak.plep.database.tables.Colors
 import nl.deltadak.plep.ui.taskcell.TaskCell
 
 /**
@@ -13,7 +14,7 @@ fun TaskCell.setBackgroundColor(colorID: Int) {
 
     Platform.runLater {
 
-        val colorString = Database.INSTANCE.getColorFromDatabase(colorID)
+        val colorString = Colors.get(colorID)
 
         if (colorID == 4) {
             this.style = "-fx-text-fill: none"

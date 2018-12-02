@@ -11,6 +11,7 @@ import javafx.scene.layout.Region
 import javafx.scene.text.TextAlignment
 import nl.deltadak.plep.Database
 import nl.deltadak.plep.HomeworkTask
+import nl.deltadak.plep.database.tables.Colors
 import nl.deltadak.plep.ui.taskcell.components.textlabel.TextLabelStyle
 import nl.deltadak.plep.ui.taskcell.util.blockerlisteners.ChangeListenerWithBlocker
 import nl.deltadak.plep.ui.taskcell.util.blockerlisteners.InvalidationListenerWithBlocker
@@ -59,7 +60,7 @@ class TaskLayout(private val taskCell: TaskCell, private val doneChangeListener:
         setTextLabel(homeworkTask)
 
         // Get style from the database and apply to the item.
-        val color = Database.INSTANCE.getColorFromDatabase(homeworkTask.colorID)
+        val color = Colors.get(homeworkTask.colorID)
         taskCell.style = "-fx-control-inner-background: #$color"
         TextLabelStyle().setDoneStyle(homeworkTask.done, label, comboBox)
 
