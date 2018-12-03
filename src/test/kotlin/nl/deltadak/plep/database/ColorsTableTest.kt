@@ -30,7 +30,7 @@ object ColorsTableTest: Spek({
         }
 
         on("requesting the hex value of a color") {
-            val value = Colors.get(1)
+            val value = Colors.get(0)
             it("should equal the value we stored in the database") {
                 assertEquals(DEFAULT_COLORS[0], value)
             }
@@ -42,9 +42,9 @@ object ColorsTableTest: Spek({
 
         on("editing a color") {
             val newColor = "f444a7"
-            Colors.update(1, newColor)
+            Colors.update(0, newColor)
             it("should update the setting, i.e., the value in the database should equal the new value") {
-                assertEquals(newColor, Colors.get(1))
+                assertEquals(newColor, Colors.get(0))
             }
         }
     }
