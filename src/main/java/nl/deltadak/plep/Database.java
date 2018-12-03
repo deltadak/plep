@@ -1,5 +1,7 @@
 package nl.deltadak.plep;
 
+import nl.deltadak.plep.database.tables.SubTasks;
+
 import java.io.File;
 import java.security.CodeSource;
 import java.sql.*;
@@ -130,7 +132,7 @@ public enum Database {
      */
     public void deleteByID(int id) {
         deleteTask(id);
-        deleteSubtasksByID(id);
+        SubTasks.INSTANCE.delete(id);
     }
     
     /**
@@ -153,10 +155,10 @@ public enum Database {
             
             int parentID = parent.getDatabaseID();
             // first remove all the old subtasks of this task
-            deleteSubtasksByID(parentID);
+            SubTasks.INSTANCE.delete(parentID);
             // add the updated subtasks
             for (int j = 1; j < homeworkTasks.get(i).size(); j++) {
-                insertSubtask(homeworkTasks.get(i).get(j), parentID);
+                SubTasks.INSTANCE.insert(homeworkTasks.get(i).get(j), parentID);
             }
         }
         
@@ -192,9 +194,7 @@ public enum Database {
      */
     public void copyAndInsertTask(LocalDate day, HomeworkTask taskToBeCopied) {
         // get the subtasks of the task to be copied
-        List<HomeworkTask> subtasks = getSubtasksByID(
-                taskToBeCopied.getDatabaseID());
-        
+        List<HomeworkTask> subtasks = SubTasks.INSTANCE.get(taskToBeCopied.getDatabaseID());
         // copy the task to a new task
         HomeworkTask newTask = taskToBeCopied;
         // give the new task its own id
@@ -204,7 +204,7 @@ public enum Database {
         insertOrUpdateTask(day, newTask, getHighestOrder(day));
         // insert the subtasks in the database, as subtasks of the new task
         for (HomeworkTask subtask : subtasks) {
-            insertSubtask(subtask, newTask.getDatabaseID());
+            SubTasks.INSTANCE.insert(subtask, newTask.getDatabaseID());
         }
     }
     
@@ -251,7 +251,6 @@ public enum Database {
      */
     public void createTables() {
         createHomeworkTable();
-        createSubtaskTable();
     }
     
     /**
@@ -435,113 +434,6 @@ public enum Database {
         
     }
     
-    // subtasks -------------------------------------------------------------
-    
-    /**
-     * Creates the subtasks table in the database.
-     */
-    private void createSubtaskTable() {
-        String sql = "CREATE TABLE IF NOT EXISTS subtasks("
-                + "parentID INT, done BOOLEAN, " + "task CHAR(255))";
-        query(sql);
-    }
-    
-    /**
-     * Inserts a subtask into the database, given the subtask and the id of its
-     * parent. If the task already exists, it does effectively nothing.
-     *
-     * @param subtask
-     *         HomeworkTask to insert.
-     * @param parentID
-     *         id of the parent task.
-     */
-    public void insertSubtask(final HomeworkTask subtask, final int parentID) {
-        // check if the task is not empty, because then it shouldn't
-        // be in the database
-        if (!subtask.getText().equals("") && (parentID != -1)) {
-            // delete the subtask if it exists, to avoid duplicates
-            //            deleteSubtask(parentID, subtask.getDone(), subtask
-            // .getText());
-            // add the subtask again
-            int doneInt = subtask.getDone() ? 1 : 0;
-            String sql = "INSERT INTO subtasks(parentID, done, task) VALUES ("
-                    + parentID + ", " + doneInt + ", '" + subtask.getText()
-                    + "')";
-            query(sql);
-        }
-    }
-    
-    /**
-     * Update all the ids of the subtasks when the id of their parent task has
-     * changed. NOTE: We have to call this method ourselves. https://github.com/deltadak/plep/issues/118 id:0
-     *
-     * @param parentTask
-     *         The parent task of which the id has changed.
-     */
-    private void updateSubtasksID(HomeworkTask parentTask) {
-        String sql = "UPDATE subtasks SET parentID = " + countID
-                + " WHERE parentID = " + parentTask.getDatabaseID();
-        query(sql);
-    }
-    
-    /**
-     * Deletes all the subtasks of a task, given their parentID.
-     *
-     * @param parentID
-     *         The id of the task of which to delete the subtasks.
-     */
-    private void deleteSubtasksByID(int parentID) {
-        String sql = "DELETE FROM subtasks WHERE parentID = " + parentID;
-        query(sql);
-    }
-    
-    /**
-     * Deletes a subtask that looks exactly like this.
-     *
-     * @param parentID
-     *         The parent id of the subtask to be deleted.
-     * @param done
-     *         The done value of the subtask to be deleted.
-     * @param task
-     *         The text of the subtask to be deleted.
-     */
-    private void deleteSubtask(int parentID, boolean done, String task) {
-        int doneInt = done ? 1 : 0;
-        String sql = "DELETE FROM subtasks WHERE parentID = " + parentID
-                + " AND done = " + doneInt + " AND task = '" + task + "'";
-        query(sql);
-    }
-    
-    /**
-     * Gets the subtasks belonging to the HomeworkTask with the given id.
-     *
-     * @param parentID
-     *         The id of the HomeworkTask.
-     *
-     * @return List<HomeworkTask> with subtasks.
-     */
-    private List<HomeworkTask> getSubtasksByID(int parentID) {
-        
-        String sql = "SELECT done, task FROM subtasks WHERE parentID = "
-                + parentID;
-        
-        List<HomeworkTask> subtasks = new ArrayList<>();
-        
-        Connection connection = setConnection();
-        try {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(sql);
-            while (resultSet.next()) {
-                HomeworkTask subtask = new HomeworkTask(
-                        resultSet.getBoolean("done"),
-                        resultSet.getString("task"));
-                subtasks.add(subtask);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return subtasks;
-    }
     // misc -------------------------------------------------------------
     
     /**
