@@ -21,7 +21,7 @@ object Colors : Table() {
     }
 
     /**
-     * Edit color, i.e., update its hex value in the database.
+     * Edit color, i.e., updateOrInsert its hex value in the database.
      *
      * @param id of the color to be updated.
      * @param value the new value to be stored in the database.

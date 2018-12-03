@@ -137,18 +137,18 @@ public enum Database {
      * Updates a day in the database. Is synchronized because multiple threads can want to call this.
      *
      * @param day
-     *         date for which to update
+     *         date for which to updateOrInsert
      * @param homeworkTasks
      *         the new homeworkTasks
      */
     public synchronized void updateTasksDay(final LocalDate day,
                                final List<List<HomeworkTask>> homeworkTasks) {
         
-        // update or insert the homework tasks
+        // updateOrInsert or insert the homework tasks
         for (int i = 0; i < homeworkTasks.size(); i++) {
             // get the parent task from the list/matrix of tasks
             HomeworkTask parent = homeworkTasks.get(i).get(0);
-            // update or insert the parent task to the database
+            // updateOrInsert or insert the parent task to the database
             insertOrUpdateTask(day, parent, i);
             
             int parentID = parent.getDatabaseID();
@@ -167,14 +167,14 @@ public enum Database {
      * Updates the parent tasks in the database (tasks table).
      *
      * @param day
-     *         The day for which to update the tasks.
+     *         The day for which to updateOrInsert the tasks.
      * @param parentTasks
      *         The List<HomeworkTask> with 'new' parents.
      */
     public synchronized void updateParentsDay(final LocalDate day,
                                  final List<HomeworkTask> parentTasks) {
         
-        // insert or update the parent tasks in the database
+        // insert or updateOrInsert the parent tasks in the database
         for (int i = 0; i < parentTasks.size(); i++) {
             // add the parent task to the database
             insertOrUpdateTask(day, parentTasks.get(i), i);
@@ -243,48 +243,6 @@ public enum Database {
         
         return order;
     }
-    
-    // labels ---------------------------------------------------------
-    
-    /**
-     * Retrieves all the labels that are stored in the database, and returns
-     * them as Strings in an ArrayList.
-     *
-     * @return labels
-     */
-    public ArrayList<String> getLabels() {
-        String sql = "SELECT * FROM labels ORDER BY id";
-        ArrayList<String> labels = new ArrayList<>();
-        
-        Connection connection = setConnection();
-        try {
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery(sql);
-            while (resultSet.next()) {
-                //                System.out.println(resultSet.getString
-                // ("label"));
-                labels.add(resultSet.getString("label"));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return labels;
-    }
-    
-    /**
-     * Updates the label in the database for the given id.
-     *
-     * @param id
-     *         Integer with the primary key of label that has to be changed.
-     * @param label
-     *         String with the new label.
-     */
-    public void updateLabel(int id, String label) {
-        removeLabel(id);
-        insertLabel(id, label);
-        deleteEmptyRows("labels", "label");
-    }
-    
 
     // misc ---------------------------------------------------------------
     
@@ -293,10 +251,7 @@ public enum Database {
      */
     public void createTables() {
         createHomeworkTable();
-        //        createExpandedItemstable();
         createSubtaskTable();
-        createLabelsTable();
-//        createColorsTable();
     }
     
     /**
@@ -377,7 +332,7 @@ public enum Database {
                 homeworkTask.setDatabaseID(getHighestID());
             }
             
-            // update the item in the database
+            // updateOrInsert the item in the database
             // REPLACE INTO updates an item if there already is an item with
             // that id, otherwise it inserts it
             String sql = "REPLACE INTO tasks(id, done, day, task, label, "
@@ -587,47 +542,6 @@ public enum Database {
         }
         return subtasks;
     }
-    
-    // labels ---------------------------------------------------------------
-    
-    /**
-     * Creates the table in the database to hold the labels, if it doesn't exist
-     * yet.
-     */
-    private void createLabelsTable() {
-        String sql = "CREATE TABLE IF NOT EXISTS labels(id INT PRIMARY KEY, "
-                + "label CHAR(10))";
-        query(sql);
-    }
-    
-    /**
-     * Inserts a new label into the database, used by {@link
-     * Database#updateLabel(int, String)}
-     *
-     * @param id
-     *         Integer with the primary key of label that has to be removed.
-     * @param label
-     *         String with the new label.
-     */
-    private void insertLabel(int id, String label) {
-        String sql = "INSERT INTO labels(id, label)" + "VALUES (" + id + ", '"
-                + label + "')";
-        query(sql);
-    }
-    
-    /**
-     * Remove a label from the database, used by {@link Database#updateLabel
-     * (int,
-     * * String)}
-     *
-     * @param id
-     *         Integer with primary key of label that has to be deleted.
-     */
-    private void removeLabel(int id) {
-        String sql = "DELETE FROM labels WHERE id = " + id;
-        query(sql);
-    }
-    
     // misc -------------------------------------------------------------
     
     /**

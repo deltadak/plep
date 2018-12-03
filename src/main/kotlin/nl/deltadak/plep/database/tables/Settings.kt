@@ -25,7 +25,7 @@ object Settings : Table() {
     }
 
     /**
-     * Edit setting, i.e., update its value in the database.
+     * Edit setting, i.e., updateOrInsert its value in the database.
      *
      * @param name type of [SettingsDefaults] to be edited.
      * @param value to be submitted to the database.

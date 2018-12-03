@@ -58,7 +58,7 @@ object SettingsTableTest : Spek({
             val name = SettingsDefaults.NUMBER_OF_MOVING_DAYS
             val newValue = "4"
             Settings.update(name, newValue)
-            it("should update the setting, i.e., the value in the database should equal the new value") {
+            it("should updateOrInsert the setting, i.e., the value in the database should equal the new value") {
                 assertEquals(newValue, Settings.get(name))
             }
         }

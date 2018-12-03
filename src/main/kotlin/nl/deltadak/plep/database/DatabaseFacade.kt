@@ -46,7 +46,7 @@ class DatabaseFacade(
      * Update only the parent tasks in the database.
      *
      * @param day The day which contains the tasks.
-     * @param parentTasks The list with parents to update.
+     * @param parentTasks The list with parents to updateOrInsert.
      */
     fun pushParentData(day: LocalDate, parentTasks: List<HomeworkTask>) {
 

@@ -8,7 +8,7 @@ import javafx.collections.FXCollections
 import javafx.scene.control.ListView
 import javafx.scene.control.cell.TextFieldListCell
 import javafx.scene.layout.GridPane
-import nl.deltadak.plep.Database
+import nl.deltadak.plep.database.tables.Labels
 import kotlin.reflect.KMutableProperty
 
 /**
@@ -29,7 +29,7 @@ class EditLabelsList {
         val items = FXCollections.observableArrayList<String>("", "", "", "", "")
 
         // Restore last known labels, if any.
-        val labels = Database.INSTANCE.labels
+        val labels = Labels.getAll()
         for (i in 0 until labels.size) {
             items[i] = labels[i]
         }
@@ -53,13 +53,13 @@ class EditLabelsList {
         GridPane.setRowIndex(labelsList, 0)
         GridPane.setRowSpan(labelsList, 2)
 
-        // When editing a label in the list, update the database and refresh UI.
+        // When editing a label in the list, updateOrInsert the database and refresh UI.
         labelsList.setOnEditCommit {
             event ->
             labelsList.items[event.index] = event.newValue
-            // Also update the reference to the labels.
+            // Also updateOrInsert the reference to the labels.
             labelsListProperty.setter.call(labelsList)
-            Database.INSTANCE.updateLabel(event.index, event.newValue)
+            Labels.updateOrInsert(event.index, event.newValue)
             refreshUI()
         }
 

@@ -43,7 +43,7 @@ class DragDone(
             taskCell.graphic = null
 
             // Update database.
-            // We only have to update the parents, because the subtasks only depend on their parents, and are independent of the day and the order in the day.
+            // We only have to updateOrInsert the parents, because the subtasks only depend on their parents, and are independent of the day and the order in the day.
             val parentTasks = tree.toHomeworkTaskList().getParentTasks()
             DatabaseFacade(progressIndicator).pushParentData(day, parentTasks)
         }

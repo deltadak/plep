@@ -2,7 +2,7 @@ package nl.deltadak.plep.ui.settingspane.labelslist
 
 import javafx.scene.control.Button
 import javafx.scene.control.ListView
-import nl.deltadak.plep.Database
+import nl.deltadak.plep.database.tables.Labels
 import kotlin.reflect.KMutableProperty
 
 /**
@@ -29,7 +29,7 @@ class RemoveLabelAction(
             val selectedIndex = labelsList.selectionModel.selectedIndex
             // Removing an item means replacing it with an empty item, so it is again editable.
             labelsList.items[selectedIndex] = ""
-            Database.INSTANCE.updateLabel(selectedIndex, "")
+            Labels.updateOrInsert(selectedIndex, "")
             refreshUI()
 
         }

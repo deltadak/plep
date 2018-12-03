@@ -27,7 +27,7 @@ class OnCourseLabelChangeUpdater(
     /**
      * Add a listener to the ComboBox which listens for value changes and applies them normally with one exception: when <no label> is selected then the empty string will be shown.
      *
-     * @param treeCell The TreeCell in which the ComboBox resides, needed to update the courselabel of the task.
+     * @param treeCell The TreeCell in which the ComboBox resides, needed to updateOrInsert the courselabel of the task.
      */
     fun addValueChangeListener(treeCell: TextFieldTreeCell<HomeworkTask>) {
 
@@ -49,7 +49,7 @@ class OnCourseLabelChangeUpdater(
     }
 
     /**
-     * Set listener on the ComboBox to update the database when the
+     * Set listener on the ComboBox to updateOrInsert the database when the
      * selected index changes.
      *
      * @param tree TreeView which the LabelCell is in, needed for updating the database

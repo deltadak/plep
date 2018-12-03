@@ -6,6 +6,7 @@ import javafx.scene.control.cell.TextFieldTreeCell
 import javafx.scene.layout.GridPane
 import nl.deltadak.plep.Database
 import nl.deltadak.plep.HomeworkTask
+import nl.deltadak.plep.database.tables.Labels
 import nl.deltadak.plep.ui.draganddrop.*
 import nl.deltadak.plep.ui.taskcell.components.checkbox.CheckBoxUpdater
 import nl.deltadak.plep.ui.taskcell.components.courselabel.OnCourseLabelChangeUpdater
@@ -30,7 +31,7 @@ class TaskCell(val tree: TreeView<HomeworkTask>, val day: LocalDate): TextFieldT
     /** The Label of this TaskCell. */
     val label = Label("")
     /** The ComboBox of this TaskCell. */
-    val comboBox = ComboBox<String>(FXCollections.observableArrayList(Database.INSTANCE.labels).apply{ add(0, "<no label>") })
+    val comboBox = ComboBox<String>(FXCollections.observableArrayList(Labels.getAll()).apply{ add(0, "<no label>") })
 
     /** A reference to a listener which listens for changes of the ComboBox, but which can be disabled. */
     private lateinit var labelChangeListener: InvalidationListenerWithBlocker

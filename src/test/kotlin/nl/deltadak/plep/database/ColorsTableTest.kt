@@ -43,7 +43,7 @@ object ColorsTableTest: Spek({
         on("editing a color") {
             val newColor = "f444a7"
             Colors.update(0, newColor)
-            it("should update the setting, i.e., the value in the database should equal the new value") {
+            it("should updateOrInsert the setting, i.e., the value in the database should equal the new value") {
                 assertEquals(newColor, Colors.get(0))
             }
         }

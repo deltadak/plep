@@ -25,8 +25,8 @@ class CheckBoxUpdater(
         val checkbox: CheckBox) {
 
     /**
-     * Sets a change listener on the CheckBox, to update the database on changes.
-     * @param tree The TreeView the current TreeCell is in. We need this to update the database.
+     * Sets a change listener on the CheckBox, to updateOrInsert the database on changes.
+     * @param tree The TreeView the current TreeCell is in. We need this to updateOrInsert the database.
      * @param taskCell The TaskCell which contains this CheckBox. Not a general TreeCell because subitems like label and combobox are used.
      * @param localDate The date of the TreeView, and thus all the HomeworkTasks, in which the CheckBox is toggled.
      *

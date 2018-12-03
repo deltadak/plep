@@ -16,10 +16,10 @@ import java.time.LocalDate
 
 
 /**
- * When the dragged object is dropped, update TreeView and database.
+ * When the dragged object is dropped, updateOrInsert TreeView and database.
  *
  * @property taskCell TreeCell on which the task is dropped.
- * @property tree TreeView to update.
+ * @property tree TreeView to updateOrInsert.
  * @property day of the TreeView.
  * @property progressIndicator Needed for refreshing UI.
  */
@@ -87,7 +87,7 @@ class DragDrop(
             }
         }
 
-        // Update database, only update the parents, because the subtasks only depend on their parents, and are independent of the day and the order in the day.
+        // Update database, only updateOrInsert the parents, because the subtasks only depend on their parents, and are independent of the day and the order in the day.
         DatabaseFacade(progressIndicator).pushParentData(
                 day, tree.toHomeworkTaskList().getParentTasks()
         )
