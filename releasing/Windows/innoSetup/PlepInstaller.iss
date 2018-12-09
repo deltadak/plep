@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Plep"
-#define MyAppVersion "2.0.0-beta.9"
+#define MyAppVersion "v1.2.3"
 #define MyAppPublisher "Deltadak"
 #define MyAppURL "https://github.com/deltadak/plep"
 #define MyAppExeName "plep.exe"
@@ -21,10 +21,10 @@ AppSupportURL={#MyAppURL}
 AppUpdatesURL={#MyAppURL}
 DefaultDirName={pf}\{#MyAppName}
 DisableProgramGroupPage=yes
-LicenseFile=..\..\LICENSE
+LicenseFile=..\..\..\LICENSE
 OutputDir=..\innoSetup
-OutputBaseFilename=setup_plep_{#MyAppVersion}
-SetupIconFile=..\..\src\main\resources\plep32.ico
+OutputBaseFilename=plep-{#MyAppVersion}-windows
+SetupIconFile=..\..\..\src\main\resources\plep32.ico
 Compression=lzma
 SolidCompression=yes
 
@@ -35,7 +35,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "..\..\build\launch4j\plep.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\..\..\build\launch4j\plep.exe"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

@@ -18,7 +18,7 @@ plugins {
     // help/dependencyUpdates checks for dependency updates.
     id("com.github.ben-manes.versions") version "0.20.0"
 
-    // help/useLatestVersions should update version numbers
+    // help/useLatestVersions updates dependency versions
     id("se.patrikerdes.use-latest-versions") version "0.2.3"
 
     // Code coverage
@@ -31,7 +31,7 @@ plugins {
 launch4j {
     mainClassName = "nl.deltadak.plep.MainKt"
     icon = "$projectDir/src/main/resources/plep32.ico"
-    manifest = "$projectDir/releasing/launch4j/plep.manifest"
+    manifest = "$projectDir/releasing/Windows/launch4j/plep.manifest"
 }
 
 application {

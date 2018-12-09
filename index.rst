@@ -66,9 +66,20 @@ Building a Windows release
 --------------------------
 
 -  Run the gradle task launch4j/createExe
--  Open InnoSetup on the setup file in ``releasing/innoSetup/PlepInstaller.iss``
+-  Open InnoSetup on the setup file in ``releasing/Windows/innoSetup/PlepInstaller.iss``
 -  Update the version number
--  Click Build \| Compile
+-  Click Build \| Compile, the generated installer will be next to the setup file.
+
+Building an Arch Linux release
+------------------------------
+
+- Make sure you have everything pushed
+- Go to ``releasing/arch-linux``
+- Run ``makepkg``
+- The generated package file will be ``plep-vx.x.x-1-any.pkg.tar.xz``
+- Check that it contains the right files with ``sudo pacman -Qlp plep-vx.x.x-1-any.pkg.tar.xz``
+- Install with ``sudo pacman -U plep-vx.x.x-1-any.pkg.tar.xz``
+
 
 `Javadoc (obsolete)`_
 ---------------------

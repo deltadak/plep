@@ -2,7 +2,7 @@
 !**/*.iss
 
 # launch4j
-!releasing/launch4j/*.manifest
+!releasing/Windows/launch4j/*.manifest
 
 # Executables
 **/*.exe
@@ -10,6 +10,7 @@
 *.class
 
 # Database files
+!releasing/arch-linux/plep.db
 plep.db
 Plep.iml
 
@@ -28,5 +29,7 @@ plep.iml
 releases/resources/
 
 # makepkg
-releasing/arch-linux/plep/
+releasing/arch-linux/plep-source/
 releasing/arch-linux/src/
+releasing/arch-linux/*.pkg.tar.xz
+releasing/arch-linux/pkg
