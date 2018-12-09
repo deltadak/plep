@@ -1,8 +1,11 @@
 package nl.deltadak.plep.database
 
 import nl.deltadak.plep.HomeworkTask
+import nl.deltadak.plep.database.tables.SubTasks
 import nl.deltadak.plep.database.tables.Tasks
 import org.jetbrains.exposed.sql.SchemaUtils
+import org.jetbrains.exposed.sql.deleteAll
+import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
@@ -13,6 +16,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 object TasksTableTest : Spek({
+    fun deleteAll() = regularTransaction { Tasks.deleteAll() }
     given("database with tasks table") {
         regularTransaction {
             SchemaUtils.drop(Tasks)
@@ -27,7 +31,7 @@ object TasksTableTest : Spek({
             it("should insert the value in the database") {
                 assertTrue { Tasks.getParentsOnDay(date).contains(task) }
             }
-            Tasks.deleteDay(date)
+            deleteAll()
         }
 
         on("inserting an empty task") {
@@ -39,13 +43,13 @@ object TasksTableTest : Spek({
         }
 
         on("updating the tasks on a day") {
-            Tasks.insertUpdate(date, task, 1)
+            Tasks.insertUpdate(date, task, order = 1)
             val tasks = Tasks.getParentsOnDay(date) + listOf(HomeworkTask(true, "new task 1"), HomeworkTask(false, "new task 2"))
             Tasks.updateDay(date, tasks)
             it("should update the tasks") {
                 tasks.forEach { assertTrue { Tasks.getParentsOnDay(date).contains(it) } }
             }
-            Tasks.deleteDay(date)
+            deleteAll()
         }
 
         on("requesting the highest order in a day") {
@@ -54,10 +58,11 @@ object TasksTableTest : Spek({
             it("should equal the highest order + 1") {
                 assertEquals(3, high)
             }
-            Tasks.deleteDay(date)
+            deleteAll()
         }
 
         on("requesting the highest id") {
+            task.databaseID = 1
             Tasks.insertUpdate(date, task, 1)
             val highID = Tasks.highestID()
             it("should equal the highest id + 1") {
