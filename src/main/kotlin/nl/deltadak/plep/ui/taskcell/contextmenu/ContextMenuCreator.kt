@@ -2,7 +2,6 @@ package nl.deltadak.plep.ui.taskcell.contextmenu
 
 import javafx.scene.control.*
 import javafx.scene.layout.GridPane
-import nl.deltadak.plep.Database
 import nl.deltadak.plep.database.DatabaseFacade
 import nl.deltadak.plep.database.tables.Colors
 import nl.deltadak.plep.ui.taskcell.TaskCell

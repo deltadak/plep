@@ -1,7 +1,6 @@
 package nl.deltadak.plep.ui.settingspane.colors
 
 import javafx.scene.control.ColorPicker
-import nl.deltadak.plep.Database
 import nl.deltadak.plep.database.tables.Colors
 import nl.deltadak.plep.ui.util.converters.toColor
 import nl.deltadak.plep.ui.util.converters.toHex

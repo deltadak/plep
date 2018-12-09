@@ -4,7 +4,6 @@ import javafx.collections.FXCollections
 import javafx.scene.control.*
 import javafx.scene.control.cell.TextFieldTreeCell
 import javafx.scene.layout.GridPane
-import nl.deltadak.plep.Database
 import nl.deltadak.plep.HomeworkTask
 import nl.deltadak.plep.database.tables.Labels
 import nl.deltadak.plep.ui.draganddrop.*

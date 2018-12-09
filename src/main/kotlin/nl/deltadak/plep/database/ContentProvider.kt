@@ -13,8 +13,8 @@ import javafx.scene.layout.GridPane
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import nl.deltadak.plep.Database
 import nl.deltadak.plep.HomeworkTask
+import nl.deltadak.plep.database.tables.Tasks
 import java.time.LocalDate
 import kotlinx.coroutines.javafx.JavaFx as FxMain
 
@@ -56,7 +56,7 @@ class ContentProvider {
         fun databaseTask() {
 
             // Get all the tasks from the database.
-            val allTasks = Database.INSTANCE.getTasksDay(localDate)
+            val allTasks = TaskFamily.getAllOnDay(localDate)
 
             // Find the parent tasks.
             val parents = allTasks.getParentTasks().toObservableList()
@@ -98,7 +98,7 @@ class ContentProvider {
         parent.expandedProperty().addListener { observable: ObservableValue<out Boolean>, oldValue: Boolean, newValue: Boolean ->
             val task = parent.value
             task.expanded = newValue
-            Database.INSTANCE.insertOrUpdateTask(localDate, task, parentIndex)
+            Tasks.insertUpdate(localDate, task, parentIndex)
         }
 
         // Find out the family size corresponding to this parent.

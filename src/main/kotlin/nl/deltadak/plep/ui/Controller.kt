@@ -4,7 +4,6 @@ import javafx.fxml.FXML
 import javafx.scene.control.*
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.GridPane
-import nl.deltadak.plep.Database
 import nl.deltadak.plep.commands.UndoFacility
 import nl.deltadak.plep.database.namesanddefaults.SettingsDefaults
 import nl.deltadak.plep.database.regularTransaction
@@ -81,9 +80,6 @@ class Controller {
      * Initialization method for the controller.
      */
     fun initialize() {
-
-        Database.INSTANCE.setDefaultDatabasePath()
-        Database.INSTANCE.createTables()
 
         listOf(Tasks, SubTasks, Settings, Labels, Colors).forEach { regularTransaction { SchemaUtils.create(it) }}
         // Put the default settings in the database.

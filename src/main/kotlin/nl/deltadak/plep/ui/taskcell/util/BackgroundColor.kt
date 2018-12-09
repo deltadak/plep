@@ -1,7 +1,6 @@
 package nl.deltadak.plep.ui.taskcell.util
 
 import javafx.application.Platform
-import nl.deltadak.plep.Database
 import nl.deltadak.plep.database.tables.Colors
 import nl.deltadak.plep.ui.taskcell.TaskCell
 

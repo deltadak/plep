@@ -3,9 +3,9 @@ package nl.deltadak.plep.commands
 import javafx.scene.control.ProgressIndicator
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeView
-import nl.deltadak.plep.Database
 import nl.deltadak.plep.HomeworkTask
 import nl.deltadak.plep.database.DatabaseFacade
+import nl.deltadak.plep.database.TaskFamily
 import nl.deltadak.plep.ui.treeview.TreeViewCleaner
 import java.time.LocalDate
 
@@ -45,7 +45,7 @@ open class DeleteCommand(
             // Use the TreeView to delete an item, to provide user feedback.
             tree.root.children.removeAt(this.index)
 
-            Database.INSTANCE.deleteByID(deletedItemsList[0].databaseID)
+            TaskFamily.deleteAll(deletedItemsList[0].databaseID)
             TreeViewCleaner().cleanSingleTreeView(tree)
         }
 

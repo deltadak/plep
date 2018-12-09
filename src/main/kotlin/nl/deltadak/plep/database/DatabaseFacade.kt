@@ -5,8 +5,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.javafx.JavaFx as FxMain
 import kotlinx.coroutines.launch
-import nl.deltadak.plep.Database
 import nl.deltadak.plep.HomeworkTask
+import nl.deltadak.plep.database.tables.Tasks
 import java.time.LocalDate
 
 
@@ -27,7 +27,7 @@ class DatabaseFacade(
 
         // Pushing to the database using coroutines.
         val job = GlobalScope.launch(Dispatchers.FxMain) {
-            Database.INSTANCE.updateTasksDay(day, homeworkTasks)
+            TaskFamily.updateAllDay(day, homeworkTasks)
         }
 
         // Only switch it on and off if it's not yet on.
@@ -51,7 +51,7 @@ class DatabaseFacade(
     fun pushParentData(day: LocalDate, parentTasks: List<HomeworkTask>) {
 
         val job = GlobalScope.launch(Dispatchers.FxMain) {
-            Database.INSTANCE.updateParentsDay(day, parentTasks)
+            Tasks.updateDay(day, parentTasks)
         }
 
         // Only switch it on and off if it's not yet on.

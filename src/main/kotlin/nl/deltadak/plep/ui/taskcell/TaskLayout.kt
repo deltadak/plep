@@ -9,7 +9,6 @@ import javafx.scene.layout.HBox
 import javafx.scene.layout.Priority
 import javafx.scene.layout.Region
 import javafx.scene.text.TextAlignment
-import nl.deltadak.plep.Database
 import nl.deltadak.plep.HomeworkTask
 import nl.deltadak.plep.database.tables.Colors
 import nl.deltadak.plep.ui.taskcell.components.textlabel.TextLabelStyle

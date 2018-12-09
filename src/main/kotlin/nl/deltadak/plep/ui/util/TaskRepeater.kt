@@ -2,9 +2,9 @@ package nl.deltadak.plep.ui.util
 
 import javafx.scene.control.ProgressIndicator
 import javafx.scene.layout.GridPane
-import nl.deltadak.plep.Database
 import nl.deltadak.plep.HomeworkTask
 import nl.deltadak.plep.database.ContentProvider
+import nl.deltadak.plep.database.TaskFamily
 import java.time.LocalDate
 
 /**
@@ -25,7 +25,7 @@ fun repeatTask(gridPane: GridPane, repeatNumber: Int, task: HomeworkTask, day: L
             }
             .forEach {
                 // Copy the task and its subtasks to the new day.
-                Database.INSTANCE.copyAndInsertTask(it, task)
+                TaskFamily.copyAndInsert(it, task)
             }
     // Refresh the UI.
    ContentProvider().setForAllDays(gridPane, focusDay, progressIndicator)
