@@ -14,6 +14,9 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
+/**
+ * Test the [TaskFamily] methods.
+ */
 object TaskFamilyTest : Spek({
     given("database with tasks table") {
         regularTransaction {

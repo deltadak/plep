@@ -5,6 +5,10 @@ import nl.deltadak.plep.database.tables.SubTasks
 import nl.deltadak.plep.database.tables.Tasks
 import java.time.LocalDate
 
+/**
+ * Implements operations for the database on families of tasks, thus operations that affect at least one parent task
+ * and one subtask.
+ */
 object TaskFamily {
 
     /**

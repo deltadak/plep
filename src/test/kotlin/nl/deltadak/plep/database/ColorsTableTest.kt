@@ -10,6 +10,9 @@ import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import kotlin.test.assertEquals
 
+/**
+ * Test the methods from the [Colors] table.
+ */
 object ColorsTableTest: Spek({
     given("database with colors table") {
         regularTransaction {

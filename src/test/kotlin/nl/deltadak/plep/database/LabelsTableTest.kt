@@ -10,6 +10,9 @@ import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
 import kotlin.test.assertEquals
 
+/**
+ * Test the methods from the [Labels] table.
+ */
 object LabelsTableTest : Spek({
     given("database with labels table") {
         regularTransaction {

@@ -3,8 +3,13 @@ package nl.deltadak.plep.database.tables
 import nl.deltadak.plep.database.regularTransaction
 import org.jetbrains.exposed.sql.*
 
+/**
+ * Describes the Colors table for the database, and implements operations on this table.
+ */
 object Colors : Table() {
+    /** ID of the color. */
     val id = integer("id").uniqueIndex()
+    /** String value of the hex code of the color, e.g. #ff6688*/
     val hex = varchar("hex", length = 10)
 
     /**

@@ -3,8 +3,13 @@ package nl.deltadak.plep.database.tables
 import nl.deltadak.plep.database.regularTransaction
 import org.jetbrains.exposed.sql.*
 
+/**
+ * Describes the Labels table for the database, and implements operation on this table.
+ */
 object Labels : Table() {
+    /** ID of the label. */
     val id = integer("id").uniqueIndex()
+    /** Text of the label. */
     val label = varchar("label", length = 10)
 
     /**

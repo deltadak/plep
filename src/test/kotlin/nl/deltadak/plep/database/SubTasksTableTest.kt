@@ -10,6 +10,9 @@ import org.jetbrains.spek.api.dsl.on
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+/**
+ * Test the methods from the [SubTasks] table.
+ */
 object SubTasksTableTest : Spek({
     given("database with a subtasks table") {
         regularTransaction {

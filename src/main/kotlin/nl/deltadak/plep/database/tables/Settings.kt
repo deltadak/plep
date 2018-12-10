@@ -7,8 +7,13 @@ import org.jetbrains.exposed.sql.insertIgnore
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.update
 
+/**
+ * Describes the Settings table for the database, and implements operations on this table.
+ */
 object Settings : Table() {
+    /** Name of the setting. */
     val name = varchar("name", length = 50).primaryKey().uniqueIndex()
+    /** Value of the setting. */
     val value = varchar("value", length = 50)
 
     /**

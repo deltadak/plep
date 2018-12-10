@@ -5,14 +5,26 @@ import nl.deltadak.plep.database.regularTransaction
 import org.jetbrains.exposed.sql.*
 import java.time.LocalDate
 
+/**
+ * Describes the Tasks table for the database, and implements operations on this table.
+ */
 object Tasks : Table() {
+    /** ID of a task. */
     val id = integer("id").primaryKey().uniqueIndex()
+    /** Boolean: true if the task is done, false if the task is not done. */
     val done = bool("done")
+    /** Day of the task in the format yyyy-mm-dd. */
     val day = varchar("day", length = 10)
+    /** Text of the task. */
     val task = varchar("task", length = 255)
+    /** Label of the task. */
     val label = varchar("label", length = 10)
+    /** Color of the task. */
     val color = integer("color")
+    /** Boolean: true if the task is expanded (subtasks are showing), false if the task is not expanded.
+     * Always false if task has no subtasks. */
     val expanded = bool("expanded")
+    /** The order of the task in a day, i.e., the tasks in a day are sorted by this number.*/
     val orderInDay = integer("orderInday")
 
 

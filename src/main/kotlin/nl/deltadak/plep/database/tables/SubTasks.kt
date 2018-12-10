@@ -7,9 +7,16 @@ import org.jetbrains.exposed.sql.deleteWhere
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 
+/**
+ * Describes the SubTasks table for the database, and implements operations on this table.
+ * A SubTask is always a child of a regular task (from the [Tasks] table).
+ */
 object SubTasks : Table() {
+    /** ID of its parent task. */
     val parentID = integer("parentID")
+    /** Boolean: true if this task is done, false if this task is not done. */
     val done = bool("done")
+    /** Text of the task. */
     val task = varchar("task", length = 255)
 
     /**
