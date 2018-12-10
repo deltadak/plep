@@ -63,8 +63,9 @@ dependencies {
     // Kotlin reflection.
     compile(kotlin("test"))
     compile(kotlin("test-junit"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:1.0.1")
+    // Do not install kotlin-coroutines version 1.0.1, it contains a bug
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:1.0.0")
 
 
     // JUnit 5
