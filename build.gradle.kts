@@ -9,7 +9,7 @@ version = "v1.2.3"
 
 plugins {
     application
-    kotlin("jvm") version "1.3.0"
+    kotlin("jvm") version "1.3.11"
     java // Required by at least JUnit.
 
     // Plugin to build .exe files.
