@@ -57,9 +57,9 @@ dependencies {
     compile("net.java.dev.jna:jna-platform:5.1.0")
 
     // Kotlin
-    compile(kotlin("stdlib"))
+    compile(kotlin("stdlib:1.3.11"))
     // To "prevent strange errors".
-    compile(kotlin("reflect"))
+    compile(kotlin("reflect:1.3.11"))
     // Kotlin reflection.
     compile(kotlin("test"))
     compile(kotlin("test-junit"))
