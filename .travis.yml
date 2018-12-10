@@ -3,6 +3,15 @@
 
 language: java
 
+sudo: false   # Linux OS: run in container
+
+jdk: oraclejdk9
+
+addons:
+ apt:
+  packages:
+   - oracle-java9-installer
+
 #sudo: false
 
 #jdk: openjdk8
