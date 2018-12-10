@@ -19,7 +19,7 @@ plugins {
     id("com.github.ben-manes.versions") version "0.20.0"
 
     // help/useLatestVersions updates dependency versions
-    id("se.patrikerdes.use-latest-versions") version "0.2.3"
+    id("se.patrikerdes.use-latest-versions") version "0.2.7"
 
     // Code coverage
     jacoco
@@ -44,17 +44,17 @@ dependencies {
     // https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc
     // 'compile' is deprecated, now it is 'api' but that fails to build with
 //    Could not find method api() for arguments [org.xerial:sqlite-jdbc:3.18.0] on object of type org.gradle.api.internal.artifacts.dsl.dependencies.DefaultDependencyHandler.
-    compile("org.xerial:sqlite-jdbc:3.23.1")
+    compile("org.xerial:sqlite-jdbc:3.25.2")
 
     // Database driver (for possible future use with Exposed).
     compile("com.h2database:h2:1.4.197")
     // Kotlin Exposed SQL DSL
     compile("org.jetbrains.exposed:exposed:0.11.2")
-    compile("org.slf4j:slf4j-simple:1.6.1")
+    compile("org.slf4j:slf4j-simple:1.8.0-beta2")
 
     // JNA, used to e.g. make a program pinnable to task bar.
-    compile("net.java.dev.jna:jna:4.5.2")
-    compile("net.java.dev.jna:jna-platform:4.5.2")
+    compile("net.java.dev.jna:jna:5.1.0")
+    compile("net.java.dev.jna:jna-platform:5.1.0")
 
     // Kotlin
     compile(kotlin("stdlib"))
@@ -64,22 +64,22 @@ dependencies {
     compile(kotlin("test"))
     compile(kotlin("test-junit"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:0.27.0-eap13")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:1.0.1")
 
 
     // JUnit 5
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.3.1")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.3.1")
-    testRuntime("org.junit.platform:junit-platform-console:1.3.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.3.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.3.2")
+    testRuntime("org.junit.platform:junit-platform-console:1.3.2")
 
     // Kotlintests are not run anyway when using JUnit 5 as well.
-    testCompile("io.kotlintest:kotlintest-core:3.1.10")
-    testCompile("io.kotlintest:kotlintest-assertions:3.1.10")
-    testCompile("io.kotlintest:kotlintest-runner-junit5:3.1.10")
+    testCompile("io.kotlintest:kotlintest-core:3.1.11")
+    testCompile("io.kotlintest:kotlintest-assertions:3.1.11")
+    testCompile("io.kotlintest:kotlintest-runner-junit5:3.1.11")
 
     // JavaFX tests using TestFX
-    testCompile("org.testfx:testfx-core:4.0.14-alpha")
-    testCompile("org.testfx:testfx-junit:4.0.14-alpha")
+    testCompile("org.testfx:testfx-core:4.0.15-alpha")
+    testCompile("org.testfx:testfx-junit:4.0.15-alpha")
     // Only needed for headless testing.
 //    testCompile("org.testfx:openjfx-monocle:8u76-b04") // jdk-9+181 for Java 9
 
@@ -96,17 +96,17 @@ repositories {
 
 /** Build an executable jar. */
 val fatJar = task("fatJar", type = Jar::class) {
-    baseName = project.name
-    manifest {
-        attributes["Implementation-Title"] = "Gradle Jar File Example"
-        attributes["Implementation-Version"] = version
-        attributes["Main-Class"] = "nl.deltadak.plep.Main"
-    }
-    from(configurations.runtime.map {
-        @Suppress("IMPLICIT_CAST_TO_ANY")
-        if (it.isDirectory) it else zipTree(it)
-    })
-    with(tasks["jar"] as CopySpec)
+//    baseName = project.name
+//    manifest {
+//        attributes["Implementation-Title"] = "Gradle Jar File Example"
+//        attributes["Implementation-Version"] = version
+//        attributes["Main-Class"] = "nl.deltadak.plep.Main"
+//    }
+//    from(configurations.runtime.map {
+//        @Suppress("IMPLICIT_CAST_TO_ANY")
+//        if (it.isDirectory) it else zipTree(it)
+//    })
+//    with(tasks["jar"] as CopySpec)
 }
 
 tasks {
