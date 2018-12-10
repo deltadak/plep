@@ -78,8 +78,8 @@ dependencies {
     testCompile("io.kotlintest:kotlintest-runner-junit5:3.1.10")
 
     // JavaFX tests using TestFX
-    testCompile("org.testfx:testfx-core:4.0.15-alpha")
-    testCompile("org.testfx:testfx-junit:4.0.15-alpha")
+    testCompile("org.testfx:testfx-core:4.0.14-alpha")
+    testCompile("org.testfx:testfx-junit:4.0.14-alpha")
     // Only needed for headless testing.
 //    testCompile("org.testfx:openjfx-monocle:8u76-b04") // jdk-9+181 for Java 9
 
