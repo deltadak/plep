@@ -13,8 +13,8 @@ addons:
      - oracle-java8-installer
 
 before_install:
-  # Install JavaFX for the JavaFX tests
-  - apt-get install openjfx
+ # Install JavaFX for the JavaFX tests
+ - apt-get install openjfx
  # make gradlew accessible to travis
  - chmod +x gradlew
  - if [[ "${TRAVIS_OS_NAME}" == linux ]]; then export DISPLAY=:99.0; sh -e /etc/init.d/xvfb start; fi
