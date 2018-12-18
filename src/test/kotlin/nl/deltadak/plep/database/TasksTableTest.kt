@@ -17,6 +17,7 @@ import kotlin.test.assertTrue
  * Test the methods from the [Tasks] table.
  */
 object TasksTableTest : Spek({
+    /** Delete all tasks. */
     fun deleteAll() = regularTransaction { Tasks.deleteAll() }
     given("database with tasks table") {
         regularTransaction {
