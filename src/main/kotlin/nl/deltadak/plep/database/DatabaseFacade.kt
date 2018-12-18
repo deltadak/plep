@@ -3,6 +3,7 @@ package nl.deltadak.plep.database
 import javafx.scene.control.ProgressIndicator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.javafx.JavaFx as FxMain
 import kotlinx.coroutines.launch
 import nl.deltadak.plep.HomeworkTask
@@ -30,16 +31,7 @@ class DatabaseFacade(
             TaskFamily.updateAllDay(day, homeworkTasks)
         }
 
-        // Only switch it on and off if it's not yet on.
-        if (!progressIndicator.isVisible) {
-
-            // Switch on progress indicator.
-            progressIndicator.isVisible = true
-
-            // Switch off progress indicator.
-            job.invokeOnCompletion { progressIndicator.isVisible = false }
-        }
-
+        switchProgressIndicator(job)
     }
 
     /**
@@ -54,6 +46,15 @@ class DatabaseFacade(
             Tasks.updateDay(day, parentTasks)
         }
 
+        switchProgressIndicator(job)
+    }
+
+    /**
+     * If progress indicator is not yet visible, switch it on and also switch it off when the job is finished.
+     *
+     * @param job The job the progress indicator has to wait for.
+     */
+    fun switchProgressIndicator(job: Job) {
         // Only switch it on and off if it's not yet on.
         if (!progressIndicator.isVisible) {
 

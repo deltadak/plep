@@ -25,6 +25,7 @@ class ColorsList(
             colorPickers[index].value = color.toColor()
         }
 
+        @Suppress("RedundantLambdaArrow") // Needed to have type inference for 'it'
         colorPickers.forEach { it.setOnAction{ _ -> editColor(it, refreshUI) }}
 
     }

@@ -56,7 +56,7 @@ Settings of v2.0.0
 Instructions for building from source in IntelliJ
 -------------------------------------------------
 
-Make sure you have JavaFX installed, for example on Arch Linux you can install the ``java-openjfx`` package.
+Make sure you have JavaFX installed, for example on Arch Linux you can install the ``java-openjfx`` package. If `javafx` still cannot be resolve, delete and re-add the SDK.
 
 -  To run or debug, use the Gradle task ``run``.
 -  To build an executable jar, use the task ``build``, the file is then

@@ -17,12 +17,12 @@ class SelectionCleaner(
      * If a TaskCell is selected, clear up all other selections as well.
      */
     fun addSelectionListener() {
-        tree.selectionModel.selectedItemProperty().addListener({
+        tree.selectionModel.selectedItemProperty().addListener {
             observable: ObservableValue<out TreeItem<HomeworkTask>>?, oldValue: TreeItem<HomeworkTask>?, newValue: TreeItem<HomeworkTask>? ->
             if (newValue != null) {
-                Selector(tree).select({ tree.selectionModel.select(newValue) })
+                Selector(tree).select { tree.selectionModel.select(newValue) }
             }
-        })
+        }
     }
 
 }

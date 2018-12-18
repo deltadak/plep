@@ -22,9 +22,7 @@ public class SlidingPaneKotlinHelper {
     @SuppressWarnings("JavaDoc")
     public void setOpenCloseButtonAction(Button openCloseButton, TranslateTransition openNav, TranslateTransition closeNav, EventHandler<MouseEvent> filter, AnchorPane slidingPane, AnchorPane main, GridPane gridPane) {
 
-        openCloseButton.setOnAction((ActionEvent evt) -> {
-            slidingPaneJavaHelper(openNav, closeNav, filter, slidingPane, main, gridPane);
-        });
+        openCloseButton.setOnAction((ActionEvent evt) -> slidingPaneJavaHelper(openNav, closeNav, filter, slidingPane, main, gridPane));
 
     }
 

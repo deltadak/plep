@@ -46,8 +46,8 @@ fun getAllTreeViews(gridPane: GridPane): List<TreeView<HomeworkTask>> {
             .forEach {
                 (it as Pane).children
                         .filterIsInstance<TreeView<HomeworkTask>>()
-                        .forEach {
-                            treeViews.add(it)
+                        .forEach { treeView ->
+                            treeViews.add(treeView)
                         }
             }
 

@@ -31,7 +31,7 @@ class OnCourseLabelChangeUpdater(
      */
     fun addValueChangeListener(treeCell: TextFieldTreeCell<HomeworkTask>) {
 
-        comboBox.valueProperty().addListener( { observable: ObservableValue<out String>?, oldValue: String?, newValue: String? ->
+        comboBox.valueProperty().addListener { observable: ObservableValue<out String>?, oldValue: String?, newValue: String? ->
 
             val task = treeCell.treeItem.value
 
@@ -39,12 +39,12 @@ class OnCourseLabelChangeUpdater(
                 task.label = ""
                 // Delay removing the combobox text because we cannot change the contents of an ObservableList while a change is in progress.
                 // In practice the delay is unnoticable.
-                Platform.runLater({comboBox.value = ""})
+                Platform.runLater {comboBox.value = ""}
             } else {
                 task.label = newValue ?: ""
             }
 
-        })
+        }
 
     }
 

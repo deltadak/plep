@@ -1,11 +1,9 @@
 package nl.deltadak.plep.database
 
 import nl.deltadak.plep.HomeworkTask
-import nl.deltadak.plep.database.tables.SubTasks
 import nl.deltadak.plep.database.tables.Tasks
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.deleteAll
-import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.given
 import org.jetbrains.spek.api.dsl.it
