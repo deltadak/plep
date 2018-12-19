@@ -65,6 +65,7 @@ Make sure you have JavaFX installed, for example on Arch Linux you can install t
 Building a Windows release
 --------------------------
 
+- Update the version number in ``build.gradle.kts``
 -  Run the gradle task launch4j/createExe
 -  Open InnoSetup on the setup file in ``releasing/Windows/innoSetup/PlepInstaller.iss``
 -  Update the version number
@@ -73,6 +74,7 @@ Building a Windows release
 Building an Arch Linux release
 ------------------------------
 
+- Update the version number in ``PKGBUILD`` and ``build.gradle.kts``
 - Make sure you have everything pushed
 - Go to ``releasing/arch-linux``
 - Run ``makepkg``

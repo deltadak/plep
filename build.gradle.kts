@@ -5,7 +5,7 @@ import org.gradle.api.plugins.ExtensionAware
 import org.gradle.jvm.tasks.Jar
 
 group = "deltadak"
-version = "v1.2.3"
+version = "v1.2.4"
 
 plugins {
     application
@@ -64,8 +64,8 @@ dependencies {
     compile(kotlin("test"))
     compile(kotlin("test-junit"))
     // Do not install kotlin-coroutines version 1.0.1, it contains a bug
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:1.0.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.0-alpha")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:1.1.0-alpha")
 
 
     // JUnit 5
