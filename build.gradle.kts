@@ -97,17 +97,16 @@ repositories {
 
 /** Build an executable jar. */
 val fatJar = task("fatJar", type = Jar::class) {
-//    baseName = project.name
-//    manifest {
-//        attributes["Implementation-Title"] = "Gradle Jar File Example"
-//        attributes["Implementation-Version"] = version
-//        attributes["Main-Class"] = "nl.deltadak.plep.Main"
-//    }
-//    from(configurations.runtime.map {
-//        @Suppress("IMPLICIT_CAST_TO_ANY")
-//        if (it.isDirectory) it else zipTree(it)
-//    })
-//    with(tasks["jar"] as CopySpec)
+    baseName = project.name
+    manifest {
+        attributes["Implementation-Title"] = "Gradle Jar File Example"
+        attributes["Implementation-Version"] = version
+        attributes["Main-Class"] = "nl.deltadak.plep.Main"
+    }
+    from(configurations.runtime.get().map {
+        if (it.isDirectory) it else zipTree(it)
+    })
+    with(tasks["jar"] as CopySpec)
 }
 
 tasks {
