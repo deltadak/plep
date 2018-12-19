@@ -4,7 +4,7 @@ package nl.deltadak.plep.ui.settingspane
 
 import javafx.scene.control.CheckBox
 import javafx.scene.control.Spinner
-import nl.deltadak.plep.database.namesanddefaults.SettingsDefaults
+import nl.deltadak.plep.database.settingsdefaults.SettingsDefaults
 import nl.deltadak.plep.database.tables.Settings
 import nl.deltadak.plep.ui.util.getNumberOfColumns
 import kotlin.reflect.KMutableProperty

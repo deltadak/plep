@@ -54,7 +54,7 @@ class DatabaseFacade(
      *
      * @param job The job the progress indicator has to wait for.
      */
-    fun switchProgressIndicator(job: Job) {
+    private fun switchProgressIndicator(job: Job) {
         // Only switch it on and off if it's not yet on.
         if (!progressIndicator.isVisible) {
 

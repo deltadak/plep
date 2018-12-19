@@ -1,4 +1,4 @@
-package nl.deltadak.plep.database.namesanddefaults
+package nl.deltadak.plep.database.settingsdefaults
 
 /**
  * The names of some settings in the database.

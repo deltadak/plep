@@ -8,7 +8,7 @@ import javafx.scene.layout.GridPane
 import nl.deltadak.plep.HomeworkTask
 import nl.deltadak.plep.commands.UndoFacility
 import nl.deltadak.plep.database.ContentProvider
-import nl.deltadak.plep.database.namesanddefaults.SettingsDefaults
+import nl.deltadak.plep.database.settingsdefaults.SettingsDefaults
 import nl.deltadak.plep.database.tables.Settings
 import nl.deltadak.plep.keylisteners.TaskDeletionInitialiser
 import nl.deltadak.plep.ui.taskcell.TaskCell

@@ -1,6 +1,6 @@
 package nl.deltadak.plep.database.tables
 
-import nl.deltadak.plep.database.namesanddefaults.SettingsDefaults
+import nl.deltadak.plep.database.settingsdefaults.SettingsDefaults
 import nl.deltadak.plep.database.regularTransaction
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.insertIgnore

@@ -1,6 +1,6 @@
 package nl.deltadak.plep.database
 
-import nl.deltadak.plep.database.namesanddefaults.SettingsDefaults
+import nl.deltadak.plep.database.settingsdefaults.SettingsDefaults
 import nl.deltadak.plep.database.tables.Settings
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.selectAll

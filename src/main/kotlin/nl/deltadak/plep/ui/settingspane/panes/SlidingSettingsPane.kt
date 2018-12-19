@@ -3,7 +3,7 @@ package nl.deltadak.plep.ui.settingspane.panes
 import javafx.scene.control.*
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.GridPane
-import nl.deltadak.plep.database.namesanddefaults.SettingsDefaults
+import nl.deltadak.plep.database.settingsdefaults.SettingsDefaults
 import nl.deltadak.plep.database.tables.Settings
 import nl.deltadak.plep.ui.settingspane.AutoColumnsAction
 import nl.deltadak.plep.ui.settingspane.applybuttons.ApplyNumberOfColumnsAction

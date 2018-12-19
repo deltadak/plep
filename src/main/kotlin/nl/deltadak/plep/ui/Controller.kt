@@ -5,7 +5,7 @@ import javafx.scene.control.*
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.GridPane
 import nl.deltadak.plep.commands.UndoFacility
-import nl.deltadak.plep.database.namesanddefaults.SettingsDefaults
+import nl.deltadak.plep.database.settingsdefaults.SettingsDefaults
 import nl.deltadak.plep.database.regularTransaction
 import nl.deltadak.plep.database.tables.*
 import nl.deltadak.plep.keylisteners.UndoKeyListener
