@@ -48,9 +48,6 @@ dependencies {
 
     // Database driver (for possible future use with Exposed).
     compile("com.h2database:h2:1.4.197")
-    // Kotlin Exposed SQL DSL
-    compile("org.jetbrains.exposed:exposed:0.11.2")
-    compile("org.slf4j:slf4j-simple:1.8.0-beta2")
 
     // JNA, used to e.g. make a program pinnable to task bar.
     compile("net.java.dev.jna:jna:5.1.0")
@@ -58,14 +55,21 @@ dependencies {
 
     // Kotlin
     compile(kotlin("stdlib:1.3.11"))
+
     // To "prevent strange errors".
     compile(kotlin("reflect:1.3.11"))
+
     // Kotlin reflection.
     compile(kotlin("test"))
     compile(kotlin("test-junit"))
-    // Do not install kotlin-coroutines version 1.0.1, it contains a bug
+
+    // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.0-alpha")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:1.1.0-alpha")
+
+    // Kotlin Exposed SQL DSL
+    compile("org.jetbrains.exposed:exposed:0.11.2")
+    compile("org.slf4j:slf4j-simple:1.8.0-beta2")
 
 
     // JUnit 5
@@ -99,7 +103,7 @@ repositories {
 val fatJar = task("fatJar", type = Jar::class) {
     baseName = project.name
     manifest {
-        attributes["Implementation-Title"] = "Gradle Jar File Example"
+        attributes["Implementation-Title"] = "Gradle Jar File"
         attributes["Implementation-Version"] = version
         attributes["Main-Class"] = "nl.deltadak.plep.Main"
     }

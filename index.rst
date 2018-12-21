@@ -6,8 +6,7 @@ Plep
 
 Plepping is the new planning.
 
-Plep works like a real agenda, but with the advantages of your Windows
-computer.
+Plep works and looks like a real agenda, but with the advantages of having it on your computer.
 
 Downloads
 ---------
@@ -77,7 +76,7 @@ Building an Arch Linux release
 - Update the version number in ``PKGBUILD`` and ``build.gradle.kts``
 - Make sure you have everything pushed
 - Go to ``releasing/arch-linux``
-- Run ``makepkg``
+- Run ``makepkg -f``
 - The generated package file will be ``plep-vx.x.x-1-any.pkg.tar.xz``
 - Check that it contains the right files with ``sudo pacman -Qlp plep-vx.x.x-1-any.pkg.tar.xz``
 - Install with ``sudo pacman -U plep-vx.x.x-1-any.pkg.tar.xz``
