@@ -16,4 +16,6 @@ enum class SettingsDefaults(
     MAX_COLUMNS("max_columns", "3"),
     /** Whether the number of columns should be calculated automatically. */
     MAX_COLUMNS_AUTO("max_columns_auto", "true"),
+    /** To check whether a database exists, because Exposed doesn't provide a method for that. */
+    TEST("present", "yes")
 }

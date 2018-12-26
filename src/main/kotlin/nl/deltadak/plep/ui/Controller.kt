@@ -14,6 +14,7 @@ import nl.deltadak.plep.ui.settingspane.panes.SlidingPane
 import nl.deltadak.plep.ui.settingspane.panes.SlidingSettingsPane
 import nl.deltadak.plep.ui.util.DEFAULT_COLORS
 import org.jetbrains.exposed.sql.SchemaUtils
+import org.sqlite.SQLiteException
 import java.time.LocalDate
 
 @Suppress("KDocMissingDocumentation") // FXML references.
@@ -81,11 +82,21 @@ class Controller {
      */
     fun initialize() {
 
-        listOf(Tasks, SubTasks, Settings, Labels, Colors).forEach { regularTransaction { SchemaUtils.create(it) }}
-        // Put the default settings in the database.
-        SettingsDefaults.values().forEach { Settings.insert(it, it.default) }
-        // Put the default colors in the database.
-        (1..DEFAULT_COLORS.size).forEach { Colors.insert(it, DEFAULT_COLORS[it-1]) }
+        // Try to find out if a database already exists.
+        try {
+            regularTransaction { Settings.insert(SettingsDefaults.TEST, SettingsDefaults.TEST.default) }
+        } catch(e: SQLiteException) {
+            // Hopefully this exception was thrown because no database exists yet. Create one with default values.
+
+            // Create the tables in the database.
+            listOf(Tasks, SubTasks, Settings, Labels, Colors).forEach { regularTransaction { SchemaUtils.create(it) }}
+
+            // Put the default settings in the database.
+            SettingsDefaults.values().forEach { Settings.insert(it, it.default) }
+
+            // Put the default colors in the database.
+            (1..DEFAULT_COLORS.size).forEach { Colors.insert(it, DEFAULT_COLORS[it-1]) }
+        }
 
         numberOfDays = Settings.get(SettingsDefaults.NUMBER_OF_DAYS).let { if(it=="") 0 else it.toInt() }
         numberOfMovingDays = Settings.get(SettingsDefaults.NUMBER_OF_MOVING_DAYS).let {if(it=="") 0 else it.toInt()}
