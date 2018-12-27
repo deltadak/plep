@@ -2,6 +2,8 @@ package nl.deltadak.plep.database.settingsdefaults
 
 /**
  * The names of some settings in the database.
+ *
+ * Note that the name of a value has to equal the settingsName converted to uppercase.
  */
 enum class SettingsDefaults(
         /** Name. */
@@ -17,5 +19,5 @@ enum class SettingsDefaults(
     /** Whether the number of columns should be calculated automatically. */
     MAX_COLUMNS_AUTO("max_columns_auto", "true"),
     /** To check whether a database exists, because Exposed doesn't provide a method for that. */
-    TEST("present", "yes")
+    TEST("test", "yes")
 }

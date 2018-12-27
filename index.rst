@@ -60,6 +60,7 @@ Make sure you have JavaFX installed, for example on Arch Linux you can install t
 -  To run or debug, use the Gradle task ``run``.
 -  To build an executable jar, use the task ``build``, the file is then
    in ``build/libs/``.
+-  To run tests from IntelliJ, install the Spek (and possibly also Spek Framework) plugin.
 
 Building a Windows release
 --------------------------
@@ -74,11 +75,11 @@ Building an Arch Linux release
 ------------------------------
 
 - Update the version number in ``PKGBUILD`` and ``build.gradle.kts``
-- Make sure you have everything pushed
+- Make sure you have everything pushed (you don't have to have the ``PKGBUILD`` pushed, but all the other build files)
 - Go to ``releasing/arch-linux``
-- Run ``makepkg -f``
+- Run ``makepkg -f`` or to only repackage ``makepkg -f --repackage``
 - The generated package file will be ``plep-vx.x.x-1-any.pkg.tar.xz``
-- Check that it contains the right files with ``sudo pacman -Qlp plep-vx.x.x-1-any.pkg.tar.xz``
+- Check that it contains the right files with ``pacman -Qlp plep-vx.x.x-1-any.pkg.tar.xz``
 - Install with ``sudo pacman -U plep-vx.x.x-1-any.pkg.tar.xz``
 
 

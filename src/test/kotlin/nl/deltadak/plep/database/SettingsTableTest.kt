@@ -23,8 +23,8 @@ object SettingsTableTest : Spek({
         on("inserting default values") {
             SettingsDefaults.values().forEach {
                 Settings.insert(it, it.default) }
-            it("should contain exactly four values") {
-                assertEquals(4, regularTransaction { Settings.selectAll().toList().size })
+            it("should contain exactly five values") {
+                assertEquals(5, regularTransaction { Settings.selectAll().toList().size })
             }
 
             it("should contain the default values") {
