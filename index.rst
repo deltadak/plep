@@ -42,6 +42,12 @@ Note: The first time plep is ran, it will create a database file in the
 folder where the jar is stored. Check for this file, otherwise your data
 won’t be saved. You can backup this if you don’t want to lose your data.
 
+Updating Plep on Linux
+----------------------
+
+Because of file permissions, an empty database with the correct permissions is created in ``/usr/lib/plep/lib/plep.db`` when the package is installed.
+If you want to reuse an old database, backup that first and then replace it again (e.g. with ``cp -a --remove-destination plep_backup.db /usr/lib/plep/lib/plep.db``).
+
 Screenshot of v2.0.0
 --------------------
 
