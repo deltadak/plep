@@ -1,5 +1,6 @@
 // Gradle file from https://github.com/PHPirates/kotlin-template-project
 
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.gradle.api.plugins.ExtensionAware
 
 import org.gradle.jvm.tasks.Jar
@@ -15,6 +16,9 @@ plugins {
     // Plugin to build .exe files.
     id("edu.sc.seis.launch4j") version "2.4.4"
 
+    // Plugin to build fat jars
+    id("com.github.johnrengelman.shadow") version "4.0.3"
+
     // help/dependencyUpdates checks for dependency updates.
     id("com.github.ben-manes.versions") version "0.20.0"
 
@@ -26,12 +30,6 @@ plugins {
 
     // Upload jacoco coverage reports to coveralls
     id("com.github.kt3k.coveralls") version "2.8.2"
-}
-
-launch4j {
-    mainClassName = "nl.deltadak.plep.MainKt"
-    icon = "$projectDir/src/main/resources/plep32.ico"
-    manifest = "$projectDir/releasing/Windows/launch4j/plep.manifest"
 }
 
 application {
@@ -99,23 +97,26 @@ repositories {
     mavenLocal()
 }
 
-/** Build an executable jar. */
-val fatJar = task("fatJar", type = Jar::class) {
-    baseName = project.name
-    manifest {
-        attributes["Implementation-Title"] = "Gradle Jar File"
-        attributes["Implementation-Version"] = version
-        attributes["Main-Class"] = "nl.deltadak.plep.Main"
-    }
-    from(configurations.runtime.get().map {
-        if (it.isDirectory) it else zipTree(it)
-    })
-    with(tasks["jar"] as CopySpec)
+
+shadow {
+
+}
+
+launch4j {
+    mainClassName = "nl.deltadak.plep.MainKt"
+    icon = "$projectDir/src/main/resources/plep32.ico"
+    manifest = "$projectDir/releasing/Windows/launch4j/plep.manifest"
 }
 
 tasks {
+
+    //
+    "shadowJar"(ShadowJar::class) {
+        classifier = ""
+    }
+
     "build" {
-        dependsOn(fatJar)
+        dependsOn(shadowJar)
     }
 
     // Use the built-in JUnit support of Gradle.

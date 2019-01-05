@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Plep"
-#define MyAppVersion "v1.2.3"
+#define MyAppVersion "v1.2.4"
 #define MyAppPublisher "Deltadak"
 #define MyAppURL "https://github.com/deltadak/plep"
 #define MyAppExeName "plep.exe"

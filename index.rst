@@ -77,6 +77,8 @@ Building a Windows release
 -  Update the version number
 -  Click Build \| Compile, the generated installer will be next to the setup file.
 
+- If Plep doesn't start, some exception was thrown. Try the Gradle task 'shadowJar' and execute the jar file generated in build/libs with `java -jar plep-vx.x.x-all.jar`.
+
 Building an Arch Linux release
 ------------------------------
 

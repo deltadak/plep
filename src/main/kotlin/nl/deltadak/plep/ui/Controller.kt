@@ -5,8 +5,9 @@ import javafx.scene.control.*
 import javafx.scene.layout.AnchorPane
 import javafx.scene.layout.GridPane
 import nl.deltadak.plep.commands.UndoFacility
-import nl.deltadak.plep.database.settingsdefaults.SettingsDefaults
+import nl.deltadak.plep.database.DatabaseFacade
 import nl.deltadak.plep.database.regularTransaction
+import nl.deltadak.plep.database.settingsdefaults.SettingsDefaults
 import nl.deltadak.plep.database.tables.*
 import nl.deltadak.plep.keylisteners.UndoKeyListener
 import nl.deltadak.plep.ui.gridpane.GridPaneInitializer
@@ -14,7 +15,7 @@ import nl.deltadak.plep.ui.settingspane.panes.SlidingPane
 import nl.deltadak.plep.ui.settingspane.panes.SlidingSettingsPane
 import nl.deltadak.plep.ui.util.DEFAULT_COLORS
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.sqlite.SQLiteException
+import java.io.File
 import java.time.LocalDate
 
 @Suppress("KDocMissingDocumentation") // FXML references.
@@ -82,12 +83,10 @@ class Controller {
      */
     fun initialize() {
 
-        // Try to find out if a database already exists.
-        try {
-            regularTransaction { Settings.insert(SettingsDefaults.TEST, SettingsDefaults.TEST.default) }
-        } catch(e: SQLiteException) {
-            // Hopefully this exception was thrown because no database exists yet. Create one with default values.
-
+        // Try to find out if a database already exists, create if not.
+        val databasePath = "${File(DatabaseFacade::class.java.protectionDomain.codeSource.location.toURI()).parent}/plep.db"
+        println("Checking for a database at $databasePath")
+        if (!File(databasePath).isFile) {
             // Create the tables in the database.
             listOf(Tasks, SubTasks, Settings, Labels, Colors).forEach { regularTransaction { SchemaUtils.create(it) }}
 
