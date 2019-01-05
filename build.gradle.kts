@@ -97,11 +97,6 @@ repositories {
     mavenLocal()
 }
 
-
-shadow {
-
-}
-
 launch4j {
     mainClassName = "nl.deltadak.plep.MainKt"
     icon = "$projectDir/src/main/resources/plep32.ico"
@@ -110,7 +105,7 @@ launch4j {
 
 tasks {
 
-    //
+    // Configure the shadowJar task.
     "shadowJar"(ShadowJar::class) {
         classifier = ""
     }
