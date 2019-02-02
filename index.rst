@@ -61,7 +61,9 @@ Settings of v2.0.0
 Instructions for building from source in IntelliJ
 -------------------------------------------------
 
-Make sure you have JavaFX installed, for example on Arch Linux you can install the ``java-openjfx`` package. If `javafx` still cannot be resolve, delete and re-add the SDK.
+To install java on Fedora, install the ``java-openjdk-devel`` package (the regular ``openjdk`` only contains the jre, and not the jdk).
+
+Make sure you have JavaFX installed, for example on Arch Linux and Fedora you can install the ``java-openjfx`` package. If `javafx` still cannot be resolve, delete and re-add the SDK.
 
 -  To run or debug, use the Gradle task ``run``.
 -  To build an executable jar, use the task ``build``, the file is then
@@ -89,6 +91,24 @@ Building an Arch Linux release
 - The generated package file will be ``plep-vx.x.x-1-any.pkg.tar.xz``
 - Check that it contains the right files with ``pacman -Qlp plep-vx.x.x-1-any.pkg.tar.xz``
 - Install with ``sudo pacman -U plep-vx.x.x-1-any.pkg.tar.xz``
+
+Building a Fedora release
+-------------------------
+
+- Make sure you have the ``rpm-build`` and ``rpmdevtools`` packages installed.
+- Compress the sources into a ``tar`` file, using (in the ``plep`` directory): ``tar czf ~/rpmbuild/SOURCES/plep-x.x.x.tar.gz file1 file2 file3 ... filen``. You should include (at least) the following files/directories:
+  - ``./gradle``
+  - ``./releasing/fedora`` (it contains the ``plep.desktop`` file)
+  - ``./src``
+  - ``build.gradle.kts``
+  - ``gradlew``
+  - ``gradlew.bat``
+  - ``LICENSE``
+  - ``settings.gradle.kts``
+- Update the version number in ``plep.spec`` and ``build.gradle.kts``.
+- Go to ``releasing/fedora``.
+- Run ``rpmbuild -bb plep.spec`` to create the rpm file. This will create the rpm file in ``~rpmbuild/RPMS/noarch/``.
+- Install the rpm with ``rpm -Uvh plep-x.x.x-y.fc29.noarch``, where ``x.x.x`` is the version number, and ``y`` the release number.
 
 
 `Javadoc (obsolete)`_

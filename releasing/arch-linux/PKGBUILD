@@ -1,7 +1,7 @@
 #@IgnoreInspection BashAddShebang
 # Maintainers: Abby and Thomas at abbythomasorganisation@gmail.com
 pkgname=plep
-pkgver=v1.2.4
+pkgver=v1.2.5
 pkgrel=1
 epoch=
 pkgdesc=" An agenda for planning a few tasks per day right on your desktop."

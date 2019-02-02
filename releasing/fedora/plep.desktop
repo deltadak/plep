@@ -1,0 +1,8 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=Plep
+Icon=plep32
+Exec=/usr/bin/plep
+Terminal=false
+Type=Application
+Categories=Applications;

@@ -1,12 +1,9 @@
 // Gradle file from https://github.com/PHPirates/kotlin-template-project
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.gradle.api.plugins.ExtensionAware
-
-import org.gradle.jvm.tasks.Jar
 
 group = "deltadak"
-version = "v1.2.4"
+version = "v1.2.5"
 
 plugins {
     application
@@ -69,7 +66,6 @@ dependencies {
     compile("org.jetbrains.exposed:exposed:0.11.2")
     compile("org.slf4j:slf4j-simple:1.8.0-beta2")
 
-
     // JUnit 5
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.3.2")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.3.2")
@@ -128,7 +124,6 @@ tasks {
             xml.isEnabled = true
             xml.destination = file("$buildDir/reports/jacoco/test/jacocoTestReport.xml")
         }
-
     }
 }
 
