@@ -1,0 +1,27 @@
+# Name is plepsnap instead of plep so it doens't clash with the plep you
+# might already have installed. Maybe we could change this once we know
+# what exactly it does.
+#
+# Note that this yaml is a first version, just to see what it would
+# produce, if anything.
+
+name: plepsnap
+version: '1.2.5'
+summary: An agenda for planning a few tasks per day right on your desktop.
+description: A snap package for plep.
+
+confinement: devmode
+
+apps:
+    plepsnap:
+        command: java -jar $SNAP/plep-1.2.5/plep-v1.2.5.jar
+        plugs: [openjdk-8, openjfx-8]
+
+parts:
+    plepsnap:
+        plugin: gradle
+        override-build: |
+            ./gradlew build
+
+            install -d "${SNAPCRAFT_PART_INSTALL}/opt/plepsnap"
+        source: https://github.com/deltadak/plep.git

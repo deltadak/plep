@@ -111,6 +111,15 @@ Building a Fedora release
 - Install the rpm with ``rpm -Uvh plep-x.x.x-y.fc29.noarch``, where ``x.x.x`` is the version number, and ``y`` the release number.
 
 
+Snap(craft)
+-----------
+
+So far... Seems like building snaps (using snapcraft) only works on Ubuntu.
+- Install snap
+- Use snap to install snapcraft: ``sudo snap install snapcraft --classic``
+- cd to the plep folder (it holds the ``snapcraft.yaml``)
+- Run snapcraft: ``snapcraft``
+
 `Javadoc (obsolete)`_
 ---------------------
 
