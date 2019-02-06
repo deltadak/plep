@@ -7,14 +7,14 @@ version = "v1.2.5"
 
 plugins {
     application
-    kotlin("jvm") version "1.3.11"
+    kotlin("jvm") version "1.3.20"
     java // Required by at least JUnit.
 
     // Plugin to build .exe files.
     id("edu.sc.seis.launch4j") version "2.4.4"
 
     // Plugin to build fat jars
-    id("com.github.johnrengelman.shadow") version "4.0.3"
+    id("com.github.johnrengelman.shadow") version "4.0.4"
 
     // help/dependencyUpdates checks for dependency updates.
     id("com.github.ben-manes.versions") version "0.20.0"
@@ -45,8 +45,8 @@ dependencies {
     compile("com.h2database:h2:1.4.197")
 
     // JNA, used to e.g. make a program pinnable to task bar.
-    compile("net.java.dev.jna:jna:5.1.0")
-    compile("net.java.dev.jna:jna-platform:5.1.0")
+    compile("net.java.dev.jna:jna:5.2.0")
+    compile("net.java.dev.jna:jna-platform:5.2.0")
 
     // Kotlin
     compile(kotlin("stdlib:1.3.11"))
@@ -59,22 +59,22 @@ dependencies {
     compile(kotlin("test-junit"))
 
     // Coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.0-alpha")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:1.1.0-alpha")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:1.1.1")
 
     // Kotlin Exposed SQL DSL
-    compile("org.jetbrains.exposed:exposed:0.11.2")
+    compile("org.jetbrains.exposed:exposed:0.12.1")
     compile("org.slf4j:slf4j-simple:1.8.0-beta2")
 
     // JUnit 5
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.3.2")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.3.2")
-    testRuntime("org.junit.platform:junit-platform-console:1.3.2")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.4.0-RC2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.4.0-RC2")
+    testRuntime("org.junit.platform:junit-platform-console:1.4.0-RC2")
 
     // Kotlintests are not run anyway when using JUnit 5 as well.
-    testCompile("io.kotlintest:kotlintest-core:3.1.11")
-    testCompile("io.kotlintest:kotlintest-assertions:3.1.11")
-    testCompile("io.kotlintest:kotlintest-runner-junit5:3.1.11")
+    testCompile("io.kotlintest:kotlintest-core:3.2.1")
+    testCompile("io.kotlintest:kotlintest-assertions:3.2.1")
+    testCompile("io.kotlintest:kotlintest-runner-junit5:3.2.1")
 
     // JavaFX tests using TestFX
     testCompile("org.testfx:testfx-core:4.0.15-alpha")
