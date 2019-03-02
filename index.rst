@@ -110,6 +110,71 @@ Building a Fedora release
 - Run ``rpmbuild -bb plep.spec`` to create the rpm file. This will create the rpm file in ``~rpmbuild/RPMS/noarch/``.
 - Install the rpm with ``rpm -Uvh plep-x.x.x-y.fc29.noarch``, where ``x.x.x`` is the version number, and ``y`` the release number.
 
+Building a Debian release
+-------------------------
+
+Source: https://www.debian.org/doc/devel-manuals#debmake-doc
+
+- Install the ``build-essential devscripts pbuilder cowbuilder lintian mc debmake`` packages
+- Put the following in ``~/.bashrc`` (assuming you use bash)::
+
+    export HISTCONTROL=ignoreboth
+    . /usr/lib/mc/mc.sh
+
+- Put in ``~/.pbuilderrc``::
+
+    AUTO_DEBSIGN="${AUTO_DEBSIGN:-no}"
+    PDEBUILD_PBUILDER=cowbuilder
+    HOOKDIR="/var/cache/pbuilder/hooks"
+    MIRRORSITE="http://deb.debian.org/debian/"
+    #APTCACHE=/var/cache/pbuilder/aptcache
+    APTCACHE=/var/cache/apt/archives
+    #BUILDRESULT=/var/cache/pbuilder/result/
+    BUILDRESULT=../
+    EXTRAPACKAGES="ccache lintian libeatmydata1"
+    # enable to use libeatmydata1 for pbuilder
+    #export LD_PRELOAD=${LD_PRELOAD+$LD_PRELOAD:}libeatmydata.so
+    # enable ccache for pbuilder
+    #export PATH="/usr/lib/ccache${PATH+:$PATH}"
+    #export CCACHE_DIR="/var/cache/pbuilder/ccache"
+    #BINDMOUNTS="${CCACHE_DIR}"
+    # parallel make
+    #DEBBUILDOPTS=-j8
+- Simlink the file with ``sudo ln -s ~/.pbuilderrc /root/.pbuilderrc``
+- ``sudo mkdir /var/cache/pbuilder/hooks``
+- Put in ``/var/cache/pbuilder/hooks/B90lintian``::
+
+    #!/bin/sh
+    set -e
+    apt-get -y --allow-downgrades install lintian
+    echo "+++ lintian output +++"
+    su -c "lintian -i -I --show-overrides /tmp/buildd/*.changes; :" -l pbuilder
+    echo "+++ end of lintian output +++"
+
+- and in ``/var/cache/pbuilder/hooks/C10shell``::
+
+    #!/bin/sh
+    set -e
+    apt-get -y --allow-downgrades install vim bash mc
+    # invoke shell if build fails
+    cd /tmp/buildd/*/debian/..
+    /bin/bash < /dev/tty > /dev/tty 2> /dev/tty
+
+- ``sudo chmod +x /var/cache/pbuilder/hooks/B90lintian``
+- ``sudo chmod +x /var/cache/pbuilder/hooks/C10shell``
+- Configure git-buildpackage by putting in ``~/.gbp.conf``::
+
+    # Configuration file for "gbp <command>"
+    [DEFAULT]
+    # the default build command:
+    builder = git-pbuilder -i -I -us -uc
+    # use pristine-tar:
+    pristine-tar = True
+    # Use color when on a terminal, alternatives: on/true, off/false or auto
+    color = auto
+
+
+    use debmake and pdebuild
 
 `Javadoc (obsolete)`_
 ---------------------
