@@ -1,6 +1,7 @@
 jobs:
   include:
-    - # Config file to set up TestFX correctly.
+    - name: Kotlin/Java desktop app
+      # Config file to set up TestFX correctly.
       # Adapted from https://github.com/TestFX/TestFX/wiki/Travis-CI
 
       language: java
@@ -37,7 +38,8 @@ jobs:
          - $HOME/.gradle/caches/
          - $HOME/.gradle/wrapper/
 
-    - # This is the simple Travis configuration, which is intended for use
+    - name: Haskell web app
+      # This is the simple Travis configuration, which is intended for use
       # on applications which do not require cross-platform and
       # multiple-GHC-version support. For more information and other
       # options, see:
