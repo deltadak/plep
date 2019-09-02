@@ -1,10 +1,6 @@
-{-# LANGUAGE FlexibleContexts      #-}
-{-# LANGUAGE FlexibleInstances     #-}
-{-# LANGUAGE GADTs                 #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE OverloadedStrings     #-}
-{-# LANGUAGE TypeFamilies          #-}
-
+{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 module Site
   ( runApp
   ) where
@@ -16,6 +12,9 @@ import           Data.IORef
 import           Data.Semigroup                ((<>))
 import           Data.Text                     (Text)
 import qualified Data.Text                     as T
+import Data.Map (Map)
+import qualified Data.Map as M
+import Data.HVect
 
 import           Database.Persist              hiding (get)
 import qualified Database.Persist              as P
@@ -31,23 +30,38 @@ import TypeDefinitions
 import           Model
 import Database
 import Views
+import Data.Maybe (fromMaybe)
 
 runApp :: IO ()
 runApp = do
+  session <- newIORef M.empty
   pool <- runStdoutLoggingT $ createSqlitePool "notes.db" 5
-  cfg <- defaultSpockCfg () (PCPool pool) ()
+  cfg <- defaultSpockCfg session (PCPool pool) ()
   runStdoutLoggingT $ runSqlPool (runMigration migrateAll) pool
   runSpock 8080 (spock cfg app)
 
 app :: Server ()
 app = do
-  middleware $ staticPolicy (addBase "static")
-  get root $ do
-    notes' <- runSql allNotes
-    lucid $ rootHtml notes'
-  post root $ do
-    author <- param' "author"
-    contents <- param' "contents"
-    runSql $ insert (Note author contents)
-    redirect "/"
-  get ("hello" <//> var) $ \x -> lucid $ helloHtml x
+  get "login" $ lucid loginPage
+  post "login" $ redirect "/"
+  prehook authHook $ do
+    middleware $ staticPolicy (addBase "static")
+    get root $ do
+      notes' <- runSql allNotes
+      lucid $ rootHtml notes'
+    post "/" $ do
+      author <- param' "author"
+      contents <- param' "contents"
+      runSql $ insert (Note author contents)
+      redirect "/"
+    
+-- | Authenticate the user. If 
+authHook :: Web.Spock.ActionCtxT () (WebStateM SqlBackend Session ()) ()
+authHook = do
+  oldCtx <- getContext
+  session <- readSession
+  sessionMap <- liftIO $ readIORef session
+  case M.lookup "user" sessionMap of   
+    Nothing -> redirect "login"
+    Just user -> redirect "/"
+    

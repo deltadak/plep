@@ -1,18 +1,26 @@
-module Views (helloHtml, rootHtml) where
+module Views
+  ( loginPage
+  , rootHtml
+  ) where
 
-import Data.Text (Text)
-import qualified Data.Text as T
-import           Control.Monad                 (forM_)
+import           Control.Monad (forM_)
+import           Data.Text     (Text)
+import qualified Data.Text     as T
 
-import Lucid
+import           Lucid
 
-import Model
+import           Model
 
-helloHtml :: Text -> Html ()
-helloHtml name =
-  h1_ $ do
-    "hello "
-    toHtml name
+loginPage :: Html ()
+loginPage =
+  form_ [method_ "post"] $ do
+        label_ $ do
+          "Username: "
+          input_ [name_ "username"]
+        label_ $ do
+          "Password: "
+          input_ [name_ "password"]
+        input_ [type_ "submit", value_ "Log In"]
 
 rootHtml :: [Note] -> Html ()
 rootHtml notes = do

@@ -12,4 +12,7 @@ share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
   Note
     author Text
     contents Text
+    
+  User
+    username Text
 |]
