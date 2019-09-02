@@ -1,36 +1,80 @@
-# Config file to set up TestFX correctly.
-# Adapted from https://github.com/TestFX/TestFX/wiki/Travis-CI
+jobs:
+  include:
+    - # Config file to set up TestFX correctly.
+      # Adapted from https://github.com/TestFX/TestFX/wiki/Travis-CI
 
-language: java
+      language: java
 
-jdk: openjdk8
+      jdk: openjdk8
 
-services:
-  - xvfb
+      services:
+        - xvfb
 
-before_install:
-  - sudo apt update
-  - sudo apt install openjfx
-  - chmod +x ./gradlew
-  - export DISPLAY=:99.0
+      before_install:
+        - sudo apt update
+        - sudo apt install openjfx
+        - chmod +x ./gradlew
+        - export DISPLAY=:99.0
 
-install: true
+      install: true
 
-script:
- - ./gradlew check
+      script:
+       - ./gradlew check
 
-# Generate coverage report and upload to codecov
-after_success:
-  - ./gradlew jacocoTestReport
-  - bash <(curl -s https://codecov.io/bash)
+      # Generate coverage report and upload to codecov
+      after_success:
+        - ./gradlew jacocoTestReport
+        - bash <(curl -s https://codecov.io/bash)
 
-before_cache:
- - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
- - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
- - rm -f  $HOME/.gradle/caches/*/fileHashes/fileHashes.bin
- - rm -f  $HOME/.gradle/caches/*/fileHashes/fileHashes.lock
+      before_cache:
+       - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+       - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+       - rm -f  $HOME/.gradle/caches/*/fileHashes/fileHashes.bin
+       - rm -f  $HOME/.gradle/caches/*/fileHashes/fileHashes.lock
 
-cache:
- directories:
-   - $HOME/.gradle/caches/
-   - $HOME/.gradle/wrapper/
+      cache:
+       directories:
+         - $HOME/.gradle/caches/
+         - $HOME/.gradle/wrapper/
+
+    - # This is the simple Travis configuration, which is intended for use
+      # on applications which do not require cross-platform and
+      # multiple-GHC-version support. For more information and other
+      # options, see:
+      #
+      # https://docs.haskellstack.org/en/stable/travis_ci/
+      #
+      # Copy these contents into the root directory of your Github project in a file
+      # named .travis.yml
+
+      # Choose a build environment
+      dist: xenial
+
+      # Do not choose a language; we provide our own build tools.
+      language: generic
+
+      # Caching so the next build will be fast too.
+      cache:
+        directories:
+          - $HOME/.stack
+
+      # Ensure necessary system libraries are present
+      addons:
+        apt:
+          packages:
+            - libgmp-dev
+
+      before_install:
+        # Download and unpack the stack executable
+        - mkdir -p ~/.local/bin
+        - export PATH=$HOME/.local/bin:$PATH
+        - travis_retry curl -L https://get.haskellstack.org/stable/linux-x86_64.tar.gz | tar xz --wildcards --strip-components=1 -C ~/.local/bin '*/stack'
+
+      install:
+        # Build dependencies
+        - stack --no-terminal --install-ghc test --only-dependencies
+
+      script:
+        - cd ./webplep
+        # Build the package, its tests, and its docs and run the tests
+        - stack --no-terminal test --haddock --no-haddock-deps
