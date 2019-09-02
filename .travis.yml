@@ -65,6 +65,7 @@ jobs:
             - libgmp-dev
 
       before_install:
+        - cd ./webplep
         # Download and unpack the stack executable
         - mkdir -p ~/.local/bin
         - export PATH=$HOME/.local/bin:$PATH
@@ -75,6 +76,5 @@ jobs:
         - stack --no-terminal --install-ghc test --only-dependencies
 
       script:
-        - cd ./webplep
         # Build the package, its tests, and its docs and run the tests
         - stack --no-terminal test --haddock --no-haddock-deps
