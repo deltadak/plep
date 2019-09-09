@@ -1,6 +1,7 @@
 module Views
   ( loginPage
-  , rootHtml
+  , registerPage
+  , rootPage
   ) where
 
 import           Control.Monad (forM_)
@@ -22,14 +23,26 @@ loginPage =
           input_ [name_ "password"]
         input_ [type_ "submit", value_ "Log In"]
 
-rootHtml :: [Note] -> Html ()
-rootHtml notes = do
+registerPage :: Html ()
+registerPage =
+  form_ [method_ "post"] $ do
+        label_ $ do
+          "Username: "
+          input_ [name_ "username"]
+        label_ $ do
+          "Password: "
+          input_ [name_ "password"]
+        input_ [type_ "submit", value_ "Log In"]
+
+
+rootPage :: Text -> [Note] -> Html ()
+rootPage username notes = do
   head_ $ do
     title_ "notes"
     script_ [src_ "js/draganddrop.js"] ("" :: T.Text)
     link_ [rel_ "stylesheet", type_ "text/css", href_ "/css/main.css"]
   body_ $ do
-    h1_ "hi!"
+    h1_ $ toHtml username
     ul_ $
       forM_ notes $ \note ->
         li_ $ do
