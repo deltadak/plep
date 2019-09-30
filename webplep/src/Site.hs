@@ -6,10 +6,10 @@ module Site
   ( runApp
   ) where
 
-import           Control.Monad                 (forM_)
+import           Control.Monad                 (forM_, when)
 import           Control.Monad.IO.Class        (liftIO)
 import           Control.Monad.Logger          (LoggingT, runStdoutLoggingT)
-import           Data.HVect
+import           Data.HVect hiding (length)
 import           Data.IORef
 import           Data.Map                      (Map)
 import qualified Data.Map                      as M
@@ -49,31 +49,33 @@ app = do
   get "login" $ lucid loginPage
   post "login" $ do
     username <- param' "username"
-    loginAction (User username)
+    password <- param' "password"
+    loginAction (User username password)
     redirect "/"
   get "register" $ lucid registerPage
   post "register" $ do
     username <- param' "username"
-    response <- registerAction (User username)
+    password <- param' "password"
+    response <- registerAction (User username password)
     case response of
       CommonSuccess _ -> redirect "login"
-      CommonError _   -> redirect "register"
+      CommonError _ -> redirect "register"
   prehook authHook $ do
     get root $ do
       notes' <- runSql allNotes
+      users <- runSql allUsers
       response <- getUserFromSession
       case response of
         CommonSuccess username -> lucid $ rootPage username notes'
         CommonError error -> redirect "login"
- 
     post root $ do
-      author <- param' "author"
-      contents <- param' "contents"
-      runSql $ insert (Note author contents)
+      contents <- param' "note"
+      currentUser <- getUserFromSession
+      case currentUser of
+        CommonSuccess username -> runSql $ insert (Note username contents)
       redirect "/"
 
 -- | Check if there is a user set in the session.
--- TODO check if user in database. If not, display login page with "user not known"
 authHook :: PlepAction ()
 authHook = do
   sessionId <- getSessionId
@@ -87,14 +89,24 @@ authHook = do
 registerAction :: User -> PlepAction CommonResponse
 registerAction user = runSql $ addUser user
 
--- | When logging in, put the user in the current session.
+-- | When logging in, check if this user is an existing user and if they are using the correct password to log in.
+--   Then put the user in the current session.
 loginAction :: User -> PlepAction ()
 loginAction user = do
   sessionId <- getSessionId
   currentSessionRef <- readSession
-  liftIO $ modifyIORef' currentSessionRef $
-    M.insert sessionId (userUsername user)
-    
+  validUser <- validateUserAction user
+  Control.Monad.when validUser $ liftIO $ modifyIORef' currentSessionRef $ M.insert sessionId (userUsername user)
+
+
+-- | Validate a user by checking if there is exactly one user with this name and password in the database.
+validateUserAction :: User -> PlepAction Bool
+validateUserAction user = do
+  foundUsers <- runSql $ getUserByCredentials user
+  case length foundUsers of
+    1 -> return True
+    _ -> return False
+
 getUserFromSession :: PlepAction CommonResponse
 getUserFromSession = do
   sessionId <- getSessionId
@@ -102,5 +114,5 @@ getUserFromSession = do
   sessionMap <- liftIO $ readIORef currentSessionRef
   case M.lookup sessionId sessionMap of
     Just username -> return (CommonSuccess username)
-    Nothing -> return (CommonError "User does not exist")
+    Nothing -> return (CommonError "User is not in session")
     

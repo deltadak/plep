@@ -32,7 +32,7 @@ registerPage =
         label_ $ do
           "Password: "
           input_ [name_ "password"]
-        input_ [type_ "submit", value_ "Log In"]
+        input_ [type_ "submit", value_ "Register"]
 
 
 rootPage :: Text -> [Note] -> Html ()
@@ -43,6 +43,7 @@ rootPage username notes = do
     link_ [rel_ "stylesheet", type_ "text/css", href_ "/css/main.css"]
   body_ $ do
     h1_ $ toHtml username
+    h2_ "Notes"
     ul_ $
       forM_ notes $ \note ->
         li_ $ do
@@ -52,11 +53,8 @@ rootPage username notes = do
     h2_ "New Note"
     form_ [method_ "post"] $ do
       label_ $ do
-        "Author: "
-        input_ [name_ "author"]
-      label_ $ do
-        "Contents: "
-        textarea_ [name_ "contents"] ""
+        "Note: "
+        textarea_ [name_ "note"] ""
       input_ [type_ "submit", value_ "Add Note"]
     p_ [id_ "todrag", draggable_ "true", ondragstart_ "drag(event)"] "drag me"
     div_ [id_ "div1", ondrop_ "drop(event)", ondragover_ "allowDrop(event)", width_ "100", height_ "70"] "here"

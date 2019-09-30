@@ -15,4 +15,6 @@ share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
     
   User
     username Text
+    password Text
+    deriving Eq
 |]
