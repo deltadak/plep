@@ -33,7 +33,8 @@ import           Database
 import           GHC.IO                        (evaluate)
 import           Model
 import           TypeDefinitions
-import           Views
+import           Views.Root
+import Views.LoginRegisterForms
 
 runApp :: IO ()
 runApp = do
@@ -46,13 +47,13 @@ runApp = do
 app :: Server ()
 app = do
   middleware $ staticPolicy (addBase "static")
-  get "login" $ lucid loginPage
+  get "login" $ lucid loginForm
   post "login" $ do
     username <- param' "username"
     password <- param' "password"
     loginAction (User username password)
     redirect "/"
-  get "register" $ lucid registerPage
+  get "register" $ lucid registerForm
   post "register" $ do
     username <- param' "username"
     password <- param' "password"
@@ -107,6 +108,7 @@ validateUserAction user = do
     1 -> return True
     _ -> return False
 
+-- | Gets the current username from the session.
 getUserFromSession :: PlepAction CommonResponse
 getUserFromSession = do
   sessionId <- getSessionId
