@@ -35,6 +35,9 @@ import           Model
 import           TypeDefinitions
 import           Views.Root
 import Views.LoginRegisterForms
+import Views.ContentMain
+import Views.Running
+import Views.Welcome
 
 runApp :: IO ()
 runApp = do
@@ -47,13 +50,14 @@ runApp = do
 app :: Server ()
 app = do
   middleware $ staticPolicy (addBase "static")
-  get "login" $ lucid loginForm
+  get "welcome" $ lucid $ rootPage (siteHeader T.empty) welcome siteFooter
+  get "login" $ lucid $ rootPage (siteHeader T.empty) loginForm siteFooter
   post "login" $ do
     username <- param' "username"
     password <- param' "password"
     loginAction (User username password)
     redirect "/"
-  get "register" $ lucid registerForm
+  get "register" $ lucid $ rootPage (siteHeader T.empty) registerForm siteFooter
   post "register" $ do
     username <- param' "username"
     password <- param' "password"
@@ -67,14 +71,16 @@ app = do
       users <- runSql allUsers
       response <- getUserFromSession
       case response of
-        CommonSuccess username -> lucid $ rootPage username notes'
-        CommonError error -> redirect "login"
+        CommonSuccess username -> lucid $ rootPage (siteHeader username) (content username notes') siteFooter
+        CommonError error -> redirect "welcome"
     post root $ do
       contents <- param' "note"
       currentUser <- getUserFromSession
       case currentUser of
-        CommonSuccess username -> runSql $ insert (Note username contents)
-      redirect "/"
+        CommonSuccess username -> do runSql $ insert (Note username contents)
+                                     redirect "/"
+        CommonError error -> redirect "welcome"                                    
+      
 
 -- | Check if there is a user set in the session.
 authHook :: PlepAction ()
@@ -83,7 +89,7 @@ authHook = do
   sessionRef <- readSession
   sessionMap <- liftIO $ readIORef sessionRef
   case M.lookup sessionId sessionMap of
-    Nothing   -> redirect "login"
+    Nothing   -> redirect "welcome"
     Just user -> return ()
 
 -- | When registering, add a user to the database.
