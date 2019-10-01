@@ -79,7 +79,11 @@ app = do
       case currentUser of
         CommonSuccess username -> do runSql $ insert (Note username contents)
                                      redirect "/"
-        CommonError error -> redirect "welcome"                                    
+        CommonError error -> redirect "welcome"  
+    get "logout" $ do 
+      logoutAction
+      redirect "welcome"
+                                        
       
 
 -- | Check if there is a user set in the session.
@@ -104,7 +108,12 @@ loginAction user = do
   currentSessionRef <- readSession
   validUser <- validateUserAction user
   Control.Monad.when validUser $ liftIO $ modifyIORef' currentSessionRef $ M.insert sessionId (userUsername user)
-
+  
+logoutAction :: PlepAction ()
+logoutAction = do
+  sessionId <- getSessionId
+  currentSessionRef <- readSession
+  liftIO $ modifyIORef' currentSessionRef $ M.delete sessionId 
 
 -- | Validate a user by checking if there is exactly one user with this name and password in the database.
 validateUserAction :: User -> PlepAction Bool
