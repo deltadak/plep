@@ -20,6 +20,9 @@ runSql action = runQuery $ \conn -> runStdoutLoggingT $ runSqlConn action conn
 allNotes :: SqlPersistT (LoggingT IO) [Note]
 allNotes = map entityVal <$> selectList [] []
 
+allNotesFromUser :: Text -> SqlPersistT (LoggingT IO) [Note]
+allNotesFromUser username = map entityVal <$> selectList [NoteAuthor <-. [username]] []
+
 -- | Retrieves all users from the database.
 --
 -- >>> runSql allUsers

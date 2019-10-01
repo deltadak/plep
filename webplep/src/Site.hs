@@ -67,11 +67,11 @@ app = do
       CommonError _ -> redirect "register"
   prehook authHook $ do
     get root $ do
-      notes' <- runSql allNotes
       users <- runSql allUsers
       response <- getUserFromSession
       case response of
-        CommonSuccess username -> lucid $ rootPage (siteHeader username) (content username notes') siteFooter
+        CommonSuccess username -> do notes' <- runSql $ allNotesFromUser username
+                                     lucid $ rootPage (siteHeader username) (content username notes') siteFooter
         CommonError error -> redirect "welcome"
     post root $ do
       contents <- param' "note"
@@ -84,7 +84,6 @@ app = do
       logoutAction
       redirect "welcome"
                                         
-      
 
 -- | Check if there is a user set in the session.
 authHook :: PlepAction ()
