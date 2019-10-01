@@ -15,22 +15,26 @@ runSql :: (HasSpock m, SpockConn m ~ SqlBackend) => SqlPersistT (LoggingT IO) a 
 runSql action = runQuery $ \conn -> runStdoutLoggingT $ runSqlConn action conn
 
 -- | Retrieves all notes from the database.
+--
 -- >>> runSql allNotes
 allNotes :: SqlPersistT (LoggingT IO) [Note]
 allNotes = map entityVal <$> selectList [] []
 
 -- | Retrieves all users from the database.
+--
 -- >>> runSql allUsers
 allUsers :: SqlPersistT (LoggingT IO) [User]
 allUsers = map entityVal <$> selectList [] []
 
 -- | Add a user to the database. TODO hash password before storing.
+-- 
 -- >>> runSql $ addUser user
 addUser :: User -> SqlPersistT (LoggingT IO) CommonResponse
 addUser user = do insert user
                   return (CommonSuccess "User has been added to the database.")
 
 -- | Gets all user from the database with this username. 
+--
 -- >>> runSql $ getUserByName username
 getUserByName :: Text -> SqlPersistT (LoggingT IO) [User]
 getUserByName username = map entityVal <$> selectList [UserUsername <-. [username]] []

@@ -2,9 +2,9 @@ module Views.Root
   ( rootPage
   ) where
 
-import           Control.Monad     (forM_)
-import           Data.Text         (Text)
-import qualified Data.Text         as T
+import           Control.Monad (forM_)
+import           Data.Text     (Text)
+import qualified Data.Text     as T
 
 import           Lucid
 
@@ -12,10 +12,10 @@ import           Model
 
 -- | The root page combines the content with the header, footer, css, and javascript.
 rootPage ::
-     Html () -- | The header of the page.
-  -> Html () -- | The content of the page.
-  -> Html () -- | The footer of the page.
-  -> Html () -- | Complete page.
+     Html () -- ^ The header of the page.
+  -> Html () -- ^ The content of the page.
+  -> Html () -- ^ The footer of the page.
+  -> Html () -- ^ Complete page.
 rootPage header content footer = do
   head_ $ do
     title_ "notes"
