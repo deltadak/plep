@@ -65,9 +65,9 @@ app = do
   post "register" $ do
     username <- param' "username"
     password <- param' "password"
-    -- Check if the entered username is valid.
-    validateUsername <- validateRegisterUsername username
-    if validateUsername && validateRegisterPassword password
+    -- Check if the entered fields are valid.
+    validateUser <- validateRegister username password
+    if validateUser
       then do
         response <- registerAction (User username password)
         case response of
