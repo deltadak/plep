@@ -92,7 +92,7 @@ app = do
         CommonError error -> redirect "welcome"
     get "logout" $ do
       logoutAction
-      redirect "welcome"-- | Check if there is a user set in the session.
+      redirect "welcome"  --  Check if there is a user set in the session.
 authHook :: PlepAction ()
 authHook = do
   sessionId <- getSessionId
