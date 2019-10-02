@@ -9,6 +9,7 @@ import qualified Data.Text as T
 
 import Model
 import TypeDefinitions
+import Control.Monad.Reader (MonadIO, ReaderT)
 
 -- | Run a query on our database.
 runSql :: (HasSpock m, SpockConn m ~ SqlBackend) => SqlPersistT (LoggingT IO) a -> m a

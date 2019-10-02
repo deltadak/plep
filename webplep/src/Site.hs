@@ -38,6 +38,7 @@ import Views.LoginRegisterForms
 import Views.ContentMain
 import Views.Running
 import Views.Welcome
+import FormValidation.LoginRegister
 
 runApp :: IO ()
 runApp = do
@@ -55,37 +56,43 @@ app = do
   post "login" $ do
     username <- param' "username"
     password <- param' "password"
-    loginAction (User username password)
-    redirect "/"
+    if not $ T.null password
+      then do
+        loginAction (User username password)
+        redirect "/"
+      else redirect "login"
   get "register" $ lucid $ rootPage (siteHeader T.empty) registerForm siteFooter
   post "register" $ do
     username <- param' "username"
     password <- param' "password"
-    response <- registerAction (User username password)
-    case response of
-      CommonSuccess _ -> redirect "login"
-      CommonError _ -> redirect "register"
+    -- Check if the entered username is valid.
+    validateUsername <- validateRegisterUsername username
+    if validateUsername && validateRegisterPassword password
+      then do
+        response <- registerAction (User username password)
+        case response of
+          CommonSuccess _ -> redirect "login"
+          CommonError _ -> redirect "register"
+      else redirect "register"
   prehook authHook $ do
     get root $ do
-      users <- runSql allUsers
       response <- getUserFromSession
       case response of
-        CommonSuccess username -> do notes' <- runSql $ allNotesFromUser username
-                                     lucid $ rootPage (siteHeader username) (content username notes') siteFooter
+        CommonSuccess username -> do
+          notes' <- runSql $ allNotesFromUser username
+          lucid $ rootPage (siteHeader username) (content username notes') siteFooter
         CommonError error -> redirect "welcome"
     post root $ do
       contents <- param' "note"
       currentUser <- getUserFromSession
       case currentUser of
-        CommonSuccess username -> do runSql $ insert (Note username contents)
-                                     redirect "/"
-        CommonError error -> redirect "welcome"  
-    get "logout" $ do 
+        CommonSuccess username -> do
+          runSql $ insert (Note username contents)
+          redirect "/"
+        CommonError error -> redirect "welcome"
+    get "logout" $ do
       logoutAction
-      redirect "welcome"
-                                        
-
--- | Check if there is a user set in the session.
+      redirect "welcome"-- | Check if there is a user set in the session.
 authHook :: PlepAction ()
 authHook = do
   sessionId <- getSessionId
@@ -107,12 +114,12 @@ loginAction user = do
   currentSessionRef <- readSession
   validUser <- validateUserAction user
   Control.Monad.when validUser $ liftIO $ modifyIORef' currentSessionRef $ M.insert sessionId (userUsername user)
-  
+
 logoutAction :: PlepAction ()
 logoutAction = do
   sessionId <- getSessionId
   currentSessionRef <- readSession
-  liftIO $ modifyIORef' currentSessionRef $ M.delete sessionId 
+  liftIO $ modifyIORef' currentSessionRef $ M.delete sessionId
 
 -- | Validate a user by checking if there is exactly one user with this name and password in the database.
 validateUserAction :: User -> PlepAction Bool

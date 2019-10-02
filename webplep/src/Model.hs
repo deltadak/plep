@@ -10,11 +10,12 @@ import           Database.Persist.TH
 
 share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
   Note
-    author Text
+    author Text 
     contents Text
     
   User
     username Text
     password Text
+    UniqueUserUsername username
     deriving Eq
 |]
