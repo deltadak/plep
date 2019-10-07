@@ -6,39 +6,41 @@ module Site
   ( runApp
   ) where
 
-import           Control.Monad                 (forM_, when)
-import           Control.Monad.IO.Class        (liftIO)
-import           Control.Monad.Logger          (LoggingT, runStdoutLoggingT)
-import           Data.HVect hiding (length)
+import           Control.Monad.IO.Class          (liftIO)
+import           Control.Monad.Logger            (LoggingT, runStdoutLoggingT)
+import           Data.HVect                      hiding (length)
 import           Data.IORef
-import           Data.Map                      (Map)
-import qualified Data.Map                      as M
-import           Data.Semigroup                ((<>))
-import           Data.Text                     (Text)
-import qualified Data.Text                     as T
+import           Data.Map                        (Map)
+import qualified Data.Map                        as M
+import           Data.Semigroup                  ((<>))
+import           Data.Text                       (Text)
+import qualified Data.Text                       as T
 
-import           Database.Persist              hiding (get)
-import qualified Database.Persist              as P
-import           Database.Persist.Sqlite       hiding (get)
+import           Database.Persist                hiding (get)
+import qualified Database.Persist                as P
+import           Database.Persist.Sqlite         hiding (get)
 import           Database.Persist.TH
 import           Lucid
 import           Network.Wai.Middleware.Static
 import           Web.Spock
 import           Web.Spock.Config
-import           Web.Spock.Lucid               (lucid)
+import           Web.Spock.Lucid                 (lucid)
 
-import           Control.Monad.Cont            (lift)
-import           Data.Maybe                    (fromMaybe)
+import           Control.Monad.Cont              (lift)
+import           Data.Maybe                      (fromMaybe)
 import           Database
-import           GHC.IO                        (evaluate)
+import           GHC.IO                          (evaluate)
 import           Model
+
+import           Actions.LoginRegisterValidation
+import           Actions.UserAuthentication
+import           Actions.UserManagement
 import           TypeDefinitions
+import           Views.ContentMain
+import           Views.LoginRegisterForms
 import           Views.Root
-import Views.LoginRegisterForms
-import Views.ContentMain
-import Views.Running
-import Views.Welcome
-import FormValidation.LoginRegister
+import           Views.Running
+import           Views.Welcome
 
 runApp :: IO ()
 runApp = do
@@ -48,6 +50,7 @@ runApp = do
   runStdoutLoggingT $ runSqlPool (runMigration migrateAll) pool
   runSpock 8080 (spock cfg app)
 
+-- | Handles the routing of urls, and runs the app.
 app :: Server ()
 app = do
   middleware $ staticPolicy (addBase "static")
@@ -72,7 +75,7 @@ app = do
         response <- registerAction (User username password)
         case response of
           CommonSuccess _ -> redirect "login"
-          CommonError _ -> redirect "register"
+          CommonError _   -> redirect "register"
       else redirect "register"
   prehook authHook $ do
     get root $ do
@@ -92,50 +95,4 @@ app = do
         CommonError error -> redirect "welcome"
     get "logout" $ do
       logoutAction
-      redirect "welcome"  --  Check if there is a user set in the session.
-authHook :: PlepAction ()
-authHook = do
-  sessionId <- getSessionId
-  sessionRef <- readSession
-  sessionMap <- liftIO $ readIORef sessionRef
-  case M.lookup sessionId sessionMap of
-    Nothing   -> redirect "welcome"
-    Just user -> return ()
-
--- | When registering, add a user to the database.
-registerAction :: User -> PlepAction CommonResponse
-registerAction user = runSql $ addUser user
-
--- | When logging in, check if this user is an existing user and if they are using the correct password to log in.
---   Then put the user in the current session.
-loginAction :: User -> PlepAction ()
-loginAction user = do
-  sessionId <- getSessionId
-  currentSessionRef <- readSession
-  validUser <- validateUserAction user
-  Control.Monad.when validUser $ liftIO $ modifyIORef' currentSessionRef $ M.insert sessionId (userUsername user)
-
-logoutAction :: PlepAction ()
-logoutAction = do
-  sessionId <- getSessionId
-  currentSessionRef <- readSession
-  liftIO $ modifyIORef' currentSessionRef $ M.delete sessionId
-
--- | Validate a user by checking if there is exactly one user with this name and password in the database.
-validateUserAction :: User -> PlepAction Bool
-validateUserAction user = do
-  foundUsers <- runSql $ getUserByCredentials user
-  case length foundUsers of
-    1 -> return True
-    _ -> return False
-
--- | Gets the current username from the session.
-getUserFromSession :: PlepAction CommonResponse
-getUserFromSession = do
-  sessionId <- getSessionId
-  currentSessionRef <- readSession
-  sessionMap <- liftIO $ readIORef currentSessionRef
-  case M.lookup sessionId sessionMap of
-    Just username -> return (CommonSuccess username)
-    Nothing -> return (CommonError "User is not in session")
-    
+      redirect "welcome" --  Check if there is a user set in the session.

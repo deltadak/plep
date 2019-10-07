@@ -1,6 +1,5 @@
 module Views.LoginRegisterForms(loginForm, registerForm) where
 
-import           Control.Monad (forM_)
 import           Data.Text     (Text)
 import qualified Data.Text     as T
 
@@ -8,6 +7,7 @@ import           Lucid
 
 import           Model
 
+-- | 
 loginForm :: Html ()
 loginForm =
   form_ [method_ "post"] $ do

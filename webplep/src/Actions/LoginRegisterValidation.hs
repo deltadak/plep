@@ -1,4 +1,4 @@
-module FormValidation.LoginRegister
+module Actions.LoginRegisterValidation
   ( validateRegisterUsername
   , validateRegisterPassword
   , validateRegister
