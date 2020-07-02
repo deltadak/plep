@@ -14,19 +14,19 @@ plugins {
     id("edu.sc.seis.launch4j") version "2.4.6"
 
     // Plugin to build fat jars
-    id("com.github.johnrengelman.shadow") version "5.2.0"
+    id("com.github.johnrengelman.shadow") version "6.0.0"
 
     // help/dependencyUpdates checks for dependency updates.
-    id("com.github.ben-manes.versions") version "0.27.0"
+    id("com.github.ben-manes.versions") version "0.28.0"
 
     // help/useLatestVersions updates dependency versions
-    id("se.patrikerdes.use-latest-versions") version "0.2.13"
+    id("se.patrikerdes.use-latest-versions") version "0.2.14"
 
     // Code coverage
     jacoco
 
     // Upload jacoco coverage reports to coveralls
-    id("com.github.kt3k.coveralls") version "2.9.0"
+    id("com.github.kt3k.coveralls") version "2.10.1"
 }
 
 application {
@@ -39,7 +39,7 @@ dependencies {
     // https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc
     // 'compile' is deprecated, now it is 'api' but that fails to build with
 //    Could not find method api() for arguments [org.xerial:sqlite-jdbc:3.18.0] on object of type org.gradle.api.internal.artifacts.dsl.dependencies.DefaultDependencyHandler.
-    implementation("org.xerial:sqlite-jdbc:3.30.1")
+    implementation("org.xerial:sqlite-jdbc:3.32.3")
 
     // Database driver (for possible future use with Exposed).
     implementation("com.h2database:h2:1.4.200")
@@ -59,17 +59,17 @@ dependencies {
     implementation(kotlin("test-junit"))
 
     // Coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.3")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:1.3.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:1.3.7")
 
     // Kotlin Exposed SQL DSL
     implementation("org.jetbrains.exposed:exposed:0.17.7")
     implementation("org.slf4j:slf4j-simple:2.0.0-alpha1")
 
     // JUnit 5
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.6.0")
-    testRuntimeOnly("org.junit.platform:junit-platform-console:1.6.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0-M1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.0-M1")
+    testRuntimeOnly("org.junit.platform:junit-platform-console:1.7.0-M1")
 
     // Kotlintests are not run anyway when using JUnit 5 as well.
     testImplementation("io.kotlintest:kotlintest-core:3.4.2")
