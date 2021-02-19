@@ -3,12 +3,14 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 group = "deltadak"
-version = "v1.2.5"
+version = "v2.0"
 
 plugins {
     application
-    kotlin("jvm") version "1.3.20"
+    kotlin("jvm") version "1.4.30"
     java // Required by at least JUnit.
+
+    id("org.openjfx.javafxplugin") version "0.0.9"
 
     // Plugin to build .exe files.
     id("edu.sc.seis.launch4j") version "2.4.9"
@@ -30,7 +32,7 @@ plugins {
 }
 
 application {
-    mainClassName = "nl.deltadak.plep.Main"
+    mainClass.set("nl.deltadak.plep.Main")
 }
 
 dependencies {
@@ -45,31 +47,28 @@ dependencies {
     implementation("com.h2database:h2:1.4.200")
 
     // JNA, used to e.g. make a program pinnable to task bar.
-    implementation("net.java.dev.jna:jna:5.6.0")
-    implementation("net.java.dev.jna:jna-platform:5.6.0")
+    implementation("net.java.dev.jna:jna:5.7.0")
+    implementation("net.java.dev.jna:jna-platform:5.7.0")
 
     // Kotlin
-    implementation(kotlin("stdlib:1.3.11"))
-
-    // To "prevent strange errors".
-    implementation(kotlin("reflect:1.3.11"))
+    implementation(kotlin("stdlib"))
 
     // Kotlin reflection.
     implementation(kotlin("test"))
     implementation(kotlin("test-junit"))
 
     // Coroutines
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-javafx:1.4.2")
 
     // Kotlin Exposed SQL DSL
-    implementation("org.jetbrains.exposed:exposed:0.17.8")
+    implementation("org.jetbrains.exposed:exposed:0.17.9")
     implementation("org.slf4j:slf4j-simple:2.0.0-alpha1")
 
     // JUnit 5
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.0")
-    testRuntimeOnly("org.junit.platform:junit-platform-console:1.7.0")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.8.0-M1")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.8.0-M1")
+    testRuntimeOnly("org.junit.platform:junit-platform-console:1.8.0-M1")
 
     // Kotlintests are not run anyway when using JUnit 5 as well.
     testImplementation("io.kotlintest:kotlintest-core:3.4.2")
@@ -130,3 +129,8 @@ tasks {
 //jacoco {
 //    reportsDir = file("$buildDir/reports")
 //}
+
+javafx {
+    version = "15.0.1"
+    modules = mutableListOf("javafx.controls", "javafx.fxml")
+}

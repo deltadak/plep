@@ -84,7 +84,7 @@ object Tasks : Table() {
      * @return (The highest order that's currently in a day.) + 1
      */
     fun highestOrder(day: LocalDate): Int = regularTransaction {
-        (select { Tasks.day eq day.toString() }.map { it[Tasks.orderInDay] }.max() ?: 0) + 1
+        (select { Tasks.day eq day.toString() }.map { it[Tasks.orderInDay] }.maxOrNull() ?: 0) + 1
     }
 
     /**
@@ -93,7 +93,7 @@ object Tasks : Table() {
      * @return int - (highest id currently in the database) + 1.
      */
     fun highestID(): Int = regularTransaction {
-        (selectAll().map { it[Tasks.id] }.max() ?: 0) + 1
+        (selectAll().map { it[Tasks.id] }.maxOrNull() ?: 0) + 1
     }
 
     /**

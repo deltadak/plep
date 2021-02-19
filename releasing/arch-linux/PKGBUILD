@@ -1,7 +1,7 @@
 #@IgnoreInspection BashAddShebang
 # Maintainers: Abby and Thomas at abbythomasorganisation@gmail.com
 pkgname=plep
-pkgver=v1.2.5
+pkgver=v2.0
 pkgrel=1
 epoch=
 pkgdesc=" An agenda for planning a few tasks per day right on your desktop."
@@ -9,7 +9,7 @@ arch=('any')
 url="https://github.com/deltadak/plep"
 license=('MIT')
 groups=()
-depends=('java-openjfx' 'jre8-openjdk')
+depends=('java-openjfx' 'jre-openjdk')
 makedepends=()
 checkdepends=()
 optdepends=()
