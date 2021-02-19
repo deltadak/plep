@@ -35,6 +35,9 @@ application {
     mainClass.set("nl.deltadak.plep.Main")
 }
 
+// Required by shadowJar
+project.setProperty("mainClassName", "nl.deltadak.plep.Main")
+
 dependencies {
     // Plep dependencies
     // JDBC driver for database
@@ -102,7 +105,7 @@ tasks {
 
     // Configure the shadowJar task.
     "shadowJar"(ShadowJar::class) {
-        classifier = ""
+        archiveClassifier.set("")
     }
 
     "build" {
