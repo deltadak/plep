@@ -3,7 +3,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 group = "deltadak"
-version = "v2.0"
+version = "2.0"
 
 plugins {
     application
@@ -11,6 +11,7 @@ plugins {
     java // Required by at least JUnit.
 
     id("org.openjfx.javafxplugin") version "0.0.9"
+    id("org.beryx.jlink") version "2.23.3"
 
     // Plugin to build .exe files.
     id("edu.sc.seis.launch4j") version "2.4.9"
@@ -33,6 +34,7 @@ plugins {
 
 application {
     mainClass.set("nl.deltadak.plep.Main")
+    mainModule.set("nl.deltadak.plep")
 }
 
 // Required by shadowJar
@@ -135,5 +137,15 @@ tasks {
 
 javafx {
     version = "15.0.1"
-    modules = mutableListOf("javafx.controls", "javafx.fxml")
+    modules = mutableListOf("javafx.controls", "javafx.fxml", "javafx.base")
+}
+
+jlink {
+    launcher {
+        name = "Plep"
+    }
+    addExtraDependencies("javafx")
+//    imageDir.set(file("/home/thomas/GitRepos/plep/build"))
+    imageZip.set(project.file("${project.buildDir}/image-zip/plep-image.zip"))
+    javaHome.set(System.getProperty("java.home"))
 }
